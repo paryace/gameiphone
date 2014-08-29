@@ -137,7 +137,7 @@
     NSString *imgStr = [GameCommon getHeardImgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"img")]];
     NSString * roomName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"roomName")];
     NSString *description = [NSString stringWithFormat:@"%@邀请你加入在陌游的队伍",roomName];
-    NSString * shareUrl = [NSString stringWithFormat:@"%@/t?p=%@",BaseIp,[GameCommon getNewStringWithId:teamInviteId]];
+    NSString * shareUrl = [NSString stringWithFormat:@"%@/t?p=%@",BaseDomain,[GameCommon getNewStringWithId:teamInviteId]];
     if (sender ==10001) {
         [[ShareToOther singleton] onTShareImage:[ImageService getImgUrl:imgStr] Title:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.roomInfoDic, @"description")] Description:description Url:shareUrl];
     }else{

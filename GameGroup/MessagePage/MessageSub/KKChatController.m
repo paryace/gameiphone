@@ -220,6 +220,7 @@ PlayingDelegate>
             }else{
                 self.nickName = KISDictionaryHaveKey(groupInfo, @"groupName");
             }
+            [self.newTeamMenuView settTitleMsg:self.nickName];
         }
     }
     self.titleLabel.text = self.nickName;
@@ -556,6 +557,21 @@ PlayingDelegate>
     }
     NSLog(@"---index--%d",index);
   
+}
+
+//
+-(void)menuOnClick:(NSInteger)senderTag{
+    if (senderTag == 0) {
+        [self invitationAtion];
+    }else if(senderTag == 1){
+        
+    }else if (senderTag == 2){
+       [self teamInfoAction];
+    }else if (senderTag == 3){
+        [self showOrHideApplyListControl];
+    }else if (senderTag == 4){
+       [self positionAction];
+    }
 }
 
 //////队员列表

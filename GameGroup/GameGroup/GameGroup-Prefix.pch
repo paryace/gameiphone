@@ -85,6 +85,9 @@
 //#define BaseIp @"http://221.122.66.243"
 
 
+
+
+#define BaseDomain @"http://www.momotalk.com"
 #define NormalRequestTimeout  30.0f//联网最长时间
 
 #define LOCALTOKEN            @"lovePetLocalToken"

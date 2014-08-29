@@ -82,6 +82,7 @@
         
         self.positionBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-70, 0, 70, 60)];
         [self.positionBtn setBackgroundImage:nil forState:UIControlStateNormal];
+        [self.positionBtn  addTarget:self action:@selector(positionOnClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.bgV addSubview:self.positionBtn];
     }
     return self;
@@ -90,6 +91,12 @@
 -(void)headOnClick:(UIButton*)sender{
     if ([self.headCkickDelegate respondsToSelector:@selector(userHeadImgClick:)]) {
         [self.headCkickDelegate userHeadImgClick:self];
+    }
+}
+
+-(void)positionOnClick:(UIButton*)sender{
+    if ([self.positionCkickDelegate respondsToSelector:@selector(positionOnClick:)]) {
+        [self.positionCkickDelegate positionOnClick:sender];
     }
 }
 

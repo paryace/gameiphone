@@ -16,9 +16,10 @@
 #import "ChineseString.h"
 #import "pinyin.h"
 #import "InplaceTimer.h"
-#define bottomHight 55
-#define topHight 44
-#define bottomPadding 10
+#define bottomHight 40.5
+#define btnHight 40.5
+#define topHight 130
+#define bottomPadding 0
 
 @implementation NewTeamMenuView
 
@@ -26,7 +27,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+        self.backgroundColor = UIColorFromRGBA(0x000000, 0.6);
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changPosition:) name:kChangPosition object:nil];//位置改变
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changMemberList:) name:kChangMemberList object:nil];//组队人数变化
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//收到确认或者取消就位确认状态
@@ -41,18 +42,21 @@
         
         UIImageView* bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320,topHight)];
         bgImageView.userInteractionEnabled = YES;
-        bgImageView.backgroundColor = kColorWithRGB(23, 161, 240, 1.0);
-        bgImageView.image = KUIImage(@"nav_bg");
+        bgImageView.backgroundColor = UIColorFromRGBA(0x000000, 0.6);
         [self addSubview:bgImageView];
+        
+        UIView * uiTableViewBg = [[UIView alloc] initWithFrame:CGRectMake(0, topHight, 320, kScreenHeigth-topHight-(KISHighVersion_7?20:0))];
+        uiTableViewBg.backgroundColor = [UIColor whiteColor];
+         [self addSubview:uiTableViewBg];
 
         
-        UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,0, 200, 44)];
-        titleLabel.textColor = [UIColor whiteColor];
-        titleLabel.backgroundColor = [UIColor clearColor];
-        titleLabel.text = @"队员列表";
-        titleLabel.textAlignment = NSTextAlignmentCenter;
-        titleLabel.font = [UIFont boldSystemFontOfSize:20];
-        [bgImageView addSubview:titleLabel];
+        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,0, 200, 44)];
+        self.titleLabel.textColor = [UIColor whiteColor];
+        self.titleLabel.backgroundColor = [UIColor clearColor];
+        self.titleLabel.text = @"队员列表";
+        self.titleLabel.textAlignment = NSTextAlignmentCenter;
+        self.titleLabel.font = [UIFont boldSystemFontOfSize:20];
+        [bgImageView addSubview:self.titleLabel];
         
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
         button.frame = CGRectMake(260, 0, 60, 44);
@@ -60,6 +64,30 @@
         [button setTitle:@"关闭" forState:UIControlStateNormal];
         button.backgroundColor = [UIColor clearColor];
         [bgImageView addSubview:button];
+        
+        
+        NSArray * texts = @[@"邀请",@"提醒",@"详情",@"申请"];
+        for (int i = 0; i<texts.count; i++) {
+            UIButton *menubutton = [UIButton buttonWithType:UIButtonTypeCustom];
+            menubutton.tag = i;
+            float itemWight = 320/texts.count;
+            menubutton.frame = CGRectMake(i*itemWight + ((itemWight-54)/2), 50, 54, 54);
+            [menubutton addTarget:self action:@selector(btnAction:)forControlEvents:UIControlEventTouchUpInside];
+            [menubutton setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_normal%d",i+1]]forState:UIControlStateNormal];
+            [menubutton setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_click%d",i+1]]forState:UIControlStateHighlighted];
+            [menubutton setImageEdgeInsets:UIEdgeInsetsMake(1, 0, 0, 1)];
+            [bgImageView addSubview:menubutton];
+            
+            
+            UILabel *menuLable = [[UILabel alloc] init];
+            menuLable.frame = CGRectMake(i*itemWight,105,itemWight,20);
+            menuLable.font = [UIFont systemFontOfSize:12];
+            menuLable.textAlignment = NSTextAlignmentCenter;
+            menuLable.textColor=UIColorFromRGBA(0xf7f7f7, 1);
+            menuLable.backgroundColor=[UIColor clearColor];
+            menuLable.text = [texts objectAtIndex:i];
+            [bgImageView addSubview:menuLable];
+        }
         
         UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0, (kScreenHeigth-topHight-20)/2+80, 320, 20)];
         pveLable.backgroundColor = [UIColor clearColor];
@@ -69,57 +97,57 @@
         pveLable.font =[ UIFont systemFontOfSize:12];
         
         if (!self.mTableView) {
-            self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, topHight, 320,kScreenHeigth-topHight) style:UITableViewStylePlain];
-            self.mTableView.backgroundColor = [UIColor clearColor];
+            self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight-(KISHighVersion_7?20:0)) style:UITableViewStylePlain];
+            self.mTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0.6);
             self.mTableView.delegate = self;
             self.mTableView.dataSource = self;
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleSingleLine;
-//            self.mTableView.backgroundView = pveLable;
             self.mTableView.tableFooterView = pveLable;
             [GameCommon setExtraCellLineHidden:self.mTableView];
-            [self addSubview:self.mTableView];
+            [uiTableViewBg addSubview:self.mTableView];
         }
         
         if (!self.bottomView){
-            self.bottomView = [[UIImageView alloc] initWithFrame:CGRectMake(0, kScreenHeigth-bottomHight-18, 320, bottomHight)];
+            self.bottomView = [[UIImageView alloc] initWithFrame:CGRectMake(0,self.mTableView.frame.size.height, 320, bottomHight)];
             self.bottomView.backgroundColor = [UIColor greenColor];
             self.bottomView.image =KUIImage(@"bottom_bg");
             self.bottomView.userInteractionEnabled = YES;
-            [self addSubview:self.bottomView];
+            [uiTableViewBg addSubview:self.bottomView];
             if (self.teamUsershipType) {
-                self.sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, bottomPadding, 290, 35)];
-                [self.sendBtn setBackgroundImage:KUIImage(@"longBtn_normal") forState:UIControlStateNormal];
-                [self.sendBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateHighlighted];
-                [self.sendBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateSelected];
-                [self.sendBtn setTitle:@"发起就位确认" forState:UIControlStateNormal];
+                self.sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, bottomPadding, 320, btnHight)];
+                [self.sendBtn setBackgroundImage:KUIImage(@"team_sendBtn_normal") forState:UIControlStateNormal];
+                [self.sendBtn setBackgroundImage:KUIImage(@"team_sendBtn_click") forState:UIControlStateHighlighted];
+                [self.sendBtn setBackgroundImage:KUIImage(@"team_sendBtn_select") forState:UIControlStateSelected];
                 [self.sendBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
                 self.sendBtn.backgroundColor = [UIColor clearColor];
-                self.sendBtn.layer.cornerRadius = 3;
-                self.sendBtn.layer.masksToBounds=YES;
                 [self.sendBtn addTarget:self action:@selector(sendButton:) forControlEvents:UIControlEventTouchUpInside];
                 [self.bottomView addSubview:self.sendBtn];
+                
+                self.timeLable = [[UILabel alloc] initWithFrame:CGRectMake(320-120, bottomPadding, 80, btnHight)];
+                self.timeLable.textColor = [UIColor grayColor];
+                self.timeLable.font = [UIFont systemFontOfSize:14];
+                self.timeLable.hidden = YES;
+                self.timeLable.textAlignment = NSTextAlignmentCenter;
+                self.timeLable.text = @"(180)";
+                [self.bottomView addSubview:self.timeLable];
             }else{
-                self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, bottomPadding, (320-40)/2, 35)];
-                [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
-                [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
-                [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
-                [self.agreeBtn setTitle:@"确定就位" forState:UIControlStateNormal];
+                self.agreeBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, bottomPadding, 160, btnHight)];
+                [self.agreeBtn setBackgroundImage:KUIImage(@"tean_agreeBtn_normal") forState:UIControlStateNormal];
+                [self.agreeBtn setBackgroundImage:KUIImage(@"tean_agreeBtn_click") forState:UIControlStateHighlighted];
+                [self.agreeBtn setBackgroundImage:KUIImage(@"tean_agreeBtn_select") forState:UIControlStateSelected];
                 [self.agreeBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
                 self.agreeBtn.backgroundColor = [UIColor clearColor];
-                self.agreeBtn.layer.cornerRadius = 3;
-                self.agreeBtn.layer.masksToBounds=YES;
+
                 [self.agreeBtn addTarget:self action:@selector(agreeButton:) forControlEvents:UIControlEventTouchUpInside];
                 [self.bottomView addSubview:self.agreeBtn];
                 
-                self.refusedBtn = [[UIButton alloc] initWithFrame:CGRectMake(15+10+(320-40)/2,bottomPadding, (320-40)/2, 35)];
-                [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
-                [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
-                [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
-                [self.refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
+                self.refusedBtn = [[UIButton alloc] initWithFrame:CGRectMake(160,bottomPadding,160, btnHight)];
+                [self.refusedBtn setBackgroundImage:KUIImage(@"team_refusedBtn_normal") forState:UIControlStateNormal];
+                [self.refusedBtn setBackgroundImage:KUIImage(@"team_refusedBtn_click") forState:UIControlStateHighlighted];
+                [self.refusedBtn setBackgroundImage:KUIImage(@"team_refusedBtn_select") forState:UIControlStateSelected];
                 [self.refusedBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
                 self.refusedBtn.backgroundColor = [UIColor clearColor];
-                self.refusedBtn.layer.cornerRadius = 3;
-                self.refusedBtn.layer.masksToBounds=YES;
+
                 [self.refusedBtn addTarget:self action:@selector(refusedButton:) forControlEvents:UIControlEventTouchUpInside];
                 [self.bottomView addSubview:self.refusedBtn];
             }
@@ -130,6 +158,17 @@
         [self addSubview:hud];
     }
     return self;
+}
+
+
+-(void)btnAction:(UIButton*)sender{
+    NSInteger tag = sender.tag;
+    [self.detaildelegate menuOnClick:tag];
+}
+
+
+-(void)settTitleMsg:(NSString*)titleText{
+    self.titleLabel.text = titleText;
 }
 
 //关闭页面
@@ -155,63 +194,99 @@
     }
 }
 
+
+
+-(void)sendBtnEnable{
+    [self.sendBtn setBackgroundImage:KUIImage(@"team_sendBtn_normal") forState:UIControlStateNormal];
+    [self.sendBtn setBackgroundImage:KUIImage(@"team_sendBtn_click") forState:UIControlStateHighlighted];
+    [self.sendBtn setUserInteractionEnabled:YES];
+}
+-(void)sendBtnUnEnable{
+    [self.sendBtn setBackgroundImage:KUIImage(@"team_sendBtn_select") forState:UIControlStateNormal];
+    [self.sendBtn setUserInteractionEnabled:NO];
+}
+
+
+-(void)agreeBtnEnable{
+    self.agreeBtn.frame = CGRectMake(0, bottomPadding, 160, btnHight);
+    [self.agreeBtn setBackgroundImage:KUIImage(@"tean_agreeBtn_normal") forState:UIControlStateNormal];
+    [self.agreeBtn setBackgroundImage:KUIImage(@"tean_agreeBtn_click") forState:UIControlStateHighlighted];
+    [self.agreeBtn setUserInteractionEnabled:YES];
+}
+-(void)agreeBtnUnEnable{
+    self.agreeBtn.frame = CGRectMake(0, bottomPadding, 320, btnHight);
+    [self.agreeBtn setBackgroundImage:KUIImage(@"tean_agreeBtn_select") forState:UIControlStateNormal];
+    [self.agreeBtn setUserInteractionEnabled:NO];
+}
+
+
+
+-(void)refusedBtnEnable{
+    self.refusedBtn.frame = CGRectMake(160, bottomPadding, 160, btnHight);
+    [self.refusedBtn setBackgroundImage:KUIImage(@"team_refusedBtn_normal") forState:UIControlStateNormal];
+    [self.refusedBtn setBackgroundImage:KUIImage(@"team_refusedBtn_click") forState:UIControlStateHighlighted];
+    [self.refusedBtn setUserInteractionEnabled:YES];
+}
+-(void)refusedBtnUnEnable{
+    self.refusedBtn.frame = CGRectMake(0, bottomPadding, 320, btnHight);
+    [self.refusedBtn setBackgroundImage:KUIImage(@"team_refusedBtn_select") forState:UIControlStateNormal];
+    [self.refusedBtn setUserInteractionEnabled:NO];
+}
+
 //正常
 -(void)normal{
     if (self.teamUsershipType) {
-        [self.sendBtn setTitle:@"发起就位确认" forState:UIControlStateNormal];
-        self.sendBtn.selected = NO;
-        self.sendBtn.enabled = YES;
+        self.timeLable.hidden = YES;
+        [self sendBtnEnable];
         
     }else{
         self.agreeBtn.hidden = NO;
-        self.agreeBtn.frame = CGRectMake(15, bottomPadding, (320-40)/2, 35);
-        [self.agreeBtn setTitle:@"确定就位" forState:UIControlStateNormal];
-        [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
-        [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
-        [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
-        self.agreeBtn.selected = NO;
-        self.agreeBtn.enabled = YES;
-        
         self.refusedBtn.hidden = NO;
-        self.refusedBtn.frame = CGRectMake(15+10+(320-40)/2,bottomPadding, (320-40)/2, 35);
-        [self.refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
-        [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
-        [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
-        [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
-        self.refusedBtn.selected = NO;
-        self.refusedBtn.enabled = YES;
+        [self agreeBtnEnable];
+        [self refusedBtnEnable];
+        
     }
 }
 
 //已经发送
 -(void)send{
     if (self.teamUsershipType) {
-        [self.sendBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
-        self.sendBtn.selected = YES;
-        self.sendBtn.enabled = NO;
+        self.timeLable.hidden = NO;
+        [self sendBtnUnEnable];
         self.agreeBtn.hidden = YES;
         self.refusedBtn.hidden = YES;
     }else{
         self.agreeBtn.hidden = NO;
-        self.agreeBtn.frame = CGRectMake(15, bottomPadding, (320-40)/2, 35);
-        [self.agreeBtn setTitle:@"确定就位" forState:UIControlStateNormal];
-        [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
-        [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
-        [self.agreeBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
-        self.agreeBtn.selected = NO;
-        self.agreeBtn.enabled = YES;
-        
         self.refusedBtn.hidden = NO;
-        self.refusedBtn.frame = CGRectMake(15+10+(320-40)/2,bottomPadding, (320-40)/2, 35);
-        [self.refusedBtn setTitle:@"拒绝就位" forState:UIControlStateNormal];
-        [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_normal") forState:UIControlStateNormal];
-        [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateHighlighted];
-        [self.refusedBtn setBackgroundImage:KUIImage(@"shortBtn_select") forState:UIControlStateSelected];
-        self.refusedBtn.selected = NO;
-        self.refusedBtn.enabled = YES;
+        [self agreeBtnEnable];
+        [self refusedBtnEnable];
+    }
+}
+//已经确定
+-(void)ok{
+    if (self.teamUsershipType) {
+        self.timeLable.hidden = NO;
+        [self sendBtnUnEnable];
+    }else{
+        self.agreeBtn.hidden = NO;
+        self.refusedBtn.hidden = YES;
+        [self agreeBtnUnEnable];
+        [self.refusedBtn setUserInteractionEnabled:NO];
     }
 }
 
+//已经取消
+-(void)cancel{
+    if (self.teamUsershipType) {
+        self.timeLable.hidden = NO;
+       [self sendBtnUnEnable];
+    }else{
+        self.agreeBtn.hidden = YES;
+        self.refusedBtn.hidden = NO;
+        [self refusedBtnUnEnable];
+        [self.agreeBtn setUserInteractionEnabled:NO];
+    }
+}
 //没有就位确认消息的时候
 -(void)reset{
     if (self.teamUsershipType) {
@@ -221,58 +296,16 @@
     }
 }
 
-//已经确定
--(void)ok{
-    if (self.teamUsershipType) {
-        [self.sendBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
-        self.sendBtn.selected = YES;
-        self.sendBtn.enabled = NO;
-    }else{
-        self.agreeBtn.hidden = NO;
-        self.agreeBtn.frame = CGRectMake(15, bottomPadding, 290, 35);
-        [self.agreeBtn setTitle:@"已确认" forState:UIControlStateNormal];
-        [self.agreeBtn setBackgroundImage:KUIImage(@"longBtn_normal") forState:UIControlStateNormal];
-        [self.agreeBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateHighlighted];
-        [self.agreeBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateSelected];
-        self.agreeBtn.selected = YES;
-        self.agreeBtn.enabled = NO;
-        
-        self.refusedBtn.selected = YES;
-        self.refusedBtn.enabled = NO;
-        self.refusedBtn.hidden = YES;
-    }
-}
 
-//已经取消
--(void)cancel{
-    if (self.teamUsershipType) {
-        [self.sendBtn setTitle:@"已经发起就位确认" forState:UIControlStateNormal];
-        self.sendBtn.selected = YES;
-        self.sendBtn.enabled = NO;
-    }else{
-        self.agreeBtn.hidden = YES;
-        self.agreeBtn.selected = YES;
-        self.agreeBtn.enabled = NO;
-        
-        self.refusedBtn.hidden = NO;
-        self.refusedBtn.frame = CGRectMake(15, bottomPadding, 290, 35);
-        [self.refusedBtn setTitle:@"已拒绝" forState:UIControlStateNormal];
-        [self.refusedBtn setBackgroundImage:KUIImage(@"longBtn_normal") forState:UIControlStateNormal];
-        [self.refusedBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateHighlighted];
-        [self.refusedBtn setBackgroundImage:KUIImage(@"longBtn_select") forState:UIControlStateSelected];
-        self.refusedBtn.selected = YES;
-        self.refusedBtn.enabled = NO;
-    }
-}
 //隐藏按钮
 -(void)hideButton{
-    self.bottomView.hidden=YES;
-    self.mTableView.frame = CGRectMake(0, topHight, 320,kScreenHeigth-topHight);
+    self.bottomView.hidden = YES;
+    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-(KISHighVersion_7 ? 20 : 0));
 }
 //显示按钮
 -(void)showButton{
-    self.bottomView.hidden=NO;
-    self.mTableView.frame = CGRectMake(0, topHight, 320,kScreenHeigth-topHight-bottomHight);
+    self.bottomView.hidden = NO;
+    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight-(KISHighVersion_7 ? 20 : 0));
 }
 
 //发起就位确认
@@ -442,6 +475,7 @@
         }
         cell.tag = indexPath.row;
         cell.headCkickDelegate = self;
+        cell.positionCkickDelegate = self;
         NSMutableDictionary * msgDic = [self.memberList objectAtIndex:indexPath.row];
         NSMutableDictionary * teamUserDic = KISDictionaryHaveKey(msgDic, @"teamUser");
         cell.headImageV.placeholderImage = KUIImage([self headPlaceholderImage:KISDictionaryHaveKey(msgDic, @"gender")]);
@@ -462,7 +496,16 @@
             cell.realmLable.text = @"";
             cell.pveLable.text = @"";
         }
-        cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
+        
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"userid")] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+            cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"请选择":KISDictionaryHaveKey(msgDic, @"value");
+            cell.positionLable.textColor = UIColorFromRGBA(0x339adf, 1);
+            [cell.positionBtn setUserInteractionEnabled:YES];
+        }else{
+            cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
+            cell.positionLable.textColor = [UIColor grayColor];
+            [cell.positionBtn setUserInteractionEnabled:NO];
+        }
         
         if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"0"]){//未发起
             cell.stateView.hidden = YES;
@@ -492,6 +535,9 @@
     return nil;
 }
 
+-(void)positionOnClick:(UIButton*)sender{
+    [self.detaildelegate menuOnClick:4];
+}
 //格式化时间
 -(NSString*)getMsgTime:(NSString*)senderTime
 {
@@ -739,11 +785,10 @@
 //计时
 - (void)timingTime:(long long )time{
     NSLog(@"计时时间---->>>>>>%lld",time);
-    self.sendBtn.selected = NO;
-    self.sendBtn.enabled = YES;
-    [self.sendBtn setTitle:[NSString stringWithFormat:@"%@(%lld)",@"已经发起就位确认",time] forState:UIControlStateNormal];
-    self.sendBtn.selected = YES;
-    self.sendBtn.enabled = NO;
+
+    [self sendBtnEnable];
+    self.timeLable.text = [NSString stringWithFormat:@"(%lld)",time];
+    [self sendBtnUnEnable];
 }
 
 -(void)deallocContro{

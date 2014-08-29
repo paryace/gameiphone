@@ -18,14 +18,16 @@
 
 @protocol DetailDelegate;
 
-@interface NewTeamMenuView : UIView<UITableViewDelegate,UITableViewDataSource,UICollectionViewDataSource,UICollectionViewDelegate,HeadClickDelegate,TimeDelegate>{
+@interface NewTeamMenuView : UIView<UITableViewDelegate,UITableViewDataSource,UICollectionViewDataSource,UICollectionViewDelegate,HeadClickDelegate,TimeDelegate,PositionDelegate>{
     MBProgressHUD* hud;//提示框
 }
 @property(nonatomic,assign)id<DetailDelegate>detaildelegate;
 @property (nonatomic, strong) UIView * mSuperView;
 @property (nonatomic, strong) UITableView *mTableView;
 @property (nonatomic, strong) UIImageView *bottomView;
+@property (nonatomic, strong) UILabel* titleLabel;
 @property (nonatomic, strong) UIButton *sendBtn ;
+@property (nonatomic, strong) UILabel *timeLable ;
 @property (nonatomic, strong) UIButton *agreeBtn ;
 @property (nonatomic, strong) UIButton *refusedBtn ;
 @property (nonatomic, strong) NSString *groipId;
@@ -38,7 +40,8 @@
 - (id)initWithFrame:(CGRect)frame GroupId:(NSString*)groupId RoomId:(NSString*)roomId GameId:(NSString*)gameId teamUsershipType:(BOOL)teamUsershipType;
 -(void)showView;//显示视图view
 -(void)hideView;//隐藏视图view
--(void)deallocContro;
+-(void)deallocContro;//取消通知注册
+-(void)settTitleMsg:(NSString*)titleText;//设置title
 @end
 
 @protocol DetailDelegate <NSObject>
@@ -47,4 +50,5 @@
 -(void)headImgClick:(NSString*)userId;//点击头像
 -(void)doCloseInpacePageAction;//关闭页面
 -(void)mHideOrShowTopMenuView;//隐藏头部消息提示view
+-(void)menuOnClick:(NSInteger)senderTag;
 @end
