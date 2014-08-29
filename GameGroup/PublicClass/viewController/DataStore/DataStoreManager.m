@@ -4950,7 +4950,12 @@
 +(NSMutableDictionary*)getMemberInfo:(NSString*)groupId UserId:(NSString*)userid{
     NSPredicate * predicates = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and userid==[c]%@",groupId,userid];
     DSMemberUserInfo * commonMsg = [DSMemberUserInfo MR_findFirstWithPredicate:predicates];
-    return [self getmemberInfo:commonMsg];
+    if (commonMsg) {
+         return [self getmemberInfo:commonMsg];
+    }else{
+        return nil;
+    }
+   
 }
 
 +(NSMutableDictionary*)getmemberInfo:(DSMemberUserInfo*)commonMsg{

@@ -948,8 +948,8 @@
         {
             UIButton *editButton=[UIButton buttonWithType:UIButtonTypeCustom];
             editButton.frame=CGRectMake(270, startX - 38, 37, 30);
-            [editButton setBackgroundImage:KUIImage(@"note_normal") forState:UIControlStateNormal];
-            [editButton setBackgroundImage:KUIImage(@"note_click") forState:UIControlStateHighlighted];
+            [editButton setBackgroundImage:KUIImage(@"beizhu") forState:UIControlStateNormal];
+            [editButton setBackgroundImage:KUIImage(@"beizhu_click") forState:UIControlStateHighlighted];
             [self.view addSubview:editButton];
             [editButton addTarget:self action:@selector(editButtonClick:) forControlEvents:UIControlEventTouchUpInside];
             
