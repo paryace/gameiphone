@@ -13,8 +13,9 @@
 #import "DWTagList.h"
 #import "CharacterView.h"
 #import "TeamInvitationController.h"
+#import "TagCell.h"
 
-@interface CreateTeamController : BaseViewController<UIPickerViewDataSource,UIPickerViewDelegate,UITextViewDelegate,UIAlertViewDelegate,SelectCharacterDelegate,SelectTypeDelegate,DWTagDelegate,CharacterDelegate>
+@interface CreateTeamController : BaseViewController<UIPickerViewDataSource,UIPickerViewDelegate,UITextViewDelegate,UIAlertViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate,SelectCharacterDelegate,SelectTypeDelegate,CharacterDelegate,TagOnCLicklDelegate>
 @property(nonatomic,strong)NSMutableDictionary *selectRoleDict;
 @property(nonatomic,strong)NSMutableDictionary *selectTypeDict;
 @end

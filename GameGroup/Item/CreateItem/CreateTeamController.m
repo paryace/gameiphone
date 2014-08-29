@@ -17,7 +17,9 @@
     UILabel       *  m_ziNumLabel;
     UITextView    *  m_miaoshuTV;
     NSInteger        m_maxZiShu;
-    DWTagList     *  tagList;
+    
+    UICollectionViewFlowLayout *layout;
+    UICollectionView *customPhotoCollectionView;
     
     NSMutableArray  *  m_RoleArray;
     NSMutableArray * m_tagArray;
@@ -73,7 +75,7 @@
     [mainView addSubview:editIV];
     
     
-    m_miaoshuTV =[[ UITextView alloc]initWithFrame:CGRectMake(10, 270, 300, 80)];
+    m_miaoshuTV =[[ UITextView alloc]initWithFrame:CGRectMake(10, 270, 300, 50)];
     m_miaoshuTV.delegate = self;
     m_miaoshuTV.layer.borderColor = UIColorFromRGBA(0xaaa9a9, 1).CGColor;
     m_miaoshuTV.layer.borderWidth =0.5;
@@ -94,15 +96,32 @@
     placeholderL.backgroundColor = [UIColor clearColor];
     [mainView addSubview:placeholderL];
     
-    m_ziNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(300-10-10, 270+55, 100, 20)];
+    m_ziNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(300-10-10, 270+25, 100, 20)];
     m_ziNumLabel.backgroundColor = [UIColor clearColor];
     m_ziNumLabel.font= [UIFont systemFontOfSize:12];
     m_ziNumLabel.textAlignment = NSTextAlignmentRight;
     [mainView addSubview:m_ziNumLabel];
     
-    tagList = [[DWTagList alloc] initWithFrame:CGRectMake(15, 370,310, 100)];
-    tagList.tagDelegate=self;
-    [mainView  addSubview:tagList];
+    
+    layout = [[UICollectionViewFlowLayout alloc]init];
+    layout.minimumInteritemSpacing = 10;
+    layout.minimumLineSpacing =10;
+    layout.scrollDirection = UICollectionViewScrollDirectionVertical;
+    layout.itemSize = CGSizeMake(88, 30);
+    customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10.0f, 330, 300, kScreenHeigth - 330-startX) collectionViewLayout:layout];
+    customPhotoCollectionView.delegate = self;
+    customPhotoCollectionView.scrollEnabled = YES;
+    customPhotoCollectionView.showsHorizontalScrollIndicator = NO;
+    customPhotoCollectionView.showsVerticalScrollIndicator = NO;
+    customPhotoCollectionView.dataSource = self;
+    customPhotoCollectionView.hidden = YES;
+    customPhotoCollectionView.backgroundColor = [UIColor redColor];
+    [customPhotoCollectionView registerClass:[TagCell class] forCellWithReuseIdentifier:@"ImageCell"];
+    customPhotoCollectionView.backgroundColor = [UIColor clearColor];;
+    [mainView addSubview:customPhotoCollectionView];
+
+    
+    
     
     
     characterView = [[CharacterView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
@@ -157,7 +176,6 @@
 -(void)selectTypeAction:(NSMutableDictionary*)typeInfo{
     if (typeInfo) {
         selectType =typeInfo;
-        tagList.hidden = NO;
         [self getPersonCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]typeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(typeInfo, @"constId")]];
         [self getTag:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(typeInfo, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
     }
@@ -167,9 +185,36 @@
         selectPeopleCount = personCountInfo;
     }
 }
-#pragma mark - 点击标签
--(void)tagClick:(UIButton*)sender
+
+#pragma mark - text view delegate
+-(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
 {
+    return 1;
+}
+
+-(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return m_tagArray.count;
+}
+
+-(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    TagCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
+    cell.tag = indexPath.row;
+    cell.delegate = self;
+    cell.titleLabel.textAlignment = NSTextAlignmentCenter;
+    cell.titleLabel.text =  KISDictionaryHaveKey([m_tagArray objectAtIndex:indexPath.row], @"value");
+    cell.titleLabel.font = [UIFont systemFontOfSize:14];
+    return cell;
+}
+
+-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    
+}
+#pragma mark - 点击标签
+-(void)tagOnClick:(TagCell*)sender{
+    
     NSString *str = m_miaoshuTV.text;
     NSInteger ziNumOld = [[GameCommon shareGameCommon] unicodeLengthOfString:str];
     NSInteger ziNumNew = [[GameCommon shareGameCommon] unicodeLengthOfString:[NSString stringWithFormat:@"%@%@",@"  ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_tagArray objectAtIndex:sender.tag], @"value")]]];
@@ -184,6 +229,7 @@
     placeholderL.text = @"";
     [self refreshZiLabelText];
 }
+
 
 
 
@@ -212,7 +258,7 @@
     }
     m_ziNumLabel.text =[NSString stringWithFormat:@"%d%@%d",ziNum,@"/",m_maxZiShu];
     CGSize nameSize = [m_ziNumLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
-    m_ziNumLabel.frame=CGRectMake(320-nameSize.width-10-10, 270+55, nameSize.width, 20);
+    m_ziNumLabel.frame=CGRectMake(320-nameSize.width-10-10, 270+25, nameSize.width, 20);
     m_ziNumLabel.backgroundColor=[UIColor clearColor];
 }
 
@@ -297,8 +343,7 @@
 {
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
         m_tagArray = responseObject;
-        [tagList setTags:responseObject average:YES rowCount:3];
-        tagList.frame = CGRectMake(10.0f, 360, 310, tagList.fittedSize.height);
+        [customPhotoCollectionView reloadData];
     }
 }
 
@@ -345,13 +390,22 @@
 
 - (void)textViewDidBeginEditing:(UITextView *)textView{
     CGRect frame = textView.frame;
-    [UIView beginAnimations:@"ResizeForKeyboard" context:nil];
-    [UIView setAnimationDuration:0.3];
-    mainView.frame = CGRectMake(0, -frame.origin.y+5+startX, self.view.frame.size.width, self.view.frame.size.height+frame.origin.y-5);
-    [UIView commitAnimations];
+    [UIView animateWithDuration:0.3 animations:^{
+        mainView.frame = CGRectMake(0, -frame.origin.y+5+startX, self.view.frame.size.width, self.view.frame.size.height+frame.origin.y-5);
+        customPhotoCollectionView.frame = CGRectMake(10.0f, 330, 300, kScreenHeigth - startX - 5 - 216-10 - frame.size.height);
+    }completion:^(BOOL finished) {
+        customPhotoCollectionView.hidden = NO;
+    }];
 }
 - (void)textViewDidEndEditing:(UITextView *)textView{
-     mainView.frame =CGRectMake(0, startX, self.view.frame.size.width,self.view.frame.size.height-startX);
+    
+    [UIView animateWithDuration:0.3 animations:^{
+         mainView.frame =CGRectMake(0, startX, self.view.frame.size.width,self.view.frame.size.height-startX);
+        customPhotoCollectionView.frame = CGRectMake(10.0f, 330, 300, kScreenHeigth - 330-startX);
+    }completion:^(BOOL finished) {
+         customPhotoCollectionView.hidden = YES;
+    }];
+   
 }
 - (void)didReceiveMemoryWarning
 {
