@@ -35,6 +35,8 @@
     UILabel *titleLabel1;
     UILabel *m_typeLabel;
     UILabel *m_timeLabel;
+    UIAlertView* popAlertView;
+    UIView *bottomView ;
 }
 @end
 
@@ -55,6 +57,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changPosition:) name:kChangPosition object:nil];//位置改变
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changMemberList:) name:kChangMemberList object:nil];//组队成员变化
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMemberCountChang:) name:UpdateTeamMemberCount object:nil];//组队人数字变化
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(meJoinTeam:) name:@"myJoin" object:nil];//对方同意我加入该组队
     
     
     titleLable=[[UILabel alloc] initWithFrame:CGRectMake(60, startX - 44, 320-120, 44)];
@@ -210,25 +213,36 @@
             [self.navigationController popViewControllerAnimated:YES];
             
         }
+    }else if (alertView.tag==10000006)
+    {
+        [self.navigationController popViewControllerAnimated:YES];
     }
     
 }
 
 -(void)showAlertDialog:(id)error{
     if ([error isKindOfClass:[NSDictionary class]]) {
+        NSLog(@"%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)]);
         if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
         {
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"1000109"]) {
+                popAlertView = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                popAlertView.tag =10000006;
+                [popAlertView show];
+            }else{
+
+            
             UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-            [alert show];
+                [alert show];
+            }
         }
     }
 }
-
 #pragma mark ---创建底部button
 -(void)buildbelowbutotnWithArray:(NSArray *)array TitleTexts:(NSArray*)titles shiptype:(NSInteger)shiptype
 {
-    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-50, 320, 50)];
-    [self.view addSubview:view];
+    bottomView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-50, 320, 50)];
+    [self.view addSubview:bottomView];
     float width = 320/array.count;
     for (int i = 0; i<array.count; i++) {
         UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(width*i, 0, width, 50)];
@@ -248,7 +262,7 @@
             button.frame = CGRectMake(160, 0, 160, 50);
             [button addTarget:self action:@selector(joinInItem:) forControlEvents:UIControlEventTouchUpInside];
         }
-        [view addSubview:button];
+        [bottomView addSubview:button];
     }
 
     if (shiptype ==2) {
@@ -262,9 +276,9 @@
             bView.realmLb.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"simpleRealm")];
             bView.topLabel.hidden = YES;
         }
-        [view addSubview:bView];
+        [bottomView addSubview:bView];
     }
-    [self.view addSubview:view];
+    [self.view addSubview:bottomView];
 }
 
 
@@ -540,7 +554,8 @@
         NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterImg")];
         cell.headImageView.imageURL =[ImageService getImageStr:imageids Width:80] ;
         cell.bgImageView.userInteractionEnabled =NO;
-         cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterName")];
+
+         cell.nickLabel.text = [NSString stringWithFormat:@"%@...",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterName")] substringToIndex:8]];
         [cell refreshViewFrameWithText:cell.nickLabel.text];
         cell.MemberLable.hidden = NO;
         
@@ -729,7 +744,10 @@
         if (indexPath.section == 0) {
             [self removeItemer:indexPath.row];
         }else{
+            NSLog(@"%d",indexPath.row);
             [self removeClaimed:indexPath.row];
+//            NSDictionary *dic = claimedList_dataArray[indexPath.row];
+//            [self deleteMenberFromList:KISDictionaryHaveKey(dic, @"roomId") GameId:self.gameid MemberId:KISDictionaryHaveKey(dic, @"memberId") MemberTeamUserId:nil];
         }
     }
 }
@@ -784,19 +802,19 @@
 
 -(void)deleteMember:(NSString*)memberId GameId:(NSString*)gameId RoomId:(NSString*)roomId MemberTeamUserId:(NSString*)memberTeamUserId{
     if ([GameCommon isEmtity:[GameCommon getNewStringWithId:memberTeamUserId]]) {
-        for (NSDictionary * dic in m_dataArray) {
-            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:gameId]
-                && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] isEqualToString:memberId]
-                && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:roomId]) {
-                [m_dataArray removeObject:dic];
-            }
-        }
-    }else{
         for (NSDictionary * dic in claimedList_dataArray) {
             if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:gameId]
                 && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] isEqualToString:memberId]
                 && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:roomId]) {
                 [claimedList_dataArray removeObject:dic];
+            }
+        }
+    }else{
+        for (NSDictionary * dic in m_dataArray ) {
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:gameId]
+                && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] isEqualToString:memberId]
+                && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:roomId]) {
+                [m_dataArray removeObject:dic];
             }
         }
     }
@@ -914,16 +932,28 @@
     
     NSLog(@"%@",notification.userInfo);
 }
+#pragma mark 我被同意加入该组队
+-(void)meJoinTeam:(NSNotification*)notification{
+    [self hideBottomView];
+    [self noHaveBottomView];
+}
 -(NSString*)getMemberCount:(NSMutableDictionary*)teamInfo{
     
     return [NSString stringWithFormat:@"[%@/%@]",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(teamInfo, @"maxVol")];
 }
 
+
+-(void)hideBottomView{
+    if(bottomView && bottomView.hidden == NO){
+        bottomView.hidden = YES;
+    }
+}
 - (void)dealloc
 {
     m_myTableView.delegate=nil;
     m_myTableView.dataSource=nil;
     backAlert.delegate = nil;
+    popAlertView.delegate = nil;
 }
 
 

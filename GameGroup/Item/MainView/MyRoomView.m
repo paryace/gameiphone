@@ -37,6 +37,12 @@
 }
 
 -(void)initMyRoomListData:(NSMutableDictionary*)dic{
+    if (!dic) {
+        self.myCreateRoomList = [NSMutableArray array];
+        self.myJoinRoomList = [NSMutableArray array];
+        self.myRequestedRoomsList = [NSMutableArray array];
+        return;
+    }
     self.listDict = [NSMutableDictionary dictionaryWithDictionary:dic];
     self.myCreateRoomList = [dic objectForKey:@"OwnedRooms"];
     self.myJoinRoomList = [dic objectForKey:@"joinedRooms"];
@@ -57,7 +63,7 @@
 #pragma mark ----tableview delegate  datasourse
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [[self.listDict allKeys] count];
+    return 3;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {

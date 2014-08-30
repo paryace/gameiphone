@@ -129,8 +129,8 @@
     NSMutableArray * titlessss= [DataStoreManager queryTitle:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Hide:@"0"];
     NSMutableArray * chasss= [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     NSMutableDictionary * latestDynamicMsg = [DataStoreManager queryLatestDynamic:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    NSString * fansnum = [[NSUserDefaults standardUserDefaults] objectForKey:[FansFriendCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
-    NSString * zannum = [[NSUserDefaults standardUserDefaults] objectForKey:[ZanCount stringByAppendingString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    NSString * fansnum = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",FansFriendCount,[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    NSString * zannum = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",ZanCount,[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
     [info setObject:latestDynamicMsg forKey:@"latestDynamicMsg"];
     [info setObject:userDic forKey:@"user"];
     [info setObject:chasss forKey:@"characters"];
@@ -317,7 +317,7 @@
             cell.distLabel.text = @"暂无头衔";
         }
         if (m_hostInfo.headImgArray.count>0) {
-            cell.headImageV.imageURL = [ImageService getImageUrl4:[m_hostInfo.headImgArray objectAtIndex:0]];
+            cell.headImageV.imageURL = [ImageService getImageStr:[m_hostInfo.headImgArray objectAtIndex:0] Width:120];
         }else
         {
             cell.headImageV.imageURL = nil;

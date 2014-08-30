@@ -290,11 +290,12 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)teamKickTypeMessageReceived:(NSDictionary *)messageContent{
     NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
     NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
-     NSString * userId = KISDictionaryHaveKey(payloadDic, @"userid");
+    NSString * userId = KISDictionaryHaveKey(payloadDic, @"userid");
     [messageContent setValue:groupId forKey:@"groupId"];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {//假如是自己被踢出
         [[GroupManager singleton] changGroupState:groupId GroupState:@"2" GroupShipType:@"3"];//改变本地群的状态
+        [[GroupManager singleton] deleteGrpuoInfo:groupId];
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",groupId]];//清除位置信息
         NSDictionary * dic = @{@"groupId":groupId,@"state":@"2"};
         dispatch_async(dispatch_get_main_queue(), ^{

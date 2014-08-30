@@ -96,10 +96,10 @@
     placeholderL.backgroundColor = [UIColor clearColor];
     [mainView addSubview:placeholderL];
     
-    m_ziNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(300-10-10, 270+25, 100, 20)];
+    m_ziNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(270, 270+25, 100, 20)];
     m_ziNumLabel.backgroundColor = [UIColor clearColor];
     m_ziNumLabel.font= [UIFont systemFontOfSize:12];
-    m_ziNumLabel.textAlignment = NSTextAlignmentRight;
+    m_ziNumLabel.textAlignment = NSTextAlignmentLeft;
     [mainView addSubview:m_ziNumLabel];
     
     
@@ -127,6 +127,7 @@
     characterView = [[CharacterView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
     characterView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     characterView.characterDelegate = self;
+    characterView.hidden = YES;
     [characterView hiddenSelf];
     [self.view addSubview:characterView];
     
@@ -254,7 +255,8 @@
 
 - (void)refreshZiLabelText
 {
-    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
+//    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
+    NSInteger ziNum = m_maxZiShu - m_miaoshuTV.text.length;
     if (ziNum<=0) {
         m_ziNumLabel.textColor = [UIColor redColor];
     }else{
@@ -262,7 +264,7 @@
     }
     m_ziNumLabel.text =[NSString stringWithFormat:@"%d%@%d",ziNum,@"/",m_maxZiShu];
     CGSize nameSize = [m_ziNumLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
-    m_ziNumLabel.frame=CGRectMake(320-nameSize.width-10-10, 270+25, nameSize.width, 20);
+    m_ziNumLabel.frame=CGRectMake(320-nameSize.width-10-10, 270+25, nameSize.width+5, 20);
     m_ziNumLabel.backgroundColor=[UIColor clearColor];
 }
 
@@ -270,7 +272,9 @@
 #pragma mark --创建
 -(void)createItem:(id)sender
 {
-    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
+//    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
+    NSInteger ziNum = m_maxZiShu - m_miaoshuTV.text.length;
+
     if (ziNum<0) {
         [self showAlertViewWithTitle:@"提示" message:@"您的描述超出了字数限制,请重新编辑" buttonTitle:@"确定"];
         return;

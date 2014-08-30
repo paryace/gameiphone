@@ -5011,7 +5011,12 @@
 +(void)updatePosition:(NSString*)roomId GameId:(NSString*)gameId GroupId:(NSString*)groupId UserId:(NSString*)userId TeamPosition:(NSDictionary*)teamPosition Successcompletion:(MRSaveCompletionHandler)successcompletion
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and sender==[c]%@",groupId,userId];
+        NSPredicate * predicate1;
+        if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+           predicate1 = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and (sender==[c]%@ or sender==[c]%@)",groupId,userId,@"you"];
+        }else{
+            predicate1 = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and sender==[c]%@",groupId,userId];
+        }
         NSArray * commonMsgs = [DSGroupMsgs MR_findAllWithPredicate:predicate1 inContext:localContext];
         for (int i = 0; i<commonMsgs.count; i++) {
             DSGroupMsgs * common = [commonMsgs objectAtIndex:i];
@@ -5084,6 +5089,13 @@
     [msgDic setObject:commonMsg.typeOrder?commonMsg.typeOrder:@"" forKey:@"order"];
     [msgDic setObject:commonMsg.typeType?commonMsg.typeType:@"" forKey:@"type"];
     [msgDic setObject:commonMsg.typeValue?commonMsg.typeValue:@""  forKey:@"value"];
+    NSMutableDictionary * typeDic = [NSMutableDictionary dictionary];
+    [typeDic setObject:commonMsg.typeConstId?commonMsg.typeConstId:@"" forKey:@"constId"];
+    [typeDic setObject:commonMsg.typeMask?commonMsg.typeMask:@"" forKey:@"mask"];
+    [typeDic setObject:commonMsg.typeOrder?commonMsg.typeOrder:@"" forKey:@"order"];
+    [typeDic setObject:commonMsg.typeType?commonMsg.typeType:@"" forKey:@"type"];
+    [typeDic setObject:commonMsg.typeValue?commonMsg.typeValue:@""  forKey:@"value"];
+    [msgDic setObject:typeDic  forKey:@"type"];
     return msgDic;
 }
 

@@ -260,6 +260,9 @@
 #pragma mark --获取我的组队列表
 -(void)getMyRoomFromNet
 {
+    if (![[NSUserDefaults standardUserDefaults]objectForKey:kMyToken]) {
+        return;
+    }
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"272" forKey:@"method"];
@@ -271,8 +274,11 @@
             
             [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"LoignRefreshPreference_wx"];
             [room initMyRoomListData:responseObject];
+        }else{
+            [room initMyRoomListData:nil];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [room initMyRoomListData:nil];
         [room stopRefre];
         [self showAlertDialog:error];
     }];
