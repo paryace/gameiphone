@@ -127,7 +127,8 @@
     characterView = [[CharacterView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
     characterView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     characterView.characterDelegate = self;
-    characterView.hidden = YES;    [self.view addSubview:characterView];
+    characterView.hidden = YES;
+    [self.view addSubview:characterView];
     
     m_RoleArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     [characterView setDate:m_RoleArray];
@@ -135,6 +136,7 @@
     if (selectCharacter) {
         [self selectCharacterAction:selectCharacter];
     }else{
+        selectTypeAndNumberPersonView.hidden = YES;
          [characterView showSelf];
     }
     
@@ -166,6 +168,7 @@
 
 -(void)selectCharacterAction:(NSMutableDictionary*)characterInfo{
     if (characterInfo) {
+        selectTypeAndNumberPersonView.hidden = NO;
         selectCharacter =characterInfo;
         [self setCharacterInfo:characterInfo];
         m_maxZiShu = 30;
@@ -378,7 +381,7 @@
 -(void)getPersonCount:(NSString *)gameid typeId:(NSString *)typeId
 {
     [[ItemManager singleton] getPersonCountFromNetWithGameId:gameid typeId:typeId reSuccess:^(id responseObject) {
-        [selectTypeAndNumberPersonView setNumberArray:responseObject];
+        [selectTypeAndNumberPersonView setNumberArray:responseObject SelectType:selectType];
     } reError:^(id error) {
         [self showErrorAlert:error];
         

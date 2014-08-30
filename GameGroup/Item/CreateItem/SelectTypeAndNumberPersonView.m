@@ -38,21 +38,37 @@
 }
 
 #pragma mark -- 人数请求成功通知
--(void)setNumberArray:(id)responseObject
+-(void)setNumberArray:(id)responseObject SelectType:(NSMutableDictionary*)selectType
 {
+    NSLog(@"selectType----%@",selectType);
     if ([responseObject isKindOfClass:[NSDictionary class]]) {
         NSArray * menCount = KISDictionaryHaveKey(responseObject, @"maxVols");
         if (menCount.count>0) {
             [self.m_countArray removeAllObjects];
             [self.m_countArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"maxVols")];
             [self.m_countPickView reloadAllComponents];
-            [self.m_countPickView selectRow:self.m_countArray.count/2 inComponent:0 animated:YES];
+            NSInteger item = [self getMaxItem:[KISDictionaryHaveKey(selectType, @"mask") integerValue] CountArray:self.m_countArray];
+            NSLog(@"selectItem----%d",item);
+            [self.m_countPickView selectRow:item inComponent:0 animated:YES];
             if (self.selectTypeDelegate) {
-                [self.selectTypeDelegate selectCount:[self.m_countArray objectAtIndex:self.m_countArray.count/2]];
+                [self.selectTypeDelegate selectCount:[self.m_countArray objectAtIndex:item]];
             }
         }
     }
 }
+
+-(NSInteger)getMaxItem:(NSInteger)max CountArray:(NSMutableArray*)array{
+    if (array.count>0) {
+        for (int i = 0; i<array.count; i++) {
+            if ([KISDictionaryHaveKey([array objectAtIndex:i], @"mask") integerValue] == max) {
+                return i;
+            }
+        }
+        return 0;
+    }
+    return 0;
+}
+
 #pragma mark -- 分类请求成功通知
 -(void)setTypeArray:(id)responseObject{
     if ([responseObject isKindOfClass:[NSArray class]]) {

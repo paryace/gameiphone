@@ -17,7 +17,7 @@
 @property(nonatomic,assign)id<SelectTypeDelegate>selectTypeDelegate;
 
 -(void)setTypeArray:(id)responseObject;
--(void)setNumberArray:(id)responseObject;
+-(void)setNumberArray:(id)responseObject SelectType:(NSMutableDictionary*)selectType;
 @end
 
 @protocol SelectTypeDelegate <NSObject>
