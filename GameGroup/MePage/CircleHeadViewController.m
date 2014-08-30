@@ -551,10 +551,12 @@ typedef enum : NSUInteger {
     [inPutView addSubview:self.textView];
     
     senderBnt = [UIButton buttonWithType:UIButtonTypeCustom];
-    [senderBnt setBackgroundImage:KUIImage(@"emoji") forState:UIControlStateNormal];
-    [senderBnt setBackgroundImage:KUIImage(@"keyboard.png") forState:UIControlStateSelected];
+    [senderBnt setImage:KUIImage(@"emoji") forState:UIControlStateNormal];
+    [senderBnt setImage:KUIImage(@"keyboard.png") forState:UIControlStateSelected];
     [senderBnt addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchDown];
     senderBnt.frame = CGRectMake(260, 0, 50, 50);
+    [senderBnt setImageEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
+
     [inPutView bringSubviewToFront:senderBnt];
     
     [inPutView addSubview:senderBnt];

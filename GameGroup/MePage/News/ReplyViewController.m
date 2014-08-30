@@ -141,6 +141,7 @@ typedef enum : NSUInteger {
     [inputButton setBackgroundImage:KUIImage(@"keyboard.png") forState:UIControlStateSelected];
     [inputButton addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
     inputButton.frame = CGRectMake(260, 0, 53, 50);
+    [inputButton setImageEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
     [inPutView bringSubviewToFront:inputButton];
     [inPutView addSubview:inputButton];
     

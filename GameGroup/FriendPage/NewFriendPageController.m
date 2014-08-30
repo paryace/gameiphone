@@ -289,7 +289,7 @@
     if (section==0) {
         return 0;
     }else{
-        return 30;
+        return 20;
     }
 }
 #pragma mark 请求数据

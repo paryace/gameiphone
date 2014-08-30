@@ -35,6 +35,7 @@
     UILabel *titleLabel1;
     UILabel *m_typeLabel;
     UILabel *m_timeLabel;
+    UIAlertView* popAlertView;
 }
 @end
 
@@ -210,20 +211,31 @@
             [self.navigationController popViewControllerAnimated:YES];
             
         }
+    }else if (alertView.tag==10000006)
+    {
+        [self.navigationController popViewControllerAnimated:YES];
     }
     
 }
 
 -(void)showAlertDialog:(id)error{
     if ([error isKindOfClass:[NSDictionary class]]) {
+        NSLog(@"%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)]);
         if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
         {
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"1000109"]) {
+                popAlertView = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                popAlertView.tag =10000006;
+                [popAlertView show];
+            }else{
+
+            
             UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-            [alert show];
+                [alert show];
+            }
         }
     }
 }
-
 #pragma mark ---创建底部button
 -(void)buildbelowbutotnWithArray:(NSArray *)array TitleTexts:(NSArray*)titles shiptype:(NSInteger)shiptype
 {
@@ -924,6 +936,7 @@
     m_myTableView.delegate=nil;
     m_myTableView.dataSource=nil;
     backAlert.delegate = nil;
+    popAlertView.delegate = nil;
 }
 
 
