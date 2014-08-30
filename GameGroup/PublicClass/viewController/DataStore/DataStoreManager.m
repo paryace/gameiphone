@@ -5089,6 +5089,13 @@
     [msgDic setObject:commonMsg.typeOrder?commonMsg.typeOrder:@"" forKey:@"order"];
     [msgDic setObject:commonMsg.typeType?commonMsg.typeType:@"" forKey:@"type"];
     [msgDic setObject:commonMsg.typeValue?commonMsg.typeValue:@""  forKey:@"value"];
+    NSMutableDictionary * typeDic = [NSMutableDictionary dictionary];
+    [typeDic setObject:commonMsg.typeConstId?commonMsg.typeConstId:@"" forKey:@"constId"];
+    [typeDic setObject:commonMsg.typeMask?commonMsg.typeMask:@"" forKey:@"mask"];
+    [typeDic setObject:commonMsg.typeOrder?commonMsg.typeOrder:@"" forKey:@"order"];
+    [typeDic setObject:commonMsg.typeType?commonMsg.typeType:@"" forKey:@"type"];
+    [typeDic setObject:commonMsg.typeValue?commonMsg.typeValue:@""  forKey:@"value"];
+    [msgDic setObject:typeDic  forKey:@"type"];
     return msgDic;
 }
 

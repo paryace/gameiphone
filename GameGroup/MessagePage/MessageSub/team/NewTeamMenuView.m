@@ -529,7 +529,15 @@
         }
         
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"userid")] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-            cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"请选择":KISDictionaryHaveKey(msgDic, @"value");
+            if ([GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]) {
+                cell.dotPosition.hidden = NO;
+                [cell.dotPosition setMsgCount:1 IsSimple:YES];
+                cell.positionLable.text = @"请选择";
+            }else {
+                cell.dotPosition.hidden = YES;
+                [cell.dotPosition setMsgCount:0 IsSimple:YES];
+                cell.positionLable.text = KISDictionaryHaveKey(msgDic, @"value");
+            }
             cell.positionLable.textColor = UIColorFromRGBA(0x339adf, 1);
             [cell.positionBtn setUserInteractionEnabled:YES];
         }else{
@@ -559,6 +567,9 @@
         }else{
             cell.MemberLable.hidden = YES;
         }
+        
+        
+        
         CGSize size = [cell.groupNameLable.text sizeWithFont:[UIFont boldSystemFontOfSize:16] constrainedToSize:CGSizeMake(MAXFLOAT, 15) lineBreakMode:NSLineBreakByCharWrapping];
         float w = size.width>((shipType==0)?119:145)?((shipType==0)?119:145):size.width;
         cell.groupNameLable.frame = CGRectMake(80, 9, w, 20);

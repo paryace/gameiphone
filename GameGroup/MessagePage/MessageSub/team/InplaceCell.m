@@ -84,6 +84,11 @@
         [self.positionBtn setBackgroundImage:nil forState:UIControlStateNormal];
         [self.positionBtn  addTarget:self action:@selector(positionOnClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.bgV addSubview:self.positionBtn];
+        
+        self.dotPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-30,20, 22,18)];
+        [self.bgV addSubview:self.dotPosition];
+        
+        
     }
     return self;
 }
