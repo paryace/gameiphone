@@ -103,7 +103,7 @@
         pveLable.font =[ UIFont systemFontOfSize:12];
         
         if (!self.mTableView) {
-            self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight-(KISHighVersion_7?20:0)) style:UITableViewStylePlain];
+            self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight-20) style:UITableViewStylePlain];
             self.mTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0.6);
             self.mTableView.delegate = self;
             self.mTableView.dataSource = self;
@@ -133,6 +133,7 @@
                 self.timeLable.textColor = [UIColor grayColor];
                 self.timeLable.font = [UIFont systemFontOfSize:14];
                 self.timeLable.hidden = YES;
+                self.timeLable.backgroundColor = [UIColor clearColor];
                 self.timeLable.textAlignment = NSTextAlignmentCenter;
                 self.timeLable.text = @"(180)";
                 [self.bottomView addSubview:self.timeLable];
@@ -331,12 +332,12 @@
 //隐藏按钮
 -(void)hideButton{
     self.bottomView.hidden = YES;
-    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-(KISHighVersion_7 ? 20 : 0));
+    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-20);
 }
 //显示按钮
 -(void)showButton{
     self.bottomView.hidden = NO;
-    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight-(KISHighVersion_7 ? 20 : 0));
+    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight-20);
 }
 
 //发起就位确认
