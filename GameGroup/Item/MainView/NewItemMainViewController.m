@@ -260,6 +260,9 @@
 #pragma mark --获取我的组队列表
 -(void)getMyRoomFromNet
 {
+    if (![[NSUserDefaults standardUserDefaults]objectForKey:kMyToken]) {
+        return;
+    }
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"272" forKey:@"method"];
