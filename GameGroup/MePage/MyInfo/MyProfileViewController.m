@@ -130,7 +130,7 @@
     }
 }
 
-#pragma mark - 初始化头像
+#pragma mark - 初始化头像 -----------------------
 -(NSArray *)imageToURL:(NSArray *)imageArray;
 {
     NSMutableArray * temp = [NSMutableArray array];
@@ -140,7 +140,8 @@
             [temp addObject:headID];
         }
         else{
-            [temp addObject:[ImageService getImgUrl:headID]];
+//          [temp addObject:[ImageService getImgUrl:headID]];
+            [temp addObject:[ImageService getImageUrlString:headID Width:112 Height:112]]; //修改图片尺寸，防止被压缩
         }
     }
     return temp;

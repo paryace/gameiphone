@@ -278,6 +278,8 @@
     [zanButton setBackgroundImage:KUIImage(@"zan_normal") forState:UIControlStateNormal];
     [zanButton setBackgroundImage:KUIImage(@"zan_click") forState:UIControlStateSelected];
     [zanButton setTitle:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"zannum")] forState:UIControlStateNormal];
+    m_zannum =  [[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"zannum")]intValue];
+
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"zan")] isEqualToString:@"1"]) {
         [zanButton setTitleColor:kColorWithRGB(204, 204, 204, 1.0) forState:UIControlStateNormal];
         zanButton.selected = YES;
@@ -341,12 +343,11 @@
         zanBtn.userInteractionEnabled = YES;
 
         zanBtn.selected = !zanBtn.selected;
-        m_zannum =  [[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"zannum")]intValue];
 
         if(zanBtn.selected)
         {
             [hud hide:YES];
-            m_zannum-=1;
+            m_zannum++;
             [zanBtn setTitle:[NSString stringWithFormat:@"%d",m_zannum] forState:UIControlStateNormal];
 
             [zanBtn setBackgroundImage:KUIImage(@"zan_hig_1") forState:UIControlStateHighlighted];
@@ -355,7 +356,7 @@
         else
         {
             [hud hide:YES];
-            m_zannum-=1;
+            m_zannum--;
             [zanBtn setBackgroundImage:KUIImage(@"zan_hig_2") forState:UIControlStateHighlighted];
             [zanBtn setTitle:[NSString stringWithFormat:@"%d",m_zannum] forState:UIControlStateNormal];
             [self showMessageWindowWithContent:@"取消赞" imageType:6];

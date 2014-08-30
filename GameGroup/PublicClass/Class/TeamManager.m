@@ -157,6 +157,7 @@ static TeamManager *teamManager = NULL;
 -(void)deleteMenberUserInfo:(NSDictionary*)memberUserInfo GroupId:(NSString*)groupId{
     [DataStoreManager deleteMenberUserInfo:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] UserId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] Successcompletion:^(BOOL success, NSError *error) {
         [DataStoreManager deleteTeamUser:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] groupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")]];
+        
         [self removeMemberCount:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"gameid")] RoomId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"roomId")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] UserId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")]];
         [[NSNotificationCenter defaultCenter]postNotificationName:kChangMemberList object:nil userInfo:memberUserInfo];
     }];
