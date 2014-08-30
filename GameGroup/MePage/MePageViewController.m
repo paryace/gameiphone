@@ -129,8 +129,8 @@
     NSMutableArray * titlessss= [DataStoreManager queryTitle:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] Hide:@"0"];
     NSMutableArray * chasss= [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
     NSMutableDictionary * latestDynamicMsg = [DataStoreManager queryLatestDynamic:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    NSString * fansnum = [NSString stringWithFormat:@"%@%@",FansFriendCount,[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    NSString * zannum = [NSString stringWithFormat:@"%@%@",ZanCount,[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    NSString * fansnum = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",FansFriendCount,[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
+    NSString * zannum = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",ZanCount,[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
     [info setObject:latestDynamicMsg forKey:@"latestDynamicMsg"];
     [info setObject:userDic forKey:@"user"];
     [info setObject:chasss forKey:@"characters"];

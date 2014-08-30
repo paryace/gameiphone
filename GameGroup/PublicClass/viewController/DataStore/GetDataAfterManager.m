@@ -290,7 +290,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)teamKickTypeMessageReceived:(NSDictionary *)messageContent{
     NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
     NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
-     NSString * userId = KISDictionaryHaveKey(payloadDic, @"userid");
+    NSString * userId = KISDictionaryHaveKey(payloadDic, @"userid");
     [messageContent setValue:groupId forKey:@"groupId"];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {//假如是自己被踢出

@@ -40,12 +40,14 @@
         titleLabel.font = [UIFont boldSystemFontOfSize:20];
         [bgImageView addSubview:titleLabel];
         
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-        button.frame = CGRectMake(260, 0, 60, 44);
-        [button addTarget:self action:@selector(closeViewAction:)forControlEvents:UIControlEventTouchUpInside];
-        [button setTitle:@"关闭" forState:UIControlStateNormal];
-        button.backgroundColor = [UIColor clearColor];
-        [bgImageView addSubview:button];
+        
+        UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 65, 44)];
+        [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
+        [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
+        backButton.backgroundColor = [UIColor clearColor];
+        [backButton addTarget:self action:@selector(closeViewAction:) forControlEvents:UIControlEventTouchUpInside];
+        [bgImageView addSubview:backButton];
+        
         [self addSubview:bgImageView];
         
         if (!m_TableView) {
