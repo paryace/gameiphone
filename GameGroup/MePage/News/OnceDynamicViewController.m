@@ -51,6 +51,7 @@
    NSString * m_userid;
     AppDelegate *app;
     
+    NSInteger m_zannum;
 }
 @property(nonatomic, strong)NSDictionary* dataDic;
 @property(nonatomic, strong)NSArray*      headImgArray;
@@ -340,17 +341,23 @@
         zanBtn.userInteractionEnabled = YES;
 
         zanBtn.selected = !zanBtn.selected;
+        m_zannum =  [[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"zannum")]intValue];
+
         if(zanBtn.selected)
         {
             [hud hide:YES];
+            m_zannum-=1;
+            [zanBtn setTitle:[NSString stringWithFormat:@"%d",m_zannum] forState:UIControlStateNormal];
+
             [zanBtn setBackgroundImage:KUIImage(@"zan_hig_1") forState:UIControlStateHighlighted];
             [self showMessageWindowWithContent:@"已赞" imageType:5];
         }
         else
         {
             [hud hide:YES];
-
+            m_zannum-=1;
             [zanBtn setBackgroundImage:KUIImage(@"zan_hig_2") forState:UIControlStateHighlighted];
+            [zanBtn setTitle:[NSString stringWithFormat:@"%d",m_zannum] forState:UIControlStateNormal];
             [self showMessageWindowWithContent:@"取消赞" imageType:6];
         }
     
