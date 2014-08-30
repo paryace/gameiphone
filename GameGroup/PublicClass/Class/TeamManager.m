@@ -147,6 +147,7 @@ static TeamManager *teamManager = NULL;
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
             [[GroupManager singleton] changGroupState:groupId GroupState:@"0" GroupShipType:@"3"];//改变本地群的状态为可用
             [[NSNotificationCenter defaultCenter]postNotificationName:@"refreshTeamList_wx" object:nil userInfo:memberUserInfo];
+             [[NSNotificationCenter defaultCenter]postNotificationName:@"myJoin" object:nil userInfo:memberUserInfo];
         }
         [[NSNotificationCenter defaultCenter]postNotificationName:kChangMemberList object:nil userInfo:memberUserInfo];
     }];

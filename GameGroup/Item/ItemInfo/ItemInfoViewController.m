@@ -36,6 +36,7 @@
     UILabel *m_typeLabel;
     UILabel *m_timeLabel;
     UIAlertView* popAlertView;
+    UIView *bottomView ;
 }
 @end
 
@@ -56,6 +57,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changPosition:) name:kChangPosition object:nil];//位置改变
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changMemberList:) name:kChangMemberList object:nil];//组队成员变化
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMemberCountChang:) name:UpdateTeamMemberCount object:nil];//组队人数字变化
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(meJoinTeam:) name:@"myJoin" object:nil];//对方同意我加入该组队
     
     
     titleLable=[[UILabel alloc] initWithFrame:CGRectMake(60, startX - 44, 320-120, 44)];
@@ -239,8 +241,8 @@
 #pragma mark ---创建底部button
 -(void)buildbelowbutotnWithArray:(NSArray *)array TitleTexts:(NSArray*)titles shiptype:(NSInteger)shiptype
 {
-    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-50, 320, 50)];
-    [self.view addSubview:view];
+    bottomView = [[UIView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-50, 320, 50)];
+    [self.view addSubview:bottomView];
     float width = 320/array.count;
     for (int i = 0; i<array.count; i++) {
         UIButton *button = [[UIButton alloc]initWithFrame:CGRectMake(width*i, 0, width, 50)];
@@ -260,7 +262,7 @@
             button.frame = CGRectMake(160, 0, 160, 50);
             [button addTarget:self action:@selector(joinInItem:) forControlEvents:UIControlEventTouchUpInside];
         }
-        [view addSubview:button];
+        [bottomView addSubview:button];
     }
 
     if (shiptype ==2) {
@@ -274,9 +276,9 @@
             bView.realmLb.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"simpleRealm")];
             bView.topLabel.hidden = YES;
         }
-        [view addSubview:bView];
+        [bottomView addSubview:bView];
     }
-    [self.view addSubview:view];
+    [self.view addSubview:bottomView];
 }
 
 
@@ -929,11 +931,22 @@
     
     NSLog(@"%@",notification.userInfo);
 }
+#pragma mark 我被同意加入该组队
+-(void)meJoinTeam:(NSNotification*)notification{
+    [self hideBottomView];
+    [self noHaveBottomView];
+}
 -(NSString*)getMemberCount:(NSMutableDictionary*)teamInfo{
     
     return [NSString stringWithFormat:@"[%@/%@]",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(teamInfo, @"maxVol")];
 }
 
+
+-(void)hideBottomView{
+    if(bottomView && bottomView.hidden == NO){
+        bottomView.hidden = YES;
+    }
+}
 - (void)dealloc
 {
     m_myTableView.delegate=nil;
