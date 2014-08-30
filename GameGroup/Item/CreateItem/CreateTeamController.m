@@ -127,6 +127,7 @@
     characterView = [[CharacterView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
     characterView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     characterView.characterDelegate = self;
+    characterView.hidden = YES;
     [characterView hiddenSelf];
     [self.view addSubview:characterView];
     
@@ -263,7 +264,7 @@
     }
     m_ziNumLabel.text =[NSString stringWithFormat:@"%d%@%d",ziNum,@"/",m_maxZiShu];
     CGSize nameSize = [m_ziNumLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
-    m_ziNumLabel.frame=CGRectMake(320-nameSize.width-10-10, 270+25, nameSize.width, 20);
+    m_ziNumLabel.frame=CGRectMake(320-nameSize.width-10-10, 270+25, nameSize.width+5, 20);
     m_ziNumLabel.backgroundColor=[UIColor clearColor];
 }
 

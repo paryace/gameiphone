@@ -50,10 +50,16 @@
     [shareButton addTarget:self action:@selector(saveChanged:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
 
+    UIImageView *txbgImgViwe = [[UIImageView alloc]initWithFrame:CGRectMake(20, startX+10, 280, 90)];
+    txbgImgViwe.backgroundColor=[UIColor clearColor];
+    
+    txbgImgViwe.image = KUIImage(@"group_info");
+    [self.view addSubview:txbgImgViwe];
+    
     
     firstTextView = [[UITextView alloc]initWithFrame:CGRectMake(20, startX+10, 280, 90)];
     firstTextView.font = [UIFont systemFontOfSize:14];
-    firstTextView.backgroundColor = [UIColor whiteColor];
+    firstTextView.backgroundColor = [UIColor clearColor];
     firstTextView.text = self.firstStr;
     firstTextView.delegate = self;
     [self.view addSubview:firstTextView];

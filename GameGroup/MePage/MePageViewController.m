@@ -317,7 +317,7 @@
             cell.distLabel.text = @"暂无头衔";
         }
         if (m_hostInfo.headImgArray.count>0) {
-            cell.headImageV.imageURL = [ImageService getImageUrl4:[m_hostInfo.headImgArray objectAtIndex:0]];
+            cell.headImageV.imageURL = [ImageService getImageStr:[m_hostInfo.headImgArray objectAtIndex:0] Width:120];
         }else
         {
             cell.headImageV.imageURL = nil;
