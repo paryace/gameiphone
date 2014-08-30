@@ -51,13 +51,14 @@
     [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:backButton];
     
-    UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [createBtn setBackgroundImage:KUIImage(@"finish_btn_icon_normal") forState:UIControlStateNormal];
-    [createBtn setBackgroundImage:KUIImage(@"finish_btn_icon_click") forState:UIControlStateHighlighted];
-    createBtn.backgroundColor = [UIColor clearColor];
-    [createBtn addTarget:self action:@selector(createItem:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:createBtn];
-    
+    if (self.createFinish) {
+        UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+        [createBtn setBackgroundImage:KUIImage(@"finish_btn_icon_normal") forState:UIControlStateNormal];
+        [createBtn setBackgroundImage:KUIImage(@"finish_btn_icon_click") forState:UIControlStateHighlighted];
+        createBtn.backgroundColor = [UIColor clearColor];
+        [createBtn addTarget:self action:@selector(createItem:) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:createBtn];
+    }
     
     NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:@"创建成功!赶快呼唤你的小伙伴去尽情的杀戮吧!"];
     [str addAttribute:NSForegroundColorAttributeName value:UIColorFromRGBA(0x00bcfa, 1) range:NSMakeRange(0,5)];

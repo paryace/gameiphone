@@ -282,6 +282,7 @@ PlayingDelegate>
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(saveAudioSuccessed:) name:KSAVEAUDIOSUCCESS object:nil];
     
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(teamInfoUploadNotification:) name:teamInfoUpload object:nil];
     
     [self addObserver:self forKeyPath:@"isRecording" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
     [self addObserver:self forKeyPath:@"isPlaying" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
@@ -4172,6 +4173,18 @@ PlayingDelegate>
 //    self.consoleLabel.text = [NSString stringWithFormat:@"播放完成: %@", [self.filename substringFromIndex:[self.filename rangeOfString:@"Documents"].location]];
 }
 
+-(void)teamInfoUploadNotification:(NSNotification*)notification{
+    if (notification.userInfo&&[notification.userInfo isKindOfClass:[NSDictionary class]]) {
+        NSString * groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(notification.userInfo, @"groupId")];
+        if ([groupId isEqualToString:[GameCommon getNewStringWithId:self.chatWithUser]]) {
+             NSMutableArray * userList = KISDictionaryHaveKey(notification.userInfo, @"memberList");
+            [self.newTeamMenuView setMemberList:userList];
+        }
+       
+    }
+    
+    NSLog(@"");
+}
 
 -(void)viewDidDisappear:(BOOL)animated
 {

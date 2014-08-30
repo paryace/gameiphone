@@ -43,6 +43,7 @@
 -(void)hideView;//隐藏视图view
 -(void)deallocContro;//取消通知注册
 -(void)settTitleMsg:(NSString*)titleText;//设置title
+-(void)setMemberList:(NSMutableArray *)memberList;
 @end
 
 @protocol DetailDelegate <NSObject>
