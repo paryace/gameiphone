@@ -126,6 +126,7 @@ UIGestureRecognizerDelegate>
 @property (nonatomic, strong) UIButton * titleImageV;
 @property (nonatomic, strong) UIButton *titleButton;  //
 @property (nonatomic, strong) UIImageView* topImageView;
+@property (nonatomic, strong) MsgNotifityView * dotPosition;
 //@property (strong,nonatomic) MsgNotifityView * dotVApp;//申请
 //@property (strong,nonatomic) MsgNotifityView * dotVInplace;//就位
 //@property (strong,nonatomic) MsgNotifityView * dotVPosition;//位置

@@ -52,7 +52,7 @@
 #define appChannel @"wx_test"//wx_test、91、appStore、tbt、pp、ky,(如果测试请用"wx_test")
 
 
-////常量
+//常量
 #define BaseClientUrl @"http://58.83.193.120/gamepro/request"//开机联网地址
 #define BaseUploadImageUrl  @"http://58.83.193.120/gamepro/fileserver/put"
 #define BaseImageUrl  @"http://58.83.193.120/gamepro/fileserver/get/"

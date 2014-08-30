@@ -364,17 +364,17 @@ static ItemManager *itemManager = NULL;
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"setTeamPosition--%@",responseObject);
         [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:[NSString stringWithFormat:@"%@%@",@"selectType_",groupId]];
-
         [DataStoreManager updatePosition:roomId GameId:gameid GroupId:groupId UserId:userid TeamPosition:selectType Successcompletion:^(BOOL success, NSError *error) {
             NSMutableDictionary * tDic = [selectType mutableCopy];
             [tDic setValue:roomId forKey:@"roomId"];
             [tDic setValue:gameid forKey:@"gameId"];
             [tDic setValue:userid forKey:@"userId"];
             [[NSNotificationCenter defaultCenter] postNotificationName:kChangPosition object:nil userInfo:tDic];
+            if (resuccess) {
+                resuccess(responseObject);
+            }
         }];
-        if (resuccess) {
-            resuccess(responseObject);
-        }
+       
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if (refailure) {
             refailure(error);

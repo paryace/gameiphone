@@ -27,6 +27,7 @@
 @property(nonatomic,strong)UIView * stateView;//状态
 @property(nonatomic,strong)UIImageView *MemberLable;
 @property(nonatomic,strong)UIButton * positionBtn;
+@property (nonatomic, strong) MsgNotifityView * dotPosition;
 @end
 @protocol PositionDelegate <NSObject>
 -(void)positionOnClick:(UIButton*)sender;

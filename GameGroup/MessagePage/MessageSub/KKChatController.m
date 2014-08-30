@@ -412,6 +412,7 @@ PlayingDelegate>
         if (teamUsershipType) {
             [self initApplyTopMenuIsSHow];
         }
+        [self showOrHidePositionDitView];
     }
     [self goBack];
     showRecordView = [[ShowRecordView alloc]initWithFrame:CGRectMake(0, 0, 150, 150)];
@@ -423,6 +424,17 @@ PlayingDelegate>
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"正在处理图片...";
     [self.view addSubview:hud];
+}
+
+-(void)showOrHidePositionDitView{
+    selectType = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",@"selectType_",self.chatWithUser]];
+    if (selectType) {
+        self.dotPosition.hidden = YES;
+        [self.dotPosition setMsgCount:0 IsSimple:YES];
+    }else {
+        self.dotPosition.hidden = NO;
+        [self.dotPosition setMsgCount:1 IsSimple:YES];
+    }
 }
 
 -(void)setTopViewWithTitle{
@@ -485,6 +497,9 @@ PlayingDelegate>
     [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
     [self.topImageView addSubview:profileButton];
     [self.topImageView addSubview:self.unReadL]; //未读数量
+    
+    self.dotPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-30,KISHighVersion_7 ? 25 : 5, 22,18)];
+    [self.topImageView addSubview:self.dotPosition];
 }
 
 
@@ -853,7 +868,7 @@ PlayingDelegate>
     [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:clickType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
         selectType = clickType;
         [self sendOtherMsg:[NSString stringWithFormat:@"选择了 %@",KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
-        [self changPosition];
+        [self changPosition:clickType];
     } reError:^(id error) {
         [self showErrorAlertView:error];
     }];
@@ -893,9 +908,10 @@ PlayingDelegate>
     }
 }
 //改变数据库位置
--(void)changPosition
+-(void)changPosition:(NSMutableDictionary*)selectPosiitonDic
 {
-    [self changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
+    [self showOrHidePositionDitView];
+    [self changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectPosiitonDic, @"value")];
     [self.tView reloadData];
 }
 //改变列表位置
@@ -920,7 +936,7 @@ PlayingDelegate>
             [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:clickType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
                 selectType = clickType;
                 [self sendOtherMsg:[NSString stringWithFormat:@"选择了 %@",KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
-                [self changPosition];
+                [self changPosition:clickType];
             } reError:^(id error) {
                 [self showErrorAlertView:error];
             }];
