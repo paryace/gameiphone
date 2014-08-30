@@ -384,7 +384,7 @@
     self.memberList = [self comm:[DataStoreManager getMemberList:self.roomId GameId:self.gameId]];
 }
 
--(void)setMemberList:(NSMutableArray *)memberList{
+-(void)setMemberListss:(NSMutableArray *)memberList{
     self.memberList = memberList;
     [self.mTableView reloadData];
 }

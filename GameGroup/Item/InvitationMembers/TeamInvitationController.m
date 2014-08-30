@@ -8,7 +8,7 @@
 
 #import "TeamInvitationController.h"
 #define  marginLeftRight 40 
-#define marginTop 36+36+59.5
+#define marginTop 36+20+20.5
 @interface TeamInvitationController (){
     UIImageView * topImage;
 }
@@ -59,11 +59,13 @@
         [createBtn addTarget:self action:@selector(createItem:) forControlEvents:UIControlEventTouchUpInside];
         [self.view addSubview:createBtn];
     }
+   
+    
     
     NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:@"创建成功!赶快呼唤你的小伙伴去尽情的杀戮吧!"];
     [str addAttribute:NSForegroundColorAttributeName value:UIColorFromRGBA(0x00bcfa, 1) range:NSMakeRange(0,5)];
     
-    UILabel * topTitleLable = [[UILabel alloc] initWithFrame:CGRectMake(0, startX+25, 320, 59.5)];
+    UILabel * topTitleLable = [[UILabel alloc] initWithFrame:CGRectMake(0, startX+25, 320, 20)];
     topTitleLable.backgroundColor = [UIColor clearColor];
     topTitleLable.textColor = UIColorFromRGBA(0x969696, 1);
     topTitleLable.textAlignment = NSTextAlignmentCenter;

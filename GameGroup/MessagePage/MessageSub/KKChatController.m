@@ -499,7 +499,7 @@ PlayingDelegate>
     [self.topImageView addSubview:profileButton];
     [self.topImageView addSubview:self.unReadL]; //未读数量
     
-    self.dotPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-30,KISHighVersion_7 ? 25 : 5, 22,18)];
+    self.dotPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-25,KISHighVersion_7 ? 22 : 2, 22,18)];
     [self.topImageView addSubview:self.dotPosition];
 }
 
@@ -4178,7 +4178,9 @@ PlayingDelegate>
         NSString * groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(notification.userInfo, @"groupId")];
         if ([groupId isEqualToString:[GameCommon getNewStringWithId:self.chatWithUser]]) {
              NSMutableArray * userList = KISDictionaryHaveKey(notification.userInfo, @"memberList");
-            [self.newTeamMenuView setMemberList:userList];
+            if (self.newTeamMenuView&&userList) {
+                [self.newTeamMenuView setMemberListss:userList];
+            }
         }
        
     }
