@@ -394,7 +394,7 @@ PlayingDelegate>
         
         
         //就位确认
-        self.newTeamMenuView = [[NewTeamMenuView alloc] initWithFrame:CGRectMake(0, KISHighVersion_7?20:0, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
+        self.newTeamMenuView = [[NewTeamMenuView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
         self.newTeamMenuView.mSuperView = self.view;
         self.newTeamMenuView.detaildelegate = self;
         self.newTeamMenuView.hidden = YES;
@@ -438,11 +438,11 @@ PlayingDelegate>
 }
 
 -(void)setTopViewWithTitle{
-    UIImageView *hideImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 20 : 0)];
-    hideImage.userInteractionEnabled = YES;
-    hideImage.backgroundColor = kColorWithRGB(23, 161, 240, 1.0);
-    hideImage.image = KUIImage(@"nav_bg");
-    [self.view addSubview:hideImage];
+//    UIImageView *hideImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 20 : 0)];
+//    hideImage.userInteractionEnabled = YES;
+//    hideImage.backgroundColor = kColorWithRGB(23, 161, 240, 1.0);
+//    hideImage.image = KUIImage(@"nav_bg");
+//    [self.view addSubview:hideImage];
     //top导航条
     self.topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
     self.topImageView.userInteractionEnabled = YES;
@@ -520,9 +520,13 @@ PlayingDelegate>
 -(void)initApplyTopMenuIsSHow{
     NSInteger  msgC = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3"];
     if (msgC>0) {
-        [self showTopItemView:[NSString stringWithFormat:@"%d条申请",msgC]];
+        if (teamUsershipType) {
+            [self showTopItemView:[NSString stringWithFormat:@"%d条申请",msgC]];
+        }
     }else{
-        [self hideTopItemView];
+        if (teamUsershipType) {
+            [self hideTopItemView];
+        }
     }
 }
 #pragma mark 决定就位确认头部导航条是否显示
