@@ -323,7 +323,7 @@
             default:
                 break;
         }
-
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"kUpdataUserInfoFromNet" object:nil];
         } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if ([[error objectForKey:kFailErrorCodeKey] isEqualToString:@"100014"]) {//已被绑定
