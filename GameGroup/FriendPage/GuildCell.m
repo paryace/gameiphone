@@ -16,7 +16,7 @@
     if (self) {
         // Initialization code
         self.gameImageView = [[UIImageView alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
-        self.gameImageView.image = KUIImage(@"wow");
+        self.gameImageView.image = KUIImage(@"wow_ guild");
         [self.contentView addSubview:self.gameImageView];
         
         self.guildLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 10, 250, 20)];

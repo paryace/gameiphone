@@ -273,7 +273,7 @@
         NSString * gameImageId = [GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dic, @"gameid")];
 
         cell.gameIconImg.imageURL = [ImageService getImageUrl4:gameImageId];
-        cell.realmLabel.text = [NSString stringWithFormat:@"%@-%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"simpleRealm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"value1")]];
+        cell.realmLabel.text = [NSString stringWithFormat:@"%@ %@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"simpleRealm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"value1")]];
         
         cell.zdlLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"value2")];
         cell.zdlLabel.adjustsFontSizeToFitWidth = YES;

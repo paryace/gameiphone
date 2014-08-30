@@ -508,12 +508,12 @@
     [m_step2Scroll addSubview:m_sexWomanButton];
 
     UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 120, 300, 40)];
-    table_top.image = KUIImage(@"table_top");
+    table_top.image = KUIImage(@"group_cardtf");
     [m_step2Scroll addSubview:table_top];
     
-    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, 121, 300, 40)];
-    table_bottom.image = KUIImage(@"table_bottom");
-    [m_step2Scroll addSubview:table_bottom];
+//    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, 121, 300, 40)];
+//    table_bottom.image = KUIImage(@"table_bottom");
+//    [m_step2Scroll addSubview:table_bottom];
     
     UILabel* table_label_two = [[UILabel alloc] initWithFrame:CGRectMake(20, 121, 100, 38)];
     table_label_two.text = @"密码";
