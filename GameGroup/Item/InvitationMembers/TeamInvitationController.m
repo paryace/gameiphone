@@ -188,7 +188,9 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-        [self shareToQQ:responseObject Sender:sender];//分享到QQ
+        if (![GameCommon isEmtity:[GameCommon getNewStringWithId:responseObject]]) {
+            [self shareToQQ:responseObject Sender:sender];//分享到QQ
+        }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
     }];
