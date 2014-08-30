@@ -30,6 +30,7 @@
 @property (nonatomic, strong) UILabel *timeLable ;
 @property (nonatomic, strong) UIButton *agreeBtn ;
 @property (nonatomic, strong) UIButton *refusedBtn ;
+
 @property (nonatomic, strong) NSString *groipId;
 @property (nonatomic, strong) NSString *roomId;
 @property (nonatomic, strong) NSString *gameId;

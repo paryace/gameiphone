@@ -5011,7 +5011,12 @@
 +(void)updatePosition:(NSString*)roomId GameId:(NSString*)gameId GroupId:(NSString*)groupId UserId:(NSString*)userId TeamPosition:(NSDictionary*)teamPosition Successcompletion:(MRSaveCompletionHandler)successcompletion
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-        NSPredicate * predicate1 = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and sender==[c]%@",groupId,userId];
+        NSPredicate * predicate1;
+        if ([userId isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+           predicate1 = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and (sender==[c]%@ or sender==[c]%@)",groupId,userId,@"you"];
+        }else{
+            predicate1 = [NSPredicate predicateWithFormat:@"groupId==[c]%@ and sender==[c]%@",groupId,userId];
+        }
         NSArray * commonMsgs = [DSGroupMsgs MR_findAllWithPredicate:predicate1 inContext:localContext];
         for (int i = 0; i<commonMsgs.count; i++) {
             DSGroupMsgs * common = [commonMsgs objectAtIndex:i];
