@@ -541,6 +541,8 @@
             cell.positionLable.textColor = UIColorFromRGBA(0x339adf, 1);
             [cell.positionBtn setUserInteractionEnabled:YES];
         }else{
+            cell.dotPosition.hidden = YES;
+            [cell.dotPosition setMsgCount:0 IsSimple:YES];
             cell.positionLable.text = [GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]?@"未选":KISDictionaryHaveKey(msgDic, @"value");
             cell.positionLable.textColor = [UIColor grayColor];
             [cell.positionBtn setUserInteractionEnabled:NO];
