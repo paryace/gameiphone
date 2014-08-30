@@ -946,6 +946,29 @@ static GameCommon *my_gameCommon = NULL;
     }
     return allUnread;
 }
+
+//未读消息的数量
++(NSInteger)getNoreadMsgCount2:(NSMutableArray*)msgs
+{
+    int allUnread = 0;
+    for (int i = 0; i<msgs.count; i++) {
+        NSMutableDictionary * message = [msgs objectAtIndex:i];
+        if ([KISDictionaryHaveKey(message, @"msgType") isEqualToString:@"groupchat"]) {//假如是关闭状态，则过滤该群的消息数
+            if ([[self getMsgSettingStateByGroupId:KISDictionaryHaveKey(message, @"groupId")] isEqualToString:@"0"]
+                ||[[self getMsgSettingStateByGroupId:KISDictionaryHaveKey(message, @"groupId")] isEqualToString:@"2"]) {
+                NSInteger unreadCount = [KISDictionaryHaveKey(message, @"unRead") intValue];
+                allUnread += unreadCount;
+            }
+        }else{
+            if (![KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"recommendfriend"] &&
+                ![KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"sayHello"]&&
+                ![KISDictionaryHaveKey(message,@"msgType") isEqualToString:@"deletePerson"]){
+                allUnread = allUnread+[KISDictionaryHaveKey(message, @"unRead") intValue];
+            }
+        }
+    }
+    return allUnread;
+}
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (21 == alertView.tag) {

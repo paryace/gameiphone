@@ -978,6 +978,9 @@ PlayingDelegate>
     }else if ([self.type isEqualToString:@"group"]){
         [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1" Successcompletion:^(BOOL success, NSError *error) {
              [self setBackButtonNoreadMsg];
+            if (self.isTeam&&!teamUsershipType) {
+                 [self readTeamApplyMsg];
+            }
         }];
     }
     
@@ -2000,7 +2003,7 @@ PlayingDelegate>
 -(void)setBackButtonNoreadMsg
 {
     NSMutableArray *array = (NSMutableArray *)[DataStoreManager qAllThumbMessagesWithType:@"1"];
-    NSInteger msgCount  = [GameCommon getNoreadMsgCount:array];
+    NSInteger msgCount  = [GameCommon getNoreadMsgCount2:array];
     [self setNoreadMsgView:msgCount];
 }
 
