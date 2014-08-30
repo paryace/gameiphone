@@ -85,6 +85,7 @@
     m_miaoshuTV.backgroundColor = [UIColor whiteColor];
     m_miaoshuTV.layer.cornerRadius = 5;
     m_miaoshuTV.layer.masksToBounds = YES;
+    m_miaoshuTV.returnKeyType = UIReturnKeyDone;
     [mainView addSubview:m_miaoshuTV];
     
     placeholderL = [[UILabel alloc]init];

@@ -137,8 +137,8 @@ typedef enum : NSUInteger {
     
     
     inputButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [inputButton setBackgroundImage:KUIImage(@"emoji") forState:UIControlStateNormal];
-    [inputButton setBackgroundImage:KUIImage(@"keyboard.png") forState:UIControlStateSelected];
+    [inputButton setImage:KUIImage(@"emoji") forState:UIControlStateNormal];
+    [inputButton setImage:KUIImage(@"keyboard.png") forState:UIControlStateSelected];
     [inputButton addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
     inputButton.frame = CGRectMake(260, 0, 53, 50);
     [inputButton setImageEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)];

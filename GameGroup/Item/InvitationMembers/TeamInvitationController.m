@@ -176,7 +176,12 @@
 
 - (void)backButtonClick:(id)sender
 {
-    [self.navigationController popToRootViewControllerAnimated:YES];
+    if (self.createFinish) {
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    }else{
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+    
 }
 -(void)createItem:(UIButton*)sender{
     [self.navigationController popToRootViewControllerAnimated:YES];

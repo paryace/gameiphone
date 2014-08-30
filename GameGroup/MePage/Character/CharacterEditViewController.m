@@ -276,6 +276,7 @@
             [m_characterArray removeObjectAtIndex:alertView.tag - 1];
             [m_myTabelView reloadData];
             [[CharacterAndTitleService singleton]deleteCharacher:KISDictionaryHaveKey(dic, @"id")];
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"kUpdataUserInfoFromNet" object:nil];
         } failure:^(AFHTTPRequestOperation *operation, id error) {
             if ([error isKindOfClass:[NSDictionary class]]) {
                 if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
