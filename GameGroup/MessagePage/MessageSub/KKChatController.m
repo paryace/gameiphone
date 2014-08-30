@@ -758,6 +758,15 @@ PlayingDelegate>
 #pragma mark -- 隐藏头部消息提示view
 -(void)mHideOrShowTopMenuView{
     [self initInpaceTopMenuIsShow];
+
+}
+
+-(void)hideMenuView{
+//    UIAlertView * errorDialog = [[UIAlertView alloc] initWithTitle:@"提示" message:teamUsershipType?@"您的组队已成功，请在游戏中等待队友寻找你进行游戏。如果队员未能及时报道，就来陌游催一催吧!":@"您的组队已成功，请在游戏中添加队长的角色xxx，进行精彩的游戏吧！" delegate:self cancelButtonTitle:@"确定"otherButtonTitles:nil, nil];
+//    [errorDialog show];
+    
+    isMenuShow = NO;
+    [self hideExtendedChooseView];
 }
 
 /////

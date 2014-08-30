@@ -758,6 +758,7 @@
     [self clearNorReadInpaceMsg];
     [self setBtnState];
     [self.detaildelegate mHideOrShowTopMenuView];
+    [self.detaildelegate hideMenuView];
 }
 //显示
 -(void)showView{

@@ -53,4 +53,5 @@
 -(void)doCloseInpacePageAction;//关闭页面
 -(void)mHideOrShowTopMenuView;//隐藏头部消息提示view
 -(void)menuOnClick:(NSInteger)senderTag;
+-(void)hideMenuView;
 @end
