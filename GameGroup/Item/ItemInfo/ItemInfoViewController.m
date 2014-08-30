@@ -741,7 +741,10 @@
         if (indexPath.section == 0) {
             [self removeItemer:indexPath.row];
         }else{
-            [self removeClaimed:indexPath.row];
+            NSLog(@"%d",indexPath.row);
+//            [self removeClaimed:indexPath.row];
+            NSDictionary *dic = claimedList_dataArray[indexPath.row];
+            [self deleteMenberFromList:KISDictionaryHaveKey(dic, @"roomId") GameId:self.gameid MemberId:KISDictionaryHaveKey(dic, @"memberId") MemberTeamUserId:nil];
         }
     }
 }
@@ -796,19 +799,19 @@
 
 -(void)deleteMember:(NSString*)memberId GameId:(NSString*)gameId RoomId:(NSString*)roomId MemberTeamUserId:(NSString*)memberTeamUserId{
     if ([GameCommon isEmtity:[GameCommon getNewStringWithId:memberTeamUserId]]) {
-        for (NSDictionary * dic in m_dataArray) {
-            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:gameId]
-                && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] isEqualToString:memberId]
-                && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:roomId]) {
-                [m_dataArray removeObject:dic];
-            }
-        }
-    }else{
         for (NSDictionary * dic in claimedList_dataArray) {
             if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:gameId]
                 && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] isEqualToString:memberId]
                 && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:roomId]) {
                 [claimedList_dataArray removeObject:dic];
+            }
+        }
+    }else{
+        for (NSDictionary * dic in m_dataArray ) {
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:gameId]
+                && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] isEqualToString:memberId]
+                && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:roomId]) {
+                [m_dataArray removeObject:dic];
             }
         }
     }

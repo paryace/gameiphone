@@ -58,12 +58,6 @@
     firstTextView.delegate = self;
     [self.view addSubview:firstTextView];
     
-    m_ziNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(300-10-10, startX+80, 100, 20)];
-    m_ziNumLabel.backgroundColor = [UIColor clearColor];
-    m_ziNumLabel.font= [UIFont systemFontOfSize:12];
-    m_ziNumLabel.text = [NSString stringWithFormat:@"%d/%d",firstTextView.text.length,m_maxZiShu];
-    m_ziNumLabel.textAlignment = NSTextAlignmentRight;
-    [self.view addSubview:m_ziNumLabel];
 
     
     tagList = [[DWTagList alloc]initWithFrame:CGRectMake(20, startX+110, 280, 60)];
@@ -86,6 +80,18 @@
 //    [dissolutionRoom addTarget:self action:@selector(dissolutionRoom:) forControlEvents:UIControlEventTouchUpInside];
 //    [self.view addSubview:dissolutionRoom];
 
+    m_ziNumLabel = [[UILabel alloc]initWithFrame:CGRectMake(260, startX+80, 100, 20)];
+    m_ziNumLabel.backgroundColor = [UIColor clearColor];
+    m_ziNumLabel.font= [UIFont systemFontOfSize:12];
+    //    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:firstTextView.text];
+    //    m_ziNumLabel.text =[NSString stringWithFormat:@"%d%@%d",ziNum,@"/",m_maxZiShu];
+    m_ziNumLabel.textColor = [UIColor blackColor];
+    m_ziNumLabel.text = [NSString stringWithFormat:@"%d/%d",firstTextView.text.length,m_maxZiShu];
+    m_ziNumLabel.textAlignment = NSTextAlignmentLeft;
+    [self.view addSubview:m_ziNumLabel];
+    [self.view bringSubviewToFront:m_ziNumLabel];
+
+    
     hud = [[MBProgressHUD alloc]initWithView: self.view];
     [self.view addSubview:hud];
     hud.labelText = @"保存中...";
@@ -223,8 +229,9 @@
         return NO;
     }
     
-    NSString *new = [textView.text stringByReplacingCharactersInRange:range withString:text];
-    NSInteger res = m_maxZiShu-[[GameCommon shareGameCommon] unicodeLengthOfString:new];
+//    NSString *new = [textView.text stringByReplacingCharactersInRange:range withString:text];
+//    NSInteger res = m_maxZiShu-[[GameCommon shareGameCommon] unicodeLengthOfString:new];
+    NSInteger res = m_maxZiShu -textView.text.length;
     if(res >= 0){
         return YES;
     }
@@ -239,7 +246,8 @@
 }
 - (void)refreshZiLabelText
 {
-    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:firstTextView.text];
+//    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:firstTextView.text];
+    NSInteger ziNum = m_maxZiShu - firstTextView.text.length;
     if (ziNum<0) {
 //        ziNum=0;
     }else{
