@@ -555,7 +555,13 @@
         cell.headImageView.imageURL =[ImageService getImageStr:imageids Width:80] ;
         cell.bgImageView.userInteractionEnabled =NO;
 
-         cell.nickLabel.text = [NSString stringWithFormat:@"%@...",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterName")] substringToIndex:8]];
+        if ([GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterName")].length>8) {
+            
+            cell.nickLabel.text = [NSString stringWithFormat:@"%@...",[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterName")] substringToIndex:8]];
+        }else{
+            
+            cell.nickLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"characterName")];
+        }
         [cell refreshViewFrameWithText:cell.nickLabel.text];
         cell.MemberLable.hidden = NO;
         
