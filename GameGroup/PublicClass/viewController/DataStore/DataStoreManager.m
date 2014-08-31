@@ -271,16 +271,20 @@
 +(void)saveDSCommonMsg:(NSDictionary *)msg
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
-        DSCommonMsgs * commonMsg = [DSCommonMsgs MR_createInContext:localContext];//所有消息
-        commonMsg.sender = [msg objectForKey:@"sender"];
-        commonMsg.msgContent = KISDictionaryHaveKey(msg, @"msg")?KISDictionaryHaveKey(msg, @"msg"):@"";
-        commonMsg.senTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
-        commonMsg.msgType = KISDictionaryHaveKey(msg, @"msgType");
-        commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
-        commonMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
-        commonMsg.status = @"1";
-        commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
-    }
+         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid=[c]%@",KISDictionaryHaveKey(msg, @"msgId")];
+        DSCommonMsgs * mCommonMsg = [DSCommonMsgs findFirstWithPredicate:predicate inContext:localContext];
+            if (!mCommonMsg) {
+                DSCommonMsgs * commonMsg = [DSCommonMsgs MR_createInContext:localContext];//所有消息
+                commonMsg.sender = [msg objectForKey:@"sender"];
+                commonMsg.msgContent = KISDictionaryHaveKey(msg, @"msg")?KISDictionaryHaveKey(msg, @"msg"):@"";
+                commonMsg.senTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
+                commonMsg.msgType = KISDictionaryHaveKey(msg, @"msgType");
+                commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
+                commonMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
+                commonMsg.status = @"1";
+                commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+            }
+        }
      completion:^(BOOL success, NSError *error) {
          
      }];
@@ -290,19 +294,22 @@
 +(void)saveDSGroupMsg:(NSDictionary *)msg  SaveSuccess:(void (^)(NSDictionary *msgDic))block
 {
     [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        DSGroupMsgs * groupMsg = [DSGroupMsgs MR_createInContext:localContext];
-        groupMsg.sender = [msg objectForKey:@"sender"];
-        groupMsg.msgContent = KISDictionaryHaveKey(msg, @"msg")?KISDictionaryHaveKey(msg, @"msg"):@"";
-        groupMsg.senTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
-        groupMsg.msgType = KISDictionaryHaveKey(msg, @"msgType");
-        groupMsg.payload = KISDictionaryHaveKey(msg, @"payload");
-        groupMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
-        groupMsg.status = @"1";
-        groupMsg.groupId = KISDictionaryHaveKey(msg, @"groupId");
-        groupMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
-        groupMsg.teamPosition = KISDictionaryHaveKey(msg, @"teamPosition");
-    }];
-    
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid=[c]%@",KISDictionaryHaveKey(msg, @"msgId")];
+        DSGroupMsgs * mgroupMsg = [DSGroupMsgs findFirstWithPredicate:predicate inContext:localContext];
+            if (!mgroupMsg) {
+                DSGroupMsgs * groupMsg = [DSGroupMsgs MR_createInContext:localContext];
+                groupMsg.sender = [msg objectForKey:@"sender"];
+                groupMsg.msgContent = KISDictionaryHaveKey(msg, @"msg")?KISDictionaryHaveKey(msg, @"msg"):@"";
+                groupMsg.senTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
+                groupMsg.msgType = KISDictionaryHaveKey(msg, @"msgType");
+                groupMsg.payload = KISDictionaryHaveKey(msg, @"payload");
+                groupMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
+                groupMsg.status = @"1";
+                groupMsg.groupId = KISDictionaryHaveKey(msg, @"groupId");
+                groupMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+                groupMsg.teamPosition = KISDictionaryHaveKey(msg, @"teamPosition");
+            }
+        }];
     if (block) {
         block(msg);
     }
@@ -315,20 +322,22 @@
 {
     NSDictionary * payloadDic = [KISDictionaryHaveKey(msg, @"payload") JSONValue];
     [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
-        DSGroupMsgs * groupMsg = [DSGroupMsgs MR_createInContext:localContext];
-        groupMsg.sender = KISDictionaryHaveKey(payloadDic, @"userid");
-        groupMsg.msgContent = KISDictionaryHaveKey(msg, @"msg")?KISDictionaryHaveKey(msg, @"msg"):@"";
-        groupMsg.senTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
-        groupMsg.msgType = KISDictionaryHaveKey(msg, @"msgType");
-        groupMsg.payload = KISDictionaryHaveKey(msg, @"payload");
-        groupMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
-        groupMsg.status = @"1";
-        groupMsg.groupId = KISDictionaryHaveKey(msg, @"groupId");
-        groupMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
-        groupMsg.teamPosition = KISDictionaryHaveKey(msg, @"teamPosition");
-        }
-     ];
-    
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid=[c]%@",KISDictionaryHaveKey(msg, @"msgId")];
+        DSGroupMsgs * mgroupMsg = [DSGroupMsgs findFirstWithPredicate:predicate inContext:localContext];
+            if (!mgroupMsg) {
+                DSGroupMsgs * groupMsg = [DSGroupMsgs MR_createInContext:localContext];
+                groupMsg.sender = KISDictionaryHaveKey(payloadDic, @"userid");
+                groupMsg.msgContent = KISDictionaryHaveKey(msg, @"msg")?KISDictionaryHaveKey(msg, @"msg"):@"";
+                groupMsg.senTime = [NSDate dateWithTimeIntervalSince1970:[[msg objectForKey:@"time"] doubleValue]];
+                groupMsg.msgType = KISDictionaryHaveKey(msg, @"msgType");
+                groupMsg.payload = KISDictionaryHaveKey(msg, @"payload");
+                groupMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
+                groupMsg.status = @"1";
+                groupMsg.groupId = KISDictionaryHaveKey(msg, @"groupId");
+                groupMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
+                groupMsg.teamPosition = KISDictionaryHaveKey(msg, @"teamPosition");
+            }
+        }];
     if (block) {
         block(msg);
     }
