@@ -154,9 +154,10 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMsgUploaded:) name:kteamMessage object:nil];
     //偏好消息
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receiceTeamRecommendMsg:) name:kteamRecommend object:nil];
-    //被剔出该群
+    //被剔出该群kDisbandMyTeam
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onkickOffGroupGroup:) name:kKickOffGroupGroup object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDisbandMyTeam:) name:kDisbandMyTeam object:nil];
     //获取xmpp服务器是否连接成功
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getConnectSuccess:) name:@"connectSuccess" object:nil];
     //
@@ -282,6 +283,12 @@
 {
     [self displayMsgsForDefaultView];
 }
+#pragma mark我的组队被解散
+-(void)onDisbandMyTeam:(NSNotification*)notification
+{
+    [self displayMsgsForDefaultView];
+}
+
 
 //申请加入组队消息
 -(void)joinTeamReceived:(NSNotification *)notification
