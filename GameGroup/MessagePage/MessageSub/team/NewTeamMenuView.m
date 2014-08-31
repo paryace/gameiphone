@@ -49,7 +49,7 @@
          [self addSubview:uiTableViewBg];
 
         
-        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,20, 200, 44)];
+        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,18, 200, 44)];
         self.titleLabel.textColor = [UIColor whiteColor];
 //        self.titleLabel.backgroundColor = [UIColor clearColor];
         self.titleLabel.text = @"队员列表";
