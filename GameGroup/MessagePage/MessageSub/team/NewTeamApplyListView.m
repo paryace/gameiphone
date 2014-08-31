@@ -12,6 +12,7 @@
 @implementation NewTeamApplyListView{
     UITableView * m_TableView;
     NSMutableArray * teamNotifityMsg;
+    UILabel *m_alertLabel;
 }
 
 - (id)initWithFrame:(CGRect)frame GroupId:(NSString*)groupId RoomId:(NSString*)roomId GameId:(NSString*)gameId teamUsershipType:(BOOL)teamUsershipType
@@ -59,6 +60,13 @@
             m_TableView.separatorStyle=UITableViewCellSeparatorStyleNone;
             [self addSubview:m_TableView];
         }
+        
+        m_alertLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(0, 0, 320, 40) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentCenter];
+        m_alertLabel.center = self.center;
+        m_alertLabel.text = @"暂无申请加入信息";
+        m_alertLabel.hidden = YES;
+        [self addSubview:m_alertLabel];
+        
         hud = [[MBProgressHUD alloc] initWithView:self];
         hud.labelText = @"加载中...";
         [self addSubview:hud];
@@ -290,6 +298,12 @@
 -(void)getZU
 {
     teamNotifityMsg = [DataStoreManager queDSTeamNotificationMsgByMsgTypeAndGroupId:@"requestJoinTeam" GroupId:self.groipId];
+    if (teamNotifityMsg &&teamNotifityMsg.count<=0) {
+        m_alertLabel.hidden = NO;
+    }else{
+        m_alertLabel.hidden = YES;
+    }
+
 }
 
 #pragma mark 申请加入组队消息

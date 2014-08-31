@@ -323,7 +323,6 @@
             default:
                 break;
         }
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"kUpdataUserInfoFromNet" object:nil];
         } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if ([[error objectForKey:kFailErrorCodeKey] isEqualToString:@"100014"]) {//已被绑定
@@ -365,7 +364,8 @@
         
         NSLog(@"%@", responseObject);
         
-        
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"kUpdataUserInfoFromNet" object:nil];
+
         [self showMessageWindowWithContent:@"添加成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
         
@@ -423,6 +423,8 @@
             [self addCharacterByNetWithDictionary:dic];//添加
 
         }
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"kUpdataUserInfoFromNet" object:nil];
+
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])

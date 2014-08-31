@@ -56,6 +56,7 @@
         [createBtn setBackgroundImage:KUIImage(@"finish_btn_icon_normal") forState:UIControlStateNormal];
         [createBtn setBackgroundImage:KUIImage(@"finish_btn_icon_click") forState:UIControlStateHighlighted];
         createBtn.backgroundColor = [UIColor clearColor];
+        [createBtn  setExclusiveTouch :YES];
         [createBtn addTarget:self action:@selector(createItem:) forControlEvents:UIControlEventTouchUpInside];
         [self.view addSubview:createBtn];
     }
@@ -91,6 +92,7 @@
         float y = startX+marginTop+(i/2)*92.5+(21+30)*(i/2);
         UIButton *  menuImage = [[UIButton alloc] initWithFrame:CGRectMake(x,y, 92.5, 92.5)];
         menuImage.tag=100+i;
+        [menuImage  setExclusiveTouch :YES];
         menuImage.userInteractionEnabled = YES;
         [menuImage setBackgroundImage:KUIImage(imageArray[i]) forState:UIControlStateNormal];
         [menuImage addTarget:self action:@selector(menuOnCLick:) forControlEvents:UIControlEventTouchUpInside];

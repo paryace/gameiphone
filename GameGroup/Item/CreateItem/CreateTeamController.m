@@ -277,7 +277,7 @@
 #pragma mark --创建
 -(void)createItem:(id)sender
 {
-    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
+    NSInteger ziNum = m_maxZiShu - m_miaoshuTV.text.length;
 //    NSInteger ziNum = m_maxZiShu - m_miaoshuTV.text.length;
 
     if (ziNum<0) {

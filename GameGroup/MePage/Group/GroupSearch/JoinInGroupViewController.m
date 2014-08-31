@@ -165,7 +165,7 @@
         auth = @"0";
     }
     
-    if ([KISDictionaryHaveKey(dic, @"failedmsg")intValue]==404||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@""]) {
+    if ([KISDictionaryHaveKey(dic, @"failedmsg")intValue]==404||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]) {
         authBg.image  = KUIImage(@"chara_auth_3");
         }
     else{

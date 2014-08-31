@@ -272,6 +272,7 @@
 -(void)getZU
 {
     teamNotifityMsg = [DataStoreManager queDSTeamNotificationMsgByMsgTypeAndGroupId:@"requestJoinTeam" GroupId:self.groipId];
+    
 }
 
 #pragma mark 申请加入组队消息
