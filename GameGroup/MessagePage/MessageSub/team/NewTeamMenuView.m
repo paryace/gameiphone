@@ -535,14 +535,24 @@
         }
         
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"userid")] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-            if ([GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]) {
+            NSDictionary *dic = [NSDictionary dictionary];
+            if ([[msgDic objectForKey:@"position"] isKindOfClass:[NSDictionary class]]) {
+                dic =[msgDic objectForKey:@"position"];
+            }
+            
+
+            if ([GameCommon isEmtity:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"value")]]&&[GameCommon isEmtity:KISDictionaryHaveKey(msgDic, @"value")]) {
                 cell.dotPosition.hidden = NO;
                 [cell.dotPosition setMsgCount:1 IsSimple:YES];
                 cell.positionLable.text = @"请选择";
             }else {
                 cell.dotPosition.hidden = YES;
                 [cell.dotPosition setMsgCount:0 IsSimple:YES];
-                cell.positionLable.text = KISDictionaryHaveKey(msgDic, @"value");
+                if ([[msgDic allKeys]containsObject:@"value"]) {
+                    cell.positionLable.text =KISDictionaryHaveKey(msgDic, @"value");
+                }else{
+                    cell.positionLable.text = KISDictionaryHaveKey(dic, @"value");
+                }
             }
             cell.positionLable.textColor = UIColorFromRGBA(0x339adf, 1);
             [cell.positionBtn setUserInteractionEnabled:YES];
