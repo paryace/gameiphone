@@ -475,7 +475,7 @@ PlayingDelegate>
             [titleBtn addSubview:self.groupunReadMsgLable];//群未读消息数
             
             CGSize textSize = [_groupunReadMsgLable.text sizeWithFont:[UIFont boldSystemFontOfSize:18] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
-            _groupunReadMsgLable.frame = CGRectMake((200-textSize.width)/2, KISHighVersion_7 ? 20 : 0, textSize.width, 20);
+            _groupunReadMsgLable.frame = CGRectMake((200-textSize.width)/2,10, textSize.width, 20);
             _titleImageV = [[UIButton alloc]initWithFrame:CGRectMake((200-textSize.width)/2+textSize.width+2, 15.5, 13, 13)];
             [_titleImageV setBackgroundImage:KUIImage(@"group_chat_title_img_normal") forState:UIControlStateNormal];
             [_titleImageV setBackgroundImage:KUIImage(@"group_chat_title_img_click") forState:UIControlStateHighlighted];
@@ -486,6 +486,8 @@ PlayingDelegate>
     }
     [self.topImageView addSubview:titleBtn];
     
+    self.dotPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-25,KISHighVersion_7 ? 22 : 2, 22,18)];
+    [self.topImageView addSubview:self.dotPosition];
     
     //个人资料按钮
     profileButton=[UIButton buttonWithType:UIButtonTypeCustom];
@@ -501,8 +503,7 @@ PlayingDelegate>
     [self.topImageView addSubview:profileButton];
     [self.topImageView addSubview:self.unReadL]; //未读数量
     
-    self.dotPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-25,KISHighVersion_7 ? 22 : 2, 22,18)];
-    [self.topImageView addSubview:self.dotPosition];
+   
 }
 
 
@@ -1426,6 +1427,7 @@ PlayingDelegate>
         cell.bgImageView.tag = indexPath.row+1;
         return cell;
     }
+     */
     
     //以上是历史消息
     else if (kkChatMsgType == KKChatMsgHistory){
@@ -1438,7 +1440,7 @@ PlayingDelegate>
         cell.msgLable.text =  @"以上是历史消息";
         return cell;
     }
-     */
+    
     //普通消息
     else
     {
@@ -2119,7 +2121,7 @@ PlayingDelegate>
 //群的未读消息数
 - (UILabel *)groupunReadMsgLable{
     if(!_groupunReadMsgLable){
-        _groupunReadMsgLable = [[UILabel alloc] initWithFrame:CGRectMake(0,KISHighVersion_7 ? 20 : 0,200,44)];
+        _groupunReadMsgLable = [[UILabel alloc] initWithFrame:CGRectMake(0,10,200,44)];
         _groupunReadMsgLable.backgroundColor = [UIColor clearColor];
         _groupunReadMsgLable.text = [NSString stringWithFormat:@"%@%d%@",@"(未读消息",self.unreadMsgCount,@"条)"];
         _groupunReadMsgLable.textAlignment = NSTextAlignmentCenter;

@@ -95,11 +95,11 @@
         }
         
         UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0, (kScreenHeigth-topHight-20)/2+80, 320, 20)];
-        pveLable.backgroundColor = [UIColor clearColor];
+        pveLable.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0);
         pveLable.textAlignment = NSTextAlignmentCenter;
         pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
         pveLable.text = @"队长可以滑动名单进行管理";
-        pveLable.font =[ UIFont systemFontOfSize:12];
+        pveLable.font =[ UIFont systemFontOfSize:20];
         
         if (!self.mTableView) {
             self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight-(KISHighVersion_7?0:20)) style:UITableViewStylePlain];
@@ -108,6 +108,7 @@
             self.mTableView.dataSource = self;
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleSingleLine;
             self.mTableView.tableFooterView = pveLable;
+            self.mTableView.tableFooterView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0);
             [GameCommon setExtraCellLineHidden:self.mTableView];
             [uiTableViewBg addSubview:self.mTableView];
         }
