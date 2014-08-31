@@ -94,7 +94,7 @@
         }
         
         UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0, (kScreenHeigth-topHight-20)/2+80, 320, 20)];
-        pveLable.backgroundColor = [UIColor redColor];
+        pveLable.backgroundColor = [UIColor clearColor];
         pveLable.textAlignment = NSTextAlignmentCenter;
         pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
         pveLable.text = @"队长可以滑动名单进行管理";
@@ -488,15 +488,15 @@
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (section == 1) {
-        UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
+        UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 30, 320, 20)];
         view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0.5);
         
-        UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0,0, 320, 50)];
+        UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0,20, 320, 20)];
         pveLable.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0.5);
         pveLable.textAlignment = NSTextAlignmentCenter;
         pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
         pveLable.text = @"队长可以滑动名单进行管理";
-        pveLable.font =[ UIFont systemFontOfSize:16];
+        pveLable.font =[ UIFont systemFontOfSize:12];
         [view addSubview:pveLable];
         return view;
     }
