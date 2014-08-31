@@ -145,7 +145,7 @@
 -(void)saveChanged:(id)sender
 {
     
-    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:firstTextView.text];
+    NSInteger ziNum = m_maxZiShu - firstTextView.text.length;
     
     if (ziNum<0) {
         [self showAlertViewWithTitle:@"提示" message:@"您的描述超出了字数限制,请重新编辑" buttonTitle:@"确定"];
@@ -231,14 +231,15 @@
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     if ([text isEqualToString:@"\n"]) {
-        [textView resignFirstResponder];
+        [firstTextView resignFirstResponder];
         return NO;
     }
     
 //    NSString *new = [textView.text stringByReplacingCharactersInRange:range withString:text];
 //    NSInteger res = m_maxZiShu-[[GameCommon shareGameCommon] unicodeLengthOfString:new];
-    NSInteger res = m_maxZiShu -textView.text.length;
+    NSInteger res = m_maxZiShu -firstTextView.text.length;
     if(res >= 0){
+        m_ziNumLabel.textColor = [UIColor blackColor];
         return YES;
     }
     else{
@@ -256,6 +257,7 @@
     NSInteger ziNum = m_maxZiShu - firstTextView.text.length;
     if (ziNum<0) {
 //        ziNum=0;
+        m_ziNumLabel.textColor = [UIColor redColor];
     }else{
         m_ziNumLabel.textColor = [UIColor blackColor];
     }

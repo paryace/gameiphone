@@ -1007,6 +1007,8 @@
         [self setBtnState];
     }
 }
+
+
 #pragma mark 接收到发起就位确认消息通知,改变就位确认状态
 -(void)sendChangInplaceState:(NSNotification*)notification{
     [self showButton];
