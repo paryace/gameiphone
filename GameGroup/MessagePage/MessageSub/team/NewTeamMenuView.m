@@ -51,7 +51,6 @@
         
         self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,18, 200, 44)];
         self.titleLabel.textColor = [UIColor whiteColor];
-//        self.titleLabel.backgroundColor = [UIColor clearColor];
         self.titleLabel.text = @"队员列表";
         self.titleLabel.textAlignment = NSTextAlignmentCenter;
         self.titleLabel.font = [UIFont boldSystemFontOfSize:20];
@@ -332,12 +331,12 @@
 //隐藏按钮
 -(void)hideButton{
     self.bottomView.hidden = YES;
-    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-20);
+    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight);
 }
 //显示按钮
 -(void)showButton{
     self.bottomView.hidden = NO;
-    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight-20);
+    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight);
 }
 
 //发起就位确认

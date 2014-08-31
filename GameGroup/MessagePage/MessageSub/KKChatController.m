@@ -882,7 +882,7 @@ PlayingDelegate>
 #pragma mark -- 选择位置之后的回调
 -(void)returnChooseInfoFrom:(UIViewController *)vc info:(NSDictionary *)info{
     NSMutableDictionary * clickType = [info mutableCopy];
-    if ([selectType isKindOfClass:[NSDictionary class]]&&[KISDictionaryHaveKey(clickType, @"value") isEqualToString:KISDictionaryHaveKey(selectType, @"value")]) {
+    if ([selectType isKindOfClass:[NSDictionary class]]&&[[GameCommon getNewStringWithId:KISDictionaryHaveKey(clickType, @"value")] isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectType, @"value")]]) {
         return;
     }
     [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:clickType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
