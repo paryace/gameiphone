@@ -381,7 +381,7 @@
 
 //就位确认数据
 -(void)getmemberList{
-    self.memberList = [self comm:[DataStoreManager getMemberList:self.roomId GameId:self.gameId]];
+    self.memberList = [self comm:[DataStoreManager getMemberList:[GameCommon getNewStringWithId:self.roomId] GameId:[GameCommon getNewStringWithId:self.gameId]]];
 }
 
 -(void)setMemberListss:(NSMutableArray *)memberList{
