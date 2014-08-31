@@ -282,6 +282,7 @@ PlayingDelegate>
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(saveAudioSuccessed:) name:KSAVEAUDIOSUCCESS object:nil];
     
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(teamInfoUploadNotification:) name:teamInfoUpload object:nil];
     
     [self addObserver:self forKeyPath:@"isRecording" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
     [self addObserver:self forKeyPath:@"isPlaying" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
@@ -394,7 +395,7 @@ PlayingDelegate>
         
         
         //就位确认
-        self.newTeamMenuView = [[NewTeamMenuView alloc] initWithFrame:CGRectMake(0, KISHighVersion_7?20:0, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
+        self.newTeamMenuView = [[NewTeamMenuView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
         self.newTeamMenuView.mSuperView = self.view;
         self.newTeamMenuView.detaildelegate = self;
         self.newTeamMenuView.hidden = YES;
@@ -438,11 +439,11 @@ PlayingDelegate>
 }
 
 -(void)setTopViewWithTitle{
-    UIImageView *hideImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 20 : 0)];
-    hideImage.userInteractionEnabled = YES;
-    hideImage.backgroundColor = kColorWithRGB(23, 161, 240, 1.0);
-    hideImage.image = KUIImage(@"nav_bg");
-    [self.view addSubview:hideImage];
+//    UIImageView *hideImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 20 : 0)];
+//    hideImage.userInteractionEnabled = YES;
+//    hideImage.backgroundColor = kColorWithRGB(23, 161, 240, 1.0);
+//    hideImage.image = KUIImage(@"nav_bg");
+//    [self.view addSubview:hideImage];
     //top导航条
     self.topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
     self.topImageView.userInteractionEnabled = YES;
@@ -498,7 +499,7 @@ PlayingDelegate>
     [self.topImageView addSubview:profileButton];
     [self.topImageView addSubview:self.unReadL]; //未读数量
     
-    self.dotPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-30,KISHighVersion_7 ? 25 : 5, 22,18)];
+    self.dotPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-25,KISHighVersion_7 ? 22 : 2, 22,18)];
     [self.topImageView addSubview:self.dotPosition];
 }
 
@@ -520,9 +521,13 @@ PlayingDelegate>
 -(void)initApplyTopMenuIsSHow{
     NSInteger  msgC = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3"];
     if (msgC>0) {
-        [self showTopItemView:[NSString stringWithFormat:@"%d条申请",msgC]];
+        if (teamUsershipType) {
+            [self showTopItemView:[NSString stringWithFormat:@"%d条申请",msgC]];
+        }
     }else{
-        [self hideTopItemView];
+        if (teamUsershipType) {
+            [self hideTopItemView];
+        }
     }
 }
 #pragma mark 决定就位确认头部导航条是否显示
@@ -753,6 +758,15 @@ PlayingDelegate>
 #pragma mark -- 隐藏头部消息提示view
 -(void)mHideOrShowTopMenuView{
     [self initInpaceTopMenuIsShow];
+
+}
+
+-(void)hideMenuView{
+//    UIAlertView * errorDialog = [[UIAlertView alloc] initWithTitle:@"提示" message:teamUsershipType?@"您的组队已成功，请在游戏中等待队友寻找你进行游戏。如果队员未能及时报道，就来陌游催一催吧!":@"您的组队已成功，请在游戏中添加队长的角色xxx，进行精彩的游戏吧！" delegate:self cancelButtonTitle:@"确定"otherButtonTitles:nil, nil];
+//    [errorDialog show];
+    
+    isMenuShow = NO;
+    [self hideExtendedChooseView];
 }
 
 /////
@@ -4168,6 +4182,20 @@ PlayingDelegate>
 //    self.consoleLabel.text = [NSString stringWithFormat:@"播放完成: %@", [self.filename substringFromIndex:[self.filename rangeOfString:@"Documents"].location]];
 }
 
+-(void)teamInfoUploadNotification:(NSNotification*)notification{
+    if (notification.userInfo&&[notification.userInfo isKindOfClass:[NSDictionary class]]) {
+        NSString * groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(notification.userInfo, @"groupId")];
+        if ([groupId isEqualToString:[GameCommon getNewStringWithId:self.chatWithUser]]) {
+             NSMutableArray * userList = KISDictionaryHaveKey(notification.userInfo, @"memberList");
+            if (self.newTeamMenuView&&userList) {
+                [self.newTeamMenuView setMemberListss:userList];
+            }
+        }
+       
+    }
+    
+    NSLog(@"");
+}
 
 -(void)viewDidDisappear:(BOOL)animated
 {

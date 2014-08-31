@@ -43,6 +43,7 @@
 -(void)hideView;//隐藏视图view
 -(void)deallocContro;//取消通知注册
 -(void)settTitleMsg:(NSString*)titleText;//设置title
+-(void)setMemberListss:(NSMutableArray *)memberList;
 @end
 
 @protocol DetailDelegate <NSObject>
@@ -52,4 +53,5 @@
 -(void)doCloseInpacePageAction;//关闭页面
 -(void)mHideOrShowTopMenuView;//隐藏头部消息提示view
 -(void)menuOnClick:(NSInteger)senderTag;
+-(void)hideMenuView;
 @end

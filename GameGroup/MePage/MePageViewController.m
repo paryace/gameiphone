@@ -40,7 +40,7 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"appBecomeActive" object:Nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:userInfoUpload object:Nil];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self name:userInfoUpload object:Nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UpdateTitleInfo object:Nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UpdateCharacterInfo object:Nil];
     [super viewWillDisappear:animated];
@@ -56,18 +56,29 @@
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
     }
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:userInfoUpload object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateUserInfo:) name:UpdateTitleInfo object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateUserInfo:) name:UpdateCharacterInfo object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreUserInfo) name:@"refreshMyInfomation" object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateLastDynicmicInfo:) name:UpdateLastDynicmicInfo object:nil];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromNet:) name:@"kUpdataUserInfoFromNet" object:nil];
+    
     [self refreUserInfo];
+}
+
+-(void)getInfoFromNet:(id)sender
+{
+    [[UserManager singleton]requestUserFromNet:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"我" withBackButton:NO];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:userInfoUpload object:nil];
+
+    
     mePagequeue = dispatch_queue_create("com.living.game.MePagequeue", NULL);
     self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     m_myTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, kScreenWidth, kScreenHeigth - 50 - 64)];

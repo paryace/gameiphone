@@ -61,11 +61,7 @@
 
 -(void)resetTableFrame{
     self.roleTableView.hidden =NO;
-    if (self.characterArray.count>1&&self.characterArray.count<5) {
-        self.roleTableView.frame = CGRectMake(12.5, 12.5+50, 320-25, self.characterArray.count*70-3);
-    }else{
-        self.roleTableView.frame = CGRectMake(12.5, 12.5+50, 320-25, 330-50);
-    }
+    self.roleTableView.frame = CGRectMake(12.5, 12.5+50, 320-25, 330-50);
     [self.roleTableView reloadData];
 }
 

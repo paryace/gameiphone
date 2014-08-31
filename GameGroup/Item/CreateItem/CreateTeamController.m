@@ -85,6 +85,7 @@
     m_miaoshuTV.backgroundColor = [UIColor whiteColor];
     m_miaoshuTV.layer.cornerRadius = 5;
     m_miaoshuTV.layer.masksToBounds = YES;
+    m_miaoshuTV.returnKeyType = UIReturnKeyDone;
     [mainView addSubview:m_miaoshuTV];
     
     placeholderL = [[UILabel alloc]init];
@@ -128,7 +129,6 @@
     characterView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     characterView.characterDelegate = self;
     characterView.hidden = YES;
-    [characterView hiddenSelf];
     [self.view addSubview:characterView];
     
     m_RoleArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
@@ -137,6 +137,7 @@
     if (selectCharacter) {
         [self selectCharacterAction:selectCharacter];
     }else{
+        selectTypeAndNumberPersonView.hidden = YES;
          [characterView showSelf];
     }
     
@@ -168,6 +169,7 @@
 
 -(void)selectCharacterAction:(NSMutableDictionary*)characterInfo{
     if (characterInfo) {
+        selectTypeAndNumberPersonView.hidden = NO;
         selectCharacter =characterInfo;
         [self setCharacterInfo:characterInfo];
         m_maxZiShu = 30;
@@ -223,7 +225,7 @@
     NSString *str = m_miaoshuTV.text;
     NSInteger ziNumOld = [[GameCommon shareGameCommon] unicodeLengthOfString:str];
     NSInteger ziNumNew = [[GameCommon shareGameCommon] unicodeLengthOfString:[NSString stringWithFormat:@"%@%@",@"  ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_tagArray objectAtIndex:sender.tag], @"value")]]];
-    if (ziNumOld+ziNumNew>30) {
+    if (ziNumOld+ziNumNew>m_maxZiShu) {
         return;
     }
     if (str.length<1) {
@@ -234,9 +236,6 @@
     placeholderL.text = @"";
     [self refreshZiLabelText];
 }
-
-
-
 
 #pragma mark - text view delegate
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
@@ -250,13 +249,19 @@
     }else{
         placeholderL.text = @"请输入或点击下列组队描述";
     }
-    return YES;
+    NSString *new = [textView.text stringByReplacingCharactersInRange:range withString:text];
+    NSInteger res = m_maxZiShu-[[GameCommon shareGameCommon] unicodeLengthOfString:new];
+    if(res >= 0){
+        return YES;
+    }
+    else{
+      return NO;
+    }
 }
 
 - (void)refreshZiLabelText
 {
-//    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
-    NSInteger ziNum = m_maxZiShu - m_miaoshuTV.text.length;
+    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
     if (ziNum<=0) {
         m_ziNumLabel.textColor = [UIColor redColor];
     }else{
@@ -272,8 +277,8 @@
 #pragma mark --创建
 -(void)createItem:(id)sender
 {
-//    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
-    NSInteger ziNum = m_maxZiShu - m_miaoshuTV.text.length;
+    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
+//    NSInteger ziNum = m_maxZiShu - m_miaoshuTV.text.length;
 
     if (ziNum<0) {
         [self showAlertViewWithTitle:@"提示" message:@"您的描述超出了字数限制,请重新编辑" buttonTitle:@"确定"];
@@ -377,7 +382,7 @@
 -(void)getPersonCount:(NSString *)gameid typeId:(NSString *)typeId
 {
     [[ItemManager singleton] getPersonCountFromNetWithGameId:gameid typeId:typeId reSuccess:^(id responseObject) {
-        [selectTypeAndNumberPersonView setNumberArray:responseObject];
+        [selectTypeAndNumberPersonView setNumberArray:responseObject SelectType:selectType];
     } reError:^(id error) {
         [self showErrorAlert:error];
         

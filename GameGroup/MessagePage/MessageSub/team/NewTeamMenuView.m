@@ -18,7 +18,7 @@
 #import "InplaceTimer.h"
 #define bottomHight 40.5
 #define btnHight 40.5
-#define topHight 130
+#define topHight 150
 #define bottomPadding 0
 
 @implementation NewTeamMenuView
@@ -45,12 +45,12 @@
         bgImageView.backgroundColor = UIColorFromRGBA(0x000000, 0.6);
         [self addSubview:bgImageView];
         
-        UIView * uiTableViewBg = [[UIView alloc] initWithFrame:CGRectMake(0, topHight, 320, kScreenHeigth-topHight-(KISHighVersion_7?20:0))];
+        UIView * uiTableViewBg = [[UIView alloc] initWithFrame:CGRectMake(0, topHight, 320, kScreenHeigth-topHight)];
         uiTableViewBg.backgroundColor = [UIColor whiteColor];
          [self addSubview:uiTableViewBg];
 
         
-        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,-2, 200, 44)];
+        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,20, 200, 44)];
         self.titleLabel.textColor = [UIColor whiteColor];
         self.titleLabel.backgroundColor = [UIColor clearColor];
         self.titleLabel.text = @"队员列表";
@@ -60,7 +60,7 @@
         
         
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-        button.frame = CGRectMake(320-65, 0, 65, 44);
+        button.frame = CGRectMake(320-65, 20, 65, 44);
         [button setBackgroundImage:[UIImage imageNamed:@"team_menu_icon_open"] forState:UIControlStateNormal];
         [button addTarget:self action:@selector(closeViewAction:)forControlEvents:UIControlEventTouchUpInside];
         button.backgroundColor = [UIColor clearColor];
@@ -72,7 +72,7 @@
             UIButton *menubutton = [UIButton buttonWithType:UIButtonTypeCustom];
             menubutton.tag = i;
             float itemWight = 320/texts.count;
-            menubutton.frame = CGRectMake(i*itemWight + ((itemWight-54)/2), 50, 54, 54);
+            menubutton.frame = CGRectMake(i*itemWight + ((itemWight-54)/2), 70, 54, 54);
             [menubutton addTarget:self action:@selector(btnAction:)forControlEvents:UIControlEventTouchUpInside];
             if (i == 1) {
                  NSString * msgState = [[GroupManager singleton] getMsgSettingStateByGroupId:self.groipId];
@@ -86,7 +86,7 @@
             
             
             UILabel *menuLable = [[UILabel alloc] init];
-            menuLable.frame = CGRectMake(i*itemWight,105,itemWight,20);
+            menuLable.frame = CGRectMake(i*itemWight,125,itemWight,20);
             menuLable.font = [UIFont systemFontOfSize:12];
             menuLable.textAlignment = NSTextAlignmentCenter;
             menuLable.textColor=UIColorFromRGBA(0xf7f7f7, 1);
@@ -103,7 +103,7 @@
         pveLable.font =[ UIFont systemFontOfSize:12];
         
         if (!self.mTableView) {
-            self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight-(KISHighVersion_7?20:0)) style:UITableViewStylePlain];
+            self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight-(KISHighVersion_7?0:20)) style:UITableViewStylePlain];
             self.mTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0.6);
             self.mTableView.delegate = self;
             self.mTableView.dataSource = self;
@@ -133,6 +133,7 @@
                 self.timeLable.textColor = [UIColor grayColor];
                 self.timeLable.font = [UIFont systemFontOfSize:14];
                 self.timeLable.hidden = YES;
+                self.timeLable.backgroundColor = [UIColor clearColor];
                 self.timeLable.textAlignment = NSTextAlignmentCenter;
                 self.timeLable.text = @"(180)";
                 [self.bottomView addSubview:self.timeLable];
@@ -189,11 +190,11 @@
 
 -(void)setMsgStateBg:(UIButton*)btn State:(NSString*)state{
     if ([state isEqualToString:@"2"]) {
-        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_click%d",2]]forState:UIControlStateNormal];
-        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_click%d",2]]forState:UIControlStateHighlighted];
+        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_normal%d",22]]forState:UIControlStateNormal];
+        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_click%d",22]]forState:UIControlStateHighlighted];
     }else{
         [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_normal%d",2]]forState:UIControlStateNormal];
-        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_normal%d",2]]forState:UIControlStateHighlighted];
+        [btn setImage:[UIImage imageNamed:[NSString stringWithFormat:@"team_menu_click%d",2]]forState:UIControlStateHighlighted];
     }
 }
 
@@ -331,12 +332,12 @@
 //隐藏按钮
 -(void)hideButton{
     self.bottomView.hidden = YES;
-    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-(KISHighVersion_7 ? 20 : 0));
+    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-20);
 }
 //显示按钮
 -(void)showButton{
     self.bottomView.hidden = NO;
-    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight-(KISHighVersion_7 ? 20 : 0));
+    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight-20);
 }
 
 //发起就位确认
@@ -381,6 +382,11 @@
 //就位确认数据
 -(void)getmemberList{
     self.memberList = [self comm:[DataStoreManager getMemberList:self.roomId GameId:self.gameId]];
+}
+
+-(void)setMemberListss:(NSMutableArray *)memberList{
+    self.memberList = memberList;
+    [self.mTableView reloadData];
 }
 
 //排序
@@ -752,6 +758,7 @@
     [self clearNorReadInpaceMsg];
     [self setBtnState];
     [self.detaildelegate mHideOrShowTopMenuView];
+    [self.detaildelegate hideMenuView];
 }
 //显示
 -(void)showView{
