@@ -366,6 +366,9 @@
             TestViewController *testVC = [[TestViewController alloc]init];
             testVC.myDelegate = self;
             testVC.testRow = indexPath.row;
+            NSLog(@"点击位置行数%d----%d",indexPath.row,testVC.testRow);
+            
+            
             testVC.userId = [self.searchAddressArray[indexPath.row] objectForKey:@"userid"];
             testVC.titleImage = [self.searchAddressArray[indexPath.row] objectForKey:@"userid"];
             testVC.nickName = [self.searchAddressArray[indexPath.row] objectForKey:@"nickname"];
@@ -457,14 +460,30 @@
 {
     if ([valueStr isEqualToString:@"off"]) {
         NSMutableDictionary * dic = self.addressArray[i];
-        [dic setObject:@"unkown" forKey:@"friendshiptype"];
+        [dic setObject:@"unkown" forKey:@"friendshipType"];
         [dic setObject:@"0" forKey:@"iCare"];
         [_tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:i inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+        if (self.searchAddressArray&&self.searchAddressArray.count>0) {
+            NSMutableDictionary *dict = self.searchAddressArray[i];
+            [dict setObject:@"unkown" forKey:@"friendshipType"];
+            [dict setObject:@"0" forKey:@"iCare"];
+
+            [searchController.searchResultsTableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:i inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+        }
+
     }else{
         NSMutableDictionary * dic = self.addressArray[i];
-        [dic setObject:@"unkown" forKey:@"friendshiptype"];
+        [dic setObject:@"unkown" forKey:@"friendshipType"];
         [dic setObject:@"1" forKey:@"iCare"];
         [_tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:i inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+        if (self.searchAddressArray&&self.searchAddressArray.count>0) {
+  
+        NSMutableDictionary *dict = self.searchAddressArray[i];
+        [dict setObject:@"unkown" forKey:@"friendshipType"];
+        [dict setObject:@"1" forKey:@"iCare"];
+        [searchController.searchResultsTableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:i inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+
+        }
     }
 }
 -(void)SwithCellChangeSwith:(UISwitch*)swith

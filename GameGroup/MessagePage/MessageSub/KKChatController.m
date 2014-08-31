@@ -118,7 +118,7 @@ PlayingDelegate>
     NSMutableArray *gifArray1;
     NSMutableArray *gifArray2;
     BOOL isPlaying;
-   
+    UIButton * titleBtn;//右上角button
 }
 
 @property (nonatomic, strong) UIView * customInputView;//录音时替换输入框
@@ -283,6 +283,8 @@ PlayingDelegate>
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(saveAudioSuccessed:) name:KSAVEAUDIOSUCCESS object:nil];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(teamInfoUploadNotification:) name:teamInfoUpload object:nil];
+    
+    
     
     [self addObserver:self forKeyPath:@"isRecording" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
     [self addObserver:self forKeyPath:@"isPlaying" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
@@ -458,7 +460,7 @@ PlayingDelegate>
     [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.topImageView addSubview:backButton];
     //top标题按钮
-    UIButton * titleBtn = [[UIButton alloc] initWithFrame:CGRectMake(60,KISHighVersion_7 ? 20 : 0,200,KISHighVersion_7 ? 64 : 44)];
+    titleBtn = [[UIButton alloc] initWithFrame:CGRectMake(60,KISHighVersion_7 ? 20 : 0,200,KISHighVersion_7 ? 64 : 44)];
     titleBtn.backgroundColor = [UIColor clearColor];
     if ([self.type isEqualToString:@"group"]&&self.unreadMsgCount>20) {
         [titleBtn addTarget:self action:@selector(loadMoreMsg:)forControlEvents:UIControlEventTouchUpInside];
@@ -679,6 +681,8 @@ PlayingDelegate>
         self.newTeamMenuView.hidden = YES;
         
         [self.newTeamMenuView hideView];
+        self.topImageView.hidden = NO;
+
     }];
     
 }
@@ -694,6 +698,7 @@ PlayingDelegate>
         self.newTeamMenuView.alpha = 1;
     }completion:^(BOOL finished) {
         self.topImageView.hidden = YES;
+
     }];
 }
 
