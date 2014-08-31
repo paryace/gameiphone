@@ -51,7 +51,7 @@
         
         self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,20, 200, 44)];
         self.titleLabel.textColor = [UIColor whiteColor];
-        self.titleLabel.backgroundColor = [UIColor clearColor];
+//        self.titleLabel.backgroundColor = [UIColor clearColor];
         self.titleLabel.text = @"队员列表";
         self.titleLabel.textAlignment = NSTextAlignmentCenter;
         self.titleLabel.font = [UIFont boldSystemFontOfSize:20];
@@ -95,7 +95,7 @@
         }
         
         UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0, (kScreenHeigth-topHight-20)/2+80, 320, 20)];
-        pveLable.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0);
+        pveLable.backgroundColor = [UIColor redColor];
         pveLable.textAlignment = NSTextAlignmentCenter;
         pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
         pveLable.text = @"队长可以滑动名单进行管理";
@@ -108,7 +108,7 @@
             self.mTableView.dataSource = self;
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleSingleLine;
             self.mTableView.tableFooterView = pveLable;
-            self.mTableView.tableFooterView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0);
+            self.mTableView.tableFooterView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0.6);
             [GameCommon setExtraCellLineHidden:self.mTableView];
             [uiTableViewBg addSubview:self.mTableView];
         }
@@ -490,10 +490,10 @@
 {
     if (section == 1) {
         UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
-        view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+        view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0.5);
         
         UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0,0, 320, 50)];
-        pveLable.backgroundColor = [UIColor clearColor];
+        pveLable.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0.5);
         pveLable.textAlignment = NSTextAlignmentCenter;
         pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
         pveLable.text = @"队长可以滑动名单进行管理";
