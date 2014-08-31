@@ -147,7 +147,7 @@ typedef enum : NSUInteger {
     [self.view addSubview:m_myTableView];
     
     //顶部图片
-    
+//    UIImage * upImage2 = [NetManager image2:upImage centerInSize:CGSizeMake(640,640)];
     topVIew =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 370)];
     topVIew.backgroundColor  =[UIColor whiteColor];
     m_myTableView.tableHeaderView = topVIew;
@@ -157,7 +157,7 @@ typedef enum : NSUInteger {
     
     NSString *userid = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
     if ([[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageHead_wx_%@",userid]]) {
-        topImageView.imageURL =[ImageService getImageStr2:[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageHead_wx_%@",userid]]];
+        topImageView.imageURL =[ImageService getImageStr:[[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageHead_wx_%@",userid]] Width:320];
     }else{
             topImageView.backgroundColor = UIColorFromRGBA(0x262930, 1);
             topImageView.imageURL = nil;
@@ -615,7 +615,7 @@ typedef enum : NSUInteger {
             NSString *userid = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
             if (![[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageHead_wx_%@",userid]]) {
                 
-                topImageView.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"coverImg")]];
+                topImageView.imageURL = [ImageService getImageStr:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"coverImg")] Width:320];
                 [[NSUserDefaults standardUserDefaults]setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"coverImg")] forKey :[NSString stringWithFormat:@"topImageHead_wx_%@",userid]];
 
             }
@@ -1339,10 +1339,11 @@ typedef enum : NSUInteger {
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];
+    UIImage * upImage2 = [NetManager image2:upImage centerInSize:CGSizeMake(640,640)];
     NSString * imagePath=[self writeImageToFile:upImage ImageName:@"topImage.jpg"];
     [self uploadbgImg:imagePath];
 //    [self uploadbgImg:upImage];
-    topImageView.image = upImage;
+    topImageView.image = upImage2;
    
 }
 //将图片保存到本地，返回保存的路径
