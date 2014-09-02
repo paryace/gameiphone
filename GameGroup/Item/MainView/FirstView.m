@@ -376,6 +376,9 @@
 
 
 -(void)hideDrowList{
+//    screenView.hidden = YES;
+    [mSearchBar resignFirstResponder];
+    tagView.hidden = YES;
     if (self.dropDownView.isShow) {
         [self.dropDownView hideView];
         [self.dropDownView hideExtendedChooseView];
