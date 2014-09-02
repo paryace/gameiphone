@@ -534,13 +534,13 @@ PlayingDelegate>
 #pragma mark 决定就位确认头部导航条是否显示
 -(void)initInpaceTopMenuIsShow{
     NSInteger onClickState = [DataStoreManager getTeamUser:self.chatWithUser UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    if(onClickState == 0){
-        if (!teamUsershipType) {
-            [self hideTopItemView];
-        }
-    }else if(onClickState == 1){
+    if(onClickState == 1){
         if (!teamUsershipType) {
             [self showTopItemView:@"就位确认消息"];
+        }
+    }else {
+        if (!teamUsershipType) {
+            [self hideTopItemView];
         }
     }
 }
