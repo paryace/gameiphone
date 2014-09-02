@@ -1641,6 +1641,7 @@ PlayingDelegate>
         _inPutView.frame = CGRectMake(0, self.view.frame.size.height-50,320,50);
         UIImage *rawEntryBackground = [UIImage imageNamed:@"chat_input.png"];
         UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13
+                                    
                                                                            topCapHeight:22];
         UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
         entryImageView.frame = CGRectMake(10, 7, 225, 35);
