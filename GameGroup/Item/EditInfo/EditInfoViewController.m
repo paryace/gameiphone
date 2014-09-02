@@ -323,7 +323,7 @@
 }
 - (void)textViewDidEndEditing:(UITextView *)textView{
     [UIView animateWithDuration:0.3 animations:^{
-        customPhotoCollectionView.frame = CGRectMake(110.0f, startX+110, 300, kScreenHeigth - 110-startX);
+        customPhotoCollectionView.frame = CGRectMake(10.0f, startX+110, 300, kScreenHeigth - 110-startX);
     }];
 }
 @end
