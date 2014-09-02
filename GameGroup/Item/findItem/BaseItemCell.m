@@ -36,13 +36,13 @@
         self.bgImageView.image = KUIImage(@"team_placeholder2.jpg");
         [self addSubview:self.bgImageView];
         
-        self.MemberLable = [[UILabel alloc]initWithFrame:CGRectMake(320-10-26, 49/2+5, 26, 11)];
-        self.MemberLable.layer.cornerRadius = 3;
-        self.MemberLable.layer.masksToBounds=YES;
-        self.MemberLable.textAlignment = NSTextAlignmentCenter;
-        self.MemberLable.font = [UIFont systemFontOfSize:10];
-        self.MemberLable.textColor = [UIColor whiteColor];
-        [self addSubview:self.MemberLable];
+        self.MemberImage = [[UIImageView alloc]initWithFrame:CGRectMake(320-10-26, 49/2+5, 26, 11)];
+//        self.MemberLable.layer.cornerRadius = 3;
+//        self.MemberLable.layer.masksToBounds=YES;
+//        self.MemberLable.textAlignment = NSTextAlignmentCenter;
+//        self.MemberLable.font = [UIFont systemFontOfSize:10];
+//        self.MemberLable.textColor = [UIColor whiteColor];
+        [self addSubview:self.MemberImage];
 
     }
     return self;

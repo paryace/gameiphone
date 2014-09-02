@@ -17,7 +17,7 @@
 @property(nonatomic,strong)UILabel *titleLabel;
 @property(nonatomic,strong)UILabel *contentLabel;
 @property(nonatomic,strong)UILabel *timeLabel;
-@property(nonatomic,strong)UILabel *MemberLable;
+@property(nonatomic,strong)UIImageView *MemberImage;
 @property(nonatomic,assign)id<teamlistCellDelegate>mydelegate;
 @end
 @protocol teamlistCellDelegate <NSObject>
