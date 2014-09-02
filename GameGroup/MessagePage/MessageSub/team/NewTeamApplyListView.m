@@ -338,8 +338,4 @@
     self.isShow = NO;
 }
 
--(void)deallocContro{
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:kJoinTeamMessage object:nil];
-}
-
 @end

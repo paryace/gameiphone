@@ -80,13 +80,14 @@
         self.positionLable.font =[ UIFont systemFontOfSize:14];
         [self.bgV addSubview:self.positionLable];
         
+        
+        
+        self.dotPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-30,17, 22,18)];
+        [self.bgV addSubview:self.dotPosition];
         self.positionBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-70, 0, 70, 80)];
         [self.positionBtn setBackgroundImage:nil forState:UIControlStateNormal];
         [self.positionBtn  addTarget:self action:@selector(positionOnClick:) forControlEvents:UIControlEventTouchUpInside];
         [self.bgV addSubview:self.positionBtn];
-        
-        self.dotPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-30,20, 22,18)];
-        [self.bgV addSubview:self.dotPosition];
         
         
     }

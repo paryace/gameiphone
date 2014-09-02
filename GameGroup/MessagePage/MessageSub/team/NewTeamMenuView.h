@@ -41,7 +41,6 @@
 - (id)initWithFrame:(CGRect)frame GroupId:(NSString*)groupId RoomId:(NSString*)roomId GameId:(NSString*)gameId teamUsershipType:(BOOL)teamUsershipType;
 -(void)showView;//显示视图view
 -(void)hideView;//隐藏视图view
--(void)deallocContro;//取消通知注册
 -(void)settTitleMsg:(NSString*)titleText;//设置title
 -(void)setMemberListss:(NSMutableArray *)memberList;
 @end

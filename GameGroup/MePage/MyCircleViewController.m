@@ -165,7 +165,7 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
         
             NSString *strImg = KISDictionaryHaveKey(responseObject, @"coverImg");
-            topImgaeView.imageURL = [ImageService getImageUrl4:strImg];
+            topImgaeView.imageURL = [ImageService getImageStr:strImg Width:320];
             if (m_currPageCount==0) {
                 [dataArray removeAllObjects];
                 [dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"dynamicMsgList")];

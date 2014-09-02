@@ -277,8 +277,7 @@
 #pragma mark --创建
 -(void)createItem:(id)sender
 {
-    NSInteger ziNum = m_maxZiShu - m_miaoshuTV.text.length;
-//    NSInteger ziNum = m_maxZiShu - m_miaoshuTV.text.length;
+    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
 
     if (ziNum<0) {
         [self showAlertViewWithTitle:@"提示" message:@"您的描述超出了字数限制,请重新编辑" buttonTitle:@"确定"];

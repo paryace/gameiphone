@@ -49,9 +49,8 @@
          [self addSubview:uiTableViewBg];
 
         
-        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,20, 200, 44)];
+        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,18, 200, 44)];
         self.titleLabel.textColor = [UIColor whiteColor];
-        self.titleLabel.backgroundColor = [UIColor clearColor];
         self.titleLabel.text = @"队员列表";
         self.titleLabel.textAlignment = NSTextAlignmentCenter;
         self.titleLabel.font = [UIFont boldSystemFontOfSize:20];
@@ -99,7 +98,7 @@
         pveLable.textAlignment = NSTextAlignmentCenter;
         pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
         pveLable.text = @"队长可以滑动名单进行管理";
-        pveLable.font =[ UIFont systemFontOfSize:12];
+        pveLable.font =[ UIFont systemFontOfSize:20];
         
         if (!self.mTableView) {
             self.mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight-(KISHighVersion_7?0:20)) style:UITableViewStylePlain];
@@ -108,6 +107,7 @@
             self.mTableView.dataSource = self;
             self.mTableView.separatorStyle=UITableViewCellSeparatorStyleSingleLine;
             self.mTableView.tableFooterView = pveLable;
+            self.mTableView.tableFooterView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0.6);
             [GameCommon setExtraCellLineHidden:self.mTableView];
             [uiTableViewBg addSubview:self.mTableView];
         }
@@ -331,12 +331,12 @@
 //隐藏按钮
 -(void)hideButton{
     self.bottomView.hidden = YES;
-    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-20);
+    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight);
 }
 //显示按钮
 -(void)showButton{
     self.bottomView.hidden = NO;
-    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight-20);
+    self.mTableView.frame = CGRectMake(0, 0, 320,kScreenHeigth-topHight-bottomHight);
 }
 
 //发起就位确认
@@ -381,7 +381,7 @@
 
 //就位确认数据
 -(void)getmemberList{
-    self.memberList = [self comm:[DataStoreManager getMemberList:self.roomId GameId:self.gameId]];
+    self.memberList = [self comm:[DataStoreManager getMemberList:[GameCommon getNewStringWithId:self.roomId] GameId:[GameCommon getNewStringWithId:self.gameId]]];
 }
 
 -(void)setMemberListss:(NSMutableArray *)memberList{
@@ -488,15 +488,15 @@
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (section == 1) {
-        UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
-        view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+        UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 30, 320, 20)];
+        view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0.5);
         
-        UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0,0, 320, 50)];
-        pveLable.backgroundColor = [UIColor clearColor];
+        UILabel * pveLable = [[UILabel alloc]initWithFrame:CGRectMake(0,20, 320, 20)];
+        pveLable.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0.5);
         pveLable.textAlignment = NSTextAlignmentCenter;
         pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
         pveLable.text = @"队长可以滑动名单进行管理";
-        pveLable.font =[ UIFont systemFontOfSize:16];
+        pveLable.font =[ UIFont systemFontOfSize:12];
         [view addSubview:pveLable];
         return view;
     }
@@ -768,7 +768,7 @@
     [self clearNorReadInpaceMsg];
     [self setBtnState];
     [self.detaildelegate mHideOrShowTopMenuView];
-    [self.detaildelegate hideMenuView];
+    [self.detaildelegate hideMenuView];//隐藏就位确认页面
 }
 //显示
 -(void)showView{
@@ -855,11 +855,6 @@
     [self sendBtnUnEnable];
 }
 
--(void)deallocContro{
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:kChangInplaceState object:nil];
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:kSendChangInplaceState object:nil];
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:kResetChangInplaceState object:nil];
-}
 
 - (void)dealloc
 {
