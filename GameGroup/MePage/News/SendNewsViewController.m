@@ -182,7 +182,7 @@
 
 - (void)saveMyNews:(id)sender
 {
-    if (_dynamicTV.text.length<=0)
+    if (_dynamicTV.text.length<=0||[GameCommon isEmtity:[GameCommon getNewStringWithId:_dynamicTV.text]])
     {
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"你还没有想好说些什么!" delegate:nil cancelButtonTitle:@"知道啦" otherButtonTitles: nil];
         [alert show];
