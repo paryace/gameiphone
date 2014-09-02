@@ -361,10 +361,9 @@
     [hud show:YES];
     [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"1" reSuccess:^(id responseObject) {
         [hud hide:YES];
-         [self btnOnclick:@"2"];
     } reError:^(id error) {
         [hud hide:YES];
-        [self btnOnclick:@"2"];
+        [self btnOnclick:@"1" OnCLickState:@"0"];//
         [self showErrorAlertView:error];
     }];
 }
@@ -373,16 +372,15 @@
     [hud show:YES];
     [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"0" reSuccess:^(id responseObject){
         [hud hide:YES];
-        [self btnOnclick:@"3"];
     } reError:^(id error) {
         [hud hide:YES];
-         [self btnOnclick:@"3"];
+         [self btnOnclick:@"1" OnCLickState:@"0"];//
         [self showErrorAlertView:error];
     }];
 }
 
--(void)btnOnclick:(NSString*)state{
-    [[TeamManager singleton] updateTeamUserState:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] GroupId:self.groipId State:state Successcompletion:^(BOOL success, NSError *error) {
+-(void)btnOnclick:(NSString*)state OnCLickState:(NSString*)onCLickState{
+    [[TeamManager singleton] updateTeamUserState:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] GroupId:self.groipId State:state OnClickState:onCLickState Successcompletion:^(BOOL success, NSError *error) {
         [self changInplaceStateMethods:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] GroupId:self.groipId State:state];
     }];
 }

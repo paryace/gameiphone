@@ -378,12 +378,15 @@ PlayingDelegate>
         
         self.topItemView=[UIButton buttonWithType:UIButtonTypeCustom];
         self.topItemView.frame=CGRectMake(0,startX, 320, 0);
+        self.topItemView.backgroundColor = [UIColor clearColor];
         [self.topItemView setBackgroundImage:KUIImage([self getBgImage]) forState:UIControlStateNormal];
+        
         [self.topItemView.titleLabel setFont:[UIFont boldSystemFontOfSize:15]];
         [self.topItemView addTarget:self action:@selector(showTeamInfoView) forControlEvents:UIControlEventTouchUpInside];
         self.topItemView.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-        self.topItemView.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;//UIColorFromRGBA(0x339adf, 1)
+        self.topItemView.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
         [self.topItemView setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        
         [self.view addSubview:self.topItemView];
         
         
@@ -518,12 +521,10 @@ PlayingDelegate>
 #pragma mark 决定申请加入头部导航条是否显示
 -(void)initApplyTopMenuIsSHow{
     NSInteger  msgC = [DataStoreManager getDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"3"];
-    if (msgC>0) {
-        if (teamUsershipType) {
+    if (teamUsershipType) {
+        if (msgC>0) {
             [self showTopItemView:[NSString stringWithFormat:@"%d条申请",msgC]];
-        }
-    }else{
-        if (teamUsershipType) {
+        }else{
             [self hideTopItemView];
         }
     }
@@ -531,13 +532,11 @@ PlayingDelegate>
 #pragma mark 决定就位确认头部导航条是否显示
 -(void)initInpaceTopMenuIsShow{
     NSInteger onClickState = [DataStoreManager getTeamUser:self.chatWithUser UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    if(onClickState == 1){
-        if (!teamUsershipType) {
+    if (!teamUsershipType) {
+        if(onClickState == 1||onClickState == 2||onClickState == 3){
             [self showTopItemView:@"就位确认消息"];
-        }
-    }else {
-        if (!teamUsershipType) {
-            [self hideTopItemView];
+        }else {
+             [self hideTopItemView];
         }
     }
 }
@@ -713,7 +712,7 @@ PlayingDelegate>
         self.topItemView.hidden = NO;
         [self.topItemView setTitle:titleText forState:UIControlStateNormal];
         self.topItemView.frame = CGRectMake(0, startX, 320, topViewHight);
-        tView.frame = CGRectMake(0,startX+topViewHight,320,kScreenHeigth-startX-topViewHight-55);
+//        tView.frame = CGRectMake(0,startX+topViewHight,320,kScreenHeigth-startX-topViewHight-55);
         if (messages.count>0) {
             [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
         }
@@ -727,7 +726,7 @@ PlayingDelegate>
 -(void)hideTopItemView{
     [UIView animateWithDuration:0.3 animations:^{
         self.topItemView.frame = CGRectMake(0, startX, 320, 0);
-        tView.frame = CGRectMake(0,startX,320,self.view.frame.size.height-startX-55);
+//        tView.frame = CGRectMake(0,startX,320,self.view.frame.size.height-startX-55);
     }completion:^(BOOL finished) {
          self.topItemView.hidden = YES;
     }];
