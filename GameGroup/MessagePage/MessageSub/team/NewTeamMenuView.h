@@ -43,6 +43,10 @@
 -(void)hideView;//隐藏视图view
 -(void)settTitleMsg:(NSString*)titleText;//设置title
 -(void)setMemberListss;
+
+-(void)changInplaceState:(NSDictionary*)memberUserInfo;
+-(void)sendChangInplaceState;
+-(void)resetChangInplaceState;
 @end
 
 @protocol DetailDelegate <NSObject>

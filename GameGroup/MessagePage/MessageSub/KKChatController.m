@@ -24,7 +24,6 @@
 #import "KKSystemMsgCell.h"
 #import "KKHistoryMsgCell.h"
 #import "GroupCricleViewController.h"
-#import "TeamChatListView.h"
 #import "ItemManager.h"
 #import "ItemInfoViewController.h"
 #import "KKTeamInviteCell.h"
@@ -132,7 +131,6 @@ PlayingDelegate>
 @property (nonatomic, strong) NSMutableArray *messages;
 @property (nonatomic, strong) NSArray *typeData_list;
 @property (assign, nonatomic)  NSInteger groupCricleMsgCount;// 群动态的未读消息
-@property (nonatomic, strong) TeamChatListView * dropDownView;
 @property (nonatomic,strong) NewTeamMenuView * newTeamMenuView;
 @property (nonatomic,strong) NewTeamApplyListView * newTeamApplyListView;
 @property (nonatomic,strong) UIButton * topItemView;
@@ -281,6 +279,10 @@ PlayingDelegate>
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(saveAudioSuccessed:) name:KSAVEAUDIOSUCCESS object:nil];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(teamInfoUploadNotification:) name:teamInfoUpload object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//收到确认或者取消就位确认状态
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];//发起就位确认状态
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//初始化就位确认状态
     
     
     
@@ -917,14 +919,6 @@ PlayingDelegate>
 }
 /////
 
-#pragma mark -- 分类请求成功通知
--(void)updateTeamType:(id)responseObject
-{
-    if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
-        self.typeData_list = responseObject;
-        [self.dropDownView.customPhotoCollectionView reloadData];
-    }
-}
 //改变数据库位置
 -(void)changPosition:(NSMutableDictionary*)selectPosiitonDic
 {
@@ -941,45 +935,23 @@ PlayingDelegate>
         }
     }
 }
-//------------------------------------------------------------------------------------------------------------
-#pragma mark -- dropDownListDelegate
--(void) chooseAtSection:(NSInteger)section index:(NSInteger)index
-{
-    if (section == 0){
-        if (self.typeData_list&&index<self.typeData_list.count) {
-            NSMutableDictionary * clickType = [self.typeData_list objectAtIndex:index];
-            if ([selectType isKindOfClass:[NSDictionary class]]&&[KISDictionaryHaveKey(clickType, @"value") isEqualToString:KISDictionaryHaveKey(selectType, @"value")]) {
-                return;
-            }
-            [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:clickType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
-                selectType = clickType;
-                [self sendOtherMsg:[NSString stringWithFormat:@"选择了 %@",KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
-                [self changPosition:clickType];
-            } reError:^(id error) {
-                [self showErrorAlertView:error];
-            }];
-        }else{
-            [self showAlertViewWithTitle:@"提示" message:@"选择位置出错" buttonTitle:@"确定"];
-        }
-    }
-}
--(BOOL) clickAtSection:(NSInteger)section
-{
-    if (section==0) {
-        [[ItemManager singleton] getMyGameLocation:self.gameId reSuccess:^(id responseObject) {
-            [self updateTeamType:responseObject];
-        } reError:^(id error) {
-        }];
-        return YES;
-    }else if(section == 1){
-        return YES;
-    }else if(section==2){
-        [self refreJoinApplyMsgCount];
-        return YES;
-    }
-    return NO;
+
+#pragma mark 接收到确认或者取消消息通知,改变就位确认状态
+-(void)changInplaceState:(NSNotification*)notification{
+    NSDictionary * memberUserInfo = notification.userInfo;
+    [self.newTeamMenuView changInplaceState:memberUserInfo];
 }
 
+#pragma mark 接收到发起就位确认消息通知,改变就位确认状态
+-(void)sendChangInplaceState:(NSNotification*)notification{
+    [self.newTeamMenuView sendChangInplaceState];
+}
+
+#pragma mark 接收到初始化就位确认消息通知,改变就位确认状态
+-(void)resetChangInplaceState:(NSNotification*)notification{
+    [self.newTeamMenuView resetChangInplaceState];
+}
+//------------------------------------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------------------------------------
 

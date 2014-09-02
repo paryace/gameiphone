@@ -30,8 +30,6 @@
         self.backgroundColor = UIColorFromRGBA(0x000000, 0.6);
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changPosition:) name:kChangPosition object:nil];//位置改变
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changMemberList:) name:kChangMemberList object:nil];//组队人数变化
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];//发起就位确认状态
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//初始化就位确认状态
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:)name:UIApplicationWillResignActiveNotification object:nil]; //监听是否触发home键挂起程序.
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:)name:UIApplicationDidBecomeActiveNotification object:nil]; //监听是否重新进入程序程序.
         self.groipId = groupId;
@@ -748,12 +746,33 @@
 }
 
 #pragma mark 接收到确认或者取消消息通知,改变就位确认状态
--(void)changInplaceState:(NSNotification*)notification{
-    NSDictionary * memberUserInfo = notification.userInfo;
+-(void)changInplaceState:(NSDictionary*)memberUserInfo{
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
         [self changInplaceStateMethods:KISDictionaryHaveKey(memberUserInfo, @"userid") GroupId:KISDictionaryHaveKey(memberUserInfo, @"groupId") State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
     }
 }
+
+#pragma mark 接收到发起就位确认消息通知,改变就位确认状态
+-(void)sendChangInplaceState{
+    [self showButton];
+    [self changPState:@"1"];
+    [self.mTableView reloadData];
+    [self setBtnState];
+    [self.detaildelegate mHideOrShowTopMenuView];
+}
+
+#pragma mark 接收到初始化就位确认消息通知,改变就位确认状态
+-(void)resetChangInplaceState{
+    
+    if (self.teamUsershipType) {
+        [[InplaceTimer singleton] resetTimer:self.gameId RoomId:self.roomId];
+    }
+    [self setBtnState];
+    [self.detaildelegate mHideOrShowTopMenuView];
+    [self clearNorReadInpaceMsg];
+    [self.detaildelegate hideMenuView];//隐藏就位确认页面
+}
+
 
 -(void)changInplaceStateMethods:(NSString*)userId GroupId:(NSString*)groupId State:(NSString*)state{
     [self changPState:[GameCommon getNewStringWithId:userId] GroupId:[GameCommon getNewStringWithId:groupId] State:state];
@@ -763,26 +782,6 @@
     [self.detaildelegate mHideOrShowTopMenuView];
 }
 
-#pragma mark 接收到发起就位确认消息通知,改变就位确认状态
--(void)sendChangInplaceState:(NSNotification*)notification{
-    [self showButton];
-    [self changPState:@"1"];
-    [self.mTableView reloadData];
-    [self setBtnState];
-    [self.detaildelegate mHideOrShowTopMenuView];
-}
-
-#pragma mark 接收到初始化就位确认消息通知,改变就位确认状态
--(void)resetChangInplaceState:(NSNotification*)notification{
-
-    if (self.teamUsershipType) {
-        [[InplaceTimer singleton] resetTimer:self.gameId RoomId:self.roomId];
-    }
-    [self setBtnState];
-    [self.detaildelegate mHideOrShowTopMenuView];
-    [self clearNorReadInpaceMsg];
-    [self.detaildelegate hideMenuView];//隐藏就位确认页面
-}
 //显示
 -(void)showView{
     [self getmemberList];
