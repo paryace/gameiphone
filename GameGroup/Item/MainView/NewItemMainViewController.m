@@ -301,6 +301,8 @@
         }
     }else if (sender ==m_button2){
         if (!m_button2.selected) {
+            [firstView hiddenSearchBarKeyBoard];
+
             m_button2.selected = YES;
             m_button1.selected = NO;
             sortingBtn.hidden = YES;

@@ -131,6 +131,12 @@
 }
 
 
+-(void)hiddenSearchBarKeyBoard
+{
+    tagView.hidden = YES;
+    [mSearchBar resignFirstResponder];
+}
+
 //拿偏好页的条件搜索
 -(void)InitializeInfo:(NSDictionary*)mainDict
 {
