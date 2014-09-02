@@ -478,13 +478,18 @@
         gameImg.placeholderImage = KUIImage(@"clazz_icon.png");
         gameImg.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dict, @"gameid")]];
         nameLabel.text = KISDictionaryHaveKey(dict, @"name");
-//        NSString *auth =[dict objectForKey:@"auth"];
-        //    BOOL isAuth = [auth boolValue];
-//        if ([auth intValue]==0) {
-//            authBg.image = KUIImage(@"chara_auth_2");
-//        }else{
-//            authBg.image = KUIImage(@"chara_auth_1");
-//        }
+        NSString *auth =[dict objectForKey:@"auth"];
+        
+        if ([KISDictionaryHaveKey(dict, @"failedmsg")intValue]==404||[KISDictionaryHaveKey(dict, @"failedmsg") isEqualToString:@"notSupport"]) {
+            authBg.image  = KUIImage(@"chara_auth_3");
+        }
+        else{
+        if ([auth intValue]==0) {
+            authBg.image = KUIImage(@"chara_auth_2");
+        }else{
+            authBg.image = KUIImage(@"chara_auth_1");
+        }
+        }
         NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")],@"gameid",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")],@"characterId", nil];
         
         [self getCardWithNetWithDic:dic];

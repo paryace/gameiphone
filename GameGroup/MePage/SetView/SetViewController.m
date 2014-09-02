@@ -47,7 +47,7 @@
     topVIew.backgroundColor = [UIColor colorWithRed:240/255.0f green:240/255.0f blue:240/255.0f alpha:1];
     m_myTableView.tableHeaderView = topVIew;
     UIImageView *headImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, 165)];
-    headImageView.image = KUIImage(@"head_me");
+    headImageView.image = KUIImage(@"head_me.jpg");
     [topVIew addSubview:headImageView];
     
     UILabel *banbenView = [[UILabel alloc]initWithFrame:CGRectMake(20, 165, 300, 44)];
