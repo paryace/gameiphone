@@ -146,7 +146,7 @@
             cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
             cell.bgImageView.hidden = YES;
         }else{
-            cell.bgImageView.image = KUIImage(@"team_placeholder2.jpg");
+            cell.bgImageView.image = KUIImage(@"team_placeholder2");
 
             cell.bgImageView.hidden = NO;
             cell.headImg.imageURL = nil;
@@ -176,7 +176,7 @@
             cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
             cell.bgImageView.hidden = YES;
         }else{
-            cell.bgImageView.image = KUIImage(@"team_placeholder2.jpg");
+            cell.bgImageView.image = KUIImage(@"team_placeholder2");
             cell.bgImageView.hidden = NO;
             cell.headImg.imageURL = nil;
             cell.titleLabel.text = nil;
