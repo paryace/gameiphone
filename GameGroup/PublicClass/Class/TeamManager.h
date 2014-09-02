@@ -37,6 +37,7 @@
 //更新就位确认状态
 -(void)updateTeamUserState:(NSDictionary*)memberUserInfo;
 
+-(void)updateTeamUserState:(NSString*)userId GroupId:(NSString*)groupId State:(NSString*)state Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
 //收到发起就位确认消息，更新就位确认状态
 -(void)updateTeamUserState:(NSString*)groupId UserId:(NSString*)userId MemberList:(NSArray*)memberList State:(NSString*)state;
