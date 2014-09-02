@@ -854,8 +854,10 @@
 }
 
 -(void)deleteMember:(NSString*)memberId GameId:(NSString*)gameId RoomId:(NSString*)roomId MemberTeamUserId:(NSString*)memberTeamUserId{
+    NSMutableArray * claimedList_array = [claimedList_dataArray mutableCopy];
+    NSMutableArray * m_array = [m_dataArray mutableCopy];
     if ([GameCommon isEmtity:[GameCommon getNewStringWithId:memberTeamUserId]]) {
-        for (NSDictionary * dic in claimedList_dataArray) {
+        for (NSDictionary * dic in claimedList_array) {
             if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:gameId]
                 && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] isEqualToString:memberId]
                 && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:roomId]) {
@@ -863,7 +865,7 @@
             }
         }
     }else{
-        for (NSDictionary * dic in m_dataArray ) {
+        for (NSDictionary * dic in m_array ) {
             if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:gameId]
                 && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")] isEqualToString:memberId]
                 && [[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] isEqualToString:roomId]) {
