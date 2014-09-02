@@ -184,10 +184,10 @@
 
 -(void)saveChanged:(id)sender
 {
-    if ([GameCommon isEmtity:[GameCommon getNewStringWithId:firstTextView.text]]) {
-        [self showAlertViewWithTitle:@"提示" message:@"描述内容不能为空" buttonTitle:@"确定"];
-        return;
-    }
+//    if ([GameCommon isEmtity:[GameCommon getNewStringWithId:firstTextView.text]]) {
+//        [self showAlertViewWithTitle:@"提示" message:@"描述内容不能为空" buttonTitle:@"确定"];
+//        return;
+//    }
     NSInteger ziNum = m_maxZiShu - firstTextView.text.length;
     
     if (ziNum<0) {
