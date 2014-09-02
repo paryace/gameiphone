@@ -364,7 +364,7 @@ static ItemManager *itemManager = NULL;
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"setTeamPosition--%@",responseObject);
         [[NSUserDefaults standardUserDefaults] setObject:selectType forKey:[NSString stringWithFormat:@"%@%@",@"selectType_",groupId]];
-        [DataStoreManager updatePosition:roomId GameId:gameid GroupId:groupId UserId:userid TeamPosition:selectType Successcompletion:^(BOOL success, NSError *error) {
+        [DataStoreManager updatePosition:[GameCommon getNewStringWithId:roomId] GameId:[GameCommon getNewStringWithId:gameid] GroupId:[GameCommon getNewStringWithId:groupId] UserId:[GameCommon getNewStringWithId:userid] TeamPosition:selectType Successcompletion:^(BOOL success, NSError *error) {
             NSMutableDictionary * tDic = [selectType mutableCopy];
             [tDic setValue:roomId forKey:@"roomId"];
             [tDic setValue:gameid forKey:@"gameId"];
