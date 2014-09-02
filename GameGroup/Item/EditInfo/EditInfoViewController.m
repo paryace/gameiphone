@@ -71,7 +71,7 @@
     layout.minimumLineSpacing =10;
     layout.scrollDirection = UICollectionViewScrollDirectionVertical;
     layout.itemSize = CGSizeMake(88, 30);
-    customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10.0f, startX+110, 300, kScreenHeigth - 330-startX) collectionViewLayout:layout];
+    customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10.0f, startX+110, 300, kScreenHeigth - 110-startX) collectionViewLayout:layout];
     customPhotoCollectionView.delegate = self;
     customPhotoCollectionView.scrollEnabled = YES;
     customPhotoCollectionView.showsHorizontalScrollIndicator = NO;
@@ -315,16 +315,15 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)textViewDidBeginEditing:(UITextView *)textView{
+    CGRect frame = textView.frame;
+    [UIView animateWithDuration:0.3 animations:^{
+        customPhotoCollectionView.frame = CGRectMake(10.0f, startX+110, 300, kScreenHeigth - startX - 10 - 216-10 - frame.size.height);
+    }];
 }
-*/
-
+- (void)textViewDidEndEditing:(UITextView *)textView{
+    [UIView animateWithDuration:0.3 animations:^{
+        customPhotoCollectionView.frame = CGRectMake(110.0f, startX+110, 300, kScreenHeigth - 110-startX);
+    }];
+}
 @end
