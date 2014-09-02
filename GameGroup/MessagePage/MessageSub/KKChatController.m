@@ -4191,9 +4191,8 @@ PlayingDelegate>
     if (notification.userInfo&&[notification.userInfo isKindOfClass:[NSDictionary class]]) {
         NSString * groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(notification.userInfo, @"groupId")];
         if ([groupId isEqualToString:[GameCommon getNewStringWithId:self.chatWithUser]]) {
-             NSMutableArray * userList = KISDictionaryHaveKey(notification.userInfo, @"memberList");
-            if (self.newTeamMenuView&&userList) {
-                [self.newTeamMenuView setMemberListss:userList];
+            if (self.newTeamMenuView) {
+                [self.newTeamMenuView setMemberListss];
             }
         }
        
