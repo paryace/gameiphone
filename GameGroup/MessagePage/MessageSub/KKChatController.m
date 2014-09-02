@@ -183,8 +183,6 @@ PlayingDelegate>
         [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
         //ack反馈消息通知
         [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
-        [self.newTeamMenuView deallocContro];
-        [self.newTeamApplyListView deallocContro];
     }
     [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.chatWithUser];
     if ([self.type isEqualToString:@"normal"]) {

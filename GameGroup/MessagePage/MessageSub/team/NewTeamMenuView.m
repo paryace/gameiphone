@@ -768,7 +768,7 @@
     [self clearNorReadInpaceMsg];
     [self setBtnState];
     [self.detaildelegate mHideOrShowTopMenuView];
-    [self.detaildelegate hideMenuView];
+    [self.detaildelegate hideMenuView];//隐藏就位确认页面
 }
 //显示
 -(void)showView{
@@ -855,11 +855,6 @@
     [self sendBtnUnEnable];
 }
 
--(void)deallocContro{
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:kChangInplaceState object:nil];
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:kSendChangInplaceState object:nil];
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:kResetChangInplaceState object:nil];
-}
 
 - (void)dealloc
 {
