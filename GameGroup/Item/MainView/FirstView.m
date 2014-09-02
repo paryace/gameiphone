@@ -154,10 +154,12 @@
 -(void)tagClick:(UIButton*)sender
 {
     selectDescription = KISDictionaryHaveKey([arrayTag objectAtIndex:sender.tag], @"value");
-    [self reloInfo:YES];
-    if([mSearchBar isFirstResponder]){
-        [mSearchBar resignFirstResponder];
-    }
+    mSearchBar.text = [mSearchBar.text stringByAppendingString:selectDescription?selectDescription:@""];
+
+//    [self reloInfo:YES];
+//    if([mSearchBar isFirstResponder]){
+//        [mSearchBar resignFirstResponder];
+//    }
 }
 
 //设置按钮文字

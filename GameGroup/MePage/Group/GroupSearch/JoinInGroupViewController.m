@@ -478,7 +478,7 @@
         gameImg.placeholderImage = KUIImage(@"clazz_icon.png");
         gameImg.imageURL = [ImageService getImageStr2:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(dict, @"gameid")]];
         nameLabel.text = KISDictionaryHaveKey(dict, @"name");
-        NSString *auth =[dict objectForKey:@"auth"];
+//        NSString *auth =[dict objectForKey:@"auth"];
         //    BOOL isAuth = [auth boolValue];
 //        if ([auth intValue]==0) {
 //            authBg.image = KUIImage(@"chara_auth_2");

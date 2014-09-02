@@ -45,6 +45,7 @@
         
         self.bgImageView = [UIButton buttonWithType:UIButtonTypeCustom];
         [self.bgImageView setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
+        [self.bgImageView  setExclusiveTouch :YES];
         [self.contentView addSubview:self.bgImageView];
         [self.bgImageView  addTarget:self action:@selector(onClick:) forControlEvents:UIControlEventTouchUpInside];
         UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(onLongClick:)];
@@ -59,6 +60,7 @@
         
         //重连
         self.failImage = [[UIButton alloc]initWithFrame:CGRectZero];
+        [self.failImage  setExclusiveTouch :YES];
         [self.failImage setBackgroundImage:KUIImage(@"fail_bg") forState:UIControlStateNormal];
         self.failImage.hidden = YES;
         [self.contentView addSubview:self.failImage];
