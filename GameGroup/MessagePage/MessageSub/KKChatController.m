@@ -630,8 +630,6 @@ PlayingDelegate>
             [self teamInfoAction];
         }
     }
-    NSLog(@"---index--%d",index);
-  
 }
 
 //
@@ -705,7 +703,7 @@ PlayingDelegate>
 }
 
 
-//显示头部View
+//显示头部横条View
 -(void)showTopItemView:(NSString*)titleText{
     [UIView animateWithDuration:0.3 animations:^{
         
@@ -722,7 +720,7 @@ PlayingDelegate>
     offsetTopHight = topViewHight;
    
 }
-//隐藏头部View
+//隐藏头部横条View
 -(void)hideTopItemView{
     [UIView animateWithDuration:0.3 animations:^{
         self.topItemView.frame = CGRectMake(0, startX, 320, 0);
