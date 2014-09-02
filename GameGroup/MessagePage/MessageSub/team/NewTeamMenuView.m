@@ -778,9 +778,9 @@
     if (self.teamUsershipType) {
         [[InplaceTimer singleton] resetTimer:self.gameId RoomId:self.roomId];
     }
-    [self clearNorReadInpaceMsg];
     [self setBtnState];
     [self.detaildelegate mHideOrShowTopMenuView];
+    [self clearNorReadInpaceMsg];
     [self.detaildelegate hideMenuView];//隐藏就位确认页面
 }
 //显示

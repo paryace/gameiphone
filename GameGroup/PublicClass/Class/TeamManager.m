@@ -204,9 +204,6 @@ static TeamManager *teamManager = NULL;
 //收到就位确认结果消息，初始化就位确认状态
 -(void)resetTeamUserState:(NSString*)groupId
 {
-    //重置就位确认消息为0
-//    [DataStoreManager updateDSTeamNotificationMsgCount:groupId SayHightType:@"1"];//
-    [DataStoreManager updateDSTeamNotificationMsgCount:groupId SayHightType:@"4"];//
     [DataStoreManager resetTeamUser:groupId State:@"0" OnClickState:@"0" Successcompletion:^(BOOL success, NSError *error) {
         [[NSNotificationCenter defaultCenter]postNotificationName:kResetChangInplaceState object:nil userInfo:nil];
     }];
