@@ -36,18 +36,25 @@
     m_mytableView.dataSource = self;
     [self.view addSubview:m_mytableView];
     [GameCommon setExtraCellLineHidden:m_mytableView];
+    
+    hud = [[MBProgressHUD alloc] initWithView:self.view];
+    hud.labelText = @"加载中...";
+    [self.view addSubview:hud];
     [self getInfo];
 }
 
 -(void)getInfo
 {
+    [hud show:YES];
     [[ItemManager singleton]getMyGameLocation:self.gameid reSuccess:^(id responseObject) {
+        [hud hide:YES];
         if ([responseObject isKindOfClass:[NSArray class]]) {
             [arr removeAllObjects];
             [arr addObjectsFromArray:responseObject];
             [m_mytableView reloadData];
         }
     } reError:^(id error) {
+        [hud hide:YES];
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
