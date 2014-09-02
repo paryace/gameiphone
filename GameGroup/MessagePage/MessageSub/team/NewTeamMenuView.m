@@ -362,7 +362,11 @@
     [hud show:YES];
     [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"1" reSuccess:^(id responseObject) {
         [hud hide:YES];
-//        self.agreeBtn = NO;
+        
+        [[TeamManager singleton] updateTeamUserState:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] GroupId:self.groipId State:@"2" Successcompletion:^(BOOL success, NSError *error) {
+            [self changInplaceStateMethods:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] GroupId:self.groipId State:@"2"];
+        }];
+        
     } reError:^(id error) {
         [hud hide:YES];
         [self showErrorAlertView:error];
@@ -373,6 +377,9 @@
     [hud show:YES];
     [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"0" reSuccess:^(id responseObject){
         [hud hide:YES];
+        [[TeamManager singleton] updateTeamUserState:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] GroupId:self.groipId State:@"3" Successcompletion:^(BOOL success, NSError *error) {
+            [self changInplaceStateMethods:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] GroupId:self.groipId State:@"3"];
+        }];
     } reError:^(id error) {
         [hud hide:YES];
         [self showErrorAlertView:error];
@@ -744,13 +751,18 @@
 -(void)changInplaceState:(NSNotification*)notification{
     NSDictionary * memberUserInfo = notification.userInfo;
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
-        [self changPState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
-        [self.mTableView reloadData];
-        [self clearNorReadInpaceMsg];
-        [self setBtnState];
-        [self.detaildelegate mHideOrShowTopMenuView];
+        [self changInplaceStateMethods:KISDictionaryHaveKey(memberUserInfo, @"userid") GroupId:KISDictionaryHaveKey(memberUserInfo, @"groupId") State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
     }
 }
+
+-(void)changInplaceStateMethods:(NSString*)userId GroupId:(NSString*)groupId State:(NSString*)state{
+    [self changPState:[GameCommon getNewStringWithId:userId] GroupId:[GameCommon getNewStringWithId:groupId] State:state];
+    [self.mTableView reloadData];
+    [self clearNorReadInpaceMsg];
+    [self setBtnState];
+    [self.detaildelegate mHideOrShowTopMenuView];
+}
+
 #pragma mark 接收到发起就位确认消息通知,改变就位确认状态
 -(void)sendChangInplaceState:(NSNotification*)notification{
     [self showButton];
@@ -759,6 +771,7 @@
     [self setBtnState];
     [self.detaildelegate mHideOrShowTopMenuView];
 }
+
 #pragma mark 接收到初始化就位确认消息通知,改变就位确认状态
 -(void)resetChangInplaceState:(NSNotification*)notification{
 
