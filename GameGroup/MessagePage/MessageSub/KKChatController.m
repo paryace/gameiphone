@@ -668,7 +668,7 @@ PlayingDelegate>
 //隐藏队员列表
 - (void)hideExtendedChooseView
 {
-    
+    CGRect reTop = self.topItemView.frame;
     [UIView animateWithDuration:0.3 animations:^{
         self.topImageView.hidden = NO;
         self.newTeamMenuView.alpha = 1;
@@ -676,6 +676,7 @@ PlayingDelegate>
         self.newTeamMenuView.alpha = 0;
         
         tView.frame = CGRectMake(0,startX,320,self.view.frame.size.height-startX-55);
+        self.topItemView.frame = CGRectMake(0, startX, 320, reTop.size.height);
     }completion:^(BOOL finished) {
         self.newTeamMenuView.hidden = YES;
         
@@ -688,6 +689,7 @@ PlayingDelegate>
 //显示队员列表
 -(void)showChooseListViewInSection
 {
+    CGRect reTop = self.topItemView.frame;
     [self hideKeyEmView];
     [UIView animateWithDuration:0.3 animations:^{
         self.newTeamMenuView.hidden = NO;
@@ -696,6 +698,7 @@ PlayingDelegate>
         
         self.newTeamMenuView.alpha = 1;
         self.tView.frame = CGRectMake(0,0, 320,kScreenHeigth-55);
+        self.topItemView.frame = CGRectMake(0, 0, 320, reTop.size.height);
     }completion:^(BOOL finished) {
         self.topImageView.hidden = YES;
 

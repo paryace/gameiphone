@@ -50,6 +50,7 @@
         self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,18, 200, 44)];
         self.titleLabel.textColor = [UIColor whiteColor];
         self.titleLabel.text = @"队员列表";
+        self.titleLabel.backgroundColor = [UIColor clearColor];
         self.titleLabel.textAlignment = NSTextAlignmentCenter;
         self.titleLabel.font = [UIFont boldSystemFontOfSize:20];
         [bgImageView addSubview:self.titleLabel];
