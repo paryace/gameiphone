@@ -291,7 +291,9 @@
         [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
         return;
     }
-    if ([GameCommon isEmtity:m_miaoshuTV.text]) {
+    NSString *trimmedString = [m_miaoshuTV.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
+    if ([GameCommon isEmtity:trimmedString]) {
         [self showAlertViewWithTitle:@"提示" message:@"组队描述内容不能为空" buttonTitle:@"OK"];
         return;
     }
