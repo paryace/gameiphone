@@ -408,8 +408,11 @@
             [self setTitleMsg:responseObject];
             [claimedList_dataArray removeAllObjects];
             [claimedList_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"claimedList")];
-            [m_dataArray removeAllObjects];
-            [m_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"memberList")];
+            if ([KISDictionaryHaveKey(responseObject, @"memberList") isKindOfClass:[NSArray class]]) {
+                [m_dataArray removeAllObjects];
+                [m_dataArray addObjectsFromArray:[self comm:KISDictionaryHaveKey(responseObject, @"memberList")]];
+            }
+            
             [m_myTableView reloadData];
             [roleTabView.roleTableView reloadData];
         }
@@ -417,6 +420,53 @@
         [hud hide:YES];
         [self showAlertDialog:error];
     }];
+}
+
+//排序
+-(NSMutableArray*)comm:(NSMutableArray*)array{
+    NSMutableArray *chineseStringsArray=[NSMutableArray array];
+    for(int i=0;i<[array count];i++){
+        ChineseString *chineseString=[[ChineseString alloc]init];
+        NSDictionary * memberDic = [array objectAtIndex:i];
+        NSString * str;
+        if ([KISDictionaryHaveKey(memberDic, @"position")&&KISDictionaryHaveKey(memberDic, @"position") isKindOfClass:[NSDictionary class]]) {
+            str = KISDictionaryHaveKey(KISDictionaryHaveKey(memberDic, @"position"), @"value");
+            if ([GameCommon isEmtity:str]) {
+                str = @"Z";
+            }
+        }else{
+            str = @"Z";
+        }
+       
+        
+        chineseString.string=[NSString stringWithString:str];
+        chineseString.memberInfo = memberDic;
+        if(chineseString.string==nil){
+            chineseString.string=@"";
+        }
+        if(![chineseString.string isEqualToString:@""]){
+            NSString *pinYinResult=[NSString string];
+            for(int j=0;j<chineseString.string.length;j++){
+                NSString *singlePinyinLetter=[[NSString stringWithFormat:@"%c",pinyinFirstLetter([chineseString.string characterAtIndex:j])]uppercaseString];
+                
+                pinYinResult=[pinYinResult stringByAppendingString:singlePinyinLetter];
+            }
+            chineseString.pinYin=pinYinResult;
+        }else{
+            chineseString.pinYin=@"";
+        }
+        [chineseStringsArray addObject:chineseString];
+    }
+    
+    NSArray *sortDescriptors = [NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:@"pinYin" ascending:YES]];
+    [chineseStringsArray sortUsingDescriptors:sortDescriptors];
+    
+    
+    NSMutableArray *result=[NSMutableArray array];
+    for(int i=0;i<[chineseStringsArray count];i++){
+        [result addObject:((ChineseString*)[chineseStringsArray objectAtIndex:i]).memberInfo];
+    }
+    return result;
 }
 
 -(void)setTitleMsg:(NSDictionary*)teamInfo{

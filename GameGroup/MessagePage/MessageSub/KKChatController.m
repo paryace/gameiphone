@@ -441,11 +441,6 @@ PlayingDelegate>
 }
 
 -(void)setTopViewWithTitle{
-//    UIImageView *hideImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 20 : 0)];
-//    hideImage.userInteractionEnabled = YES;
-//    hideImage.backgroundColor = kColorWithRGB(23, 161, 240, 1.0);
-//    hideImage.image = KUIImage(@"nav_bg");
-//    [self.view addSubview:hideImage];
     //top导航条
     self.topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
     self.topImageView.userInteractionEnabled = YES;
