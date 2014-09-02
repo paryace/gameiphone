@@ -709,8 +709,11 @@ PlayingDelegate>
         
         self.topItemView.hidden = NO;
         [self.topItemView setTitle:titleText forState:UIControlStateNormal];
-        self.topItemView.frame = CGRectMake(0, startX, 320, topViewHight);
-//        tView.frame = CGRectMake(0,startX+topViewHight,320,kScreenHeigth-startX-topViewHight-55);
+        if (self.newTeamMenuView&&self.newTeamMenuView.isShow) {
+            self.topItemView.frame = CGRectMake(0, 0, 320, topViewHight);
+        }else{
+            self.topItemView.frame = CGRectMake(0, startX, 320, topViewHight);
+        }
         if (messages.count>0) {
             [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
         }
@@ -723,8 +726,11 @@ PlayingDelegate>
 //隐藏头部横条View
 -(void)hideTopItemView{
     [UIView animateWithDuration:0.3 animations:^{
-        self.topItemView.frame = CGRectMake(0, startX, 320, 0);
-//        tView.frame = CGRectMake(0,startX,320,self.view.frame.size.height-startX-55);
+        if (self.newTeamMenuView&&self.newTeamMenuView.isShow) {
+            self.topItemView.frame = CGRectMake(0, 0, 320, 0);
+        }else{
+            self.topItemView.frame = CGRectMake(0, startX, 320, 0);
+        }
     }completion:^(BOOL finished) {
          self.topItemView.hidden = YES;
     }];
