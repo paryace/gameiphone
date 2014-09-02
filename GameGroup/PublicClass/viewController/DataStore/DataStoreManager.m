@@ -1710,8 +1710,9 @@
     }else{
         nameIndex = [[nameKey substringToIndex:1] uppercaseString];
     }
+    BOOL isEmoji = [self stringContainsEmoji:nameKey];//判断字符串是否包含表情
     //没有昵称和备注的情况nameindex标记为＃
-    if ([GameCommon isEmtity:nameIndex]) {
+    if ([GameCommon isEmtity:nameIndex]||isEmoji) {
         nameIndex=@"#";
     }
     
