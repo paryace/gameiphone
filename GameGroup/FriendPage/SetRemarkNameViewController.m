@@ -49,6 +49,11 @@
         if (alertView.cancelButtonIndex != buttonIndex) {
             [self.navigationController popViewControllerAnimated:YES];
         }
+    }else if (alertView.tag == 102){
+        if (alertView.cancelButtonIndex != buttonIndex) {
+            m_remarkText.text = @"";
+            [self reMarkNickName:@""];
+        }
     }
 }
 -(void)dealloc{
@@ -87,22 +92,24 @@
 {
     [m_remarkText resignFirstResponder];
     if (KISEmptyOrEnter(m_remarkText.text)) {
-//        [self showAlertViewWithTitle:@"提示" message:@"请输入备注名称" buttonTitle:@"确定"];
-//        return;
-        m_remarkText.text = @"";
+        alert1 = [[UIAlertView alloc] initWithTitle:@"提示" message:@"是否删除用户备注" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确认", nil];
+        alert1.tag = 102;
+        [alert1 show];
+        return;
     }
-    else if([[GameCommon shareGameCommon] unicodeLengthOfString:m_remarkText.text] > 6)
+    if([[GameCommon shareGameCommon] unicodeLengthOfString:m_remarkText.text] > 6)
     {
         [self showAlertViewWithTitle:@"提示" message:@"备注名称最长6个汉字" buttonTitle:@"确定"];
         return;
     }
-  
+    [self reMarkNickName:m_remarkText.text];
+}
+
+-(void)reMarkNickName:(NSString*)nickName{
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-   
     [paramDict setObject:self.userId forKey:@"frienduserid"];
-    [paramDict setObject:m_remarkText.text forKey:@"friendalias"];
-    
+    [paramDict setObject:nickName forKey:@"friendalias"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"117" forKey:@"method"];
@@ -125,7 +132,7 @@
         }
         else
             [DataStoreManager storeThumbMsgUser:self.userId nickName:m_remarkText.text];
-
+        
         [self.navigationController popViewControllerAnimated:YES];
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
