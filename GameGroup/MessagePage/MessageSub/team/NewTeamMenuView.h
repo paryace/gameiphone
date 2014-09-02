@@ -36,6 +36,7 @@
 @property (nonatomic, strong) NSString *gameId;
 @property (nonatomic, nonatomic)  BOOL teamUsershipType;
 @property (nonatomic, nonatomic)  BOOL isShow;
+@property (assign, nonatomic) NSInteger deleteIndex;
 @property (strong, nonatomic)  NSMutableArray * memberList;
 
 - (id)initWithFrame:(CGRect)frame GroupId:(NSString*)groupId RoomId:(NSString*)roomId GameId:(NSString*)gameId teamUsershipType:(BOOL)teamUsershipType;
@@ -54,6 +55,7 @@
 -(void)itemOnClick:(NSDictionary*)charaDic;//点击item
 -(void)headImgClick:(NSString*)userId;//点击头像
 -(void)doCloseInpacePageAction;//关闭页面
+-(void)doCloseControllerAction;//退出页面
 -(void)mHideOrShowTopMenuView;//隐藏头部消息提示view
 -(void)menuOnClick:(NSInteger)senderTag;
 -(void)hideMenuView;

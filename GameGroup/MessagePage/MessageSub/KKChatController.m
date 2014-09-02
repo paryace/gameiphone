@@ -765,6 +765,9 @@ PlayingDelegate>
 -(void)doCloseInpacePageAction{
     [self showOrHideControl];
 }
+-(void)doCloseControllerAction{
+    [self.navigationController popViewControllerAnimated:YES];
+}
 
 #pragma mark -- 隐藏头部消息提示view
 -(void)mHideOrShowTopMenuView{

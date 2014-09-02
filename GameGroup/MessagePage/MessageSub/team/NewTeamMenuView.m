@@ -96,7 +96,7 @@
         pveLable.backgroundColor = [UIColor clearColor];
         pveLable.textAlignment = NSTextAlignmentCenter;
         pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
-        pveLable.text = @"队长可以滑动名单进行管理";
+        pveLable.text = self.teamUsershipType?@"队长可以滑动名单进行管理":@"队员滑动自己可以退出房间";
         pveLable.font =[ UIFont systemFontOfSize:20];
         
         if (!self.mTableView) {
@@ -501,7 +501,7 @@
         pveLable.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0.5);
         pveLable.textAlignment = NSTextAlignmentCenter;
         pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
-        pveLable.text = @"队长可以滑动名单进行管理";
+        pveLable.text = self.teamUsershipType?@"队长可以滑动名单进行管理":@"队员滑动自己可以退出房间";
         pveLable.font =[ UIFont systemFontOfSize:12];
         [view addSubview:pveLable];
         return view;
@@ -629,6 +629,12 @@
             return @"解散";
         }
         return @"删除";
+    }else if(!self.teamUsershipType){
+        NSMutableDictionary * dic = [self.memberList objectAtIndex:indexPath.row];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]) {
+            return @"退出";
+        }
+        return @"";
     }
     return @"";
 }
@@ -639,6 +645,12 @@
     }
     if (self.teamUsershipType) {
         return YES;
+    }else if(!self.teamUsershipType){
+        NSMutableDictionary * dic = [self.memberList objectAtIndex:indexPath.row];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]) {
+            return YES;
+        }
+        return NO;
     }
     return NO;
     
@@ -648,12 +660,20 @@
     if (indexPath.section==1) {
         return;
     }
+    self.deleteIndex = indexPath.row;
     if (editingStyle ==UITableViewCellEditingStyleDelete) {
         tableView.editing = NO;
         NSMutableDictionary * dic = [self.memberList objectAtIndex:indexPath.row];
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]) {
-            UIAlertView*  alert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要解散队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须解散", nil];
-            alert.tag = 10000001;
+            
+            if (self.teamUsershipType) {
+                UIAlertView*  alert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要解散队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须解散", nil];
+                alert.tag = 10000001;
+                [alert show];
+                return;
+            }
+            UIAlertView*  alert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要退出该队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+            alert.tag = 10000002;
             [alert show];
             return;
         }
@@ -684,7 +704,28 @@
                 [self showErrorAlertView:error];
             }];
         }
+    }else if (alertView.tag ==10000002) {
+        if (buttonIndex==1) {
+            hud.labelText = @"请稍等...";
+            [hud show:YES];
+             NSMutableDictionary * dic = [self.memberList objectAtIndex:self.deleteIndex];
+            [[ItemManager singleton] exitTeam:[GameCommon getNewStringWithId:self.roomId] GameId:[GameCommon getNewStringWithId:self.gameId] MemberId:[GameCommon getNewStringWithId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")]] reSuccess:^(id responseObject) {
+                [hud hide:YES];
+                [self.detaildelegate doCloseControllerAction];
+                [self showToastAlertView:@"退出成功"];
+            } reError:^(id error) {
+                [hud hide:YES];
+                [self showErrorAlertView:error];
+            }];
+        }
     }
+}
+
+
+//退出房间
+-(void)gooutRoomWithNet
+{
+   
 }
 
 
