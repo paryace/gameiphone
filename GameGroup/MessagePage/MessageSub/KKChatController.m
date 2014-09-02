@@ -897,6 +897,7 @@ PlayingDelegate>
     [hud show:YES];
     [[ItemManager singleton] setTeamPosition:self.gameId UserId:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] RoomId:self.roomId PositionTag:clickType GroupId:self.chatWithUser reSuccess:^(id responseObject) {
         [hud hide:YES];
+        [self hideMenuView];
         selectType = clickType;
         [self sendOtherMsg:[NSString stringWithFormat:@"选择了 %@",KISDictionaryHaveKey(selectType, @"value")] TeamPosition:KISDictionaryHaveKey(selectType, @"value")];
         [self changPosition:clickType];
