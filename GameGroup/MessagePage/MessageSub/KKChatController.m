@@ -2567,7 +2567,8 @@ PlayingDelegate>
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"startTeamPreparedConfirm"]//发起就位确认
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedConfirmResultSuccess"]//就位确认成功
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedConfirmResultFail"]//就位确认失败
-             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamClaimAddType"])//占坑消息
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamClaimAddType"]//占坑消息
+             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamClaimKickType"])//占坑的人被踢出
     {
         return KKChatMsgTypeSystem;
     }

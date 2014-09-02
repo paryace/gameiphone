@@ -53,6 +53,8 @@
 
 -(void)teamClaimAddTypeMessageReceived:(NSDictionary *)messageContent;//占坑
 
+-(void)teamClaimKickTypeMessageReceived:(NSDictionary *)messageContent;//预约的人被踢出
+
 -(void)teamOccupyTypeMessageReceived:(NSDictionary *)messageContent;//填坑
 
 -(void)teamInviteTypeMessageReceived:(NSDictionary *)messageContent;//邀请加入组队

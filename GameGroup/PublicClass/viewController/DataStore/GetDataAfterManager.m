@@ -418,10 +418,27 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
             [[NSNotificationCenter defaultCenter] postNotificationName:kteamMessage object:nil userInfo:msgDic];
         });
     }];
-    
-    
-    [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
 }
+#pragma mark 预约的人被踢出
+-(void)teamClaimKickTypeMessageReceived:(NSDictionary *)messageContent{
+    NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
+    NSString * groupId = KISDictionaryHaveKey(payloadDic, @"groupId");
+    [messageContent setValue:groupId forKey:@"groupId"];
+    [messageContent setValue:@"1" forKey:@"sayHiType"];
+    [DataStoreManager saveTeamThumbMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        
+    }];
+    [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
+        [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[MessageSetting singleton] setSoundOrVibrationopen];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNewMessageReceived object:nil userInfo:msgDic];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kteamMessage object:nil userInfo:msgDic];
+        });
+    }];
+
+}
+
 #pragma mark 填坑
 -(void)teamOccupyTypeMessageReceived:(NSDictionary *)messageContent{
     [self comeBackDelivered:KISDictionaryHaveKey(messageContent, @"sender") msgId:KISDictionaryHaveKey(messageContent, @"msgId") Type:@"normal"];//反馈消息
