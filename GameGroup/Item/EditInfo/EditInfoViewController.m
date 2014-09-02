@@ -62,6 +62,7 @@
     firstTextView.backgroundColor = [UIColor clearColor];
     firstTextView.text = self.firstStr;
     firstTextView.delegate = self;
+    firstTextView.returnKeyType =UIReturnKeyDone;
     [self.view addSubview:firstTextView];
     
 
@@ -103,6 +104,13 @@
     hud.labelText = @"保存中...";
     [self getcardFromNetWithGameid:self.gameid TypeId:self.typeId CharacterId:self.characterId];
     // Do any additional setup after loading the view.
+    UITapGestureRecognizer *tapg = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hsjp:)];
+    tapg.delegate = self;
+    [self.view addGestureRecognizer:tapg];
+}
+-(void)hsjp:(id)sender
+{
+    [firstTextView resignFirstResponder];
 }
 -(void)getcardFromNetWithGameid:(NSString*)gameid TypeId:(NSString*)typeId CharacterId:(NSString*)characterId
 {
@@ -124,11 +132,11 @@
 -(void)tagClick:(UIButton*)sender
 {
     
-    NSInteger textlength = [[GameCommon shareGameCommon] unicodeLengthOfString:firstTextView.text];
+//    NSInteger textlength = [[GameCommon shareGameCommon] unicodeLengthOfString:firstTextView.text];
     
     NSString * tagValue =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")];
-    NSInteger tagValueLength = [[GameCommon shareGameCommon] unicodeLengthOfString:tagValue];
-    if (textlength+tagValueLength>30) {
+    NSInteger tagValueLength = tagValue.length;
+    if (firstTextView.text.length+tagValueLength>30) {
         return;
     }
     if (firstTextView.text&&firstTextView.text.length>0) {

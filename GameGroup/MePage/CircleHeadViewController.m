@@ -792,6 +792,7 @@ typedef enum : NSUInteger {
 //    }
     if ([[contentDict allKeys]containsObject:@"Analyzed"] && [KISDictionaryHaveKey(contentDict, @"Analyzed") boolValue] && !reAnalyzer ) {  //如果已经分析过
         return contentDict;
+        
     }
     
     float cellHeight = 0.0f; //行高
