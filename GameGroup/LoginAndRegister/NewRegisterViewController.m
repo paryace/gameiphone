@@ -170,7 +170,7 @@
     
     m_agreeButton = [[UIButton alloc] initWithFrame:CGRectMake(14, 156, 16, 16)];
     [m_agreeButton setBackgroundImage:KUIImage(@"_png_11") forState:UIControlStateNormal];
-    [m_agreeButton setBackgroundImage:KUIImage(@"_png_09") forState:UIControlStateSelected];
+    [m_agreeButton setBackgroundImage:KUIImage(@"_png_09") forState:UIControlStateHighlighted];
     m_agreeButton.backgroundColor = [UIColor clearColor];
     [m_agreeButton addTarget:self action:@selector(agreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [m_step1Scroll addSubview:m_agreeButton];
@@ -193,52 +193,41 @@
     [m_step1Scroll addSubview:protocolButton];
     
     self.step1Button = [[UIButton alloc] initWithFrame:CGRectMake(10, 90, 300, 40)];
-    [self.step1Button setBackgroundImage:KUIImage(@"1_031.png") forState:UIControlStateNormal];
-//    [step1Button setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+//    [self.step1Button setImage:KUIImage(@"1_031.png") forState:UIControlStateNormal];
+//    [self.step1Button setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
     
-//    if ([[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"REGISTERNEEDMSG"]] isEqualToString:@"1"]) {
-//    if ([[TempData sharedInstance] registerNeedMsg]) {
-       // [step1Button setTitle:@"获取验证码" forState:UIControlStateNormal];
-//        [step1Button setImage:KUIImage(@"a_png_03") forState:UIControlStateNormal];
-//    }else{
-//        [step1Button setTitle:@"下一步" forState:UIControlStateNormal];
-//    }
-//    if (m_phoneNumText.text.length>0) {
-//        [step1Button setImage:KUIImage(@"a_png_03") forState:UIControlStateNormal];
-//        [step1Button setImage:KUIImage(@"a_png_06") forState:UIControlStateSelected];
-//    }
-//    [step1Button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-//    step1Button.backgroundColor = [UIColor clearColor];
+    if ([[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"REGISTERNEEDMSG"]] isEqualToString:@"1"]) {
+        [self.step1Button setImage:KUIImage(@"1_031") forState:UIControlStateNormal];
+    }else{
+        [self.step1Button setImage:KUIImage(@"1_04") forState:UIControlStateNormal];
+    }
     [self.step1Button addTarget:self action:@selector(getVerCodeButton:) forControlEvents:UIControlEventTouchUpInside];
     [m_step1Scroll addSubview:self.step1Button];
-    
-//    UILabel *tishiLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, CGRectGetMidY(step1Button.frame)+15, 300, 50)];
-//    tishiLabel.text = @"输入您的手机号码,免费注册陌游,陌游不会在任何地方泄露您的手机号码";
-//    tishiLabel.textColor = [UIColor grayColor];
-//    tishiLabel.backgroundColor = [UIColor clearColor];
-//    tishiLabel.font = [UIFont systemFontOfSize:12];
-//    tishiLabel.numberOfLines= 2;
-//    [m_step1Scroll addSubview:tishiLabel];
-    
-//    UILabel *helpLbel = [[UILabel alloc]initWithFrame:CGRectMake(10,CGRectGetMidY(tishiLabel.frame)+15,300,40)];
-//    helpLbel.text = @"注册遇到问题？";
-//    helpLbel.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
-//    helpLbel.font = [UIFont systemFontOfSize:12];
-//    helpLbel.textColor = kColorWithRGB(41, 164, 246, 1.0);
-//    helpLbel.userInteractionEnabled = YES;
-//    helpLbel.textAlignment = NSTextAlignmentLeft;
-//    [m_step1Scroll addSubview:helpLbel];
-//    [helpLbel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterToHelpPage:)]];
-    
+
+ 
     
 }
 - (void)changeButtonImage:(id)sender
 {
-    if (m_phoneNumText.text.length ==11) {
-     [self.step1Button setImage:KUIImage(@"a_png_03") forState:UIControlStateNormal];
-    [self.step1Button setImage:KUIImage(@"a_png_06") forState:UIControlStateSelected];
+    if ([[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"REGISTERNEEDMSG"]] isEqualToString:@"1"]) {
+      if (m_phoneNumText.text.length ==11) {
+        
+        //        [self.step1Button setImage:KUIImage(@"a_png_03") forState:UIControlStateNormal];
+        [self.step1Button setImage:KUIImage(@"a_png_03") forState:UIControlStateNormal];
+        [self.step1Button setImage:KUIImage(@"a_png_06") forState:UIControlStateHighlighted];
+        }else{
+        [self.step1Button setImage:KUIImage(@"1_031") forState:UIControlStateNormal];
+        }
     }else{
-  [self.step1Button setImage:KUIImage(@"1_031.png") forState:UIControlStateNormal];
+        if (m_phoneNumText.text.length ==11) {
+            
+            //        [self.step1Button setImage:KUIImage(@"a_png_03") forState:UIControlStateNormal];
+            [self.step1Button setImage:KUIImage(@"	") forState:UIControlStateNormal];
+            [self.step1Button setImage:KUIImage(@"_png_032_06") forState:UIControlStateHighlighted];
+        }else{
+            [self.step1Button setImage:KUIImage(@"1_04") forState:UIControlStateNormal];
+            
+        }
     }
 }
 
@@ -271,7 +260,7 @@
 }
 - (void)getVerCodeButton:(id)sender//获取验证码
 {
-//    [m_phoneNumText resignFirstResponder];
+    [m_phoneNumText resignFirstResponder];
     //判断字符为空
     if (KISEmptyOrEnter(m_phoneNumText.text)) {
         [self showAlertViewWithTitle:@"提示" message:@"请输入手机号！" buttonTitle:@"确定"];
@@ -337,8 +326,9 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [hud hide:YES];
-        
+#pragma mark====================resionFirstResponser
         self.scrollView.contentOffset = CGPointMake(kScreenWidth, 0);
+//        [m_phoneNumText resignFirstResponder];
         [m_verCodeTextField becomeFirstResponder];
         UILabel* topLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, 300, 50)];
         topLabel.numberOfLines = 2;
@@ -362,7 +352,7 @@
 
 - (void)setstep1Scroll_verCode
 {
-    [m_verCodeTextField becomeFirstResponder];
+//    [m_verCodeTextField becomeFirstResponder];
 //    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 60, 235, 40)];
 //    table_top.image = KUIImage(@"text_bg");
 //    [m_step1Scroll_verCode addSubview:table_top];
@@ -406,7 +396,7 @@
     
     self.vercodeNextButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 130, 300, 40)];
     [self.vercodeNextButton setImage:KUIImage(@"1_04") forState:UIControlStateNormal];
-    [self.vercodeNextButton setBackgroundImage:KUIImage(@"1_04") forState:UIControlStateNormal];
+//    [self.vercodeNextButton setBackgroundImage:KUIImage(@"1_04") forState:UIControlStateNormal];
 //    [vercodeNextButton setBackgroundImage:KUIImage(@"_png_032_06") forState:UIControlStateHighlighted];
 //    [vercodeNextButton setTitle:@"下一步" forState:UIControlStateNormal];
 //    [self.vercodeNextButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -418,7 +408,7 @@
 {
     if (m_verCodeTextField.text.length>=6) {
         [self.vercodeNextButton setImage:KUIImage(@"_png_032_03") forState:UIControlStateNormal];
-        [self.vercodeNextButton setImage:KUIImage(@"_png_032_06") forState:UIControlStateSelected];
+        [self.vercodeNextButton setImage:KUIImage(@"_png_032_06") forState:UIControlStateHighlighted];
     }else{
         [self.vercodeNextButton setImage:KUIImage(@"1_04") forState:UIControlStateNormal];
     }
@@ -538,13 +528,13 @@
         [hud hide:YES];
     }];
 }
-#pragma mark ---------填写密码和邮箱and头像
+#pragma mark ---------头像
 -(void)buildStep2
 {
 //     [m_phoneNumText resignFirstResponder];
     m_photoButton = [[UIButton alloc] initWithFrame:CGRectMake(110, 10, 100, 100)];
     [m_photoButton setImage:KUIImage(@"touxiang_03") forState:UIControlStateNormal];
-    [m_photoButton setImage:KUIImage(@"未标题-1_03") forState:UIControlStateSelected];
+    [m_photoButton setImage:KUIImage(@"未标题-1_03") forState:UIControlStateHighlighted];
     [m_photoButton setBackgroundColor:[UIColor clearColor]];
     m_photoButton.layer.cornerRadius = 5;
     m_photoButton.layer.masksToBounds = YES;
@@ -659,7 +649,7 @@
         [self.step3Button setImage:KUIImage(@"未标题-1_06") forState:UIControlStateNormal];
     }else{
        [self.step3Button setImage:KUIImage(@"touxiang_19") forState:UIControlStateNormal];
-       [self.step3Button setImage:KUIImage(@"touxiang_22") forState:UIControlStateNormal];
+       [self.step3Button setImage:KUIImage(@"touxiang_22") forState:UIControlStateHighlighted];
     }
 }
 - (void)selectSex:(id)sender
@@ -1044,8 +1034,29 @@
         }
     }
 }
-
-
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    if (textField == m_parssWordTf) {
+        [self animateTextField: textField up: YES];
+    }
+  }
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    if (textField == m_parssWordTf) {
+        [self animateTextField: textField up: NO];
+    }
+}
+- (void) animateTextField: (UITextField*) textField up: (BOOL) up
+{
+    const int movementDistance = 40;
+    const float movementDuration = 0.3f;
+    int movement = (up ? -movementDistance : movementDistance);
+    [UIView beginAnimations: @"viewMoveup" context: nil];
+    [UIView setAnimationBeginsFromCurrentState: YES];
+    [UIView setAnimationDuration: movementDuration];
+    self.view.frame = CGRectOffset(self.view.frame, 0, movement);
+    [UIView commitAnimations];
+}
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [textField resignFirstResponder];
