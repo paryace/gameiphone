@@ -85,12 +85,14 @@
         self.agreeButton.frame = CGRectMake(5,95,155, 36);
         [self.agreeButton setBackgroundImage:[UIImage imageNamed:@"agree.png"] forState:UIControlStateNormal];
         [self.agreeButton addTarget:self action:@selector(agreeButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+        [self.agreeButton  setExclusiveTouch :YES];
         [self.contentView addSubview:self.agreeButton];
         
         self.refuseButton = [UIButton buttonWithType:UIButtonTypeCustom];
         self.refuseButton.frame = CGRectMake(160,95,155, 36);
         [self.refuseButton setBackgroundImage:[UIImage imageNamed:@"refuse.png"] forState:UIControlStateNormal];
         [self.refuseButton addTarget:self action:@selector(refuseButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+        [self.refuseButton  setExclusiveTouch :YES];
         [self.contentView addSubview:self.refuseButton];
         
         
