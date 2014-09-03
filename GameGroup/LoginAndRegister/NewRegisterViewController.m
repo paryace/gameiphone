@@ -170,7 +170,7 @@
     
     m_agreeButton = [[UIButton alloc] initWithFrame:CGRectMake(14, 156, 16, 16)];
     [m_agreeButton setBackgroundImage:KUIImage(@"_png_11") forState:UIControlStateNormal];
-    [m_agreeButton setBackgroundImage:KUIImage(@"_png_09") forState:UIControlStateHighlighted];
+    [m_agreeButton setBackgroundImage:KUIImage(@"_png_09") forState:UIControlStateSelected];
     m_agreeButton.backgroundColor = [UIColor clearColor];
     [m_agreeButton addTarget:self action:@selector(agreeButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [m_step1Scroll addSubview:m_agreeButton];
@@ -222,7 +222,7 @@
         if (m_phoneNumText.text.length ==11) {
             
             //        [self.step1Button setImage:KUIImage(@"a_png_03") forState:UIControlStateNormal];
-            [self.step1Button setImage:KUIImage(@"	") forState:UIControlStateNormal];
+            [self.step1Button setImage:KUIImage(@"_png_032_03") forState:UIControlStateNormal];
             [self.step1Button setImage:KUIImage(@"_png_032_06") forState:UIControlStateHighlighted];
         }else{
             [self.step1Button setImage:KUIImage(@"1_04") forState:UIControlStateNormal];
