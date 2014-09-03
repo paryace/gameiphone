@@ -60,7 +60,7 @@
         firstView.selectCharacter = nil;
         firstView.selectType = nil;
         [firstView setTitleInfo];
-        [firstView initSearchConditions];
+//        [firstView initSearchConditions];
     }
     firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     
