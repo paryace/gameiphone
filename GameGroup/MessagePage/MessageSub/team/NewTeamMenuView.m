@@ -358,6 +358,9 @@
 
 //确定就位
 -(void)agreeButton:(UIButton*)sender{
+    if (self.refusedBtn.isHighlighted) {
+        return;
+    }
     [hud show:YES];
     [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"1" reSuccess:^(id responseObject) {
         [hud hide:YES];
@@ -369,6 +372,9 @@
 }
 //取消就位
 -(void)refusedButton:(UIButton*)sender{
+    if (self.agreeBtn.isHighlighted) {
+        return;
+    }
     [hud show:YES];
     [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"0" reSuccess:^(id responseObject){
         [hud hide:YES];
