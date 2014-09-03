@@ -251,7 +251,11 @@
     authVC.gameId = self.gameId;
     authVC.isComeFromFirstOpen = NO;
     authVC.realm = KISDictionaryHaveKey(self.dataDic, @"realm");
-    authVC.character = KISDictionaryHaveKey(self.dataDic, @"charactername");
+    if ([[GameCommon getNewStringWithId:self.gameId] isEqualToString:@"4"]) {
+        authVC.character = KISDictionaryHaveKey(self.dataDic, @"characterid");
+    }else{
+        authVC.character = KISDictionaryHaveKey(self.dataDic, @"charactername");
+    }
     [self.navigationController pushViewController:authVC animated:YES];
 }
 //举报邀请

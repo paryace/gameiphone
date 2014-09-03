@@ -217,9 +217,11 @@
 
     authVC.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
     authVC.realm = KISDictionaryHaveKey(dic, @"realm");
-    authVC.character = KISDictionaryHaveKey(dic, @"name");
-
-    [[NSUserDefaults standardUserDefaults]setObject:[NSDictionary dictionaryWithObjectsAndKeys:authVC.gameId,@"gameId",authVC.realm,@"realm",authVC.character,@"character", nil] forKey:@"deleteRole_wx"];
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:@"4"]) {
+         authVC.character = KISDictionaryHaveKey(dic, @"id");
+    }else {
+         authVC.character = KISDictionaryHaveKey(dic, @"name");
+    }
     
     [self.navigationController pushViewController:authVC animated:YES];
 }
