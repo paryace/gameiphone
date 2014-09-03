@@ -77,7 +77,8 @@ typedef enum : NSUInteger {
     KKChatMsgHistory,
     KKChatMsgTeamInvite,
     KKChatMsgSimple,
-    kkchatMsgAudio
+    kkchatMsgAudio,
+    kkchatMsgJoinTeam
 } KKChatMsgType;
 
 
@@ -1098,6 +1099,84 @@ PlayingDelegate>
         }
         return cell;
     }
+    else if (kkChatMsgType ==kkchatMsgJoinTeam)
+    {
+        static NSString *identifier = @"teamJoinCell";
+        KKTeamInviteCell *cell =(KKTeamInviteCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
+        if (cell == nil) {
+            cell = [[KKTeamInviteCell alloc] initWithMessage:dict reuseIdentifier:identifier];
+        }
+        cell.myChatCellDelegate = self;
+        [cell setMessageDictionary:dict];
+        NSDictionary* msgDic = [[self.finalMessageArray objectAtIndex:indexPath.row] JSONValue];
+//        CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"msg")]];
+        CGSize contentSize = CGSizeZero;
+//        cell.titleLabel.text = KISDictionaryHaveKey(msgDic, @"msg");
+        contentSize = [self getPayloadMsgContentSize:[NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm"),KISDictionaryHaveKey(messages[indexPath.row], @"msg")]withThumb:YES];
+        
+        NSString * dImageId=[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"img")];
+        cell.thumbImgV.imageURL = [ImageService getImageStr:dImageId Width:70];
+        
+        if (indexPath.row==0) {
+            cell.senderAndTimeLabel.hidden=YES;
+        }else{
+            NSString* timeStr = [self.finalMessageTime objectAtIndex:indexPath.row];
+            NSString* pTime = [[messages objectAtIndex:(indexPath.row-1)] objectForKey:@"time"];
+            [cell setMsgTime:timeStr lastTime:time previousTime:pTime];
+        }
+        cell.contentLabel.text = [NSString stringWithFormat:@"%@-%@",KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"realm"),KISDictionaryHaveKey(messages[indexPath.row], @"msg")];
+        [cell.bgImageView setTag:(indexPath.row+1)];
+        UIImage *bgImage = nil;
+
+        if ([sender isEqualToString:@"you"]) {
+            //头像
+            [cell setHeadImgByMe:self.myHeadImg];
+            [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
+            [cell.thumbImgV setFrame:CGRectMake(75,40,40,40)];
+            bgImage = [[UIImage imageNamed:@"bubble_05"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+25)];
+            cell.senderNickName.hidden=YES;
+            [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
+            [cell.failImage setTag:(indexPath.row+1)];
+            [cell.failImage addTarget:self action:@selector(resendMsgClick:) forControlEvents:UIControlEventTouchUpInside];
+//            [cell.titleLabel setFrame:CGRectMake(padding + 35, 33,titleSize.width,titleSize.height+(contentSize.height > 0 ? 0 : 5))];
+            cell.lineImage.hidden = YES;
+            [cell.contentLabel setFrame:CGRectMake(padding + 50 +28+28,35 , contentSize.width,contentSize.height)];
+            
+            [cell.attView setFrame:CGRectMake(320-size.width - padding-20-10-30, 40 +50, 220, 30)];
+            
+            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
+        }else
+        {
+            [cell.thumbImgV setFrame:CGRectMake(70,35+offHight,40,40)];
+            NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:sender];
+            NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
+            NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
+            [cell setHeadImgByChatUser:userImage];
+            [cell setUserPosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
+            if([self.type isEqualToString:@"normal"]){
+                cell.senderNickName.hidden=YES;
+            }else if([self.type isEqualToString:@"group"]){
+                cell.senderNickName.hidden=NO;
+                cell.senderNickName.text = userNickName;
+            }
+            
+            bgImage = [[UIImage imageNamed:@"bubble_04.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+18)];
+            [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
+            cell.statusLabel.hidden = YES;
+            cell.failImage.hidden=YES;
+            [cell.titleLabel setFrame:CGRectMake(padding + 50,33+offHight,0,0)];
+            [cell.contentLabel setFrame:CGRectMake(padding + 50 + 45,35+offHight  ,contentSize.width,contentSize.height)];
+            [cell.lineImage  setFrame:CGRectMake(cell.titleLabel.frame.origin.x,cell.titleLabel.frame.origin.y+cell.titleLabel.frame.size.height+2,size.width+10,1)];
+            cell.lineImage.hidden=YES;
+            [cell.attView setFrame:CGRectMake(padding-5+45,cell.bgImageView.frame.origin.y+cell.bgImageView.frame.size.height-30, 220, 25)];
+            
+        }
+        [cell putTextAndImgWithType:1];
+        return cell;
+
+    }
     //邀请加入组队
     else if (kkChatMsgType == KKChatMsgTeamInvite) {
         static NSString *identifier = @"teamInviteCell";
@@ -1105,6 +1184,8 @@ PlayingDelegate>
         if (cell == nil) {
             cell = [[KKTeamInviteCell alloc] initWithMessage:dict reuseIdentifier:identifier];
         }
+        cell.lowType = 2;
+
         cell.myChatCellDelegate = self;
         [cell setMessageDictionary:dict];
         NSDictionary* msgDic = [[self.finalMessageArray objectAtIndex:indexPath.row] JSONValue];
@@ -1125,13 +1206,15 @@ PlayingDelegate>
         cell.contentLabel.text = KISDictionaryHaveKey(msgDic, @"description");
         [cell.bgImageView setTag:(indexPath.row+1)];
         UIImage *bgImage = nil;
+        [cell putTextAndImgWithType:2];
+
         if ([sender isEqualToString:@"you"]) {
             //头像
             [cell setHeadImgByMe:self.myHeadImg];
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell.thumbImgV setFrame:CGRectMake(55,40 + titleSize.height,40,40)];
             bgImage = [[UIImage imageNamed:@"bubble_05"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
-            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
+            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+25)];
             cell.senderNickName.hidden=YES;
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             [cell.failImage setTag:(indexPath.row+1)];
@@ -1139,6 +1222,9 @@ PlayingDelegate>
             [cell.titleLabel setFrame:CGRectMake(padding + 35, 33,titleSize.width,titleSize.height+(contentSize.height > 0 ? 0 : 5))];
             cell.lineImage.hidden = YES;
             [cell.contentLabel setFrame:CGRectMake(padding + 50 +28,35 + titleSize.height + (titleSize.height > 0 ? 5 : 0), contentSize.width,contentSize.height)];
+            
+            [cell.attView setFrame:CGRectMake(320-size.width - padding-20-10-30, 40 + titleSize.height+50, 220, 30)];
+            
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
         }else
         {
@@ -1156,7 +1242,7 @@ PlayingDelegate>
             }
             
             bgImage = [[UIImage imageNamed:@"bubble_04.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
-            [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+35,size.height + 20)];
+            [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+18)];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.statusLabel.hidden = YES;
             cell.failImage.hidden=YES;
@@ -1164,6 +1250,8 @@ PlayingDelegate>
             [cell.contentLabel setFrame:CGRectMake(padding + 50 + 45,35 + titleSize.height + (titleSize.height > 0 ? 5+offHight : 0+offHight),contentSize.width,contentSize.height)];
             [cell.lineImage  setFrame:CGRectMake(cell.titleLabel.frame.origin.x,cell.titleLabel.frame.origin.y+cell.titleLabel.frame.size.height+2,size.width+10,1)];
             cell.lineImage.hidden=YES;
+            [cell.attView setFrame:CGRectMake(padding-5+45, 90 + titleSize.height, 220, 25)];
+
         }
         return cell;
     }
@@ -1287,6 +1375,7 @@ PlayingDelegate>
         cell.msgLable.frame=CGRectMake((320-msgLabletextSize.width)/2, 22, msgLabletextSize.width+5, msgLabletextSize.height+2);
         return cell;
     }
+    
     else if (kkChatMsgType == KKChatMsgSimple)
     {
         static NSString *identifier = @"simpleMsgCell";
@@ -1557,6 +1646,15 @@ PlayingDelegate>
         itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"gameid")];
         [self.navigationController pushViewController:itemInfo animated:YES];
 
+    }
+    else if (kkChatMsgType ==kkchatMsgJoinTeam)
+    {
+        NSDictionary * msgDic = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+        H5CharacterDetailsViewController *h5Chara = [[H5CharacterDetailsViewController alloc]init];
+        h5Chara.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"gameid")];
+        h5Chara.characterName =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"characterName")];
+        h5Chara.characterId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"characterId")] ;
+        [self.navigationController pushViewController:h5Chara animated:YES];
     }
 }
 #pragma mark  Cell长按
@@ -2375,6 +2473,11 @@ PlayingDelegate>
             mas=KISDictionaryHaveKey(plainEntry, @"payload");
             break;
         }
+            case kkchatMsgJoinTeam:
+        {
+            mas = KISDictionaryHaveKey(plainEntry, @"payload");
+            break;
+        }
         case KKChatMsgTypeImage:{//图片
             mas=[[NSMutableAttributedString alloc] init];
             break;
@@ -2530,8 +2633,21 @@ PlayingDelegate>
             float higF = 0;
             contentSize = [self getPayloadMsgContentSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"description")] withThumb:YES];
             higF = contentSize.height;
-            NSNumber * height = [NSNumber numberWithFloat:(contentSize.height > 40 ? (titleSize.height + contentSize.height + 5) : titleSize.height + 45)];
+            NSNumber * height = [NSNumber numberWithFloat:(contentSize.height > 40 ? (titleSize.height + contentSize.height + 5) : titleSize.height + 45)+25];
             array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:195],height, nil];
+            break;
+        }
+            case kkchatMsgJoinTeam:
+        {
+            NSDictionary* magDic = [KISDictionaryHaveKey(plainEntry, @"payload") JSONValue];
+            CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"msg")]];
+            CGSize contentSize = CGSizeZero;
+            float higF = 0;
+            contentSize = [self getPayloadMsgContentSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"description")] withThumb:YES];
+            higF = contentSize.height;
+            NSNumber * height = [NSNumber numberWithFloat:(contentSize.height > 40 ? (titleSize.height + contentSize.height + 5) : titleSize.height + 45)+25];
+            array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:195],height, nil];
+
             break;
         }
         default:
@@ -2565,7 +2681,6 @@ PlayingDelegate>
     }
     //系统消息
     else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"inGroupSystemMsg"]//系统消息
-             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamAddType"]//加入组队
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamKickType"]//提出组队
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamQuitType"]//退出组队
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"inTeamSystemMsg"]//解散组队
@@ -2576,6 +2691,10 @@ PlayingDelegate>
              ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamClaimKickType"])//占坑的人被踢出
     {
         return KKChatMsgTypeSystem;
+    }
+    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamAddType"])//加入组队
+    {
+        return kkchatMsgJoinTeam;
     }
     else if([[NSString stringWithFormat:@"%@",types] isEqualToString:@"selectTeamPosition"]
             ||[[NSString stringWithFormat:@"%@",types] isEqualToString:@"teamPreparedUserSelectOk"]//同意就位确认
