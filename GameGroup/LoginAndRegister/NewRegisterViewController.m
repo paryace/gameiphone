@@ -637,11 +637,12 @@
     [self.step3Button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 
     self.step3Button.backgroundColor = [UIColor clearColor];
-    [self.step3Button addTarget:self action:@selector(step3ButtonOK:) forControlEvents:UIControlEventTouchUpInside];
+    [self.step3Button addTarget:self action:@selector(step33ButtonOK:) forControlEvents:UIControlEventTouchUpInside];
     [m_step2Scroll addSubview:self.step3Button];
     m_step2Scroll.contentSize  = CGSizeMake(0, iPhone5?kScreenHeigth:kScreenHeigth+40);
     
 }
+#pragma mark ====================完成按钮的butoton  image
 - (void)changeFinishButtonImage:(id)sender
 {
     
@@ -677,7 +678,7 @@
 }
 
 #pragma 最后一步
-- (void)step3ButtonOK:(id)sender
+- (void)step33ButtonOK:(id)sender
 {
    
     [m_parssWordTf resignFirstResponder];
@@ -922,7 +923,11 @@
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
+   
+//    [m_verCodeTextField resignFirstResponder];
     [picker dismissViewControllerAnimated:YES completion:^{}];
+    [m_phoneNumText resignFirstResponder];
+//    [m_verCodeTextField resignFirstResponder];
 }
 
 -(void)uploadImage:(NSString*)uploadImagePath
@@ -1010,6 +1015,11 @@
 //        
 //        return canChange;
         if (range.location == 6)
+            return NO;
+        return YES;
+    }else if (m_parssWordTf == textField)
+    {
+        if (range.location == 16)
             return NO;
         return YES;
     }

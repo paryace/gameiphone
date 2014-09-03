@@ -60,7 +60,8 @@
 //#define monvbangURL @"http://58.83.193.120/h5/index.html"
 //#define MymonvbangURL @"http://58.83.193.120/h5/index.html?"
 //#define BaseHelpUrl @"http://58.83.193.120/faq/"
-//#define QiniuBaseImageUrl @"http://gamepro.qiniudn.com/"//七牛图片服务器
+//#define QiniuBase
+//、ImageUrl @"http://gamepro.qiniudn.com/"//七牛图片服务器
 //#define BinRoleUrl @"http://58.83.193.120/share/role.html?"
 //#define BaseAuthRoleUrl @"http://58.83.193.120/share/certificate.html?"
 //#define BaseDynamicShareUrl @"http://www.momotalk.com/moyo/releasemsg.html?"
