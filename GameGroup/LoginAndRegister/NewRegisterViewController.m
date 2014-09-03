@@ -576,11 +576,11 @@
 //    [m_step2Scroll addSubview:table_label_two];
 #pragma mark===============================================
     UIView *sexView = [[UIView alloc]initWithFrame:CGRectMake(0, 135, 320, 45)];
-//    sexView.backgroundColor = [UIColor blackColor];
+    sexView.backgroundColor = [UIColor whiteColor];
     [m_step2Scroll addSubview:sexView];
     
     UIView *secretView = [[UIView alloc]initWithFrame:CGRectMake(0, 182, 320, 45)];
-//    secretView.backgroundColor = [UIColor yellowColor];
+    secretView.backgroundColor = [UIColor whiteColor];
     [m_step2Scroll addSubview:secretView];
     
     self.sexImage = [[UIImageView alloc]initWithFrame:CGRectMake(20, 12, 15, 15)];
@@ -606,7 +606,7 @@
     
     m_parssWordTf = [[UITextField alloc] initWithFrame:CGRectMake(40, 0, 240, 45)];
     m_parssWordTf.returnKeyType = UIReturnKeyDone;
-    m_parssWordTf.placeholder = @"请设置您的密码";
+    m_parssWordTf.placeholder = @"请设置6-16位密码";
     [m_parssWordTf setValue:UIColorFromRGBA(0xd5d5d5, 1) forKeyPath:@"_placeholderLabel.textColor"];
     m_parssWordTf.delegate = self;
     m_parssWordTf.secureTextEntry = YES;//显示密文
