@@ -165,16 +165,18 @@
         auth = @"0";
     }
     
-    if ([KISDictionaryHaveKey(dic, @"failedmsg")intValue]==404||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]) {
-        authBg.image  = KUIImage(@"chara_auth_3");
-        }
-    else{
-    
-    if ([auth intValue]==0) {
-        authBg.image = KUIImage(@"chara_auth_2");
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:@"3"]) {
+        authBg.image  = KUIImage(@"");
     }else{
-        authBg.image = KUIImage(@"chara_auth_1");
-    }
+        if ([KISDictionaryHaveKey(dic, @"failedmsg")intValue]==404||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]) {
+            authBg.image  = KUIImage(@"chara_auth_3");
+        }else{
+            if ([auth intValue]==0) {
+                authBg.image = KUIImage(@"chara_auth_2");
+            }else{
+                authBg.image = KUIImage(@"chara_auth_1");
+            }
+        }
     }
     [myView addSubview:authBg];
     
@@ -480,16 +482,20 @@
         nameLabel.text = KISDictionaryHaveKey(dict, @"name");
         NSString *auth =[dict objectForKey:@"auth"];
         
-        if ([KISDictionaryHaveKey(dict, @"failedmsg")intValue]==404||[KISDictionaryHaveKey(dict, @"failedmsg") isEqualToString:@"notSupport"]) {
-            authBg.image  = KUIImage(@"chara_auth_3");
-        }
-        else{
-        if ([auth intValue]==0) {
-            authBg.image = KUIImage(@"chara_auth_2");
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")] isEqualToString:@"3"]) {
+            authBg.image  = KUIImage(@"");
         }else{
-            authBg.image = KUIImage(@"chara_auth_1");
+            if ([KISDictionaryHaveKey(dict, @"failedmsg")intValue]==404||[KISDictionaryHaveKey(dict, @"failedmsg") isEqualToString:@"notSupport"]) {
+                authBg.image  = KUIImage(@"chara_auth_3");
+            }else{
+                if ([auth intValue]==0) {
+                    authBg.image = KUIImage(@"chara_auth_2");
+                }else{
+                    authBg.image = KUIImage(@"chara_auth_1");
+                }
+            }
         }
-        }
+       
         NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"gameid")],@"gameid",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")],@"characterId", nil];
         
         [self getCardWithNetWithDic:dic];
