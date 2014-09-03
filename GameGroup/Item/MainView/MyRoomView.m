@@ -102,6 +102,7 @@
         cell.tag = indexPath.section*10000+indexPath.row;
         
         if ([self.myCreateRoomList isKindOfClass:[NSArray class]]&&self.myCreateRoomList.count>0) {
+            [cell.headImg setUserInteractionEnabled:YES];
             NSDictionary * dic = [self.myCreateRoomList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
             NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
@@ -115,6 +116,7 @@
             cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
             cell.bgImageView.hidden = YES;
         }else{
+            [cell.headImg setUserInteractionEnabled:NO];
             cell.bgImageView.image = KUIImage(@"team_ placeholder1.jpg");
             cell.bgImageView.hidden = NO;
             cell.headImg.imageURL = nil;
@@ -133,6 +135,7 @@
         cell.tag = indexPath.section*10000+indexPath.row;
         cell.mydelegate =self;
         if ([self.myJoinRoomList isKindOfClass:[NSArray class]]&&self.myJoinRoomList.count>0) {
+            [cell.headImg setUserInteractionEnabled:YES];
             NSDictionary * dic = [self.myJoinRoomList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
             NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
@@ -147,7 +150,7 @@
             cell.bgImageView.hidden = YES;
         }else{
             cell.bgImageView.image = KUIImage(@"team_placeholder2");
-
+            [cell.headImg setUserInteractionEnabled:NO];
             cell.bgImageView.hidden = NO;
             cell.headImg.imageURL = nil;
             cell.titleLabel.text = nil;
@@ -164,6 +167,7 @@
         cell.mydelegate = self;
         cell.tag =indexPath.section*10000+indexPath.row;
         if ([self.myRequestedRoomsList isKindOfClass:[NSArray class]]&&self.myRequestedRoomsList.count>0) {
+            [cell.headImg setUserInteractionEnabled:YES];
             NSDictionary * dic = [self.myRequestedRoomsList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
             NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
@@ -179,6 +183,7 @@
             cell.bgImageView.image = KUIImage(@"team_placeholder2");
             cell.bgImageView.hidden = NO;
             cell.headImg.imageURL = nil;
+            [cell.headImg setUserInteractionEnabled:NO];
             cell.titleLabel.text = nil;
             cell.contentLabel.text = nil;
             cell.timeLabel.text = nil;

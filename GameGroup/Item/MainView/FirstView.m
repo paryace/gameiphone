@@ -162,10 +162,10 @@
     selectDescription = KISDictionaryHaveKey([arrayTag objectAtIndex:sender.tag], @"value");
     mSearchBar.text = [mSearchBar.text stringByAppendingString:selectDescription?selectDescription:@""];
 
-//    [self reloInfo:YES];
-//    if([mSearchBar isFirstResponder]){
-//        [mSearchBar resignFirstResponder];
-//    }
+    [self reloInfo:YES];
+    if([mSearchBar isFirstResponder]){
+        [mSearchBar resignFirstResponder];
+    }
 }
 
 //设置按钮文字
