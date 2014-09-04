@@ -43,7 +43,6 @@
 #import "ShowRecordView.h"
 #import "amrFileCodec.h"
 
-
 #import "RecorderManager.h"
 #import "PlayerManager.h"
 
@@ -119,9 +118,11 @@ PlayingDelegate>
     NSMutableArray *gifArray2;
     BOOL isPlaying;
     UIButton * titleBtn;//右上角button
+    
+ 
+    CustomInputView *custview;//录音框架
 }
 
-@property (nonatomic, strong) UIView * customInputView;//录音时替换输入框
 
 @property (nonatomic, assign) KKChatInputType kkchatInputType;
 @property (nonatomic, strong) UILabel *unReadL;
@@ -338,18 +339,21 @@ PlayingDelegate>
      
      打开则开启语音界面
      
-     [self BulidCustomInputView];//语音输入框
-     self.customInputView.hidden = YES;//语音输入框默认隐藏
      
      将 inputview中的 entryImageView.frame --> CGRectMake(50, 7, 185, 35);
      把Audiobtn add到inputview中
      更改self。textview的frame 同上
      
       */
-    
+//    self.customInputView.hidden = YES;//语音输入框默认隐藏
+
     
     [self setTopViewWithTitle];
-    
+    custview= [[ CustomInputView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-50,320,50)];
+    custview.mydelegate = self;
+    custview.hidden = YES;
+    [self.view addSubview:custview];
+
     
     
      [self changMsgToRead];
@@ -422,8 +426,8 @@ PlayingDelegate>
         [self showOrHidePositionDitView];
     }
     [self goBack];
-    showRecordView = [[ShowRecordView alloc]initWithFrame:CGRectMake(0, 0, 150, 150)];
-    showRecordView.center = self.view.center;
+    showRecordView = [[ShowRecordView alloc]initWithFrame:CGRectMake(0, startX,320 , self.view.bounds.size.height-startX-50)];
+//    showRecordView.center = self.view.center;
     showRecordView.hidden = YES;
     [self.view addSubview:showRecordView];
     
@@ -1440,7 +1444,7 @@ PlayingDelegate>
     /* 
      声音 CELL
     */
-    /*
+    
     else if (kkChatMsgType ==kkchatMsgAudio)
     {
         NSString * payloadStr = KISDictionaryHaveKey(dict, @"payload");
@@ -1499,7 +1503,7 @@ PlayingDelegate>
         cell.bgImageView.tag = indexPath.row+1;
         return cell;
     }
-     */
+    
     
     //以上是历史消息
     else if (kkChatMsgType == KKChatMsgHistory){
@@ -1724,7 +1728,7 @@ PlayingDelegate>
         UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13
                                                                            topCapHeight:22];
         UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
-        entryImageView.frame = CGRectMake(10, 7, 225, 35);
+        entryImageView.frame = CGRectMake(60, 7, 185, 35);
         entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         UIImage *rawBackground = [UIImage imageNamed:@"inputbg.png"];
         UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
@@ -1734,63 +1738,12 @@ PlayingDelegate>
         
         [_inPutView addSubview:imageView];
         [_inPutView addSubview:entryImageView];
-//        [_inPutView addSubview:self.audioBtn];
+        [_inPutView addSubview:self.audioBtn];
         [_inPutView addSubview:self.textView];
         [_inPutView addSubview:self.kkChatAddButton];
         [_inPutView addSubview:self.emojiBtn];
-//        [_inPutView addSubview:self.startRecordBtn];
     }
     return _inPutView;
-}
-
--(void)BulidCustomInputView
-{
-    if (!self.customInputView) {
-        self.customInputView = [[UIView alloc]init];
-        self.customInputView.frame =CGRectMake(0, self.view.frame.size.height-50,320,50);
-        UIImage *rawEntryBackground = [UIImage imageNamed:@"chat_input.png"];
-        UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13
-                                                                           topCapHeight:22];
-        UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
-        entryImageView.frame = CGRectMake(50, 7, 185, 35);
-        entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        UIImage *rawBackground = [UIImage imageNamed:@"inputbg.png"];
-        UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
-        UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
-        imageView.frame = CGRectMake(0,0,self.customInputView.frame.size.width,self.customInputView.frame.size.height);
-        imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-
-        [self.customInputView addSubview:imageView];
-        [self.customInputView addSubview:entryImageView];
-        
-      UIButton *  customAudioBtn = [[UIButton alloc]initWithFrame:CGRectMake(5, self.customInputView.frame.size.height-12-36, 45, 45)];
-        customAudioBtn.backgroundColor = [UIColor clearColor];
-        customAudioBtn.titleLabel.numberOfLines = 0;
-        [customAudioBtn setImage:KUIImage(@"keyboard") forState:UIControlStateNormal];
-        [customAudioBtn setImageEdgeInsets:UIEdgeInsetsMake(8, 8, 8, 8)];
-        [customAudioBtn addTarget:self action:@selector(hiddenStartRecordBtn:) forControlEvents:UIControlEventTouchUpInside];
-        [self.customInputView addSubview:customAudioBtn];
-        [self.customInputView addSubview:self.startRecordBtn];
-        self.startRecordBtn.hidden = NO;
-        
-        UIButton *customKKchatAddBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        customKKchatAddBtn.frame = CGRectMake(240,self.customInputView.frame.size.height-12-36,45,45);
-        
-        [customKKchatAddBtn setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
-        [customKKchatAddBtn setImageEdgeInsets:UIEdgeInsetsMake(8, 8, 8, 8)];
-        [customKKchatAddBtn addTarget:self action:@selector(kkChatAddButtonClick:)forControlEvents:UIControlEventTouchUpInside];
-        [self.customInputView addSubview:customKKchatAddBtn];
-        
-        
-        UIButton * CustomEmojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        CustomEmojiBtn.frame = CGRectMake(277, self.customInputView.frame.size.height-12-36,45,45);
-        [CustomEmojiBtn setImage:[UIImage imageNamed:@"emoji.png"] forState:UIControlStateNormal];
-        [CustomEmojiBtn addTarget:self action:@selector(kkChatEmojiBtnClicked:)forControlEvents:UIControlEventTouchUpInside];
-        [CustomEmojiBtn setImageEdgeInsets:UIEdgeInsetsMake(8, 8, 8, 8)];
-
-        [self.customInputView addSubview:CustomEmojiBtn];
-        [self.view addSubview:self.customInputView];
-    }
 }
 
 #pragma mark --创建声音buton
@@ -1802,32 +1755,8 @@ PlayingDelegate>
     [_audioBtn setImageEdgeInsets:UIEdgeInsetsMake(8, 8, 8, 8)];
 
     [_audioBtn setImage:KUIImage(@"audioBtn") forState:UIControlStateNormal];
-//    if (!_audioBtn.selected) {
-//        [_audioBtn setImageEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
-//    }else{
-//        [_audioBtn setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
-//    }
-//    [_audioBtn setImage:KUIImage(@"keyboard") forState:UIControlStateSelected];
-
     [_audioBtn addTarget:self action:@selector(showStartRecordBtn:) forControlEvents:UIControlEventTouchUpInside];
     return _audioBtn;
-}
-
-/*
- --创建长按录音button
- */
--(UIButton *)startRecordBtn
-{
-    _startRecordBtn = [[UIButton alloc]initWithFrame:CGRectMake(50, 7, 185, 35)];
-    [_startRecordBtn setImage:KUIImage(@"chat_recordAudio_normal") forState:UIControlStateNormal];
-    [_startRecordBtn setTitle:@"长按录音" forState:UIControlStateNormal];
-
-    [_startRecordBtn addTarget:self action:@selector(startRecording:) forControlEvents:UIControlEventTouchDown];
-    [_startRecordBtn addTarget:self action:@selector(cancleRecord:withEvent:) forControlEvents:UIControlEventTouchDragInside];
-    [_startRecordBtn addTarget:self action:@selector(stopRecording:) forControlEvents:UIControlEventTouchUpInside];
-//    _startRecordBtn.hidden = YES;
-    return _startRecordBtn;
-    
 }
 
 /*
@@ -1840,44 +1769,13 @@ PlayingDelegate>
     NSDictionary *dic = info.userInfo;
     double cus = [[dic objectForKey:@"low"] doubleValue];
     showRecordView.hidden  = NO;
+    showRecordView.imageView.image = KUIImage(@"third_xiemessage_record_icon");
     [showRecordView changeBDimgWithimg:cus];
 }
-
-
-
-
 #pragma mark----录音发送录音方法
 -(void)showStartRecordBtn:(UIButton *)sender
 {
-//    if (!sender.selected) {
-//        sender.selected = YES;
-//            [self.textView resignFirstResponder];
-//        if (self.kkchatInputType ==KKChatInputTypeEmoji) {
-//            ifEmoji = NO;
-//            [self autoMovekeyBoard:0];
-//            self.kkchatInputType = KKChatInputTypeNone;
-//            self.theEmojiView.hidden = YES;
-//            [m_EmojiScrollView removeFromSuperview];
-//            [emojiBGV removeFromSuperview];
-//            [m_Emojipc removeFromSuperview];
-//            [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
-//
-//        }else if (self.kkchatInputType ==KKChatInputTypeAdd)
-//        {
-//            canAdd = NO;
-//            [self autoMovekeyBoard:0];
-//            self.kkchatInputType = KKChatInputTypeNone;
-//            self.theEmojiView.hidden = YES;
-//            self.kkChatAddView.hidden = YES;
-//            [m_EmojiScrollView removeFromSuperview];
-//            [emojiBGV removeFromSuperview];
-//            [m_Emojipc removeFromSuperview];
-//            [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
-//
-//        }
-
-        
-        
+    
             if (self.kkchatInputType != KKChatInputTypeNone) {
                 [self autoMovekeyBoard:0];
                 [self.textView resignFirstResponder];
@@ -1901,70 +1799,9 @@ PlayingDelegate>
     canAdd = YES;
     ifEmoji = NO;
     self.inPutView.hidden = YES;
-    self.customInputView.hidden = NO;
-//            [clearView removeFromSuperview];
-//            if ([popLittleView superview]) {
-//                [popLittleView removeFromSuperview];
-//            }
-//        [_audioBtn setTitle:@"键盘" forState:UIControlStateSelected];
-//         _audioBtn.frame =  CGRectMake(5, 5, 40, 40);
-//        _startRecordBtn.hidden = NO;
-//    }else{
-//        sender.selected = NO;
-//        [_audioBtn setTitle:@"录音" forState:UIControlStateNormal];
-//       _audioBtn.frame =  CGRectMake(5, 5, 27.5, 29.5);
-//        _startRecordBtn.hidden = YES;
-//        [self.textView becomeFirstResponder];
-//    }
+    custview.hidden = NO;
 }
 
--(void)hiddenStartRecordBtn:(UIButton *)sender
-{
-    self.customInputView.hidden = YES;
-    self.inPutView.hidden = NO;
-    [self.textView becomeFirstResponder];
-}
-
-
--(void)startRecording:(UIButton *)sender
-{
-//    [recordAudio stopPlay];
-//    [recordAudio startRecord];
-//    startRecordTime = [NSDate timeIntervalSinceReferenceDate];
-//    
-////    [curAudio release],
-//    curAudio=nil;
-//    showRecordView.hidden = NO;
-//    [self showMsg:@"开始录音。。。"];
-    _audioBtn.userInteractionEnabled = NO;
-    self.kkChatAddButton. userInteractionEnabled = NO;
-    self.emojiBtn.userInteractionEnabled = NO;
-
-    [[PlayerManager sharedManager]stopPlaying];
-    [RecorderManager sharedManager].delegate = self;
-    [[RecorderManager sharedManager] startRecording];
-
-}
-- (void) cancleRecord: (UIButton *) c withEvent:(UIEvent *)ev
-
-{
-    CGPoint moveCenter  = [[[ev allTouches] anyObject] locationInView:self.view];
-    NSLog(@"%f-*-*-%f---%f",moveCenter.y,c.frame.size.height,self.view.frame.size.height-50-moveCenter.y);
-    if (self.view.frame.size.height-50-moveCenter.y>10) {
-        [[RecorderManager sharedManager]cancelRecording];
-    }
-}
-
--(void)stopRecording:(UIButton *)sender
-{
-    _audioBtn.userInteractionEnabled = YES;
-    self.kkChatAddButton. userInteractionEnabled = YES;
-    self.emojiBtn.userInteractionEnabled = YES;
-
-    [[RecorderManager sharedManager] stopRecording];
-    
-    
-}
 
 #pragma mark --播放
 #pragma mark ---播放声音
@@ -1999,7 +1836,6 @@ PlayingDelegate>
     
         NSString *ps = [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]]];
     
-    
     /*
      判断文件是否存在 如果不存在就保存
      
@@ -2007,9 +1843,6 @@ PlayingDelegate>
     if (![self isFileExist:ps]) {
         [data writeToFile:ps atomically:YES];
     }
-
-    
-    
     
         [[PlayerManager sharedManager] playAudioWithFileName:ps delegate:self];
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
@@ -2250,7 +2083,7 @@ PlayingDelegate>
 
 - (HPGrowingTextView *)textView{
     if(!_textView){
-        _textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 225, 35)];
+        _textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(60, 7, 185, 35)];
         _textView.isScrollable = NO;
         _textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
         _textView.minNumberOfLines = 1;
@@ -2899,7 +2732,6 @@ PlayingDelegate>
          [self showUnActionAlert];
         return ;
     }
-    self.customInputView.hidden = YES;
     self.inPutView.hidden = NO;
     if (self.kkchatInputType != KKChatInputTypeEmoji) {
         ifEmoji = YES;
@@ -2929,10 +2761,10 @@ PlayingDelegate>
         [self showUnActionAlert];
         return ;
     }
+    self.startRecordBtn.userInteractionEnabled =NO;
     _audioBtn.selected = NO;
     _startRecordBtn.hidden = YES;
     self.inPutView.hidden = NO;
-    self.customInputView.hidden = YES;
     if (self.kkchatInputType != KKChatInputTypeAdd) {   //点击切到发送
         self.kkchatInputType = KKChatInputTypeAdd;
         
@@ -4211,8 +4043,10 @@ PlayingDelegate>
 //                                     waitUntilDone:NO];
     
 //    NSString *filePaths = [self.filename substringFromIndex:[self.filename rangeOfString:@"Documents"].location];
-    
-    
+    showRecordView.imageView.image = KUIImage(@"third_xiemessage_record_icon");
+    showRecordView.m_bodongImg.hidden = NO;
+    showRecordView.backgroundColor = UIColorFromRGBA(0x000000, .7);
+
     
     NSLog(@"interval---%.0f",interval);
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -4258,7 +4092,7 @@ PlayingDelegate>
 }
 
 - (void)recordingStopped {
-    
+
     showRecordView.hidden=YES;
 }
 
@@ -4275,7 +4109,6 @@ PlayingDelegate>
 //    self.levelMeter.progress = levelMeter;
     NSLog(@"------%f",levelMeter);
     showRecordView.hidden  = NO;
-
     [showRecordView changeBDimgWithimg:levelMeter];
 }
 
@@ -4305,6 +4138,64 @@ PlayingDelegate>
     
     NSLog(@"");
 }
+
+#pragma mark ----CustomInputViewDelegate
+-(void)beginRecordWithView:(UIView *)view//点击开始
+{
+    [[PlayerManager sharedManager]stopPlaying];
+    [RecorderManager sharedManager].delegate = self;
+    [[RecorderManager sharedManager] startRecording];
+}
+-(void)touchMovedWithView:(UIView *)view//移动向上超过20
+{
+    showRecordView.imageView.image = KUIImage(@"cancleRecord_1") ;
+    showRecordView.m_bodongImg.hidden = YES;
+    showRecordView.backgroundColor = UIColorFromRGBA(0xf75757, .7);
+}
+
+-(void)touchMoveBackWithView:(UIView *)view//移动向上小雨20
+{
+    showRecordView.imageView.image = KUIImage(@"third_xiemessage_record_icon");
+    showRecordView.m_bodongImg.hidden = NO;
+    showRecordView.backgroundColor = UIColorFromRGBA(0x000000, .7);
+}
+
+-(void)RecordSuccessWithView:(UIView *)view//点击完成 录制成功
+{
+    [[RecorderManager sharedManager]stopRecording];
+}
+
+-(void)cancleRecordWithView:(UIView *)view;//点击完成 录制失败
+{
+    showRecordView.imageView.image = KUIImage(@"third_xiemessage_record_icon");
+    showRecordView.m_bodongImg.hidden = NO;
+    showRecordView.backgroundColor = UIColorFromRGBA(0x000000, .7);
+    [[RecorderManager sharedManager]cancelRecording];
+
+}
+
+-(void)didClickEmjoWithView:(UIView *)view //点击表情buton
+{
+    [self kkChatEmojiBtnClicked:nil];
+    custview.hidden = YES;
+    self.inPutView.hidden  = NO;
+
+}
+
+-(void)didClickkkchatAddBtnWithView:(UIView *)view//点击加号
+{
+    [self kkChatAddButtonClick:nil];
+    custview.hidden = YES;
+    self.inPutView.hidden  = NO;
+
+}
+-(void)didClickAudioWithView:(UIView *)view
+{
+    custview.hidden = YES;
+    self.inPutView.hidden  = NO;
+}
+
+
 
 -(void)viewDidDisappear:(BOOL)animated
 {
