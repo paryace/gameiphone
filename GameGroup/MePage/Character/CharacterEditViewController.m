@@ -159,32 +159,24 @@
     }
     else
     {
-//        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"1"]) {//已认证
-//            cell.authBtn.hidden = YES;
-//            cell.authBg.image= KUIImage(@"chara_auth_1");
-//        }
-//        else
-//        {
-//            cell.authBtn.hidden = NO;
-//            cell.authBg.image= KUIImage(@"chara_auth_2");
-//        }
-        
-        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"1"]) {//已认证
-            cell.authBtn.hidden = YES;
-            cell.authBg.image= KUIImage(@"chara_auth_1");
-        }
-        else if([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"0"])
-        {
-            cell.authBg.image= KUIImage(@"chara_auth_2");
-            cell.authBtn.hidden = NO;
-        }else{
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"gameid")] isEqualToString:@"3"]) {
             cell.authBg.image = KUIImage(@"");
             cell.authBtn.hidden = YES;
+        }else{
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"1"]) {//已认证
+                cell.authBtn.hidden = YES;
+                cell.authBg.image= KUIImage(@"chara_auth_1");
+            }
+            else if([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"auth")] isEqualToString:@"0"])
+            {
+                cell.authBg.image= KUIImage(@"chara_auth_2");
+                cell.authBtn.hidden = NO;
+            }else{
+                cell.authBg.image = KUIImage(@"");
+                cell.authBtn.hidden = YES;
+            }
         }
 
-        
-        
-        
         NSString * gameImageId=KISDictionaryHaveKey(tempDic, @"img");
         if ([GameCommon isEmtity:gameImageId]) {
             cell.heardImg.image = [UIImage imageNamed:@"clazz_0.png"];
@@ -217,9 +209,11 @@
 
     authVC.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];
     authVC.realm = KISDictionaryHaveKey(dic, @"realm");
-    authVC.character = KISDictionaryHaveKey(dic, @"name");
-
-    [[NSUserDefaults standardUserDefaults]setObject:[NSDictionary dictionaryWithObjectsAndKeys:authVC.gameId,@"gameId",authVC.realm,@"realm",authVC.character,@"character", nil] forKey:@"deleteRole_wx"];
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:@"4"]) {
+         authVC.character = KISDictionaryHaveKey(dic, @"id");
+    }else {
+         authVC.character = KISDictionaryHaveKey(dic, @"name");
+    }
     
     [self.navigationController pushViewController:authVC animated:YES];
 }

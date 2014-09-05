@@ -982,6 +982,7 @@
                     [hud hide:YES];
                     [self showAlertViewWithTitle:@"提示" message:@"感谢您的举报，我们会尽快处理！" buttonTitle:@"确定"];
                 } failure:^(AFHTTPRequestOperation *operation, id error) {
+                    [hud hide:YES];
                     if ([error isKindOfClass:[NSDictionary class]]) {
                         if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
                         {

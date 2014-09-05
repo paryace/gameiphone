@@ -8,9 +8,10 @@
 
 #import "BaseViewController.h"
 #import "DWTagList.h"
+#import "TagCell.h"
 @protocol editInfoDelegate;
 
-@interface EditInfoViewController : BaseViewController<DWTagDelegate,UITextViewDelegate>
+@interface EditInfoViewController : BaseViewController<TagOnCLicklDelegate,UITextViewDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
 @property(nonatomic,copy)NSString * firstStr;
 @property(nonatomic,copy)NSString * secondStr;
 @property(nonatomic,copy)NSString * itemId;

@@ -48,7 +48,7 @@
         
         
         self.MemberLable = [[UIImageView alloc]initWithFrame:CGRectMake(195, 6, 26, 12.5)];
-        self.MemberLable.image = KUIImage(@"team_captain_icon.png");
+        self.MemberLable.image = KUIImage(@"m_team_captain_icon.png");
         [self.bgV addSubview:self.MemberLable];
         
         self.gameImageV = [[EGOImageView alloc]initWithFrame:CGRectMake(80, 35, 15, 15)];

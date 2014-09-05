@@ -30,8 +30,6 @@
         self.backgroundColor = UIColorFromRGBA(0x000000, 0.6);
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changPosition:) name:kChangPosition object:nil];//位置改变
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changMemberList:) name:kChangMemberList object:nil];//组队人数变化
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];//发起就位确认状态
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//初始化就位确认状态
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:)name:UIApplicationWillResignActiveNotification object:nil]; //监听是否触发home键挂起程序.
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:)name:UIApplicationDidBecomeActiveNotification object:nil]; //监听是否重新进入程序程序.
         self.groipId = groupId;
@@ -52,6 +50,7 @@
         self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60,18, 200, 44)];
         self.titleLabel.textColor = [UIColor whiteColor];
         self.titleLabel.text = @"队员列表";
+        self.titleLabel.backgroundColor = [UIColor clearColor];
         self.titleLabel.textAlignment = NSTextAlignmentCenter;
         self.titleLabel.font = [UIFont boldSystemFontOfSize:20];
         [bgImageView addSubview:self.titleLabel];
@@ -97,7 +96,7 @@
         pveLable.backgroundColor = [UIColor clearColor];
         pveLable.textAlignment = NSTextAlignmentCenter;
         pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
-        pveLable.text = @"队长可以滑动名单进行管理";
+        pveLable.text = self.teamUsershipType?@"队长可以滑动名单进行管理":@"队员滑动自己可以退出房间";
         pveLable.font =[ UIFont systemFontOfSize:20];
         
         if (!self.mTableView) {
@@ -359,23 +358,36 @@
 
 //确定就位
 -(void)agreeButton:(UIButton*)sender{
+    if (self.refusedBtn.isHighlighted) {
+        return;
+    }
     [hud show:YES];
     [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"1" reSuccess:^(id responseObject) {
         [hud hide:YES];
-//        self.agreeBtn = NO;
     } reError:^(id error) {
         [hud hide:YES];
+        [self btnOnclick:@"1" OnCLickState:@"0"];//
         [self showErrorAlertView:error];
     }];
 }
 //取消就位
 -(void)refusedButton:(UIButton*)sender{
+    if (self.agreeBtn.isHighlighted) {
+        return;
+    }
     [hud show:YES];
     [[ItemManager singleton] teamPreparedUserSelect:self.roomId GameId:self.gameId Value:@"0" reSuccess:^(id responseObject){
         [hud hide:YES];
     } reError:^(id error) {
         [hud hide:YES];
+         [self btnOnclick:@"1" OnCLickState:@"0"];//
         [self showErrorAlertView:error];
+    }];
+}
+
+-(void)btnOnclick:(NSString*)state OnCLickState:(NSString*)onCLickState{
+    [[TeamManager singleton] updateTeamUserState:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] GroupId:self.groipId State:state OnClickState:onCLickState Successcompletion:^(BOOL success, NSError *error) {
+        [self changInplaceStateMethods:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID] GroupId:self.groipId State:state];
     }];
 }
 
@@ -384,8 +396,8 @@
     self.memberList = [self comm:[DataStoreManager getMemberList:[GameCommon getNewStringWithId:self.roomId] GameId:[GameCommon getNewStringWithId:self.gameId]]];
 }
 
--(void)setMemberListss:(NSMutableArray *)memberList{
-    self.memberList = memberList;
+-(void)setMemberListss{
+    [self getmemberList];
     [self.mTableView reloadData];
 }
 
@@ -495,7 +507,7 @@
         pveLable.backgroundColor = UIColorFromRGBA(0xf3f3f3, 0.5);
         pveLable.textAlignment = NSTextAlignmentCenter;
         pveLable.textColor = kColorWithRGB(5,5,5, 0.7);
-        pveLable.text = @"队长可以滑动名单进行管理";
+        pveLable.text = self.teamUsershipType?@"队长可以滑动名单进行管理":@"队员滑动自己可以退出房间";
         pveLable.font =[ UIFont systemFontOfSize:12];
         [view addSubview:pveLable];
         return view;
@@ -623,6 +635,12 @@
             return @"解散";
         }
         return @"删除";
+    }else if(!self.teamUsershipType){
+        NSMutableDictionary * dic = [self.memberList objectAtIndex:indexPath.row];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]) {
+            return @"退出";
+        }
+        return @"";
     }
     return @"";
 }
@@ -633,6 +651,12 @@
     }
     if (self.teamUsershipType) {
         return YES;
+    }else if(!self.teamUsershipType){
+        NSMutableDictionary * dic = [self.memberList objectAtIndex:indexPath.row];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]) {
+            return YES;
+        }
+        return NO;
     }
     return NO;
     
@@ -642,12 +666,20 @@
     if (indexPath.section==1) {
         return;
     }
+    self.deleteIndex = indexPath.row;
     if (editingStyle ==UITableViewCellEditingStyleDelete) {
         tableView.editing = NO;
         NSMutableDictionary * dic = [self.memberList objectAtIndex:indexPath.row];
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]isEqualToString:[GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]]) {
-            UIAlertView*  alert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要解散队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须解散", nil];
-            alert.tag = 10000001;
+            
+            if (self.teamUsershipType) {
+                UIAlertView*  alert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要解散队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"必须解散", nil];
+                alert.tag = 10000001;
+                [alert show];
+                return;
+            }
+            UIAlertView*  alert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要退出该队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+            alert.tag = 10000002;
             [alert show];
             return;
         }
@@ -678,7 +710,28 @@
                 [self showErrorAlertView:error];
             }];
         }
+    }else if (alertView.tag ==10000002) {
+        if (buttonIndex==1) {
+            hud.labelText = @"请稍等...";
+            [hud show:YES];
+             NSMutableDictionary * dic = [self.memberList objectAtIndex:self.deleteIndex];
+            [[ItemManager singleton] exitTeam:[GameCommon getNewStringWithId:self.roomId] GameId:[GameCommon getNewStringWithId:self.gameId] MemberId:[GameCommon getNewStringWithId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberId")]] reSuccess:^(id responseObject) {
+                [hud hide:YES];
+                [self.detaildelegate doCloseControllerAction];
+                [self showToastAlertView:@"退出成功"];
+            } reError:^(id error) {
+                [hud hide:YES];
+                [self showErrorAlertView:error];
+            }];
+        }
     }
+}
+
+
+//退出房间
+-(void)gooutRoomWithNet
+{
+   
 }
 
 
@@ -741,35 +794,42 @@
 }
 
 #pragma mark 接收到确认或者取消消息通知,改变就位确认状态
--(void)changInplaceState:(NSNotification*)notification{
-    NSDictionary * memberUserInfo = notification.userInfo;
+-(void)changInplaceState:(NSDictionary*)memberUserInfo{
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
-        [self changPState:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"userid")] GroupId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(memberUserInfo, @"groupId")] State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
-        [self.mTableView reloadData];
-        [self clearNorReadInpaceMsg];
-        [self setBtnState];
-        [self.detaildelegate mHideOrShowTopMenuView];
+        [self changInplaceStateMethods:KISDictionaryHaveKey(memberUserInfo, @"userid") GroupId:KISDictionaryHaveKey(memberUserInfo, @"groupId") State:[self getState:KISDictionaryHaveKey(memberUserInfo, @"type")]];
     }
 }
+
 #pragma mark 接收到发起就位确认消息通知,改变就位确认状态
--(void)sendChangInplaceState:(NSNotification*)notification{
+-(void)sendChangInplaceState{
     [self showButton];
     [self changPState:@"1"];
     [self.mTableView reloadData];
     [self setBtnState];
     [self.detaildelegate mHideOrShowTopMenuView];
 }
-#pragma mark 接收到初始化就位确认消息通知,改变就位确认状态
--(void)resetChangInplaceState:(NSNotification*)notification{
 
+#pragma mark 接收到初始化就位确认消息通知,改变就位确认状态
+-(void)resetChangInplaceState{
+    
     if (self.teamUsershipType) {
         [[InplaceTimer singleton] resetTimer:self.gameId RoomId:self.roomId];
     }
+    [self setBtnState];
+    [self.detaildelegate mHideOrShowTopMenuView];
+    [self clearNorReadInpaceMsg];
+    [self.detaildelegate hideMenuView];//隐藏就位确认页面
+}
+
+
+-(void)changInplaceStateMethods:(NSString*)userId GroupId:(NSString*)groupId State:(NSString*)state{
+    [self changPState:[GameCommon getNewStringWithId:userId] GroupId:[GameCommon getNewStringWithId:groupId] State:state];
+    [self.mTableView reloadData];
     [self clearNorReadInpaceMsg];
     [self setBtnState];
     [self.detaildelegate mHideOrShowTopMenuView];
-    [self.detaildelegate hideMenuView];
 }
+
 //显示
 -(void)showView{
     [self getmemberList];
@@ -855,11 +915,6 @@
     [self sendBtnUnEnable];
 }
 
--(void)deallocContro{
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:kChangInplaceState object:nil];
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:kSendChangInplaceState object:nil];
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:kResetChangInplaceState object:nil];
-}
 
 - (void)dealloc
 {

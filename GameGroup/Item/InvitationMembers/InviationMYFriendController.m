@@ -125,10 +125,36 @@
                                   dataDict = result;
                                   [keysArr addObjectsFromArray:keys];
                                   
+//                                  //判断列表是否存在不包含队伍游戏的角色并且删除
+//                                  for (int i = 0; i<keysArr.count; i++) {
+//                                      NSMutableArray *arr = [dataDict objectForKey:[keysArr objectAtIndex:i]];
+//                                      for (int j = arr.count-1; j>=0; j--) {
+//                                          NSDictionary *dic = [arr objectAtIndex:j];
+//                                          NSString *str = [[arr objectAtIndex:j]objectForKey:@"gameids"];
+//                                          NSArray* array = [str componentsSeparatedByString:@","];
+//                                          if (![array containsObject:self.gameId]) {
+//                                              [arr removeObject:dic];
+//                                          }
+//                                      }
+//                                  }
+//                                  //判断标签下是否存在空数据 如果有 删除标签
+//                                  for (int i = keysArr.count-1; i>=0; i--) {
+//                                      NSString *str =[keysArr objectAtIndex:i];
+//                                      NSMutableArray *arr = [dataDict objectForKey:str];
+//                                      
+//                                      NSLog(@"%d--%@----%d",i,str,arr.count);
+//                                      if (!arr|| arr.count<1) {
+//                                          [keysArr removeObjectAtIndex:i];
+//                                      }
+//                                  }
+                                  
+                                  
+                                  
                                   for (int i =0; i<keysArr.count; i++) {
                                       NSArray *arr = [dataDict objectForKey:[keysArr objectAtIndex:i]];
                                       for (int j=0;j<arr.count;j++) {
                                           NSMutableDictionary *dic =[arr objectAtIndex:j];
+
                                           [dic setObject:[NSString stringWithFormat:@"%d",i] forKey:@"section"];
                                           [dic setObject:[NSString stringWithFormat:@"%d",j] forKey:@"row"];
                                           [dic setValue:@"1" forKey:@"choose"];
@@ -171,6 +197,30 @@
             [dataDict removeAllObjects];
             dataDict = result;
             [keysArr addObjectsFromArray:keys];
+            
+//            //判断列表是否存在不包含队伍游戏的角色并且删除
+//            for (int i = 0; i<keysArr.count; i++) {
+//                NSMutableArray *arr = [dataDict objectForKey:[keysArr objectAtIndex:i]];
+//                for (int j = arr.count-1; j>=0; j--) {
+//                    NSDictionary *dic = [arr objectAtIndex:j];
+//                    NSString *str = [[arr objectAtIndex:j]objectForKey:@"gameids"];
+//                    NSArray* array = [str componentsSeparatedByString:@","];
+//                    if (![array containsObject:self.gameId]) {
+//                        [arr removeObject:dic];
+//                    }
+//                }
+//            }
+//            //判断标签下是否存在空数据 如果有 删除标签
+//            for (int i = keysArr.count-1; i>=0; i--) {
+//                NSString *str =[keysArr objectAtIndex:i];
+//                NSMutableArray *arr = [dataDict objectForKey:str];
+//                
+//                NSLog(@"%d--%@----%d",i,str,arr.count);
+//                if (!arr|| arr.count<1) {
+//                    [keysArr removeObjectAtIndex:i];
+//                }
+//            }
+            
             for (int i =0; i<keysArr.count; i++) {
                 NSArray *arr = [dataDict objectForKey:[keysArr objectAtIndex:i]];
                 for (int j=0;j<arr.count;j++) {
@@ -418,7 +468,7 @@
     NSArray *arr= [dataDict objectForKey:keysArr[indexPath.section]];
     tempDict = arr[indexPath.row];
     
-    if (cell.chooseImg.image ==KUIImage(@"unchoose")) {
+    if ([KISDictionaryHaveKey(tempDict,@"choose")isEqualToString:@"1"]) {
         cell.chooseImg.image = KUIImage(@"choose");
         NSDictionary *dic = tempDict;
         [tempDict setObject:@"2" forKey:@"choose"];

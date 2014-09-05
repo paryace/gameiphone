@@ -233,6 +233,9 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             else if ([payLoadType isEqualToString:@"teamClaimAddType"]){//占坑
                 [self.chatDelegate teamClaimAddTypeMessageReceived:dict];
             }
+            else if ([payLoadType isEqualToString:@"teamClaimKickType"]){//预约的人被踢出
+                [self.chatDelegate teamClaimKickTypeMessageReceived:dict];
+            }
             else if ([payLoadType isEqualToString:@"teamOccupyType"]){//填坑
                 [self.chatDelegate teamOccupyTypeMessageReceived:dict];
             }

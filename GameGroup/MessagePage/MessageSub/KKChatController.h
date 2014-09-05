@@ -37,6 +37,7 @@
 #import "NewTeamApplyListView.h"
 #import "SendFileMessageDelegate.h"
 #import "TeamInvitationController.h"
+#import "CustomInputView.h"
 
 @class AppDelegate, XMPPHelper;
 
@@ -66,7 +67,8 @@ RecordAudioDelegate,
 SendAudioMsgDeleGate,
 ApplyDetailDelegate,
 SendFileMessageDelegate,
-UIGestureRecognizerDelegate>
+UIGestureRecognizerDelegate,
+CustomInputDelegate>
 
 {
     NSString * userName;

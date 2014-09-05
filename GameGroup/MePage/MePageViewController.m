@@ -420,9 +420,13 @@
             cell.authBg.hidden = NO;
             if ([failedmsg intValue] ==404||[failedmsg isEqualToString:@"notSupport"])//角色不存在
             {
-                cell.heardImg.image = KUIImage(@"clazz_icon.png");
-                cell.authBg.image= KUIImage(@"chara_auth_3");
-                cell.authBg.hidden =NO;
+                if ([[GameCommon getNewStringWithId:gameid] isEqualToString:@"3"]) {
+                    cell.authBg.image = KUIImage(@"");
+                }else{
+                    cell.authBg.image= KUIImage(@"chara_auth_3");
+                    cell.authBg.hidden =NO;
+                }
+                 cell.heardImg.image = KUIImage(@"clazz_icon.png");
             }
             else
             {
@@ -433,14 +437,18 @@
                     cell.heardImg.imageURL = [ImageService getImageUrl3:img Width:80];
                 }
                 
-                if ([[GameCommon getNewStringWithId:auth] isEqualToString:@"1"]) {//已认证
-                    cell.authBg.image= KUIImage(@"chara_auth_1");
-                }
-                else if([[GameCommon getNewStringWithId:auth] isEqualToString:@"0"])
-                {
-                    cell.authBg.image= KUIImage(@"chara_auth_2");
-                }else{
+                if ([[GameCommon getNewStringWithId:gameid] isEqualToString:@"3"]) {
                     cell.authBg.image = KUIImage(@"");
+                }else{
+                    if ([[GameCommon getNewStringWithId:auth] isEqualToString:@"1"]) {//已认证
+                        cell.authBg.image= KUIImage(@"chara_auth_1");
+                    }
+                    else if([[GameCommon getNewStringWithId:auth] isEqualToString:@"0"])
+                    {
+                        cell.authBg.image= KUIImage(@"chara_auth_2");
+                    }else{
+                        cell.authBg.image = KUIImage(@"");
+                    }
                 }
             }
            

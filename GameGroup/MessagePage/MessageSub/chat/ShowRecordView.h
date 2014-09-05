@@ -10,4 +10,6 @@
 
 @interface ShowRecordView : UIView
 -(void)changeBDimgWithimg:(double)img;
+@property (nonatomic, strong)UIImageView *imageView;
+@property (nonatomic, strong) UIImageView *m_bodongImg;
 @end

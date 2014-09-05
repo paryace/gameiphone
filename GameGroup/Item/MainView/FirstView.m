@@ -131,6 +131,12 @@
 }
 
 
+-(void)hiddenSearchBarKeyBoard
+{
+    tagView.hidden = YES;
+    [mSearchBar resignFirstResponder];
+}
+
 //拿偏好页的条件搜索
 -(void)InitializeInfo:(NSDictionary*)mainDict
 {
@@ -154,6 +160,8 @@
 -(void)tagClick:(UIButton*)sender
 {
     selectDescription = KISDictionaryHaveKey([arrayTag objectAtIndex:sender.tag], @"value");
+    mSearchBar.text = [mSearchBar.text stringByAppendingString:selectDescription?selectDescription:@""];
+
     [self reloInfo:YES];
     if([mSearchBar isFirstResponder]){
         [mSearchBar resignFirstResponder];
@@ -249,6 +257,9 @@
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
         arrayTag = responseObject;
         [tagList setTags:arrayTag];
+    }else {
+        arrayTag = [NSMutableArray array];
+        [tagList setTags:[NSMutableArray array]];
     }
 }
 #pragma mark -- Filter请求成功通知
@@ -374,6 +385,9 @@
 
 
 -(void)hideDrowList{
+//    screenView.hidden = YES;
+    [mSearchBar resignFirstResponder];
+    tagView.hidden = YES;
     if (self.dropDownView.isShow) {
         [self.dropDownView hideView];
         [self.dropDownView hideExtendedChooseView];
@@ -500,13 +514,13 @@
     
     NSString *title = [NSString stringWithFormat:@"[%@/%@]%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")]];
     cell.titleLabel.text = title;
+    
     NSString * myRankStr = [self getMyRank:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"myRank")]];
     if ([GameCommon isEmtity:myRankStr]) {
-        cell.MemberLable.hidden = YES;
+        cell.MemberImage.hidden = YES;
     }else{
-        cell.MemberLable.backgroundColor = UIColorFromRGBA(0x2eac1d, 1);
-        cell.MemberLable.text = myRankStr;
-        cell.MemberLable.hidden = NO;
+        cell.MemberImage.image = KUIImage(myRankStr);
+        cell.MemberImage.hidden = NO;
     }
     cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")] doubleValue]];
@@ -518,11 +532,11 @@
 
 -(NSString*)getMyRank:(NSString*)myRank{
     if ([myRank intValue]==1) {
-        return @"申请";
+        return @"m_team_apply_icon";
     }else if ([myRank intValue]==2){
-        return @"队员";
+        return @"m_team_players_icon";
     }else if ([myRank intValue]==9){
-        return @"队长";
+        return @"m_team_captain_icon";
     }
     return @"";
 }
@@ -639,6 +653,7 @@
         [[ItemManager singleton] getTeamLable:KISDictionaryHaveKey(self.selectCharacter, @"gameid") TypeId:KISDictionaryHaveKey(self.selectType, @"constId") CharacterId:KISDictionaryHaveKey(self.selectCharacter, @"id") reSuccess:^(id responseObject) {
             [self updateTeamLable:responseObject];
         } reError:^(id error) {
+            [self updateTeamLable:nil];
             [self showErrorAlertView:error];
         }];
         

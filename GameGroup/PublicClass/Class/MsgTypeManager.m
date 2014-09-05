@@ -186,6 +186,9 @@
     else if ([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"teamClaimAddType"]){
         return payloadTypeTeamClaimAddType;
     }
+    else if ([[NSString stringWithFormat:@"%@",payloadType] isEqualToString:@"teamClaimKickType"]){
+        return payloadTypeTeamClaimKickType;
+    }
     else{
         return PayloadTypeOther;
     }
@@ -213,7 +216,8 @@
         ||payloadType == PayloadTypeTeamPreparedUserSelectCancel
         ||payloadType == PayloadTypeTeamPreparedConfirmResultSuccess
         ||payloadType == payloadTypeTeamPreparedConfirmResultFail
-        ||payloadType == payloadTypeTeamClaimAddType) {
+        ||payloadType == payloadTypeTeamClaimAddType
+        ||payloadType == payloadTypeTeamClaimKickType) {
         return 1;
     }
     else

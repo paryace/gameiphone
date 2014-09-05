@@ -331,7 +331,7 @@
                 if (success) {
                     [self displayMsgsForDefaultView];
                 }else {
-                    [self showAlertViewWithTitle:@"提示" message:@"清除消息失败" buttonTitle:@"确定"];
+//                    [self showAlertViewWithTitle:@"提示" message:@"清除消息失败" buttonTitle:@"确定"];
                 }
             }];
         }

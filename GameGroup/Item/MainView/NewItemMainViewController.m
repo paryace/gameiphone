@@ -60,7 +60,7 @@
         firstView.selectCharacter = nil;
         firstView.selectType = nil;
         [firstView setTitleInfo];
-        [firstView initSearchConditions];
+//        [firstView initSearchConditions];
     }
     firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     
@@ -192,7 +192,7 @@
 -(void)create:(id)sender{
     NSArray *arr =[room.listDict objectForKey:@"OwnedRooms"];
     if (arr.count==2) {
-        [self showAlertViewWithTitle:@"提示" message:@"您的队伍已达到创建上限" buttonTitle:@"确定"];
+        [self showAlertViewWithTitle:@"提示" message:@"最多只能创建两个队伍" buttonTitle:@"确定"];
         return;
     }
     [[Custom_tabbar showTabBar] hideTabBar:YES];
@@ -301,6 +301,8 @@
         }
     }else if (sender ==m_button2){
         if (!m_button2.selected) {
+            [firstView hiddenSearchBarKeyBoard];
+
             m_button2.selected = YES;
             m_button1.selected = NO;
             sortingBtn.hidden = YES;

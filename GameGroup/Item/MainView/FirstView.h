@@ -44,10 +44,11 @@
 -(void)InitializeInfo:(NSDictionary*)mainDict;//拿偏好页面的条件搜索
 -(void)hideDrowList;//隐藏弹出菜单
 -(void)setTitleInfo;
+-(void)hiddenSearchBarKeyBoard;
+
 @end
 
 @protocol firstViewDelegate <NSObject>
-
 -(void)enterSearchRoomPageWithView:(FirstView *)view;
 -(void)refreWithRow:(NSInteger)row;
 -(void)enterEditPageWithRow:(NSInteger)row isRow:(BOOL)isrow;

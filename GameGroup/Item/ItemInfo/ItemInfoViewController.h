@@ -10,6 +10,7 @@
 #import "RoleTabView.h"
 #import "EditInfoViewController.h"
 #import "ItemInfoCell.h"
+#import "ChineseString.h"
 
 @interface ItemInfoViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,roleTabDelegate,UIAlertViewDelegate,editInfoDelegate,HeadClickDelegate>
 @property(nonatomic,strong)NSMutableDictionary *infoDict;

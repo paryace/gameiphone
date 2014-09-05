@@ -12,10 +12,12 @@
 {
     UITextView *firstTextView;
     UITextView *secondTextView;
-    DWTagList     *  tagList;
     NSMutableArray  *  m_flArray;
     UILabel       *  m_ziNumLabel;
     NSInteger        m_maxZiShu;
+    
+    UICollectionViewFlowLayout *layout;
+    UICollectionView *customPhotoCollectionView;
 
 
 }
@@ -27,9 +29,6 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
-        
-        
         
     }
     return self;
@@ -50,25 +49,38 @@
     [shareButton addTarget:self action:@selector(saveChanged:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
 
-    UIImageView *txbgImgViwe = [[UIImageView alloc]initWithFrame:CGRectMake(20, startX+10, 280, 90)];
+    UIImageView *txbgImgViwe = [[UIImageView alloc]initWithFrame:CGRectMake(10, startX+10, 300, 90)];
     txbgImgViwe.backgroundColor=[UIColor clearColor];
     
     txbgImgViwe.image = KUIImage(@"group_info");
     [self.view addSubview:txbgImgViwe];
     
     
-    firstTextView = [[UITextView alloc]initWithFrame:CGRectMake(20, startX+10, 280, 90)];
+    firstTextView = [[UITextView alloc]initWithFrame:CGRectMake(10, startX+10, 300, 90)];
     firstTextView.font = [UIFont systemFontOfSize:14];
     firstTextView.backgroundColor = [UIColor clearColor];
     firstTextView.text = self.firstStr;
     firstTextView.delegate = self;
+    firstTextView.returnKeyType =UIReturnKeyDone;
     [self.view addSubview:firstTextView];
-    
 
     
-    tagList = [[DWTagList alloc]initWithFrame:CGRectMake(20, startX+110, 280, 60)];
-    tagList.tagDelegate=self;
-    [self.view addSubview:tagList];
+    
+    layout = [[UICollectionViewFlowLayout alloc]init];
+    layout.minimumInteritemSpacing = 10;
+    layout.minimumLineSpacing =10;
+    layout.scrollDirection = UICollectionViewScrollDirectionVertical;
+    layout.itemSize = CGSizeMake(88, 30);
+    customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10.0f, startX+110, 300, kScreenHeigth - 110-startX) collectionViewLayout:layout];
+    customPhotoCollectionView.delegate = self;
+    customPhotoCollectionView.scrollEnabled = YES;
+    customPhotoCollectionView.showsHorizontalScrollIndicator = NO;
+    customPhotoCollectionView.showsVerticalScrollIndicator = NO;
+    customPhotoCollectionView.dataSource = self;
+    customPhotoCollectionView.backgroundColor = [UIColor redColor];
+    [customPhotoCollectionView registerClass:[TagCell class] forCellWithReuseIdentifier:@"ImageCell"];
+    customPhotoCollectionView.backgroundColor = [UIColor clearColor];;
+    [self.view addSubview:customPhotoCollectionView];
     
     
 //    secondTextView =  [[UITextView alloc]initWithFrame:CGRectMake(20, startX+90, 280, 70)];
@@ -102,7 +114,13 @@
     [self.view addSubview:hud];
     hud.labelText = @"保存中...";
     [self getcardFromNetWithGameid:self.gameid TypeId:self.typeId CharacterId:self.characterId];
-    // Do any additional setup after loading the view.
+    UITapGestureRecognizer *tapg = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(hsjp:)];
+    tapg.delegate = self;
+    [self.view addGestureRecognizer:tapg];
+}
+-(void)hsjp:(id)sender
+{
+    [firstTextView resignFirstResponder];
 }
 -(void)getcardFromNetWithGameid:(NSString*)gameid TypeId:(NSString*)typeId CharacterId:(NSString*)characterId
 {
@@ -112,39 +130,64 @@
         [self showErrorAlert:error];
     }];
 }
+
 #pragma mark -- 标签请求成功通知
 -(void)updateTeamLable:(id)responseObject
 {
     if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
         m_flArray = responseObject;
-        [tagList setTags:responseObject average:YES rowCount:3];
-        tagList.frame = CGRectMake(20.0f, startX+ 110.0f, tagList.fittedSize.width-10, tagList.fittedSize.height);
+        [customPhotoCollectionView reloadData];
     }
 }
--(void)tagClick:(UIButton*)sender
+
+#pragma mark - text view delegate
+-(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
+    return 1;
+}
+
+-(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return m_flArray.count;
+}
+
+-(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    TagCell *cell  = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
+    cell.tag = indexPath.row;
+    cell.delegate = self;
+    cell.titleLabel.textAlignment = NSTextAlignmentCenter;
+    cell.titleLabel.text =  KISDictionaryHaveKey([m_flArray objectAtIndex:indexPath.row], @"value");
+    cell.titleLabel.font = [UIFont systemFontOfSize:14];
+    return cell;
+}
+
+-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    NSInteger textlength = [[GameCommon shareGameCommon] unicodeLengthOfString:firstTextView.text];
-    
+}
+#pragma mark - 点击标签
+-(void)tagOnClick:(TagCell*)sender{
     NSString * tagValue =[NSString stringWithFormat:@"%@",KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")];
-    NSInteger tagValueLength = [[GameCommon shareGameCommon] unicodeLengthOfString:tagValue];
-    if (textlength+tagValueLength>30) {
+    NSInteger tagValueLength = tagValue.length;
+    if (firstTextView.text.length+tagValueLength>30) {
         return;
     }
     if (firstTextView.text&&firstTextView.text.length>0) {
         firstTextView.text =[NSString stringWithFormat:@"%@ %@",firstTextView.text,[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")]];
     }else{
         firstTextView.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_flArray objectAtIndex:sender.tag], @"value")];
-
+        
     }
-    
-    
     [self refreshZiLabelText];
 }
 
 -(void)saveChanged:(id)sender
 {
-    
+//    if ([GameCommon isEmtity:[GameCommon getNewStringWithId:firstTextView.text]]) {
+//        [self showAlertViewWithTitle:@"提示" message:@"描述内容不能为空" buttonTitle:@"确定"];
+//        return;
+//    }
     NSInteger ziNum = m_maxZiShu - firstTextView.text.length;
     
     if (ziNum<0) {
@@ -272,16 +315,15 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)textViewDidBeginEditing:(UITextView *)textView{
+    CGRect frame = textView.frame;
+    [UIView animateWithDuration:0.3 animations:^{
+        customPhotoCollectionView.frame = CGRectMake(10.0f, startX+110, 300, kScreenHeigth - startX - 10 - 216-10 - frame.size.height);
+    }];
 }
-*/
-
+- (void)textViewDidEndEditing:(UITextView *)textView{
+    [UIView animateWithDuration:0.3 animations:^{
+        customPhotoCollectionView.frame = CGRectMake(10.0f, startX+110, 300, kScreenHeigth - 110-startX);
+    }];
+}
 @end

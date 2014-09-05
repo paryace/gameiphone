@@ -722,7 +722,7 @@ typedef enum : NSUInteger {
                     //有图， 先解析出图片数组
                     NSMutableString *imgStr = KISDictionaryHaveKey(contentDict, @"img");
                     NSString *str = [imgStr substringFromIndex:imgStr.length];
-                    NSString *str2;
+                    NSString *str2 = @"";
                     if ([str isEqualToString:@","]) {
                         str2= [imgStr substringToIndex:imgStr.length-1];
                     }
@@ -1161,7 +1161,7 @@ typedef enum : NSUInteger {
     //离线评论
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSMutableDictionary *commentUser = [NSMutableDictionary dictionary];
-    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict;
     NSString * nickName = [DataStoreManager queryNickNameForUser:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     [commentUser setObject:@"" forKey:@"img"];
     [commentUser setObject:nickName forKey:@"nickname"];
