@@ -1476,9 +1476,15 @@ PlayingDelegate>
             UIImage * bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.voiceImageView.image = KUIImage(@"SenderVoiceNodePlaying003");
+
             cell.voiceImageView.frame =CGRectMake(320-size.width - padding, padding*2-4,20,20);
             cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-30, padding*2-4, 30, 20);
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-15)status:status];
+            
+//            cell.voiceImageView.frame =CGRectMake(320-size.width - padding, padding*2-2,20,20);
+//            cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-40, padding*2-2, 20, 20);
+//            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-21)status:status];
+
             [cell uploadAudio:indexPath.row];
         }else{
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
@@ -2750,6 +2756,7 @@ PlayingDelegate>
     }
     self.inPutView.hidden = NO;
     [self.view bringSubviewToFront:self.inPutView];
+    [self.view bringSubviewToFront:self.theEmojiView];
 
     if (self.kkchatInputType != KKChatInputTypeEmoji) {
         ifEmoji = YES;
@@ -2781,6 +2788,7 @@ PlayingDelegate>
     }
     self.inPutView.hidden = NO;
     [self.view bringSubviewToFront:self.inPutView];
+    [self.view bringSubviewToFront:self.kkChatAddView];
     if (self.kkchatInputType != KKChatInputTypeAdd) {   //点击切到发送
         self.kkchatInputType = KKChatInputTypeAdd;
         
@@ -3395,6 +3403,7 @@ PlayingDelegate>
     }
     [messageDict setObject:payloadStr forKey:@"payload"];
     [self addNewMessageToTable:messageDict];
+    [[MessageAckService singleton] addMessage:messageDict];
 }
 -(NSString*)getDomain:(NSString*)domain
 {
