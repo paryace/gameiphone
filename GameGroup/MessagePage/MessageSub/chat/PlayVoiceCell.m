@@ -53,7 +53,7 @@
         
         self.audioTimeSizeLb = [[UILabel alloc]initWithFrame:CGRectMake(20, 0, 20, 20)];
         self.audioTimeSizeLb.backgroundColor = [UIColor clearColor];
-        self.audioTimeSizeLb.textColor = [UIColor blackColor];
+        self.audioTimeSizeLb.textColor = [UIColor grayColor];
         self.audioTimeSizeLb.font = [UIFont boldSystemFontOfSize:12];
         self.audioTimeSizeLb.textAlignment =NSTextAlignmentCenter;
         [self addSubview:self.audioTimeSizeLb];

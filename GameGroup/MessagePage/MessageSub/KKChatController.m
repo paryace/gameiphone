@@ -683,11 +683,12 @@ PlayingDelegate>
         self.topItemView.frame = CGRectMake(0, startX, 320, reTop.size.height);
     }completion:^(BOOL finished) {
         self.newTeamMenuView.hidden = YES;
-        
         [self.newTeamMenuView hideView];
         self.topImageView.hidden = NO;
-
     }];
+    if (messages.count>0) {
+        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+    }
     
 }
 //显示队员列表
@@ -738,11 +739,14 @@ PlayingDelegate>
         }else{
             self.topItemView.frame = CGRectMake(0, startX, 320, 0);
         }
+      
     }completion:^(BOOL finished) {
          self.topItemView.hidden = YES;
     }];
     offsetTopHight = 0;
-    
+    if (messages.count>0) {
+        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+    }
 }
 #pragma mark -- 跳转角色详情
 -(void)itemOnClick:(NSDictionary*)charaDic{
