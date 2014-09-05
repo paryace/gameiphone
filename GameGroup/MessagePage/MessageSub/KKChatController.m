@@ -1478,7 +1478,7 @@ PlayingDelegate>
             cell.voiceImageView.image = KUIImage(@"SenderVoiceNodePlaying003");
             cell.voiceImageView.frame =CGRectMake(320-size.width - padding, padding*2-2,20,20);
             cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-40, padding*2-2, 20, 20);
-            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-15)status:status];
+            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-21)status:status];
             [cell uploadAudio:indexPath.row];
         }else{
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
@@ -3395,6 +3395,7 @@ PlayingDelegate>
     }
     [messageDict setObject:payloadStr forKey:@"payload"];
     [self addNewMessageToTable:messageDict];
+    [[MessageAckService singleton] addMessage:messageDict];
 }
 -(NSString*)getDomain:(NSString*)domain
 {
