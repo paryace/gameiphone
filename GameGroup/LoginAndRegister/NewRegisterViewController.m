@@ -217,6 +217,7 @@
         [self.step1Button setImage:KUIImage(@"a_png_06") forState:UIControlStateHighlighted];
         }else{
         [self.step1Button setImage:KUIImage(@"1_031") forState:UIControlStateNormal];
+            
         }
     }else{
         if (m_phoneNumText.text.length ==11) {
@@ -696,9 +697,13 @@
 //        [self showAlertViewWithTitle:@"提示" message:@"请选择性别！" buttonTitle:@"确定"];
 //        return;
 //    }
-    if (m_parssWordTf.text.length < 6 || m_parssWordTf.text.length > 16) {
-        [self showAlertViewWithTitle:@"提示" message:@"密码最长16个字符,最短6个字符！" buttonTitle:@"确定"];
+    if (m_parssWordTf.text.length < 6 ) {
+        [self showAlertViewWithTitle:@"提示" message:@"密码最短6个字符！" buttonTitle:@"确定"];
         return;
+    }else if(m_parssWordTf.text.length > 16){
+        [self showAlertViewWithTitle:@"提示" message:@"密码最长16个字符！" buttonTitle:@"确定"];
+        return;
+
     }
 //    if (![[GameCommon shareGameCommon] isValidateEmail:m_emailTf.text])
 //    {
@@ -984,21 +989,25 @@
         {
             return  NO;
         }
-        else//只允许输入数字
-        {
-            if (range.length == 1)//如果是输入字符，range的length会为0,删除字符为1
-            {//判断如果是删除字符，就直接返回yes
-                return YES;
-            }
-            NSCharacterSet *cs;
-            cs = [[NSCharacterSet characterSetWithCharactersInString:NUMBERS] invertedSet];
-            
-            NSString *filtered = [[string componentsSeparatedByCharactersInSet:cs] componentsJoinedByString:@""];
-            
-            BOOL canChange = [string isEqualToString:filtered];
-            
-            return canChange;
-        }
+//        else//只允许输入数字
+//        {
+//            if (range.length == 1)//如果是输入字符，range的length会为0,删除字符为1
+//            {//判断如果是删除字符，就直接返回yes
+//                return YES;
+//            }
+//            NSCharacterSet *cs;
+//            cs = [[NSCharacterSet characterSetWithCharactersInString:NUMBERS] invertedSet];
+//            
+//            NSString *filtered = [[string componentsSeparatedByCharactersInSet:cs] componentsJoinedByString:@""];
+//            
+//            BOOL canChange = [string isEqualToString:filtered];
+//            
+//            return canChange;
+//        }
+        
+        
+        
+        
     }
     else if(m_verCodeTextField == textField)
     {

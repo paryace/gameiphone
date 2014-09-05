@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "EGOImageView.h"
 @interface SelectGameCell : UITableViewCell
+@property (nonatomic,strong)EGOImageView *gameIcon;
+@property (nonatomic,strong)UILabel *gameLabel;
 
 @end

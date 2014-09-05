@@ -10,6 +10,8 @@
 #import "AboutRoleCell.h"
 #import "HelpViewController.h"
 #import "CharacterAndTitleService.h"
+#import "SelectGameView.h"
+#import "BoundRoleCell.h"
 @interface BangdingRolesViewController ()
 {
     UITableView *m_myTableView;
@@ -22,7 +24,12 @@
     UIButton* findPasButton;
     UIButton* registerButton;
     UIScrollView *mainScrollView;
+    NSMutableArray *nameArray;
+    NSMutableArray *imgArray;
+    UITapGestureRecognizer *tap;
+    NSInteger number;
 }
+@property (nonatomic,strong)SelectGameView *gameTableView;
 @end
 
 @implementation BangdingRolesViewController
@@ -39,6 +46,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    
     self.navigationController.navigationBarHidden = YES;
     [self setTopViewWithTitle:@"绑定角色" withBackButton:NO];
     
@@ -47,29 +56,17 @@
                                                object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification
                                                object:nil];
-    
-
-    
-    UIImageView *iageView =[[ UIImageView alloc]initWithFrame:CGRectMake(0, startX, 320, 28)];
-//    iageView.image = KUIImage(@"registerStep3");
-    [self.view addSubview:iageView];
-    
+   
     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"选择游戏",@"name",@"",@"content",@"picker",@"type", nil];
     m_dataArray =[NSMutableArray array];
     [m_dataArray addObject:dic];
     
     gameInfoArray = [NSMutableArray new];
-//    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
-//    NSDictionary *dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
-//    NSArray *allkeys = [dict allKeys];
-//    for (int i = 0; i <allkeys.count; i++) {
-//        NSArray *array = [dict objectForKey:allkeys[i]];
-//        [gameInfoArray addObjectsFromArray:array];
-//    }
-    
+
     [[GameListManager singleton] getGameListFromLocal:^(id responseObject) {
         if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
             [gameInfoArray addObjectsFromArray:responseObject];
+         
         }
     } reError:^(id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -81,16 +78,72 @@
         }
     }];
     
-    mainScrollView =[[ UIScrollView alloc]initWithFrame:CGRectMake(0, startX+28, 320, kScreenHeigth-startX-28)];
+    mainScrollView =[[ UIScrollView alloc]initWithFrame:CGRectMake(0, startX+8, 320, kScreenHeigth-startX-28)];
     mainScrollView.contentSize = CGSizeMake(0, (kScreenHeigth-startX-28)*1.3);
+    mainScrollView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:mainScrollView];
     
     [self setStep_2View];
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
-  
-    // Do any additional setup after loading the view.
+    
+    UITapGestureRecognizer *tap1 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapGS:)];
+    [mainScrollView addGestureRecognizer:tap1];
+    
+    #pragma mark --------------- 创建选择游戏的视图
+
+    self.gameTableView = [[SelectGameView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth)];
+    self.gameTableView.titleView.text = @"选择游戏";
+    self.gameTableView.backgroundColor = [UIColor whiteColor];
+    self.gameTableView.selectGameDelegate = self;
+    nameArray = [NSMutableArray array];
+    imgArray = [NSMutableArray array];
+    for (int i=0; i<[gameInfoArray count]; i++) {
+        NSDictionary * dic = [gameInfoArray objectAtIndex:i];
+        NSString * name = [dic objectForKey:@"name"];
+        NSString * img = [dic objectForKey:@"img"];
+        [nameArray addObject:name];
+        [imgArray addObject:img];
+    }
+    [self.gameTableView setDateWithNameArray:nameArray andImg:imgArray];
+    
+    [self.view addSubview:self.gameTableView];
+ 
+       // Do any additional setup after loading the view.
 }
+
+-(void)selectGame:(NSInteger)characterDic
+{
+    //fuzhi给num
+    number = characterDic;
+    //选择游戏界面的代理的实现
+    if ([gameInfoArray count] != 0) {
+        NSDictionary *dict =[gameInfoArray objectAtIndex:characterDic];
+        NSArray *sarchArray ;
+        sarchArray =[[dict objectForKey:@"gameParams"]objectForKey:@"bindCharacterParams"];
+        
+        [m_dataArray removeAllObjects];
+        
+        NSDictionary *firstDic = [NSDictionary dictionaryWithObjectsAndKeys:@"选择游戏",@"name",[dict objectForKey:@"name"],@"content",@"picker",@"type",[dict objectForKey:@"id"],@"gameid",KISDictionaryHaveKey(dict,@"img"),@"img",nil];
+        
+        [m_dataArray addObject:firstDic];
+        [m_dataArray addObjectsFromArray:[[dict objectForKey:@"gameParams" ] objectForKey:@"commonParams"]];
+        [m_dataArray addObjectsFromArray:sarchArray];
+        
+        m_okButton.hidden = NO;
+        m_myTableView.frame = CGRectMake(0, 60, 320, 44*m_dataArray.count);
+        m_okButton.frame = CGRectMake(10, 104+44*m_dataArray.count, 300, 40);
+        registerButton.frame = CGRectMake(150,  149+44*m_dataArray.count, 100, 40);
+        findPasButton.frame = CGRectMake(70,  149+44*m_dataArray.count, 80, 40);
+        [m_myTableView reloadData];
+    }
+
+    
+}
+
+
+
+
 #pragma mark 第二步
 - (void)setStep_2View
 {
@@ -117,14 +170,19 @@
     m_gameNamePick.delegate = self;
     m_gameNamePick.showsSelectionIndicator = YES;
     
+   
+    
+    
+    
     toolbar_server1 = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
     toolbar_server1.tintColor = [UIColor blackColor];
     UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectGameNameOK:)];
     rb_server.tintColor = [UIColor blackColor];
     toolbar_server1.items = @[rb_server];
     
-    m_okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 172, 300, 40)];
-    [m_okButton setBackgroundImage:KUIImage(@"bindingrole") forState:UIControlStateNormal];
+    m_okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 192, 300, 40)];
+//    m_okButton.backgroundColor = [UIColor redColor];
+    [m_okButton setBackgroundImage:KUIImage(@"11_08") forState:UIControlStateNormal];
 //    [step2Button setBackgroundImage:KUIImage(@"zhuce_click") forState:UIControlStateHighlighted];
     //    [step2Button setTitle:@"绑定上述角色" forState:UIControlStateNormal];
     [m_okButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -133,7 +191,7 @@
     [mainScrollView addSubview:m_okButton];
     
     
-    findPasButton = [[UIButton alloc] initWithFrame:CGRectMake(70, 210, 80, 40)];
+    findPasButton = [[UIButton alloc] initWithFrame:CGRectMake(70, 230, 80, 40)];
     [findPasButton setTitle:@"退出登录" forState:UIControlStateNormal];
     [findPasButton setTitleColor:kColorWithRGB(128, 128, 128, 1.0) forState:UIControlStateNormal];
     findPasButton.backgroundColor = [UIColor clearColor];
@@ -141,7 +199,7 @@
     [findPasButton addTarget:self action:@selector(backToRegister:) forControlEvents:UIControlEventTouchUpInside];
     [mainScrollView addSubview:findPasButton];
     
-    registerButton = [[UIButton alloc] initWithFrame:CGRectMake(150, 210, 100, 40)];
+    registerButton = [[UIButton alloc] initWithFrame:CGRectMake(150, 230, 100, 40)];
     [registerButton setTitle:@"|     遇到问题" forState:UIControlStateNormal];
     [registerButton setTitleColor:kColorWithRGB(128, 128, 128, 1.0) forState:UIControlStateNormal];
     registerButton.backgroundColor = [UIColor clearColor];
@@ -150,6 +208,12 @@
     [mainScrollView addSubview:registerButton];
 
     
+}
+#pragma mark---------------点击手势 收回键盘
+- (void)tapGS:(UIGestureRecognizer*)gs
+{
+    UITextField *tf = (UITextField *)[self.view viewWithTag:100002];
+    [tf resignFirstResponder];
 }
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
@@ -172,6 +236,9 @@
 }
 - (void)selectGameNameOK:(UIButton *)sender
 {
+    UIButton *bvt = (UIButton *)[self.view viewWithTag:1001];
+    [bvt setTitle:@"" forState:UIControlStateNormal];
+    
     if ([gameInfoArray count] != 0) {
         NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gameNamePick selectedRowInComponent:0]];
         NSArray *sarchArray ;
@@ -188,11 +255,20 @@
         m_okButton.hidden = NO;
         m_myTableView.frame = CGRectMake(0, 60, 320, 44*m_dataArray.count);
         m_okButton.frame = CGRectMake(10, 74+44*m_dataArray.count, 300, 40);
-        registerButton.frame = CGRectMake(150,  124+44*m_dataArray.count, 100, 40);
-        findPasButton.frame = CGRectMake(70,  124+44*m_dataArray.count, 80, 40);
+        registerButton.frame = CGRectMake(150,  149+44*m_dataArray.count, 100, 40);
+        findPasButton.frame = CGRectMake(70,  149+44*m_dataArray.count, 80, 40);
         [m_myTableView reloadData];
     }
 }
+#pragma mark ------点击选择游戏的button
+//
+- (void)didGameNameBt:(id)sender
+{
+
+    [self.gameTableView showSelf];
+    [self.gameTableView.roleTableView reloadData];
+}
+#pragma mark ------返回到注册
 -(void)backToRegister:(id)sender
 {
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -214,23 +290,27 @@
 
 }
 
-- (void)realmSelectClick:(UIButton *)sender
+- (void)realmSelectClickA:(UIButton *)sender
 {
     RealmsSelectViewController* realmVC = [[RealmsSelectViewController alloc] init];
     realmVC.realmSelectDelegate = self;
     realmVC.indexCount =[NSString stringWithFormat:@"%d",sender.tag];
     realmVC.gameNum = [[m_dataArray objectAtIndex:0]objectForKey:@"gameid"];
-    realmVC.prama = [[m_dataArray objectAtIndex:sender.tag]objectForKey:@"param"];
+    realmVC.prama = [[m_dataArray objectAtIndex:sender.tag-1000]objectForKey:@"param"];
     
     [self.navigationController pushViewController:realmVC animated:YES];
 }
-
+#pragma mark -----------------------realmStr ---------
 - (void)selectOneRealmWithName:(NSString *)name num:(NSString *)num
 {
     //    dic = [m_dataArray objectAtIndex:[num intValue]];
     //    [dic setObject:name forKey:@"content"];
-    UITextField *tf = (UITextField *)[self.view viewWithTag:[num intValue]+100000];
-    tf.text = name;
+//    UITextField *tf = (UITextField *)[self.view viewWithTag:[num intValue]+100000];
+    
+    UIButton *bvtt = (UIButton *)[self.view viewWithTag:[num intValue]];
+    [bvtt setTitle:name forState:UIControlStateNormal];
+    [bvtt setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+//    tf.text = name;
     m_realmStr = name;
 }
 
@@ -243,20 +323,31 @@
         [self showAlertViewWithTitle:@"提示" message:@"请将信息填写完整" buttonTitle:@"确定"];
         return;
     }
-    
+    NSLog(@"dataArray=%@",m_dataArray);
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
     for (int i =0; i<m_dataArray.count; i++) {
         NSDictionary *dic = m_dataArray[i];
         if (i==0) {
             [params setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
-        }else{
-            UITextField *tf  = (UITextField *)[self.view viewWithTag:i+100000];
-            if (!tf.text||[tf.text isEqualToString:@""]||[tf.text isEqualToString:@" "]) {
-                [self showAlertViewWithTitle:@"提示" message:@"请将信息填写完整" buttonTitle:@"确定"];
+        }else if(i == 1){
+            UIButton * bvtt = (UIButton *)[self.view viewWithTag:1001];
+            if (!bvtt.titleLabel.text||[bvtt.titleLabel.text isEqualToString:@""]||[bvtt.titleLabel.text isEqualToString:@" "]) {
+                [self showAlertViewWithTitle:@"提示" message:@"请选择正确的服务器" buttonTitle:@"确定"];
                 return;
             }
-            [params setObject:tf.text forKey:KISDictionaryHaveKey(dic, @"param")];
+            [params setObject:bvtt.titleLabel.text forKey:KISDictionaryHaveKey(dic, @"param")];
+        }else if(i == 2){
+            UITextField * bvt = (UITextField *)[self.view viewWithTag:100000+i];
+//            UIButton * bvt = (UIButton *)[self.view viewWithTag:1001];
+            if (!bvt.text||[bvt.text isEqualToString:@""]||[bvt.text isEqualToString:@" "]) {
+                [self showAlertViewWithTitle:@"提示" message:@"请填写角色名" buttonTitle:@"确定"];
+                return;
+            }
+            [params setObject:bvt.text forKey:KISDictionaryHaveKey(dic, @"param")];
         }
+        NSLog(@"dic=%@",dic);
+        NSLog(@"key=%@",KISDictionaryHaveKey(dic, @"param"));
+        NSLog(@"params =%@",params);
     }
     
     NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
@@ -276,7 +367,7 @@
         NSMutableDictionary* params_two = [[NSMutableDictionary alloc]init];
         [params_two setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
         [params_two setObject:KISDictionaryHaveKey(dic, @"id") forKey:@"characterId"];
-        
+        NSLog(@"%@",params_two);
         NSMutableDictionary* body_two = [[NSMutableDictionary alloc]init];
         [body_two addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
         [body_two setObject:params_two forKey:@"params"];
@@ -357,60 +448,92 @@
     //    [m_gameNameText resignFirstResponder];
     
 }
-
+#pragma mark 设置tableview---------------------------------
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if (tableView == (UITableView *)self.gameTableView) {
+        return 1;
+    }else{
     return m_dataArray.count;
+    }
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *identifint = @"cell";
-    AboutRoleCell *cell = [tableView dequeueReusableCellWithIdentifier:identifint];
+    
+    static NSString *identifint = @"Rolecell";
+    BoundRoleCell *cell = [tableView dequeueReusableCellWithIdentifier:identifint];
+    
     if (cell ==nil) {
-        cell = [[AboutRoleCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifint];
+        cell = [[BoundRoleCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifint];
     }
+    cell.serverButton.tag = indexPath.row +1000;
     cell.contentTF.delegate = self;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     NSDictionary *dic = m_dataArray[indexPath.row];
-    cell.titleLabel.text =KISDictionaryHaveKey(dic, @"name");
     cell.contentTF.text = KISDictionaryHaveKey(dic, @"content");
     cell.contentTF.tag = indexPath.row+100000;
     
     if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"list"]||[KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
         cell.rightImageView.hidden = NO;
         if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
-            cell.contentTF.inputView =m_gameNamePick;
-            cell.contentTF.inputAccessoryView= toolbar_server1;
+            cell.gameNameBt.hidden = NO;
+            cell.contentTF.hidden = NO;
+            cell.contentTF.enabled = NO;
             cell.serverButton.hidden = YES;
             cell.gameImg.hidden = NO;
+            cell.titleLabel.hidden = YES;
+            [cell.gameNameBt addTarget:self action:@selector(didGameNameBt:) forControlEvents:UIControlEventTouchUpInside];
             NSString * imageId=KISDictionaryHaveKey(dic, @"img");
             cell.gameImg.imageURL = [ImageService getImageUrl4:imageId];
             
+            
+            // 第二个cell的显示内容
         }else if([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"list"]){
             cell.serverButton.hidden =NO;
+            cell.smallImg.hidden = NO;
             cell.gameImg.hidden = YES;
-            [cell.serverButton addTarget:self action:@selector(realmSelectClick:) forControlEvents:UIControlEventTouchUpInside];
-            cell.serverButton.tag = indexPath.row;
+            cell.contentTF.hidden = YES;
+            cell.contentTF.enabled = NO;
+            [cell.serverButton setTitle:@"请选择您的服务器" forState:UIControlStateNormal];
+            [cell.serverButton addTarget:self action:@selector(realmSelectClickA:) forControlEvents:UIControlEventTouchUpInside];
+            [cell.serverButton setTitleColor:UIColorFromRGBA(0xd5d5d5, 1) forState:UIControlStateNormal];
+            cell.smallImg.image = KUIImage(@"r-1_08");
         }
         
     }else{
+        cell.serverButton.hidden = YES;
         cell.gameImg.hidden = YES;
         cell.serverButton.hidden = YES;
         cell.rightImageView.hidden = YES;
         cell.contentTF.inputView =nil;
+        cell.smallImg.hidden = NO;
+        cell.contentTF.placeholder = [NSString stringWithFormat:@"请输入您的%@",KISDictionaryHaveKey(dic, @"name")];
+        cell.smallImg.image = KUIImage(@"r-1_10");
+         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeImage:) name:UITextFieldTextDidChangeNotification object:nil];
+        [cell.contentTF addTarget:self action:@selector(changeImage:) forControlEvents:UIControlEventValueChanged];
     }
     
     return cell;
 }
-
+- (void)changeImage:(id)sender
+{
+    UITextField *tf = (UITextField *)[self.view viewWithTag:100002];
+    if (tf.text.length>0) {
+        [m_okButton setImage:KUIImage(@"r11_06") forState:UIControlStateHighlighted];
+        [m_okButton setImage:KUIImage(@"r11_03") forState:UIControlStateNormal];
+    }else{
+        [m_okButton setImage:KUIImage(@"r-1_102") forState:UIControlStateNormal];
+    }
+}
+#pragma mark ------------往下一个页面传zhi
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag ==1001) {
         if (buttonIndex ==1) {
             AuthViewController* authVC = [[AuthViewController alloc] init];
-            NSDictionary *dict =[gameInfoArray objectAtIndex:[m_gameNamePick selectedRowInComponent:0]];
+            NSDictionary *dict =[gameInfoArray objectAtIndex:number];
             authVC.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"id")];
             authVC.realm = m_realmStr;
             authVC.Type =@"register";
@@ -436,12 +559,13 @@
         if (i==0) {
             [params setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
         }else{
-            UITextField *tf  = (UITextField *)[self.view viewWithTag:i+100000];
-            if (!tf.text||[tf.text isEqualToString:@""]||[tf.text isEqualToString:@" "]) {
+//            UITextField *tf  = (UITextField *)[self.view viewWithTag:i+100000];
+            UIButton *bvt = (UIButton *)[self.view viewWithTag:1001];
+            if (!bvt.titleLabel.text||[bvt.titleLabel.text isEqualToString:@""]||[bvt.titleLabel.text isEqualToString:@" "]) {
                 [self showAlertViewWithTitle:@"提示" message:@"请将信息填写完整" buttonTitle:@"确定"];
                 return;
             }
-            [params setObject:tf.text forKey:KISDictionaryHaveKey(dic, @"param")];
+            [params setObject:bvt.titleLabel.text forKey:KISDictionaryHaveKey(dic, @"param")];
         }
     }
     [params setObject:@"register" forKey:@"type"];
@@ -452,6 +576,7 @@
     [body setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken ]forKey:@"token"];
     hud.labelText = @"获取中...";
     [hud show:YES];
+    NSLog(@"body******************************%@",body);
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         [[TempData sharedInstance]isBindingRolesWithBool:YES];
