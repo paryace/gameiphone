@@ -2750,6 +2750,7 @@ PlayingDelegate>
     }
     self.inPutView.hidden = NO;
     [self.view bringSubviewToFront:self.inPutView];
+    [self.view bringSubviewToFront:self.theEmojiView];
 
     if (self.kkchatInputType != KKChatInputTypeEmoji) {
         ifEmoji = YES;
@@ -2781,6 +2782,7 @@ PlayingDelegate>
     }
     self.inPutView.hidden = NO;
     [self.view bringSubviewToFront:self.inPutView];
+    [self.view bringSubviewToFront:self.kkChatAddView];
     if (self.kkchatInputType != KKChatInputTypeAdd) {   //点击切到发送
         self.kkchatInputType = KKChatInputTypeAdd;
         
