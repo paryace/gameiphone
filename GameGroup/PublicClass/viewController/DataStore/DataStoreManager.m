@@ -282,6 +282,7 @@
                 commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
                 commonMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
                 commonMsg.status = @"1";
+                commonMsg.audioType = @"1";
                 commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
             }
         }
@@ -305,6 +306,7 @@
                 groupMsg.payload = KISDictionaryHaveKey(msg, @"payload");
                 groupMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
                 groupMsg.status = @"1";
+                groupMsg.audioType = @"1";
                 groupMsg.groupId = KISDictionaryHaveKey(msg, @"groupId");
                 groupMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
                 groupMsg.teamPosition = KISDictionaryHaveKey(msg, @"teamPosition");
@@ -315,7 +317,34 @@
     }
 }
 
++(void)changeAudioTypeWithMsgId:(NSString *)msgid table:(NSString *)table
+{
+    /*
+     table : normal
+     */
+    if ([table isEqualToString:@"group"]) {
+        [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid=[c]%@",msgid];
+            DSGroupMsgs * mgroupMsg = [DSGroupMsgs findFirstWithPredicate:predicate inContext:localContext];
+            if (mgroupMsg) {
+                mgroupMsg.audioType = @"2";
+            }
+        }];
+    }else{
+        
+        [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+            NSPredicate * predicate = [NSPredicate predicateWithFormat:@"messageuuid=[c]%@",msgid];
+            DSCommonMsgs * mCommonMsg = [DSCommonMsgs findFirstWithPredicate:predicate inContext:localContext];
+            if (mCommonMsg) {
+                mCommonMsg.audioType = @"2";
+            }
+        }
+        completion:^(BOOL success, NSError *error) {
+                                                       
+    }];
 
+    }
+}
 
 #pragma mark - 保存就位确认历史消息
 +(void)saveDSGroupMsgOKCancel:(NSDictionary *)msg SaveSuccess:(void (^)(NSDictionary *msgDic))block
@@ -425,6 +454,7 @@
         commonMsg.payload = KISDictionaryHaveKey(msg, @"payload");
         commonMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
         commonMsg.status = @"1";
+        commonMsg.audioType =@"1";
         commonMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
     }
 }
@@ -544,6 +574,7 @@
         groupMsg.payload = KISDictionaryHaveKey(msg, @"payload");
         groupMsg.messageuuid = KISDictionaryHaveKey(msg, @"msgId");
         groupMsg.status = @"1";
+        groupMsg.audioType =@"1";
         groupMsg.groupId = KISDictionaryHaveKey(msg, @"groupId");
         groupMsg.receiveTime=[NSString stringWithFormat:@"%@",[GameCommon getCurrentTime]];
         groupMsg.teamPosition = KISDictionaryHaveKey(msg, @"teamPosition");
@@ -1189,6 +1220,7 @@
         NSTimeInterval uu = [tt timeIntervalSince1970];
         [thumbMsgsDict setObject:[NSString stringWithFormat:@"%f",uu] forKey:@"time"];
         [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] msgType]?[[DSArray objectAtIndex:i] msgType] : @"" forKey:@"msgType"];
+        [thumbMsgsDict setObject:[[DSArray objectAtIndex:i]audioType]?[[DSArray objectAtIndex:i]audioType]:@"0" forKey:@"audioType"];
         [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] payload]?[[DSArray objectAtIndex:i] payload] : @"" forKey:@"payload"];
         [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] messageuuid]?[[DSArray objectAtIndex:i] messageuuid] : @"" forKey:@"messageuuid"];
         [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] status]?[[DSArray objectAtIndex:i] status] : @"" forKey:@"status"];
@@ -1219,6 +1251,7 @@
         [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] payload]?[[DSArray objectAtIndex:i] payload] : @"" forKey:@"payload"];
         [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] messageuuid]?[[DSArray objectAtIndex:i] messageuuid] : @"" forKey:@"messageuuid"];
         [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] status]?[[DSArray objectAtIndex:i] status] : @"" forKey:@"status"];
+        [thumbMsgsDict setObject:[[DSArray objectAtIndex:i]audioType]?[[DSArray objectAtIndex:i]audioType]:@"0" forKey:@"audioType"];
         [thumbMsgsDict setObject:[[DSArray objectAtIndex:i] teamPosition]?[[DSArray objectAtIndex:i] teamPosition] : @"" forKey:@"teamPosition"];
         [msgArray addObject:thumbMsgsDict];
     }

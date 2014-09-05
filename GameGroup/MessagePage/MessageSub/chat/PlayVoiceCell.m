@@ -59,6 +59,10 @@
         [self addSubview:self.audioTimeSizeLb];
 //        [self.voiceImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(playAudio:)]];
         
+        self.audioRedImg = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 10, 10)];
+        self.audioRedImg.image = KUIImage(@"msg_audio_red");
+        [self addSubview:self.audioRedImg];
+        
     }
     return self;
 }

@@ -22,5 +22,5 @@
 @dynamic messageuuid;
 @dynamic status;
 @dynamic receiveTime;
-
+@dynamic audioType;
 @end

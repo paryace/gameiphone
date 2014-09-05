@@ -25,5 +25,5 @@
 @property (nonatomic, retain) NSString * status;
 @property (nonatomic, retain) NSString * groupId;
 @property (nonatomic, retain) NSString * teamPosition;
-
+@property (nonatomic, retain) NSString * audioType;
 @end

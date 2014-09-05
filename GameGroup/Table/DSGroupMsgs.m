@@ -24,5 +24,5 @@
 @dynamic status;
 @dynamic groupId;
 @dynamic teamPosition;
-
+@dynamic audioType;
 @end

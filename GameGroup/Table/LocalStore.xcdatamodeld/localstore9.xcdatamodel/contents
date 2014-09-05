@@ -84,6 +84,7 @@
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSCommonMsgs" representedClassName="DSCommonMsgs" syncable="YES">
+        <attribute name="audioType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="messageuuid" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="msgContent" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="msgFilesID" optional="YES" attributeType="String" syncable="YES"/>
@@ -211,6 +212,7 @@
         <attribute name="state" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="DSGroupMsgs" representedClassName="DSGroupMsgs" syncable="YES">
+        <attribute name="audioType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="groupId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="messageuuid" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="msgContent" optional="YES" attributeType="String" syncable="YES"/>
@@ -548,7 +550,7 @@
         <element name="DSCharacters" positionX="-90" positionY="-54" width="128" height="210"/>
         <element name="DSCircleCount" positionX="-81" positionY="-45" width="128" height="120"/>
         <element name="DSCircleWithMe" positionX="-81" positionY="-45" width="128" height="270"/>
-        <element name="DSCommonMsgs" positionX="-290" positionY="216" width="128" height="210"/>
+        <element name="DSCommonMsgs" positionX="-290" positionY="216" width="128" height="225"/>
         <element name="DSCreateTeamUserInfo" positionX="-81" positionY="-45" width="128" height="165"/>
         <element name="DSFans" positionX="252" positionY="-198" width="128" height="238"/>
         <element name="DSFansNameIndex" positionX="-18" positionY="363" width="128" height="60"/>
@@ -557,7 +559,7 @@
         <element name="DSFriendsNewsList" positionX="-146" positionY="144" width="128" height="300"/>
         <element name="DSGroupApplyMsg" positionX="-90" positionY="-54" width="128" height="330"/>
         <element name="DSGroupList" positionX="-81" positionY="-45" width="128" height="315"/>
-        <element name="DSGroupMsgs" positionX="-90" positionY="-54" width="128" height="240"/>
+        <element name="DSGroupMsgs" positionX="-90" positionY="-54" width="128" height="255"/>
         <element name="DSGroupUser" positionX="-90" positionY="-54" width="128" height="75"/>
         <element name="DSLatestDynamic" positionX="-90" positionY="-54" width="128" height="315"/>
         <element name="DSMemberUserInfo" positionX="-81" positionY="-45" width="128" height="300"/>

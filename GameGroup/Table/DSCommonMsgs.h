@@ -23,5 +23,5 @@
 @property (nonatomic, retain) NSString * messageuuid;
 @property (nonatomic, retain) NSString * status;
 @property (nonatomic, retain) NSString * receiveTime;
-
+@property (nonatomic, retain) NSString * audioType;
 @end

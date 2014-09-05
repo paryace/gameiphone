@@ -506,4 +506,6 @@
 
 +(void)changshiptypeWithUserId:(NSString *)userId type:(NSString *)type Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
++(void)changeAudioTypeWithMsgId:(NSString *)msgid table:(NSString *)table;//更改语音一度
+
 @end
