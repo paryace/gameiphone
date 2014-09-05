@@ -24,11 +24,11 @@
 //        self.frame =CGRectMake(0, self.view.frame.size.height-50,320,50);
         isReady = YES;
         UIImage *rawEntryBackground = [UIImage imageNamed:@"chat_input.png"];
-        UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13
-                                                                           topCapHeight:22];
-        UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
-        entryImageView.frame = CGRectMake(40, 7.5f, 206, 29);
-        entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+//        UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13
+//                                                                           topCapHeight:22];
+//        UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
+//        entryImageView.frame = CGRectMake(40, 7.5f, 206, 29);
+//        entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         UIImage *rawBackground = [UIImage imageNamed:@"inputbg.png"];
         UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
         UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
@@ -36,7 +36,7 @@
         imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         
         [self addSubview:imageView];
-        [self addSubview:entryImageView];
+//        [self addSubview:entryImageView];
         
         //声音button
         UIButton *  customAudioBtn = [[UIButton alloc]initWithFrame:CGRectMake(10, 9.5f, 25, 25)];
