@@ -1673,7 +1673,11 @@ PlayingDelegate>
     }
     else if (kkChatMsgType ==kkchatMsgJoinTeam)
     {
-        NSDictionary * msgDic = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+         NSDictionary * msgDic = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"gameid")] isEqualToString:@"3"]) {
+            [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+            return;
+        }
         H5CharacterDetailsViewController *h5Chara = [[H5CharacterDetailsViewController alloc]init];
         h5Chara.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"gameid")];
         h5Chara.characterName =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"characterName")];
