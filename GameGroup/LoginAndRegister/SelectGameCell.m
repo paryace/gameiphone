@@ -21,7 +21,7 @@
 - (void)setSubView
 {
     // 箭头
-    UIImageView * arrowImage = [[UIImageView alloc]initWithFrame:CGRectMake(260, 20, 30, 30)];
+    UIImageView * arrowImage = [[UIImageView alloc]initWithFrame:CGRectMake(250, 29, 18, 18)];
 //    arrowImage.backgroundColor = [UIColor blackColor];
     arrowImage.image = KUIImage(@"touxiang_14");
     [self addSubview:arrowImage];

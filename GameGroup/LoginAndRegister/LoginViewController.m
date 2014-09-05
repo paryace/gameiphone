@@ -50,20 +50,24 @@
 
 - (void)setMainView
 {
-    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 15 + startX, 300, 40)];
-    table_top.image = KUIImage(@"table_top");
+    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(0, 15 + startX, 320, 40)];
+//    table_top.image = KUIImage(@"table_top");
+    table_top.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:table_top];
     
-    UIImageView* table_arrow = [[UIImageView alloc] initWithFrame:CGRectMake(280, 31 + startX, 12, 8)];
-    table_arrow.image = KUIImage(@"arrow_bottom");
+    UIImageView* table_arrow = [[UIImageView alloc] initWithFrame:CGRectMake(280, 33 + startX, 12, 8)];
+//    table_arrow.image = KUIImage(@"arrow_bottom");
+    table_arrow.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:table_arrow];
     
-    UIImageView* table_middle = [[UIImageView alloc] initWithFrame:CGRectMake(10, 55 + startX, 300, 40)];
-    table_middle.image = KUIImage(@"table_middle");
+    UIImageView* table_middle = [[UIImageView alloc] initWithFrame:CGRectMake(0, 57 + startX, 320, 40)];
+    table_middle.backgroundColor = [UIColor whiteColor];
+//    table_middle.image = KUIImage(@"table_middle");
     [self.view addSubview:table_middle];
     
-    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, 95 + startX, 300, 40)];
-    table_bottom.image = KUIImage(@"table_bottom");
+    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(0, 99 + startX, 320, 40)];
+    table_bottom.backgroundColor = [UIColor whiteColor];
+//    table_bottom.image = KUIImage(@"table_bottom");
     [self.view addSubview:table_bottom];
     
     UILabel* table_label_one = [[UILabel alloc] initWithFrame:CGRectMake(20, 16 + startX, 100, 38)];
