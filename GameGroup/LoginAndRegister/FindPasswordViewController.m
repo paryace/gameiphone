@@ -289,7 +289,7 @@
     m_leftTime--;
     if (m_leftTime == 0) {
         m_refreshVCButton.selected = NO;
-        [m_refreshVCButton setTitle:@"重发" forState:UIControlStateNormal];
+        [m_refreshVCButton setTitle:@"重新发送" forState:UIControlStateNormal];
         m_refreshVCButton.userInteractionEnabled = YES;
         if([m_verCodeTimer isValid])
         {
@@ -298,7 +298,7 @@
         }
     }
     else
-        [m_refreshVCButton setTitle:[NSString stringWithFormat:@"%ds", m_leftTime] forState:UIControlStateSelected];
+        [m_refreshVCButton setTitle:[NSString stringWithFormat:@"重新发送（%d）", m_leftTime] forState:UIControlStateSelected];
 }
 #pragma mark -获取验证码 下一步
 - (void)vercodeNextButtonClick:(id)sender

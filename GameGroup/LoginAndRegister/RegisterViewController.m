@@ -236,36 +236,36 @@
     [m_step1Scroll addSubview:protocolButton];
     
     UIButton* step1Button = [[UIButton alloc] initWithFrame:CGRectMake(10, 96, 300, 40)];
-    [step1Button setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
-    [step1Button setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
+//    [step1Button setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
+//    [step1Button setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
 //    if ([[TempData sharedInstance] registerNeedMsg]) {
-    if ([[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"REGISTERNEEDMSG"]] isEqualToString:@"1"]) {
-        [step1Button setTitle:@"获取验证码" forState:UIControlStateNormal];
-    }else{
-        [step1Button setTitle:@"下一步" forState:UIControlStateNormal];
-    }
-    [step1Button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    step1Button.backgroundColor = [UIColor clearColor];
+//    if ([[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"REGISTERNEEDMSG"]] isEqualToString:@"1"]) {
+//        [step1Button setTitle:@"获取验证码" forState:UIControlStateNormal];
+//    }else{
+//        [step1Button setTitle:@"下一步" forState:UIControlStateNormal];
+//    }
+//    [step1Button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//    step1Button.backgroundColor = [UIColor clearColor];
     [step1Button addTarget:self action:@selector(getVerCodeButton:) forControlEvents:UIControlEventTouchUpInside];
     [m_step1Scroll addSubview:step1Button];
 
-    UILabel *tishiLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, CGRectGetMidY(step1Button.frame)+15, 300, 50)];
-    tishiLabel.text = @"输入您的手机号码,免费注册陌游,陌游不会在任何地方泄露您的手机号码";
-    tishiLabel.textColor = [UIColor grayColor];
-    tishiLabel.backgroundColor = [UIColor clearColor];
-    tishiLabel.font = [UIFont systemFontOfSize:12];
-    tishiLabel.numberOfLines= 2;
-    [m_step1Scroll addSubview:tishiLabel];
-    
-    UILabel *helpLbel = [[UILabel alloc]initWithFrame:CGRectMake(10,CGRectGetMidY(tishiLabel.frame)+15,300,40)];
-    helpLbel.text = @"注册遇到问题？";
-    helpLbel.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
-    helpLbel.font = [UIFont systemFontOfSize:12];
-    helpLbel.textColor = kColorWithRGB(41, 164, 246, 1.0);
-    helpLbel.userInteractionEnabled = YES;
-    helpLbel.textAlignment = NSTextAlignmentLeft;
-    [m_step1Scroll addSubview:helpLbel];
-    [helpLbel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterToHelpPage:)]];
+//    UILabel *tishiLabel = [[UILabel alloc]initWithFrame:CGRectMake(10, CGRectGetMidY(step1Button.frame)+15, 300, 50)];
+//    tishiLabel.text = @"输入您的手机号码,免费注册陌游,陌游不会在任何地方泄露您的手机号码";
+//    tishiLabel.textColor = [UIColor grayColor];
+//    tishiLabel.backgroundColor = [UIColor clearColor];
+//    tishiLabel.font = [UIFont systemFontOfSize:12];
+//    tishiLabel.numberOfLines= 2;
+//    [m_step1Scroll addSubview:tishiLabel];
+//    
+//    UILabel *helpLbel = [[UILabel alloc]initWithFrame:CGRectMake(10,CGRectGetMidY(tishiLabel.frame)+15,300,40)];
+//    helpLbel.text = @"注册遇到问题？";
+//    helpLbel.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+//    helpLbel.font = [UIFont systemFontOfSize:12];
+//    helpLbel.textColor = kColorWithRGB(41, 164, 246, 1.0);
+//    helpLbel.userInteractionEnabled = YES;
+//    helpLbel.textAlignment = NSTextAlignmentLeft;
+//    [m_step1Scroll addSubview:helpLbel];
+//    [helpLbel addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterToHelpPage:)]];
 
     
 }
@@ -306,7 +306,7 @@
 //}
 - (void)getVerCodeButton:(id)sender//获取验证码
 {
-    [m_phoneNumText resignFirstResponder];
+
     //判断字符为空
     if (KISEmptyOrEnter(m_phoneNumText.text)) {
         [self showAlertViewWithTitle:@"提示" message:@"请输入手机号！" buttonTitle:@"确定"];
@@ -400,7 +400,7 @@
 
 - (void)setstep1Scroll_verCode
 {
-    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 60, 235, 40)];
+        UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 60, 235, 40)];
     table_top.image = KUIImage(@"text_bg");
     [m_step1Scroll_verCode addSubview:table_top];
     
@@ -492,7 +492,7 @@
     m_leftTime--;
     if (m_leftTime == 0) {
         m_refreshVCButton.selected = NO;
-        [m_refreshVCButton setTitle:@"重发" forState:UIControlStateNormal];
+        [m_refreshVCButton setTitle:@"重新发送" forState:UIControlStateNormal];
         m_refreshVCButton.userInteractionEnabled = YES;
         if([m_verCodeTimer isValid])
         {
@@ -501,12 +501,12 @@
         }
     }
     else
-        [m_refreshVCButton setTitle:[NSString stringWithFormat:@"%ds", m_leftTime] forState:UIControlStateSelected];
+        [m_refreshVCButton setTitle:[NSString stringWithFormat:@"重新发送(%ds)", m_leftTime] forState:UIControlStateSelected];
 }
 
 - (void)vercodeNextButtonClick:(id)sender
 {
-    [m_verCodeTextField resignFirstResponder];
+//    [m_verCodeTextField resignFirstResponder];
     
     if (KISEmptyOrEnter(m_verCodeTextField.text)) {
         [self showAlertViewWithTitle:@"提示" message:@"请输入验证码！" buttonTitle:@"确定"];

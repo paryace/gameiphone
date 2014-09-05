@@ -10,7 +10,7 @@
 #import "RealmsSelectViewController.h"
 #import "introduceViewController.h"
 #import "AuthViewController.h"
-
-@interface BangdingRolesViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIPickerViewDataSource,UIPickerViewDelegate,UITextFieldDelegate,RealmSelectDelegate,NewRegisterViewControllerDelegate,UIAlertViewDelegate,AuthCharacterDelegate>
+#import "SelectGameView.h"
+@interface BangdingRolesViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIPickerViewDataSource,UIPickerViewDelegate,UITextFieldDelegate,RealmSelectDelegate,NewRegisterViewControllerDelegate,UIAlertViewDelegate,AuthCharacterDelegate,SelectGameDelegate>
 @property(nonatomic,assign)id<NewRegisterViewControllerDelegate>delegate;
 @end
