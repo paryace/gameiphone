@@ -1463,7 +1463,7 @@ PlayingDelegate>
         cell.myChatCellDelegate = self;
         cell.tag = indexPath.row;
         cell.sendType = sender;
-        cell.audioTimeSizeLb.text = KISDictionaryHaveKey(payload, @"timeSize");
+        cell.audioTimeSizeLb.text = [NSString stringWithFormat:@"%@″",KISDictionaryHaveKey(payload, @"timeSize")];
         if ([sender isEqualToString:@"you"]) {
             cell.audioRedImg.hidden = YES;
             cell.senderNickName.hidden=YES;
@@ -1476,8 +1476,8 @@ PlayingDelegate>
             UIImage * bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.voiceImageView.image = KUIImage(@"SenderVoiceNodePlaying003");
-            cell.voiceImageView.frame =CGRectMake(320-size.width - padding, padding*2-2,20,20);
-            cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-40, padding*2-2, 20, 20);
+            cell.voiceImageView.frame =CGRectMake(320-size.width - padding, padding*2-4,20,20);
+            cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-30, padding*2-4, 30, 20);
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-15)status:status];
             [cell uploadAudio:indexPath.row];
         }else{
@@ -1502,8 +1502,8 @@ PlayingDelegate>
             }
             
             cell.voiceImageView.image = KUIImage(@"ReceiverVoiceNodePlaying003");
-            cell.voiceImageView.frame = CGRectMake(padding+7+45,padding*2-2+offHight,20,20);
-            cell.audioTimeSizeLb.frame = CGRectMake(padding+7+45+25, padding*2-2+offHight, 20, 20);
+            cell.voiceImageView.frame = CGRectMake(padding+7+45,padding*2-5+offHight,20,20);
+            cell.audioTimeSizeLb.frame = CGRectMake(padding+7+45+25, padding*2-5+offHight, 30, 20);
             [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15+offHight,size.width+10,size.height+5)];
             [cell.audioRedImg setFrame: CGRectMake(padding-10+45+size.width+17, padding*2-22+offHight, 10, 10)];
            UIImage * bgImage = [[UIImage imageNamed:@"bubble_01.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
