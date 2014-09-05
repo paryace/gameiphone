@@ -259,6 +259,8 @@ PlayingDelegate>
     [super viewDidLoad];
     //激活监听
     wxSDArray = [[NSMutableArray alloc]init];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:)name:UIApplicationWillResignActiveNotification object:nil]; //监听是否触发home键挂起程序.
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:)name:UIApplicationDidBecomeActiveNotification object:nil]; //监听是否重新进入程序程序.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:)name:@"wxr_myActiveBeChanged"object:nil];
     //群信息更新完成通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupInfoUploaded:) name:groupInfoUpload object:nil];
@@ -1479,11 +1481,7 @@ PlayingDelegate>
 
             cell.voiceImageView.frame =CGRectMake(320-size.width - padding, padding*2-4,20,20);
             cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-30, padding*2-4, 30, 20);
-            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-15)status:status];
-            
-//            cell.voiceImageView.frame =CGRectMake(320-size.width - padding, padding*2-2,20,20);
-//            cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-40, padding*2-2, 20, 20);
-//            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-21)status:status];
+            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-21)status:status];
 
             [cell uploadAudio:indexPath.row];
         }else{
@@ -4226,4 +4224,14 @@ PlayingDelegate>
     [[RecorderManager sharedManager]stopRecording];
 }
 
+
+- (void)applicationWillResignActive:(NSNotification *)notification
+{
+
+}
+
+- (void)applicationDidBecomeActive:(NSNotification *)notification
+{
+    [custview rechangReadyState];
+}
 @end

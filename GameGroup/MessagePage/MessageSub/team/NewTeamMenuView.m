@@ -366,7 +366,7 @@
         [hud hide:YES];
     } reError:^(id error) {
         [hud hide:YES];
-        [self btnOnclick:@"1" OnCLickState:@"0"];//
+        [self btnOnclick:@"0" OnCLickState:@"0"];//
         [self showErrorAlertView:error];
     }];
 }
@@ -380,7 +380,7 @@
         [hud hide:YES];
     } reError:^(id error) {
         [hud hide:YES];
-         [self btnOnclick:@"1" OnCLickState:@"0"];//
+         [self btnOnclick:@"0" OnCLickState:@"0"];//
         [self showErrorAlertView:error];
     }];
 }
