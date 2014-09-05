@@ -4101,7 +4101,7 @@ PlayingDelegate>
 
 }
 - (void)recordingTimeout {
-    [[RecorderManager sharedManager]cancelRecording];
+    [[RecorderManager sharedManager]stopRecording];
     [self showMessageWindowWithContent:@"录音超时,最长60秒" imageType:4];
     
     
@@ -4114,6 +4114,7 @@ PlayingDelegate>
 
 - (void)recordingFailed:(NSString *)failureInfoString {
 //    self.consoleLabel.text = @"录音失败";
+    [[RecorderManager sharedManager]cancelRecording];
     [self isFileExistDelete:failureInfoString];
     [self showMessageWindowWithContent:@"录音失败" imageType:4];
     
@@ -4131,9 +4132,9 @@ PlayingDelegate>
 - (void)playingStoped {
     for (PlayVoiceCell *cell in [self.tView visibleCells]  ) {
         if ([cell isKindOfClass:[PlayVoiceCell class]]) {
-            if ([cell.voiceImageView isAnimating]) {
+//            if ([cell.voiceImageView isAnimating]) {
                 [cell.voiceImageView stopAnimating];
-            }
+//            }
         }
 
     }
