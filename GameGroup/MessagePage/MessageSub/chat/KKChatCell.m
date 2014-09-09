@@ -236,10 +236,8 @@
         if (![GameCommon isEmtity:teamPosition]) {
             if ([teamPosition isEqualToString:@"未选"]) {
                 self.levelLable.text = @"未选";
-//                self.levelLable.backgroundColor = kColorWithRGB(213, 213, 213, 1.0);
-//                self.levelLable.textColor = kColorWithRGB(159, 159, 159, 1.0);
-
-                self.levelLable.backgroundColor = kColorWithRGB(56, 150, 228, 1.0);               self.levelLable.textColor = [UIColor whiteColor];
+                self.levelLable.backgroundColor = kColorWithRGB(56, 150, 228, 1.0);
+                self.levelLable.textColor = [UIColor whiteColor];
             }else{
                 self.levelLable.text = teamPosition;
                 self.levelLable.backgroundColor = kColorWithRGB(56, 150, 228, 1.0);
@@ -247,9 +245,8 @@
             }
         }else{
             self.levelLable.text = @"未选";
-//            self.levelLable.backgroundColor = kColorWithRGB(213, 213, 213, 1.0);
-//            self.levelLable.textColor = kColorWithRGB(159, 159, 159, 1.0);
-                            self.levelLable.backgroundColor = kColorWithRGB(56, 150, 228, 1.0);               self.levelLable.textColor = [UIColor whiteColor];
+            self.levelLable.backgroundColor = kColorWithRGB(56, 150, 228, 1.0);
+            self.levelLable.textColor = [UIColor whiteColor];
         }
     }else{
         self.levelLable.hidden=YES;

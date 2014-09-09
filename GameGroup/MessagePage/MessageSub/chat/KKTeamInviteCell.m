@@ -44,7 +44,6 @@
         [self.contentView addSubview:self.contentLabel];
 
         self.attView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 220, 25)];
-//        self.attView.backgroundColor = [UIColor greenColor];
         [self.contentView addSubview:self.attView];
         
         UIImageView *img = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 215, 1)];
@@ -90,14 +89,11 @@
 }
 - (void)awakeFromNib
 {
-    // Initialization code
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
 }
 
 @end

@@ -136,8 +136,10 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recommendFriendMessageReceived:) name:kRecommendMessage object:nil];
     //
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dailynewsReceived:) name:kNewsMessage object:nil];
-    //申请加入群完成通知
+    //申请加入群通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinGroupReceived:) name:kJoinGroupMessage object:nil];
+    //加入群组通知
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinGroupSuccessReceived:) name:kJoinSuccessGroupMessage object:nil];
     
     //申请加入组队通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
@@ -272,12 +274,16 @@
 {
     [self displayMsgsForDefaultView];
 }
-//加入群
+//申请加入群
 -(void)joinGroupReceived:(NSNotification *)notification
 {
     [self displayMsgsForDefaultView];
 }
-
+//加入组队消息
+-(void)joinGroupSuccessReceived:(NSNotification *)notification
+{
+    [self displayMsgsForDefaultView];
+}
 #pragma mark 被剔出该群通知或者收到同意加入群的消息通知
 - (void)onkickOffGroupGroup:(NSNotification*)notification
 {
