@@ -1315,7 +1315,7 @@ PlayingDelegate>
             cell.lineImage.hidden = YES;
             [cell.contentLabel setFrame:CGRectMake(padding + 50 +28,35 + titleSize.height + (titleSize.height > 0 ? 5 : 0), contentSize.width,contentSize.height)];
             
-            [cell.attView setFrame:CGRectMake(320-size.width - padding-20-10-30, 40 + titleSize.height+50, 220, 30)];
+            [cell.attView setFrame:CGRectMake(320-size.width - padding-20-10-30,cell.bgImageView.frame.origin.y+cell.bgImageView.frame.size.height-30, 220, 30)];
             
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
         }else
