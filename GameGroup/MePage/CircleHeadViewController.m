@@ -1361,7 +1361,7 @@ typedef enum : NSUInteger {
     NSData *data = UIImageJPEGRepresentation(thumbimg, 0.7);
 
     [self dismissViewControllerAnimated:YES completion:^{
-        
+      
     }];
     if ([data writeToFile:openImgPath atomically:NO]) {
         return openImgPath;
