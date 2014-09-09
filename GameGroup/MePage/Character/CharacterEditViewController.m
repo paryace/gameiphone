@@ -72,9 +72,17 @@
         NSLog(@"%@", responseObject);
         if ([responseObject isKindOfClass:[NSArray class]]) {
             [m_characterArray removeAllObjects];
-            [m_characterArray addObjectsFromArray:responseObject];
+            NSArray *array222 = [responseObject sortedArrayUsingComparator:^NSComparisonResult(NSMutableDictionary * obj1, NSMutableDictionary * obj2) {
+                if ([KISDictionaryHaveKey(obj1, @"id") integerValue] < [KISDictionaryHaveKey(obj2, @"id") integerValue]) {
+                    return (NSComparisonResult)NSOrderedDescending;
+                }
+                if ([KISDictionaryHaveKey(obj1, @"id") integerValue] > [KISDictionaryHaveKey(obj2, @"id") integerValue]) {
+                    return (NSComparisonResult)NSOrderedAscending;
+                }
+                return (NSComparisonResult)NSOrderedSame;
+            }];
+            [m_characterArray addObjectsFromArray:array222];
             [m_myTabelView reloadData];
-            
             [[CharacterAndTitleService singleton] saveCharachers:responseObject Userid:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
