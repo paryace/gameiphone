@@ -418,15 +418,15 @@
             cell.heardImg.placeholderImage = KUIImage(@"clazz_icon.png");
             cell.realmLabel.text = [[realm stringByAppendingString:@" "] stringByAppendingString:v1];
             cell.authBg.hidden = NO;
-            if ([failedmsg intValue] ==404||[failedmsg isEqualToString:@"notSupport"])//角色不存在
+            if ([failedmsg intValue] == 404||[failedmsg isEqualToString:@"notSupport"])//角色不存在
             {
                 if ([[GameCommon getNewStringWithId:gameid] isEqualToString:@"3"]) {
                     cell.authBg.image = KUIImage(@"");
                 }else{
                     cell.authBg.image= KUIImage(@"chara_auth_3");
                     cell.authBg.hidden =NO;
+                    cell.heardImg.image = KUIImage(@"clazz_icon.png");
                 }
-                 cell.heardImg.image = KUIImage(@"clazz_icon.png");
             }
             else
             {

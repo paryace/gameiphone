@@ -11,6 +11,7 @@
 @protocol CustomInputDelegate;
 @interface CustomInputView : UIView
 @property (nonatomic,assign)id<CustomInputDelegate>mydelegate;
+-(void)rechangReadyState;
 @end
 
 @protocol CustomInputDelegate <NSObject>
@@ -23,4 +24,5 @@
 -(void)didClickEmjoWithView:(UIView *)view; //点击表情buton
 -(void)didClickkkchatAddBtnWithView:(UIView *)view;//点击加号
 -(void)didClickAudioWithView:(UIView *)view;//点击声音
+
 @end

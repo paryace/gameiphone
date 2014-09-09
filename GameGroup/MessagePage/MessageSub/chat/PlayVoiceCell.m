@@ -53,7 +53,7 @@
         
         self.audioTimeSizeLb = [[UILabel alloc]initWithFrame:CGRectMake(20, 0, 20, 20)];
         self.audioTimeSizeLb.backgroundColor = [UIColor clearColor];
-        self.audioTimeSizeLb.textColor = [UIColor blackColor];
+        self.audioTimeSizeLb.textColor = [UIColor grayColor];
         self.audioTimeSizeLb.font = [UIFont boldSystemFontOfSize:12];
         self.audioTimeSizeLb.textAlignment =NSTextAlignmentCenter;
         [self addSubview:self.audioTimeSizeLb];
@@ -110,7 +110,6 @@
 {
     NSDictionary *dic =[[self.message objectForKey:@"payload"]JSONValue];
     NSString *str = [dic objectForKey:@"messageid"];
-//    NSString *str =[NSString stringWithFormat:@"%@/%@",RootDocPath,KISDictionaryHaveKey(self.message, @"messageuuid")];
     NSString * state = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(self.message, @"status")];
     if ([state isEqualToString:@"10"]) {//假如还没有执行上传操作
         if (self.uploaddelegate) {

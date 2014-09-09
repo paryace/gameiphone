@@ -259,6 +259,8 @@ PlayingDelegate>
     [super viewDidLoad];
     //激活监听
     wxSDArray = [[NSMutableArray alloc]init];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:)name:UIApplicationWillResignActiveNotification object:nil]; //监听是否触发home键挂起程序.
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:)name:UIApplicationDidBecomeActiveNotification object:nil]; //监听是否重新进入程序程序.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:)name:@"wxr_myActiveBeChanged"object:nil];
     //群信息更新完成通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupInfoUploaded:) name:groupInfoUpload object:nil];
@@ -681,11 +683,12 @@ PlayingDelegate>
         self.topItemView.frame = CGRectMake(0, startX, 320, reTop.size.height);
     }completion:^(BOOL finished) {
         self.newTeamMenuView.hidden = YES;
-        
         [self.newTeamMenuView hideView];
         self.topImageView.hidden = NO;
-
     }];
+    if (messages.count>0) {
+        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+    }
     
 }
 //显示队员列表
@@ -736,11 +739,14 @@ PlayingDelegate>
         }else{
             self.topItemView.frame = CGRectMake(0, startX, 320, 0);
         }
+      
     }completion:^(BOOL finished) {
          self.topItemView.hidden = YES;
     }];
     offsetTopHight = 0;
-    
+    if (messages.count>0) {
+        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+    }
 }
 #pragma mark -- 跳转角色详情
 -(void)itemOnClick:(NSDictionary*)charaDic{
@@ -1479,11 +1485,7 @@ PlayingDelegate>
 
             cell.voiceImageView.frame =CGRectMake(320-size.width - padding, padding*2-4,20,20);
             cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-30, padding*2-4, 30, 20);
-            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-15)status:status];
-            
-//            cell.voiceImageView.frame =CGRectMake(320-size.width - padding, padding*2-2,20,20);
-//            cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-40, padding*2-2, 20, 20);
-//            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-21)status:status];
+            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-21)status:status];
 
             [cell uploadAudio:indexPath.row];
         }else{
@@ -1671,7 +1673,11 @@ PlayingDelegate>
     }
     else if (kkChatMsgType ==kkchatMsgJoinTeam)
     {
-        NSDictionary * msgDic = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+         NSDictionary * msgDic = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"gameid")] isEqualToString:@"3"]) {
+            [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+            return;
+        }
         H5CharacterDetailsViewController *h5Chara = [[H5CharacterDetailsViewController alloc]init];
         h5Chara.gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"gameid")];
         h5Chara.characterName =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"characterName")];
@@ -4226,4 +4232,14 @@ PlayingDelegate>
     [[RecorderManager sharedManager]stopRecording];
 }
 
+
+- (void)applicationWillResignActive:(NSNotification *)notification
+{
+
+}
+
+- (void)applicationDidBecomeActive:(NSNotification *)notification
+{
+    [custview rechangReadyState];
+}
 @end

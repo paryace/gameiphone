@@ -366,7 +366,7 @@
         [hud hide:YES];
     } reError:^(id error) {
         [hud hide:YES];
-        [self btnOnclick:@"1" OnCLickState:@"0"];//
+        [self btnOnclick:@"0" OnCLickState:@"0"];//
         [self showErrorAlertView:error];
     }];
 }
@@ -380,7 +380,7 @@
         [hud hide:YES];
     } reError:^(id error) {
         [hud hide:YES];
-         [self btnOnclick:@"1" OnCLickState:@"0"];//
+         [self btnOnclick:@"0" OnCLickState:@"0"];//
         [self showErrorAlertView:error];
     }];
 }
@@ -888,8 +888,7 @@
     if (self.isShow) {
         if (self.teamUsershipType) {
             NSLog(@"从应用退到桌面");
-            self.sendBtn.selected = NO;
-            self.sendBtn.enabled = YES;
+//             [self sendBtnUnEnable];
             [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
         }
     }
@@ -900,8 +899,7 @@
     if (self.isShow) {
         if (self.teamUsershipType) {
             NSLog(@"从桌面回到应用");
-            self.sendBtn.selected = YES;
-            self.sendBtn.enabled = NO;
+//            [self sendBtnEnable];
             [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
         }
     }

@@ -23,7 +23,7 @@
         // Initialization code
 //        self.frame =CGRectMake(0, self.view.frame.size.height-50,320,50);
         isReady = YES;
-        UIImage *rawEntryBackground = [UIImage imageNamed:@"chat_input.png"];
+//        UIImage *rawEntryBackground = [UIImage imageNamed:@"chat_input.png"];
 //        UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13
 //                                                                           topCapHeight:22];
 //        UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
@@ -52,7 +52,7 @@
         //        self.startRecordBtn.hidden = NO;
         
         //录音button
-        m_RecordImageView = [[UIImageView alloc]initWithFrame:CGRectMake(41, 7.5f, 206, 29)];
+        m_RecordImageView = [[UIImageView alloc]initWithFrame:CGRectMake(41, 4.5f, 206, 35)];
         m_RecordImageView.image = KUIImage(@"chat_recordAudio_normal");
 //        m_RecordImageView.backgroundColor = [UIColor redColor];
         m_RecordImageView.userInteractionEnabled = YES;
@@ -157,13 +157,11 @@
 {
     isReady =YES;
 }
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
+
+-(void)rechangReadyState{
+    if (isReady == NO) {
+        [self changeBool];
+    }
 }
-*/
 
 @end
