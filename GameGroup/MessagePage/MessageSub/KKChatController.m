@@ -2590,7 +2590,7 @@ PlayingDelegate>
             array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:195],height, nil];
             break;
         }
-            case kkchatMsgJoinTeam:
+        case kkchatMsgJoinTeam:
         {
             NSDictionary* magDic = [KISDictionaryHaveKey(plainEntry, @"payload") JSONValue];
             CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"msg")]];

@@ -4207,15 +4207,7 @@
         thumbMsgs.sayHiType = @"1";
         thumbMsgs.payLoad = [payloadDic JSONFragment];
         thumbMsgs.receiveTime=[GameCommon getCurrentTime];
-    }
-//    completion:^(BOOL success, NSError *error) {
-//        if (block) {
-//            block(msg);
-//        }
-//    }
-     
-     ];
-    
+    }];
     if (block) {
         block(msg);
     }
