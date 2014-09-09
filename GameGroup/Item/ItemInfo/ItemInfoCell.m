@@ -46,8 +46,8 @@
         self.gameIconImgView.placeholderImage = KUIImage(@"clazz_0");
         [self addSubview:self.gameIconImgView];
         
-        self.value1Lb =[GameCommon buildLabelinitWithFrame:CGRectMake(90, 24, 200, 15) font:[UIFont systemFontOfSize:12] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
-        self.value1Lb.adjustsFontSizeToFitWidth = YES;
+        self.value1Lb =[GameCommon buildLabelinitWithFrame:CGRectMake(90, 24, 180, 15) font:[UIFont systemFontOfSize:12] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+//        self.value1Lb.adjustsFontSizeToFitWidth = YES;
         [self addSubview:self.value1Lb];
 
         self.value2Lb =[GameCommon buildLabelinitWithFrame:CGRectMake(70, 41, 320-120, 15) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
@@ -56,7 +56,7 @@
 
         
         self.value3Lb = [GameCommon buildLabelinitWithFrame:CGRectMake(260, 0, 50, 60) font:[UIFont boldSystemFontOfSize:12] textColor:UIColorFromRGBA(0x121213, 1) backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentCenter];
-        self.value1Lb.adjustsFontSizeToFitWidth = YES;
+//        self.value1Lb.adjustsFontSizeToFitWidth = YES;
         [self addSubview:self.value3Lb];
         
     }

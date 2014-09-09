@@ -82,27 +82,12 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *identifier = @"cell";
-//    RolesCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-//    if (!cell) {
-//        cell = [[RolesCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:strCell];
-//    }
-//    NSDictionary *dic = [self.coreArray objectAtIndex:indexPath.row];
-//    cell.headImageV.imageURL = [ImageService getImageStr:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"img")] Width:80];
-//    cell.nameLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"name")];
-//    cell.distLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"simpleRealm")];
-//    
-//    
-//    return cell;
-    
     EnteroCell *cell = (EnteroCell*)[tableView dequeueReusableCellWithIdentifier:identifier];
     if (cell == nil) {
         cell = [[EnteroCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.backgroundColor = [UIColor clearColor];
-    
-//    cell.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.4];
-    
     NSDictionary* tempDic = [self.coreArray objectAtIndex:indexPath.row];
     
     NSString * imageId=[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"img")];

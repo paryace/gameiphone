@@ -754,7 +754,7 @@ PlayingDelegate>
 #pragma mark -- 跳转角色详情
 -(void)itemOnClick:(NSDictionary*)charaDic{
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"failedmsg")] isEqualToString:@"404"]
-        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"failedmsg")] isEqualToString:@"notSupport"]) {
+        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"failedmsg")] isEqualToString:@"notSupport"]||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"gameid")] isEqualToString:@"3"]) {
         [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
         return;
     }
@@ -1120,6 +1120,7 @@ PlayingDelegate>
         if (cell == nil) {
             cell = [[KKTeamInviteCell alloc] initWithMessage:dict reuseIdentifier:identifier];
         }
+//        cell.backgroundColor  = [UIColor greenColor];
         cell.myChatCellDelegate = self;
         [cell setMessageDictionary:dict];
         NSDictionary* msgDic = [[self.finalMessageArray objectAtIndex:indexPath.row] JSONValue];
@@ -1175,11 +1176,11 @@ PlayingDelegate>
             }
             
             bgImage = [[UIImage imageNamed:@"bubble_04.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
-            if (contentSize.height>40) {
-                [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+33)];
-            }else {
+//            if (contentSize.height>40) {
+//                [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+33)];
+//            }else {
                 [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+18)];
-            }
+//            }(padding-10+45,padding*2-15+offHight,size.width+25,size.height + 20)
 
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.statusLabel.hidden = YES;
@@ -1314,7 +1315,7 @@ PlayingDelegate>
             cell.lineImage.hidden = YES;
             [cell.contentLabel setFrame:CGRectMake(padding + 50 +28,35 + titleSize.height + (titleSize.height > 0 ? 5 : 0), contentSize.width,contentSize.height)];
             
-            [cell.attView setFrame:CGRectMake(320-size.width - padding-20-10-30, 40 + titleSize.height+50, 220, 30)];
+            [cell.attView setFrame:CGRectMake(320-size.width - padding-20-10-30,cell.bgImageView.frame.origin.y+cell.bgImageView.frame.size.height-30, 220, 30)];
             
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
         }else
@@ -2590,15 +2591,15 @@ PlayingDelegate>
             array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:195],height, nil];
             break;
         }
-            case kkchatMsgJoinTeam:
+        case kkchatMsgJoinTeam:
         {
             NSDictionary* magDic = [KISDictionaryHaveKey(plainEntry, @"payload") JSONValue];
             CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"msg")]];
             CGSize contentSize = CGSizeZero;
             float higF = 0;
-            contentSize = [self getPayloadMsgContentSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"description")] withThumb:YES];
+            contentSize = [self getPayloadMsgContentSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(plainEntry, @"msg")] withThumb:YES];
             higF = contentSize.height;
-            NSNumber * height = [NSNumber numberWithFloat:(contentSize.height > 40 ? (titleSize.height + contentSize.height + 5) : titleSize.height + 45)+25];
+            NSNumber * height = [NSNumber numberWithFloat:(contentSize.height > 40 ? (titleSize.height + contentSize.height) : 45)+25];
             array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:195],height, nil];
 
             break;
@@ -2800,20 +2801,14 @@ PlayingDelegate>
     UIImage* thumbimg = [NetManager image:upImage centerInSize:CGSizeMake(200, 200)];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     
-     NSData *thumbImageData = UIImageJPEGRepresentation(thumbimg, 1);
+    NSData *thumbImageData = UIImageJPEGRepresentation(thumbimg, 1);
     NSData *upImageData = [self compressImage:upImage];
     
     NSString* openImgPath=[self writeImageToFile:thumbImageData];
     NSString* upImagePath=[self writeImageToFile:upImageData];
     if (openImgPath!=nil) {
         [self sendImageMsgD:openImgPath BigImagePath:upImagePath UUID:uuid Body:@"[图片]"]; //一条图片消息写到本地
-//        NSInteger imageIndex = [self getMsgRowWithId:uuid];
-//        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(imageIndex) inSection:0];
-//        KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
-//        [cell uploadImage:upImagePath cellIndex:(imageIndex)];
-    }
-    else
-    {
+    }else{
     }
     [self dismissViewControllerAnimated:YES completion:^{
         [hud hide:YES];

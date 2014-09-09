@@ -205,8 +205,7 @@
     }
     NSDictionary * payloadDic = [payLoadStr JSONValue];
     PayloadType payloadType = [self getTPayloadType:KISDictionaryHaveKey(payloadDic,@"type")];
-    if (payloadType == PayloadTypeInGroupSystemMsg
-        ||payloadType == PayloadTypeSelectTeamPosition
+    if (payloadType == PayloadTypeSelectTeamPosition
         ||payloadType == PayloadTypeTeamAddType
         ||payloadType == PayloadTypeTeamKickType
         ||payloadType == PayloadTypeTeamQuitType
@@ -219,6 +218,8 @@
         ||payloadType == payloadTypeTeamClaimAddType
         ||payloadType == payloadTypeTeamClaimKickType) {
         return 1;
+    }else if (payloadType == PayloadTypeInGroupSystemMsg){
+        return 0;
     }
     else
     {
