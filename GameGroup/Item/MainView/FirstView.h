@@ -49,10 +49,9 @@
 @end
 
 @protocol firstViewDelegate <NSObject>
--(void)enterSearchRoomPageWithView:(FirstView *)view;
--(void)refreWithRow:(NSInteger)row;
--(void)enterEditPageWithRow:(NSInteger)row isRow:(BOOL)isrow;
--(void)didClickPreferenceToNetWithRow:(NSInteger)row;
+//-(void)refreWithRow:(NSInteger)row;
+//-(void)enterEditPageWithRow:(NSInteger)row isRow:(BOOL)isrow;
+//-(void)didClickPreferenceToNetWithRow:(NSInteger)row;
 -(void)didClickTableViewCellEnterNextPageWithController:(UIViewController *)vc;
 -(void)didClickSuccessWithText:(NSString *)text tag:(NSInteger)tag;
 

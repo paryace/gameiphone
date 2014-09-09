@@ -291,6 +291,7 @@
             m_button1.selected = YES;
             m_button2.selected = NO;
             sortingBtn.hidden = NO;
+            
             [UIView beginAnimations:@"animation" context:nil];
             [UIView setAnimationDuration:1.0f];
             [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];

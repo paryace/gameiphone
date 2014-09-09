@@ -54,6 +54,7 @@
         arrayTag = [NSMutableArray array];
         arrayType = [NSMutableArray array];
         arrayFilter = [NSMutableArray array];
+        
         //菜单
         self.dropDownView = [[DropDownListView alloc] initWithFrame:CGRectMake(0,0, 320, 40) dataSource:self delegate:self];
         self.dropDownView.mSuperView = self;
@@ -73,9 +74,11 @@
         _customLabel.text = @"哎呀，没有您想找的队伍！赶紧换个模式寻找伙伴吧！";
         [self addSubview:_customLabel];
         //排序
+        
         sortView = [[SortingView alloc]initWithFrame:frame];
         sortView.mydelegate = self;
         [self addSubview:sortView];
+        
         //初始化搜索条
         UIView *tableheadView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
         tableheadView.backgroundColor = UIColorFromRGBA(0xd9d9d9, 1);
@@ -529,6 +532,7 @@
     return cell;
 }
 
+#pragma mark ===获取队长 队员 已加入 图标
 
 -(NSString*)getMyRank:(NSString*)myRank{
     if ([myRank intValue]==1) {

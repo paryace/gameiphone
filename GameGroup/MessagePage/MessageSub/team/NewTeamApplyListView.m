@@ -137,6 +137,8 @@
             cell.detailLable.text=@"已同意";
         }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"2"]){
             cell.detailLable.text=@"已拒绝";
+        }else if([KISDictionaryHaveKey(msgDic, @"state") isEqualToString:@"5"]){
+            cell.detailLable.text=@"申请已经过期";
         }else {
             cell.detailLable.text=@"已处理";
         }
@@ -236,10 +238,9 @@
     [[ItemManager singleton] agreeJoinTeam:KISDictionaryHaveKey(msgDic, @"gameid") UserId:KISDictionaryHaveKey(msgDic, @"userid") RoomId:KISDictionaryHaveKey(msgDic, @"roomId") reSuccess:^(id responseObject) {
         [hud hide:YES];
         [self changState:msgDic State:@"1"];
-//        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"同意加入成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-//        [alert show];
     } reError:^(id error) {
         [hud hide:YES];
+        [self changState:msgDic State:@"5"];
         [self showErrorAlertView:error];
     }];
 }
@@ -251,10 +252,9 @@
     [[ItemManager singleton] disAgreeJoinTeam:KISDictionaryHaveKey(msgDic, @"gameid") UserId:KISDictionaryHaveKey(msgDic, @"userid") RoomId:KISDictionaryHaveKey(msgDic, @"roomId") reSuccess:^(id responseObject) {
         [hud hide:YES];
         [self changState:msgDic State:@"2"];
-//        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"您已拒绝加入" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-//        [alert show];
     } reError:^(id error) {
         [hud hide:YES];
+        [self changState:msgDic State:@"5"];
         [self showErrorAlertView:error];
     }];
 }

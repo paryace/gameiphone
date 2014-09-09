@@ -3582,17 +3582,17 @@
     NSPredicate * predicate = [NSPredicate predicateWithFormat:@"userid==[c]%@",userId];
     NSArray *array = [DSCharacters MR_findAllWithPredicate:predicate];
     
-//    NSArray *array222 = [array sortedArrayUsingComparator:^NSComparisonResult(DSCharacters * obj1, DSCharacters * obj2) {
-//        if ([obj1.charactersId integerValue] > [obj2.charactersId integerValue]) {
-//            return (NSComparisonResult)NSOrderedDescending;
-//        }
-//        if ([obj1.charactersId integerValue] < [obj2.charactersId integerValue]) {
-//            return (NSComparisonResult)NSOrderedAscending;
-//        }
-//        return (NSComparisonResult)NSOrderedSame;
-//    }];
+    NSArray *array222 = [array sortedArrayUsingComparator:^NSComparisonResult(DSCharacters * obj1, DSCharacters * obj2) {
+        if ([obj1.charactersId integerValue] < [obj2.charactersId integerValue]) {
+            return (NSComparisonResult)NSOrderedDescending;
+        }
+        if ([obj1.charactersId integerValue] > [obj2.charactersId integerValue]) {
+            return (NSComparisonResult)NSOrderedAscending;
+        }
+        return (NSComparisonResult)NSOrderedSame;
+    }];
     
-    for (DSCharacters *character in array) {
+    for (DSCharacters *character in array222) {
         [charactersArray addObject:[self getCharacter:character]];
     }
     return charactersArray;
