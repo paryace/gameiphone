@@ -51,6 +51,7 @@
     [delButton addTarget:self action:@selector(cleanBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreMsgList:) name:kJoinGroupMessage object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreMsgList:) name:kJoinSuccessGroupMessage object:nil];
     
     m_applyArray = [NSMutableArray array];
     m_ApplyTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.frame.size.height - startX) style:UITableViewStylePlain];

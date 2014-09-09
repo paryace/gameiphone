@@ -199,6 +199,7 @@
 #define kDeleteAttention @"deleteAttentionReceived"
 #define kOtherMessage    @"otherMessage"
 #define kJoinGroupMessage    @"joinGroupMessage"//申请加入群组
+#define kJoinSuccessGroupMessage @"joinGroupSuccessMessage"//加入群组消息
 #define kRecommendMessage    @"recommend"
 #define kDisbandGroup    @"disbandGroup"//解散群组
 #define kKickOffGroupGroup    @"kickOffGroupGroup"//离开群组

@@ -205,9 +205,8 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
         [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
         dispatch_async(dispatch_get_main_queue(), ^{
             [[MessageSetting singleton] setSoundOrVibrationopen];
-             NSDictionary * dic = @{@"groupId":groupId,@"state":@"0"};
-            [[NSNotificationCenter defaultCenter]postNotificationName:kKickOffGroupGroup object:nil userInfo:dic];
-            [[NSNotificationCenter defaultCenter] postNotificationName:kJoinGroupMessage object:nil userInfo:msgDic];
+            NSDictionary * dic = @{@"groupId":groupId,@"state":@"0"};
+             [[NSNotificationCenter defaultCenter]postNotificationName:kJoinSuccessGroupMessage object:nil userInfo:dic];
         });
         
     }];
@@ -236,7 +235,7 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 -(void)changGroupMessageReceived:(NSDictionary *)messageContent
 {
     NSDictionary * payloadDic = [self getPayloadDic:messageContent];
-    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"payload")];
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payloadDic, @"groupId")];
     [messageContent setValue:@"1" forKey:@"sayHiType"];
     [messageContent setValue:groupId forKey:@"groupId"];
     [DataStoreManager saveDSGroupMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
