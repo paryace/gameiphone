@@ -340,7 +340,7 @@
             UITextField * bvt = (UITextField *)[self.view viewWithTag:100000+i];
 //            UIButton * bvt = (UIButton *)[self.view viewWithTag:1001];
             if (!bvt.text||[bvt.text isEqualToString:@""]||[bvt.text isEqualToString:@" "]) {
-                [self showAlertViewWithTitle:@"提示" message:@"请填写角色名" buttonTitle:@"确定"];
+                [self showAlertViewWithTitle:@"提示" message:[NSString stringWithFormat:@"请输入您的%@",KISDictionaryHaveKey(dic, @"name")] buttonTitle:@"确定"];
                 return;
             }
             [params setObject:bvt.text forKey:KISDictionaryHaveKey(dic, @"param")];
@@ -401,7 +401,7 @@
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if ([[error objectForKey:kFailErrorCodeKey] isEqualToString:@"100014"]) {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"该角色已被其他玩家绑定，若该角色为您所有，您可点击认证将其认证到您名下"] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"认证", nil];
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"    已被其他玩家绑定，若该角色为您所有，您可点击认证将其认证到您名下"] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"认证", nil];
                 alert.tag =1001;
                 [alert show];
             }
@@ -539,9 +539,10 @@
             authVC.Type =@"register";
             authVC.authDelegate =self;
             UITextField *tf  = (UITextField *)[self.view viewWithTag:2+100000];
+//            UIButton * bt = (UIButton *)[self.view viewWithTag:1001];
             authVC.isComeFromFirstOpen = YES;
             authVC.character = tf.text;
-            
+//            authVC.character = bt.titleLabel.text;
             [self.navigationController pushViewController:authVC animated:YES];
         }
     }else if(alertView.tag ==1002){
@@ -556,18 +557,28 @@
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
     for (int i =0; i<m_dataArray.count; i++) {
         NSDictionary *dic = m_dataArray[i];
-        if (i==0) {
+              if (i==0) {
             [params setObject:KISDictionaryHaveKey(dic, @"gameid") forKey:@"gameid"];
-        }else{
-//            UITextField *tf  = (UITextField *)[self.view viewWithTag:i+100000];
-            UIButton *bvt = (UIButton *)[self.view viewWithTag:1001];
-            if (!bvt.titleLabel.text||[bvt.titleLabel.text isEqualToString:@""]||[bvt.titleLabel.text isEqualToString:@" "]) {
-                [self showAlertViewWithTitle:@"提示" message:@"请将信息填写完整" buttonTitle:@"确定"];
+        }else if(i ==1){
+
+            UIButton * bvtt = (UIButton *)[self.view viewWithTag:1001];
+            if (!bvtt.titleLabel.text||[bvtt.titleLabel.text isEqualToString:@""]||[bvtt.titleLabel.text isEqualToString:@" "]) {
+                [self showAlertViewWithTitle:@"提示" message:@"请选择正确的服务器" buttonTitle:@"确定"];
                 return;
             }
-            [params setObject:bvt.titleLabel.text forKey:KISDictionaryHaveKey(dic, @"param")];
+            [params setObject:bvtt.titleLabel.text forKey:KISDictionaryHaveKey(dic, @"param")];
+        
+        }else if(i == 2){
+                 UITextField * bvt = (UITextField *)[self.view viewWithTag:100000+i];
+            
+                 if (!bvt.text||[bvt.text isEqualToString:@""]||[bvt.text isEqualToString:@" "]) {
+                     [self showAlertViewWithTitle:@"提示" message:@"请填写角色名" buttonTitle:@"确定"];
+                     return;
+                 }
+            [params setObject:bvt.text forKey:KISDictionaryHaveKey(dic, @"param")];
+             }
         }
-    }
+
     [params setObject:@"register" forKey:@"type"];
     NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
     [body addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
