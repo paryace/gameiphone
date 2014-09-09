@@ -2599,7 +2599,7 @@ PlayingDelegate>
             float higF = 0;
             contentSize = [self getPayloadMsgContentSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(plainEntry, @"msg")] withThumb:YES];
             higF = contentSize.height;
-            NSNumber * height = [NSNumber numberWithFloat:(contentSize.height > 40 ? (titleSize.height + contentSize.height) : contentSize.height)+25];
+            NSNumber * height = [NSNumber numberWithFloat:(contentSize.height > 40 ? (titleSize.height + contentSize.height) : 45)+25];
             array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:195],height, nil];
 
             break;
