@@ -245,6 +245,8 @@
 #pragma mark -------选择游戏界面的代理
 -(void)selectGame:(NSInteger)characterDic
 {
+    UITextField *tf = (UITextField *)[self.view viewWithTag:2];
+    [tf resignFirstResponder];
     if ([gameInfoArray count] != 0) {
         NSDictionary *dict =[gameInfoArray objectAtIndex:characterDic];
         //  m_gameNameText.text = [dict objectForKey:@"name"];
