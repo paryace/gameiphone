@@ -14,34 +14,29 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
-        self.headImg =[[ EGOImageButton alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
+        self.headImg =[[ EGOImageButton alloc]initWithFrame:CGRectMake(10, 10, 60, 60)];
         [self addSubview:self.headImg];
         self.headImg.layer.cornerRadius = 5;
         self.headImg.layer.masksToBounds=YES;
         [self.headImg addTarget:self action:@selector(enterPersonInfoPage:) forControlEvents:UIControlEventTouchUpInside];
-        self.titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(60, 10, 170, 20) font:[UIFont systemFontOfSize:14] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(80, 10, 320-80-30, 40) font:[UIFont systemFontOfSize:14] textColor:[UIColor blackColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.titleLabel.numberOfLines = 2;
         [self addSubview:self.titleLabel];
         
-        self.gameIconImg = [[EGOImageView alloc]initWithFrame:CGRectMake(60, 33, 15, 15)];
+        self.gameIconImg = [[EGOImageView alloc]initWithFrame:CGRectMake(80, 53, 15, 15)];
         [self addSubview:self.gameIconImg];
         
-        self.contentLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(80, 26.0f, 320-80-10-26-2, 30) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
+        self.contentLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(100, 50, 320-100-90, 20) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
         [self addSubview:self.contentLabel];
         
-        self.timeLabel =[GameCommon buildLabelinitWithFrame:CGRectMake(220, 5, 90, 20) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentRight];
+        self.timeLabel =[GameCommon buildLabelinitWithFrame:CGRectMake(320-90-5, 50, 90, 20) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentRight];
         [self addSubview:self.timeLabel];
         
         self.bgImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 60)];
         self.bgImageView.image = KUIImage(@"team_placeholder2.jpg");
         [self addSubview:self.bgImageView];
         
-        self.MemberImage = [[UIImageView alloc]initWithFrame:CGRectMake(320-10-26, 49/2+5, 26, 11)];
-//        self.MemberLable.layer.cornerRadius = 3;
-//        self.MemberLable.layer.masksToBounds=YES;
-//        self.MemberLable.textAlignment = NSTextAlignmentCenter;
-//        self.MemberLable.font = [UIFont systemFontOfSize:10];
-//        self.MemberLable.textColor = [UIColor whiteColor];
+        self.MemberImage = [[UIImageView alloc]initWithFrame:CGRectMake(320-30, 0, 30, 30)];
         [self addSubview:self.MemberImage];
 
     }
@@ -53,6 +48,11 @@
     if ([self.mydelegate respondsToSelector:@selector(enterPersonInfoPageWithCell:)]) {
         [self.mydelegate enterPersonInfoPageWithCell:self];
     }
+}
+-(void)refreText:(NSString*)timeStr{
+    CGSize size = [timeStr sizeWithFont:[UIFont boldSystemFontOfSize:16] constrainedToSize:CGSizeMake(MAXFLOAT, 15) lineBreakMode:NSLineBreakByCharWrapping];
+    self.timeLabel.frame = CGRectMake(320-size.width-5, 50, size.width, 20);
+    self.contentLabel.frame = CGRectMake(100, 50, 320-100-size.width - 5, 20);
 }
 - (void)awakeFromNib
 {

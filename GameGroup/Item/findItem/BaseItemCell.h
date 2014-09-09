@@ -19,6 +19,7 @@
 @property(nonatomic,strong)UILabel *timeLabel;
 @property(nonatomic,strong)UIImageView *MemberImage;
 @property(nonatomic,assign)id<teamlistCellDelegate>mydelegate;
+-(void)refreText:(NSString*)timeStr;
 @end
 @protocol teamlistCellDelegate <NSObject>
 

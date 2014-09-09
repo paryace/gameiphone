@@ -7,7 +7,6 @@
 //
 
 #import "NewItemMainViewController.h"
-#import "BaseItemCell.h"
 #import "CreateItemViewController.h"
 #import "ItemInfoViewController.h"
 #import "MyRoomViewController.h"

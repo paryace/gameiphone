@@ -466,34 +466,6 @@
 {
     return m_dataArray.count;
 }
-//-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-//{
-//    if (tableView --mSearchBar.) {
-//        
-//    }}
-//-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-//{
-//    UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
-//    view.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1  ];
-//    UIImageView *imageV= [[UIImageView alloc] initWithFrame:CGRectMake(110, 5, 20, 20)];
-//    imageV.layer.cornerRadius = 5;
-//    imageV.layer.masksToBounds=YES;
-//    imageV.backgroundColor = [UIColor clearColor];
-//    [view addSubview:imageV];
-//    
-//    UILabel * lable = [[UILabel alloc] initWithFrame:CGRectMake(130, 0, 60, 30)];
-//    [lable setTextAlignment:NSTextAlignmentCenter];
-//    lable.text = @"创建组队";
-//    [lable setFont:[UIFont boldSystemFontOfSize:13.0]];
-//    [lable setBackgroundColor:[UIColor clearColor]];
-//    [lable setTextColor:[UIColor grayColor ]];
-//    [view addSubview:lable];
-//    
-//    [view addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(createTeam:)]];
-//    return view;
-//    
-//}
-
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -507,15 +479,13 @@
     cell.bgImageView.hidden = YES;
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     cell.headImg.placeholderImage = KUIImage(@"placeholder");
-//    cell.headImg.image = KUIImage(@"wow");
-    
     NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
-    cell.headImg.imageURL =[ImageService getImageStr:imageids Width:80] ;
+    cell.headImg.imageURL =[ImageService getImageStr:imageids Width:120] ;
     
     NSString * gameImage = [GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")]];
     cell.gameIconImg.imageURL = [ImageService getImageUrl4:gameImage];
     
-    NSString *title = [NSString stringWithFormat:@"[%@/%@]%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")]];
+    NSString *title = [NSString stringWithFormat:@"[%@/%@]%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")]];
     cell.titleLabel.text = title;
     
     NSString * myRankStr = [self getMyRank:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"myRank")]];
@@ -525,10 +495,11 @@
         cell.MemberImage.image = KUIImage(myRankStr);
         cell.MemberImage.hidden = NO;
     }
-    cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
+    cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")];
     NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")] doubleValue]];
     NSString *timeStr = [GameCommon getShowTime:sendTime];
     cell.timeLabel.text = timeStr;
+    [cell refreText:timeStr];
     return cell;
 }
 
@@ -536,27 +507,16 @@
 
 -(NSString*)getMyRank:(NSString*)myRank{
     if ([myRank intValue]==1) {
-        return @"m_team_apply_icon";
+        return @"m_team_apply_icon_2";
     }else if ([myRank intValue]==2){
-        return @"m_team_players_icon";
+        return @"m_team_players_icon_2";
     }else if ([myRank intValue]==9){
-        return @"m_team_captain_icon";
+        return @"m_team_captain_icon_2";
     }
     return @"";
 }
 
 
-
-#pragma mark --进入创建组队页面----待定
-
-//-(void)createTeam:(id)sender
-//{
-//    NewCreateItemViewController *cretItm = [[NewCreateItemViewController alloc]init];
-//    cretItm.selectRoleDict = selectCharacter;
-//    cretItm.selectTypeDict = selectType;
-//    [self.navigationController pushViewController:cretItm animated:YES];
-//    
-//}
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -593,7 +553,7 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 60;
+    return 80;
 }
 #pragma mark ---celldelegate ---J进入个人资料页面
 -(void)enterPersonInfoPageWithCell:(BaseItemCell*)cell

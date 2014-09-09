@@ -106,15 +106,15 @@
             NSDictionary * dic = [self.myCreateRoomList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
             NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
-            cell.headImg.imageURL =[ImageService getImageStr:imageids Width:80] ;
+            cell.headImg.imageURL =[ImageService getImageStr:imageids Width:120] ;
             cell.gameIconImg.imageURL = [ImageService getImageUrl4:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")]]];
-            NSString *title = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")];
-            cell.titleLabel.text = title;
-            cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
+            cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
+            cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")];
             NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
             NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
             cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
             cell.bgImageView.hidden = YES;
+            [cell refreText:[NSString stringWithFormat:@"%@|%@",timeStr,personStr]];
         }else{
             [cell.headImg setUserInteractionEnabled:NO];
             cell.bgImageView.image = KUIImage(@"team_ placeholder1.jpg");
@@ -139,15 +139,16 @@
             NSDictionary * dic = [self.myJoinRoomList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
             NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
-            cell.headImg.imageURL =[ImageService getImageStr:imageids Width:80] ;
+            cell.headImg.imageURL =[ImageService getImageStr:imageids Width:120] ;
             cell.gameIconImg.imageURL = [ImageService getImageUrl4:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")]]];
-            cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")];
-            cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
+            cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
+            cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")];
             NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
             NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
             
             cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
             cell.bgImageView.hidden = YES;
+            [cell refreText:[NSString stringWithFormat:@"%@|%@",timeStr,personStr]];
         }else{
             cell.bgImageView.image = KUIImage(@"team_placeholder2");
             [cell.headImg setUserInteractionEnabled:NO];
@@ -171,14 +172,15 @@
             NSDictionary * dic = [self.myRequestedRoomsList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
             NSString *imageids = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"img")];
-            cell.headImg.imageURL =[ImageService getImageStr:imageids Width:80] ;
+            cell.headImg.imageURL =[ImageService getImageStr:imageids Width:120] ;
             cell.gameIconImg.imageURL = [ImageService getImageUrl4:[GameCommon putoutgameIconWithGameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")]]];
-            cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")];
-            cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
+            cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"description")];
+            cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")];
             NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")]];
             NSString *personStr = [NSString stringWithFormat:@"%@/%@人",[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"memberCount")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"maxVol")]];
             cell.timeLabel.text = [NSString stringWithFormat:@"%@|%@",timeStr,personStr];
             cell.bgImageView.hidden = YES;
+            [cell refreText:[NSString stringWithFormat:@"%@|%@",timeStr,personStr]];
         }else{
             cell.bgImageView.image = KUIImage(@"team_placeholder2");
             cell.bgImageView.hidden = NO;
@@ -294,7 +296,7 @@
 //            return 0;
 //        }
 //    }
-    return 60;
+    return 80;
 }
 //-(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 //{
