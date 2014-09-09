@@ -1136,6 +1136,7 @@ PlayingDelegate>
             [cell setMsgTime:timeStr lastTime:time previousTime:pTime];
         }
         cell.contentLabel.text = KISDictionaryHaveKey(messages[indexPath.row], @"msg");
+//        cell.contentLabel.backgroundColor = [UIColor greenColor];
         [cell.bgImageView setTag:(indexPath.row+1)];
         UIImage *bgImage = nil;
 
@@ -1145,7 +1146,12 @@ PlayingDelegate>
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell.thumbImgV setFrame:CGRectMake(55,40,40,40)];
             bgImage = [[UIImage imageNamed:@"bubble_05"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
-            [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+25)];
+            if (contentSize.height>40) {
+                [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+32)];
+            }else {
+                [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+25)];
+            }
+
             cell.senderNickName.hidden=YES;
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             [cell.failImage setTag:(indexPath.row+1)];
@@ -1154,7 +1160,7 @@ PlayingDelegate>
             cell.lineImage.hidden = YES;
             [cell.contentLabel setFrame:CGRectMake(padding + 50 +28,35 , contentSize.width,contentSize.height)];
             
-            [cell.attView setFrame:CGRectMake(320-size.width - padding-20-10-30, 40 +50, 220, 30)];
+            [cell.attView setFrame:CGRectMake(320-size.width - padding-20-10-30,cell.bgImageView.frame.origin.y+cell.bgImageView.frame.size.height-30, 220, 30)];
             
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
         }else
@@ -1173,7 +1179,12 @@ PlayingDelegate>
             }
             
             bgImage = [[UIImage imageNamed:@"bubble_04.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
-            [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+18)];
+            if (contentSize.height>40) {
+                [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+33)];
+            }else {
+                [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+18)];
+            }
+
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.statusLabel.hidden = YES;
             cell.failImage.hidden=YES;
@@ -1182,7 +1193,7 @@ PlayingDelegate>
             [cell.lineImage  setFrame:CGRectMake(cell.titleLabel.frame.origin.x,cell.titleLabel.frame.origin.y+cell.titleLabel.frame.size.height+2,size.width+10,1)];
             cell.lineImage.hidden=YES;
             [cell.attView setFrame:CGRectMake(padding-5+45,cell.bgImageView.frame.origin.y+cell.bgImageView.frame.size.height-30, 220, 25)];
-            
+
         }
         [cell putTextAndImgWithType:1];
         return cell;
@@ -1483,9 +1494,19 @@ PlayingDelegate>
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.voiceImageView.image = KUIImage(@"SenderVoiceNodePlaying003");
 
-            cell.voiceImageView.frame =CGRectMake(320-size.width - padding, padding*2-4,20,20);
-            cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-30, padding*2-4, 30, 20);
-            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-21)status:status];
+
+            cell.voiceImageView.frame =CGRectMake(320 - padding-75, padding*2-4,20,20);
+            cell.audioTimeSizeLb.frame = CGRectMake(320-padding-110, padding*2-4, 30, 20);
+            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-15)status:status];
+            
+//            cell.voiceImageView.frame =CGRectMake(320-size.width - padding, padding*2-2,20,20);
+//            cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-40, padding*2-2, 20, 20);
+//            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-21)status:status];
+
+//            cell.voiceImageView.frame =CGRectMake(320-size.width - padding, padding*2-4,20,20);
+//            cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-30, padding*2-4, 30, 20);
+//            [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-21)status:status];
+
 
             [cell uploadAudio:indexPath.row];
         }else{
@@ -3868,11 +3889,33 @@ PlayingDelegate>
     }
 }
 
+-(BOOL)repeat:(NSDictionary*)tempDic{
+    if (messages.count<3) {
+        for (int i = 0;i < messages.count;i++) {
+            NSMutableDictionary * msg = [messages objectAtIndex:i];
+            NSString * msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"messageuuid")];
+            if ([msgId isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgId")]]) {
+                return YES;
+            }
+        }
+    }else {
+        for (int i = messages.count-3;i < messages.count;i++) {
+            NSMutableDictionary * msg = [messages objectAtIndex:i];
+            NSString * msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"messageuuid")];
+            if ([msgId isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgId")]]) {
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
 
 #pragma mark 接收到新消息
 - (void)newMesgReceived:(NSNotification*)notification
 {
+    NSLog(@"----newmessage-----%@",notification);
     NSDictionary* tempDic = notification.userInfo;
+    
     NSString * msgType  = KISDictionaryHaveKey(tempDic, @"msgType");
     if([msgType isEqualToString:@"groupchat"]
        ||[msgType isEqualToString:@"disbandGroup"]
@@ -3911,6 +3954,10 @@ PlayingDelegate>
 }
 -(void)setNewMsg:(NSDictionary*)tempDic Sender:(NSString*)sender
 {
+    if ([self repeat:tempDic]) {
+        return;
+    }
+    NSLog(@"---setNewMsg----");
     if ([sender isEqualToString:self.chatWithUser]) {
         NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");
         [tempDic setValue:msgId forKey:@"messageuuid"];
@@ -4081,7 +4128,7 @@ PlayingDelegate>
     
     NSLog(@"interval---%.0f",interval);
         dispatch_async(dispatch_get_main_queue(), ^{
-            if ((long long)interval<2) {
+            if ((long long)interval<1) {
                 /*
                  上传失败 删除本地已创建文件
                  */
