@@ -20,17 +20,11 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 
 @implementation GetDataAfterManager
 {
-    int index;
-    int index2;
-    NSTimeInterval markTimeDy;
-    NSTimeInterval markTimeDyMe;
     NSTimeInterval markTimeDyGroup;
-    
-    int dyMsgCount;
-    int dyMeMsgCount;
+
     int dyGroupMsgCount;
 }
-//static SystemSoundID shake_sound_male_id = 0;
+
 + (GetDataAfterManager*)shareManageCommon
 {
     @synchronized(self)
@@ -47,10 +41,6 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 {
     self = [super init];
     if (self) {
-        index=1;
-        index2=1;
-        dyMsgCount = 0;
-        dyMeMsgCount = 0;
         dyGroupMsgCount = 0;
         self.appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     }
