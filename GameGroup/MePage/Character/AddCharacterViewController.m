@@ -142,11 +142,11 @@
     m_serverNamePick.delegate = self;
     m_serverNamePick.showsSelectionIndicator = YES;
     
-    toolbar_server = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-    toolbar_server.tintColor = [UIColor blackColor];
-    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectServerNameOK:)];
-    rb_server.tintColor = [UIColor blackColor];
-    toolbar_server.items = @[rb_server];
+//    toolbar_server = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+//    toolbar_server.tintColor = [UIColor blackColor];
+//    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectServerNameOK:)];
+//    rb_server.tintColor = [UIColor blackColor];
+//    toolbar_server.items = @[rb_server];
     
     m_okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 180, 300, 40)];
     [m_okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];

@@ -1341,8 +1341,8 @@ PlayingDelegate>
             [cell.contentLabel setFrame:CGRectMake(padding + 50 + 45,35 + titleSize.height + (titleSize.height > 0 ? 5+offHight : 0+offHight),contentSize.width,contentSize.height)];
             [cell.lineImage  setFrame:CGRectMake(cell.titleLabel.frame.origin.x,cell.titleLabel.frame.origin.y+cell.titleLabel.frame.size.height+2,size.width+10,1)];
             cell.lineImage.hidden=YES;
-            [cell.attView setFrame:CGRectMake(padding-5+45, 90 + titleSize.height, 220, 25)];
-
+            [cell.attView setFrame:CGRectMake(padding-5+45,cell.bgImageView.frame.origin.y+cell.bgImageView.frame.size.height-27, 220, 25)];
+//            [cell.attView setFrame:CGRectMake(padding-5+45, 90 + titleSize.height, 220, 25)];
         }
         return cell;
     }
@@ -1562,13 +1562,9 @@ PlayingDelegate>
             UIImage * bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:5 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.voiceImageView.image = KUIImage(@"SenderVoiceNodePlaying003");
-
-
-            cell.voiceImageView.frame =CGRectMake(320-size.width - padding, padding*2-4,20,20);
-            cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-30, padding*2-4, 30, 20);
+            cell.voiceImageView.frame =CGRectMake(320 - padding-75, padding*2-4,20,20);
+            cell.audioTimeSizeLb.frame = CGRectMake(320-padding-100, padding*2-4, 30, 20);
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-21)status:status];
-
-
             [cell uploadAudio:indexPath.row];
         }else{
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
@@ -1940,7 +1936,11 @@ PlayingDelegate>
         self.clickCellNum = i;
         NSMutableDictionary *dic = [messages objectAtIndex:i];
         NSDictionary *dict = [[dic objectForKey:@"payload"]JSONValue];
-        
+    
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"sender")]isEqualToString:@"0"]) {
+        [[PlayerManager sharedManager] playAudioWithFileName:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")] delegate:self];
+    }else{
+    
         NSString *filePath =[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]];
 
     [dic setObject:@"2" forKey:@"audioType"];
@@ -1959,6 +1959,7 @@ PlayingDelegate>
     }
     
         [[PlayerManager sharedManager] playAudioWithFileName:ps delegate:self];
+    }
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
         PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
         cell.cellCount = indexPath.row;
@@ -3484,10 +3485,10 @@ PlayingDelegate>
     NSDictionary *payloadDict = [KISDictionaryHaveKey(messageDict, @"payload")JSONValue];
     NSString * payloadStr;
     if (self.isTeam) {
-        payloadStr  = [MessageService createPayLoadAudioStr:audioMsg TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId timeSize:KISDictionaryHaveKey(payloadDict, @"timeSize") roomId:self.roomId team:@"teamchat"];
+        payloadStr  = [MessageService createPayLoadAudioStr:audioMsg TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId timeSize:KISDictionaryHaveKey(payloadDict, @"timeSize") roomId:self.roomId team:@"teamchat" sender:@"1"];
         
     }else{
-        payloadStr = [MessageService createPayLoadAudioStr:audioMsg timeSize:KISDictionaryHaveKey(payloadDict, @"timeSize")];
+        payloadStr = [MessageService createPayLoadAudioStr:audioMsg timeSize:KISDictionaryHaveKey(payloadDict, @"timeSize")  sender:@"1"];
     }
     [DataStoreManager changeMyMessage:uuid PayLoad:payloadStr];
     if (self.isTeam) {
@@ -3510,9 +3511,9 @@ PlayingDelegate>
     NSString * timeLength = [NSString stringWithFormat:@"%.0f",timestr];
     NSString* payloadStr;
     if (self.isTeam) {
-        payloadStr = [MessageService createPayLoadAudioStr:audioMsg TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId timeSize:timeLength roomId:self.roomId team:@"teamchat"];
+        payloadStr = [MessageService createPayLoadAudioStr:audioMsg TeamPosition:KISDictionaryHaveKey(selectType, @"value") gameid:self.gameId timeSize:timeLength roomId:self.roomId team:@"teamchat" sender:@"0"];
     }else{
-        payloadStr=[MessageService createPayLoadAudioStr:audioMsg timeSize:timeLength];
+        payloadStr=[MessageService createPayLoadAudioStr:audioMsg timeSize:timeLength sender:@"0"];
     }
     NSMutableDictionary *messageDict =  [self createMsgDictionarys:body NowTime:nowTime UUid:uuid MsgStatus:@"10" SenderId:@"you" ReceiveId:self.chatWithUser MsgType:[self getMsgType]];
     if (self.isTeam) {

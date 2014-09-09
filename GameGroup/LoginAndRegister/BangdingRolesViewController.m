@@ -28,6 +28,7 @@
     NSMutableArray *imgArray;
     UITapGestureRecognizer *tap;
     NSInteger number;
+    NSString *gameNameStr;
 }
 @property (nonatomic,strong)SelectGameView *gameTableView;
 @end
@@ -135,6 +136,7 @@
         m_okButton.frame = CGRectMake(10, 104+44*m_dataArray.count, 300, 40);
         registerButton.frame = CGRectMake(150,  149+44*m_dataArray.count, 100, 40);
         findPasButton.frame = CGRectMake(70,  149+44*m_dataArray.count, 80, 40);
+        gameNameStr = [NSString stringWithFormat:@"%@",[nameArray  objectAtIndex:number]];
         [m_myTableView reloadData];
     }
 
@@ -271,23 +273,11 @@
 #pragma mark ------返回到注册
 -(void)backToRegister:(id)sender
 {
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"102" forKey:@"method"];//退出登陆
-    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"layoutresponseObject%@", responseObject);
-        
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        
-    }];
-    [GameCommon loginOut];
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"注册已成功，您需要完成角色绑定以便与其他玩家交流，是否退出绑定？" delegate:self cancelButtonTitle:@"确定退出" otherButtonTitles:@"取消", nil];
+    alert.tag = 2003;
+    [alert show];
     
-    IntroduceViewController *intro = [[IntroduceViewController alloc]init];
-    intro.delegate = self.delegate;
-    [self.navigationController pushViewController:intro animated:NO];
-
 }
 
 - (void)realmSelectClickA:(UIButton *)sender
@@ -402,14 +392,18 @@
         if ([error isKindOfClass:[NSDictionary class]]) {
             if ([[error objectForKey:kFailErrorCodeKey] isEqualToString:@"100014"]) {
                 UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"    已被其他玩家绑定，若该角色为您所有，您可点击认证将其认证到您名下"] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"认证", nil];
-                alert.tag =1001;
+                alert.tag =2001;
                 [alert show];
             }
             else if ([[error objectForKey:kFailErrorCodeKey] isEqualToString:@"200001"]){
+                if ([gameNameStr isEqualToString:@"Dota2"]==YES) {
+                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                    [alert show];
+                }else{
                 UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"继续", nil];
-                alert.tag =1002;
+                alert.tag =2002;
                 [alert show];
- 
+                }
             }
             else if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -530,7 +524,7 @@
 #pragma mark ------------往下一个页面传zhi
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (alertView.tag ==1001) {
+    if (alertView.tag ==2001) {
         if (buttonIndex ==1) {
             AuthViewController* authVC = [[AuthViewController alloc] init];
             NSDictionary *dict =[gameInfoArray objectAtIndex:number];
@@ -545,9 +539,29 @@
 //            authVC.character = bt.titleLabel.text;
             [self.navigationController pushViewController:authVC animated:YES];
         }
-    }else if(alertView.tag ==1002){
+    }else if(alertView.tag == 2002){
         if (buttonIndex ==1) {
             [self bindingnonerole];
+        }
+    }else if(alertView.tag == 2003){
+        if (buttonIndex ==0) {
+            NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+            
+            [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+            [postDict setObject:@"102" forKey:@"method"];//退出登陆
+            [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+            [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                NSLog(@"layoutresponseObject%@", responseObject);
+                
+            } failure:^(AFHTTPRequestOperation *operation, id error) {
+                
+            }];
+            [GameCommon loginOut];
+            
+            IntroduceViewController *intro = [[IntroduceViewController alloc]init];
+            intro.delegate = self.delegate;
+            [self.navigationController pushViewController:intro animated:NO];
+
         }
     }
 }
@@ -600,12 +614,12 @@
         if ([error isKindOfClass:[NSDictionary class]]) {
             if ([[error objectForKey:kFailErrorCodeKey] isEqualToString:@"100014"]) {
                 UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"该角色已被其他玩家绑定，若该角色为您所有，您可点击认证将其认证到您名下"] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"认证", nil];
-                alert.tag =1001;
+                alert.tag =2001;
                 [alert show];
             }
             else if ([[error objectForKey:kFailErrorCodeKey] isEqualToString:@"200001"]){
                 UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                alert.tag =1002;
+                alert.tag =2002;
                 [alert show];
                 
             }
