@@ -101,6 +101,7 @@ static UpLoadFileService *upload = NULL;
     failure:^(AFHTTPRequestOperation *operation, id error)
     {
         NSLog(@"deviceToken fail");
+        [updeleGate uploadFailed:filePath error:nil];
     }];
 }
 -(long long)getCurrentTime{

@@ -72,6 +72,8 @@ static PlayerManager *mPlayerManager = nil;
     if ( ! filename) {
         return;
     }
+    NSLog(@"%lu",(unsigned long)[filename rangeOfString:@".spx"].location);
+
     if ([filename rangeOfString:@".spx"].location != NSNotFound) {
         [[AVAudioSession sharedInstance] setActive:YES error:nil];
         
