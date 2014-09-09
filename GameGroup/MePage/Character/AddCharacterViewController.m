@@ -192,7 +192,7 @@
     if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"list"]||[KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
         cell.rightImageView.hidden = NO;
         if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
-//            cell.contentTF.inputView =m_serverNamePick;
+            cell.contentTF.inputView =m_serverNamePick;
             cell.contentTF.inputAccessoryView= toolbar_server;
             cell.serverButton.hidden = YES;
             cell.gameImg.hidden = NO;

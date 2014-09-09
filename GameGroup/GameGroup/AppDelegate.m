@@ -206,6 +206,7 @@
 {
     NSLog(@"呜呜呜呜 Failed to get token, error: %@", error);
     [GameCommon shareGameCommon].deviceToken = @"";
+
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
