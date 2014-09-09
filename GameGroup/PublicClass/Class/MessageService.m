@@ -40,10 +40,11 @@
 }
 #pragma mark 创建发送正常声音消息的payload
 
-+(NSString*)createPayLoadAudioStr:(NSString*)audioId timeSize:(NSString *)timeSize
++(NSString*)createPayLoadAudioStr:(NSString*)audioId timeSize:(NSString *)timeSize sender:(NSString *)sender
 {
     NSDictionary * dic = @{@"messageid":audioId,
                            @"timeSize":timeSize,
+                           @"sender":sender,
                            @"type":@"audio"};
     return [dic JSONFragment];
 }
@@ -74,12 +75,13 @@
 
 #pragma mark 创建组队发送正常声音消息的payload
 
-+(NSString*)createPayLoadAudioStr:(NSString*)audioId TeamPosition:(NSString *)teamPosition gameid:(NSString *)gameid timeSize:(NSString *)timeSize roomId:(NSString *)roomId team:(NSString *)team
++(NSString*)createPayLoadAudioStr:(NSString*)audioId TeamPosition:(NSString *)teamPosition gameid:(NSString *)gameid timeSize:(NSString *)timeSize roomId:(NSString *)roomId team:(NSString *)team sender:(NSString *)sender
 {
     NSDictionary * dic = @{@"teamPosition":teamPosition,
                            @"gameid":gameid,
                            @"roomId": roomId,
                            @"team":team,
+                           @"sender":sender,
                            @"messageid":audioId,
                            @"timeSize":timeSize,
                            @"type":@"audio"};
