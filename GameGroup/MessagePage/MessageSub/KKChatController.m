@@ -3868,11 +3868,33 @@ PlayingDelegate>
     }
 }
 
+-(BOOL)repeat:(NSDictionary*)tempDic{
+    if (messages.count<3) {
+        for (int i = 0;i < messages.count;i++) {
+            NSMutableDictionary * msg = [messages objectAtIndex:i];
+            NSString * msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"messageuuid")];
+            if ([msgId isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgId")]]) {
+                return YES;
+            }
+        }
+    }else {
+        for (int i = messages.count-3;i < messages.count;i++) {
+            NSMutableDictionary * msg = [messages objectAtIndex:i];
+            NSString * msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"messageuuid")];
+            if ([msgId isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"msgId")]]) {
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
 
 #pragma mark 接收到新消息
 - (void)newMesgReceived:(NSNotification*)notification
 {
+    NSLog(@"----newmessage-----%@",notification);
     NSDictionary* tempDic = notification.userInfo;
+    
     NSString * msgType  = KISDictionaryHaveKey(tempDic, @"msgType");
     if([msgType isEqualToString:@"groupchat"]
        ||[msgType isEqualToString:@"disbandGroup"]
@@ -3911,6 +3933,10 @@ PlayingDelegate>
 }
 -(void)setNewMsg:(NSDictionary*)tempDic Sender:(NSString*)sender
 {
+    if ([self repeat:tempDic]) {
+        return;
+    }
+    NSLog(@"---setNewMsg----");
     if ([sender isEqualToString:self.chatWithUser]) {
         NSString * msgId = KISDictionaryHaveKey(tempDic, @"msgId");
         [tempDic setValue:msgId forKey:@"messageuuid"];
