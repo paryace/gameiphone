@@ -68,6 +68,7 @@
 #define ShareUrl @"http://www.momotalk.com/share/teamroom.html?"
 #define BaseIp @"http://58.83.193.120"
 
+
 //#define BaseClientUrl @"http://221.122.66.243/gamepro/request"//开机联网地址 测试
 //#define BaseUploadImageUrl  @"http://221.122.66.243/gamepro/fileserver/put"
 //#define BaseImageUrl  @"http://221.122.66.243/gamepro/fileserver/get/"

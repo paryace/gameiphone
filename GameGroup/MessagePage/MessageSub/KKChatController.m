@@ -1937,10 +1937,9 @@ PlayingDelegate>
         NSMutableDictionary *dic = [messages objectAtIndex:i];
         NSDictionary *dict = [[dic objectForKey:@"payload"]JSONValue];
     
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"sender")]isEqualToString:@"0"]) {
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"sender")]isEqualToString:@"0"]&&[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"sender")]isEqualToString:@"you"]) {
         [[PlayerManager sharedManager] playAudioWithFileName:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")] delegate:self];
     }else{
-    
         NSString *filePath =[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]];
 
     [dic setObject:@"2" forKey:@"audioType"];
@@ -2873,14 +2872,14 @@ PlayingDelegate>
         return ;
     }
     self.inPutView.hidden = NO;
+    self.audioBtn.selected = NO;
+
     [self.view bringSubviewToFront:self.inPutView];
     [self.view bringSubviewToFront:self.theEmojiView];
 
     if (self.kkchatInputType != KKChatInputTypeEmoji) {
         ifEmoji = YES;
         self.kkchatInputType = KKChatInputTypeEmoji;
-        _audioBtn.selected = NO;
-        _startRecordBtn.hidden = YES;
         [sender setImage:[UIImage imageNamed:@"keyboard.png"]forState:UIControlStateNormal];
         [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
         self.textView.hidden = NO;

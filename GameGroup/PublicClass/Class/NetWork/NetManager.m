@@ -22,7 +22,7 @@
         if (!dict) {
             failure(operation, @"");
         }
-        NSLog(@"获得数据：%@", dict);
+//        NSLog(@"获得数据：%@", dict);
         int status = [[dict objectForKey:@"errorcode"] intValue];
         if (status==0) {
             success(operation,KISDictionaryHaveKey(dict, @"entity"));
