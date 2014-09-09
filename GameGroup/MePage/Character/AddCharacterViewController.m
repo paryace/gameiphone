@@ -11,6 +11,7 @@
 #import "AboutRoleCell.h"
 #import "ImageService.h"
 #import "HelpViewController.h"
+#import "SelectGameView.h"
 @interface AddCharacterViewController ()
 {
 //    UITextField*  m_gameNameText;
@@ -29,6 +30,10 @@
     UIButton* m_okButton;
     AboutRoleCell *aboutRoleCell;
     UILabel *helplable;
+ 
+    NSMutableArray *nameArray;
+    NSMutableArray *imgArray;
+    
 }
 
 @end
@@ -56,6 +61,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    
+    
     
 //    [GameCommon shareGameCommon].selectRealm = @"";
     
@@ -87,6 +95,17 @@
         }
     }];
     
+#pragma mark --------------添加namearray和imgarray
+    nameArray = [NSMutableArray array];
+    imgArray = [NSMutableArray array];
+    for (int i=0; i<[gameInfoArray count]; i++) {
+        NSDictionary * dic = [gameInfoArray objectAtIndex:i];
+        NSString * name = [dic objectForKey:@"name"];
+        NSString * img = [dic objectForKey:@"img"];
+        [nameArray addObject:name];
+        [imgArray addObject:img];
+    }
+
 //    NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
 //    NSMutableDictionary* dict= [[NSMutableDictionary dictionaryWithContentsOfFile:path]objectForKey:@"gamelist"];
 //    NSArray *allkeys = [dict allKeys];
@@ -192,7 +211,13 @@
     if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"list"]||[KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
         cell.rightImageView.hidden = NO;
         if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
-            cell.contentTF.inputView =m_serverNamePick;
+//            cell.contentTF.inputView =m_serverNamePick;
+            SelectGameView *testView = [[SelectGameView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth)];
+            testView.selectGameDelegate = self;
+            testView.titleView.text = @"选择游戏";
+            testView.backgroundColor = [UIColor whiteColor];
+            [testView setDateWithNameArray:nameArray andImg:imgArray];
+            cell.contentTF.inputView = testView;
             cell.contentTF.inputAccessoryView= toolbar_server;
             cell.serverButton.hidden = YES;
             cell.gameImg.hidden = NO;
@@ -217,7 +242,33 @@
     
     return cell;
 }
+#pragma mark -------选择游戏界面的代理
+-(void)selectGame:(NSInteger)characterDic
+{
+    if ([gameInfoArray count] != 0) {
+        NSDictionary *dict =[gameInfoArray objectAtIndex:characterDic];
+        //  m_gameNameText.text = [dict objectForKey:@"name"];
+        NSArray *sarchArray ;
+        sarchArray =[[dict objectForKey:@"gameParams"]objectForKey:@"bindCharacterParams"];
+        
+        
+        [m_dataArray removeAllObjects];
+        
+        NSDictionary *firstDic = [NSDictionary dictionaryWithObjectsAndKeys:@"选择游戏",@"name",[dict objectForKey:@"name"],@"content",@"picker",@"type",[dict objectForKey:@"id"],@"gameid",KISDictionaryHaveKey(dict,@"img"),@"img",nil];
+        
+        [m_dataArray addObject:firstDic];
+        [m_dataArray addObjectsFromArray:[[dict objectForKey:@"gameParams" ] objectForKey:@"commonParams"]];
+        [m_dataArray addObjectsFromArray:sarchArray];
+        m_okButton.hidden = NO;
+        m_myTableView.frame = CGRectMake(0, startX+44, 320, 44*m_dataArray.count);
+        helplable.hidden =NO;
+        helplable.frame = CGRectMake(10, startX+64+44*m_dataArray.count, 280, 30);
+        m_okButton.frame = CGRectMake(10, startX+94+44*m_dataArray.count, 300, 40);
+        [m_myTableView reloadData];
+    }
 
+
+}
 
 - (void)realmSelectClick:(UIButton *)sender
 {

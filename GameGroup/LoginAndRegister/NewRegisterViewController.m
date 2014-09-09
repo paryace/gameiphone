@@ -236,17 +236,17 @@
     
     //下面是手机号码位数控制处理，如果多余13位 ＝ 11位号码＋2个空格 响应相应事件，自己可以随便写
     if(count < 13){
-        self.step1Button.enabled = NO;
+
          [self.step1Button setImage:KUIImage(@"1_031") forState:UIControlStateNormal];
     }
     else if(count == 13){
-        self.step1Button.enabled = YES;
+ 
         [self.step1Button setImage:KUIImage(@"a_png_03") forState:UIControlStateNormal];
         [self.step1Button setImage:KUIImage(@"a_png_06") forState:UIControlStateHighlighted];
     }
     else{
         field.text = [field.text substringToIndex:13];
-        self.step1Button.enabled = YES;
+      
         [self.step1Button setImage:KUIImage(@"a_png_03") forState:UIControlStateNormal];
         [self.step1Button setImage:KUIImage(@"a_png_06") forState:UIControlStateHighlighted];
     }

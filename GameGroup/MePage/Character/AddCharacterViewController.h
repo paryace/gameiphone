@@ -10,6 +10,7 @@
 #import "RealmsSelectViewController.h"
 #import "SearchRoleViewController.h"
 #import "AuthViewController.h"
+#import "SelectGameView.h"
 
 typedef enum
 {
@@ -18,7 +19,7 @@ typedef enum
     CHA_TYPE_Change,
 }CharacterType;
 
-@interface AddCharacterViewController : BaseViewController<UITextFieldDelegate, RealmSelectDelegate, UIAlertViewDelegate, SearchRoleDelegate, AuthCharacterDelegate,UIPickerViewDataSource,UIPickerViewDelegate,UITableViewDataSource,UITableViewDelegate>
+@interface AddCharacterViewController : BaseViewController<UITextFieldDelegate, RealmSelectDelegate, UIAlertViewDelegate, SearchRoleDelegate, AuthCharacterDelegate,UIPickerViewDataSource,UIPickerViewDelegate,UITableViewDataSource,UITableViewDelegate,SelectGameDelegate>
 
 
 @property(nonatomic, assign)CharacterType viewType;//增加或删除
