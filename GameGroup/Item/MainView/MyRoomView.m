@@ -102,6 +102,7 @@
         cell.tag = indexPath.section*10000+indexPath.row;
         
         if ([self.myCreateRoomList isKindOfClass:[NSArray class]]&&self.myCreateRoomList.count>0) {
+            cell.selectionStyle = UITableViewCellSelectionStyleDefault;
             [cell.headImg setUserInteractionEnabled:YES];
             NSDictionary * dic = [self.myCreateRoomList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
@@ -116,6 +117,7 @@
             cell.bgImageView.hidden = YES;
             [cell refreText:[NSString stringWithFormat:@"%@|%@",timeStr,personStr]];
         }else{
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
             [cell.headImg setUserInteractionEnabled:NO];
             cell.bgImageView.image = KUIImage(@"team_ placeholder1.jpg");
             cell.bgImageView.hidden = NO;
@@ -135,6 +137,7 @@
         cell.tag = indexPath.section*10000+indexPath.row;
         cell.mydelegate =self;
         if ([self.myJoinRoomList isKindOfClass:[NSArray class]]&&self.myJoinRoomList.count>0) {
+            cell.selectionStyle = UITableViewCellSelectionStyleDefault;
             [cell.headImg setUserInteractionEnabled:YES];
             NSDictionary * dic = [self.myJoinRoomList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
@@ -150,6 +153,7 @@
             cell.bgImageView.hidden = YES;
             [cell refreText:[NSString stringWithFormat:@"%@|%@",timeStr,personStr]];
         }else{
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.bgImageView.image = KUIImage(@"team_placeholder2");
             [cell.headImg setUserInteractionEnabled:NO];
             cell.bgImageView.hidden = NO;
@@ -168,6 +172,7 @@
         cell.mydelegate = self;
         cell.tag =indexPath.section*10000+indexPath.row;
         if ([self.myRequestedRoomsList isKindOfClass:[NSArray class]]&&self.myRequestedRoomsList.count>0) {
+            cell.selectionStyle = UITableViewCellSelectionStyleDefault;
             [cell.headImg setUserInteractionEnabled:YES];
             NSDictionary * dic = [self.myRequestedRoomsList objectAtIndex:indexPath.row];
             cell.headImg.placeholderImage = KUIImage(@"placeholder");
@@ -182,6 +187,7 @@
             cell.bgImageView.hidden = YES;
             [cell refreText:[NSString stringWithFormat:@"%@|%@",timeStr,personStr]];
         }else{
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.bgImageView.image = KUIImage(@"team_placeholder2");
             cell.bgImageView.hidden = NO;
             cell.headImg.imageURL = nil;
@@ -197,10 +203,11 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
     NSDictionary *dic;
     if (indexPath.section ==0) {
         if (self.myCreateRoomList&&self.myCreateRoomList.count>0) {
+            [tableView deselectRowAtIndexPath:indexPath animated:YES];
             [[Custom_tabbar showTabBar] hideTabBar:YES];
             dic = [self.myCreateRoomList objectAtIndex:indexPath.row];
             if ([self.myDelegate respondsToSelector:@selector(didClickMyRoomWithView: dic:)]) {
@@ -209,6 +216,7 @@
         }
     }else if(indexPath.section ==1){
         if (self.myJoinRoomList&&self.myJoinRoomList.count>0) {
+            [tableView deselectRowAtIndexPath:indexPath animated:YES];
             [[Custom_tabbar showTabBar] hideTabBar:YES];
             dic = [self.myJoinRoomList objectAtIndex:indexPath.row];
             if ([self.myDelegate respondsToSelector:@selector(didClickMyRoomWithView: dic:)]) {
@@ -217,6 +225,7 @@
         }
     }else if(indexPath.section == 2){
         if (self.myRequestedRoomsList&&self.myRequestedRoomsList.count>0) {
+            [tableView deselectRowAtIndexPath:indexPath animated:YES];
             [[Custom_tabbar showTabBar] hideTabBar:YES];
             dic = [self.myRequestedRoomsList objectAtIndex:indexPath.row];
             if ([self.myDelegate respondsToSelector:@selector(didClickRoomInfoWithView: dic:)]) {

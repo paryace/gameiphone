@@ -14,6 +14,7 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        self.backgroundColor = [UIColor whiteColor];
         self.headImg =[[ EGOImageButton alloc]initWithFrame:CGRectMake(10, 10, 60, 60)];
         [self addSubview:self.headImg];
         self.headImg.layer.cornerRadius = 5;
@@ -32,7 +33,7 @@
         self.timeLabel =[GameCommon buildLabelinitWithFrame:CGRectMake(320-90-5, 50, 90, 20) font:[UIFont systemFontOfSize:12] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentRight];
         [self addSubview:self.timeLabel];
         
-        self.bgImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 60)];
+        self.bgImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 10, 320, 60)];
         self.bgImageView.image = KUIImage(@"team_placeholder2.jpg");
         [self addSubview:self.bgImageView];
         
@@ -50,9 +51,14 @@
     }
 }
 -(void)refreText:(NSString*)timeStr{
+     CGSize sizeThatFits = [self.titleLabel.text sizeWithFont:self.titleLabel.font constrainedToSize:CGSizeMake(320-80-30, MAXFLOAT) lineBreakMode:NSLineBreakByCharWrapping];
+    float hight = sizeThatFits.height>40?40:sizeThatFits.height;
+    self.titleLabel.frame = CGRectMake(80, 10, 320-80-32, hight);
+    self.gameIconImg.frame = CGRectMake(80, 10+hight+8, 15, 15);
     CGSize size = [timeStr sizeWithFont:[UIFont boldSystemFontOfSize:16] constrainedToSize:CGSizeMake(MAXFLOAT, 15) lineBreakMode:NSLineBreakByCharWrapping];
-    self.timeLabel.frame = CGRectMake(320-size.width-5, 50, size.width, 20);
-    self.contentLabel.frame = CGRectMake(100, 50, 320-100-size.width - 5, 20);
+    self.timeLabel.frame = CGRectMake(320-size.width-5, 10+hight+5, size.width, 20);
+    self.contentLabel.frame = CGRectMake(100, 10+hight+5, 320-100-size.width - 5, 20);
+    
 }
 - (void)awakeFromNib
 {

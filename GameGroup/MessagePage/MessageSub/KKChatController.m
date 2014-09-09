@@ -2796,20 +2796,14 @@ PlayingDelegate>
     UIImage* thumbimg = [NetManager image:upImage centerInSize:CGSizeMake(200, 200)];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     
-     NSData *thumbImageData = UIImageJPEGRepresentation(thumbimg, 1);
+    NSData *thumbImageData = UIImageJPEGRepresentation(thumbimg, 1);
     NSData *upImageData = [self compressImage:upImage];
     
     NSString* openImgPath=[self writeImageToFile:thumbImageData];
     NSString* upImagePath=[self writeImageToFile:upImageData];
     if (openImgPath!=nil) {
         [self sendImageMsgD:openImgPath BigImagePath:upImagePath UUID:uuid Body:@"[图片]"]; //一条图片消息写到本地
-//        NSInteger imageIndex = [self getMsgRowWithId:uuid];
-//        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(imageIndex) inSection:0];
-//        KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
-//        [cell uploadImage:upImagePath cellIndex:(imageIndex)];
-    }
-    else
-    {
+    }else{
     }
     [self dismissViewControllerAnimated:YES completion:^{
         [hud hide:YES];
