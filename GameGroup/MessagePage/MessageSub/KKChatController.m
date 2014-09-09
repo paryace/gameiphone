@@ -1120,6 +1120,7 @@ PlayingDelegate>
         if (cell == nil) {
             cell = [[KKTeamInviteCell alloc] initWithMessage:dict reuseIdentifier:identifier];
         }
+//        cell.backgroundColor  = [UIColor greenColor];
         cell.myChatCellDelegate = self;
         [cell setMessageDictionary:dict];
         NSDictionary* msgDic = [[self.finalMessageArray objectAtIndex:indexPath.row] JSONValue];
@@ -1175,11 +1176,11 @@ PlayingDelegate>
             }
             
             bgImage = [[UIImage imageNamed:@"bubble_04.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
-            if (contentSize.height>40) {
-                [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+33)];
-            }else {
+//            if (contentSize.height>40) {
+//                [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+33)];
+//            }else {
                 [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+18)];
-            }
+//            }(padding-10+45,padding*2-15+offHight,size.width+25,size.height + 20)
 
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.statusLabel.hidden = YES;
@@ -2596,9 +2597,9 @@ PlayingDelegate>
             CGSize titleSize = [self getPayloadMsgTitleSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"msg")]];
             CGSize contentSize = CGSizeZero;
             float higF = 0;
-            contentSize = [self getPayloadMsgContentSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(magDic, @"description")] withThumb:YES];
+            contentSize = [self getPayloadMsgContentSize:[GameCommon getNewStringWithId:KISDictionaryHaveKey(plainEntry, @"msg")] withThumb:YES];
             higF = contentSize.height;
-            NSNumber * height = [NSNumber numberWithFloat:(contentSize.height > 40 ? (titleSize.height + contentSize.height + 5) : titleSize.height + 45)+25];
+            NSNumber * height = [NSNumber numberWithFloat:(contentSize.height > 40 ? (titleSize.height + contentSize.height) : contentSize.height)+25];
             array=[NSArray arrayWithObjects:[NSNumber numberWithFloat:195],height, nil];
 
             break;
