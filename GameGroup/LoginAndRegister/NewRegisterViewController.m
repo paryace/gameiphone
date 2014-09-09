@@ -1120,6 +1120,8 @@
 {
     if (textField == m_parssWordTf) {
         [self animateTextField: textField up: YES];
+    }else if (textField == m_phoneNumText){
+       
     }
   }
 - (void)textFieldDidEndEditing:(UITextField *)textField
