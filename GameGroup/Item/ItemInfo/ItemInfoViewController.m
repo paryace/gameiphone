@@ -97,30 +97,6 @@
     roleTabView.hidden = YES;
     roleTabView.mydelegate  =self;
     NSMutableArray *coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    /*
-     去除角色列表中的404 和notSupport 的角色
-     */
-
-    
-//    NSMutableArray *arr = [NSMutableArray array];
-//    for (NSDictionary *dic  in coreArray) {
-//        if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
-//            NSLog(@"++++++++%@",dic);
-//        }else{
-//            
-//            NSLog(@"%@",[dic objectForKey:@""]);
-//            
-//            [arr addObject:dic];
-//            
-//            
-//        }
-//    }
-//    [coreArray removeAllObjects];
-//    
-//    [coreArray  addObjectsFromArray:arr];
-
-    
-    
     [self.view addSubview:roleTabView];
     [roleTabView setDate:coreArray];
     hud  = [[MBProgressHUD alloc]initWithView:self.view];
@@ -378,28 +354,6 @@
             m_typeLabel.frame = CGRectMake((320-size.width)/2, 0, size.width, 25);
             m_timeLabel.frame =CGRectMake(165+size.width/2, 0, 110, 25);
 
-            /*
-             去除角色列表中的404 和notSupport 的角色
-             */
-            
-            
-            
-            roleTabView.coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] gameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"gameid")]];
-            NSMutableArray *arr = [NSMutableArray array];
-            for (NSDictionary *dic  in roleTabView.coreArray) {
-                if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
-                    NSLog(@"++++++++%@",dic);
-                }else{
-                    
-                    NSLog(@"%@",[dic objectForKey:@""]);
-                    [arr addObject:dic];
-                }
-            }
-            [roleTabView.coreArray removeAllObjects];
-            
-            [roleTabView.coreArray  addObjectsFromArray:arr];
-
-
             [self queryMyRoleWithArr:KISDictionaryHaveKey(responseObject, @"memberList")];
             descriptionStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"description")];
             [self setGetOutBtn:teamUsershipType Requested:requested];
@@ -414,7 +368,6 @@
             }
             
             [m_myTableView reloadData];
-            [roleTabView.roleTableView reloadData];
         }
     } reError:^(id error) {
         [hud hide:YES];
@@ -631,7 +584,8 @@
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
-            ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]) {
+            ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]
+            ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:@"3"]) {
             
             hud.mode = MBProgressHUDModeText;
             hud.detailsLabelText  =@"无法获取角色详情数据,由于角色不存在或暂不支持";
@@ -639,7 +593,6 @@
             [hud show:YES];
             [hud hide:YES afterDelay:2];
             
-//            [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
             
             return;
         }
@@ -651,8 +604,8 @@
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         NSDictionary *dic = [claimedList_dataArray objectAtIndex:indexPath.row];
         if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
-            ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]) {
-//            [self showMessageWindowWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" imageType:1];
+            ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]
+            ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:@"3"]) {
             hud.mode = MBProgressHUDModeText;
             hud.detailsLabelText  =@"无法获取角色详情数据,由于角色不存在或暂不支持";
             hud.labelText = nil;
@@ -887,18 +840,22 @@
     UIImageView *imageView =[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 60)];
     imageView.image = KUIImage(leftImg);
     [customView addSubview:imageView];
-    
-//    UILabel *titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(35, 0, 100, 40) font:[UIFont systemFontOfSize:14] textColor:[UIColor whiteColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];
-//    titleLabel.text = title;
-//    [customView addSubview:titleLabel];
-    
-    
     return customView;
 }
 -(void)didClickChooseWithView:(RoleTabView*)view info:(NSDictionary *)info
 {
-//    itemRoleBtn.hidden = NO;
+
     roleTabView.hidden = YES;
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"failedmsg")] isEqualToString:@"404"]
+        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"failedmsg")] isEqualToString:@"notSupport"]
+        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"gameid")] isEqualToString:@"3"]) {
+        hud.mode = MBProgressHUDModeText;
+        hud.detailsLabelText  =@"无法获取角色详情数据,由于角色不存在或暂不支持";
+        hud.labelText = nil;
+        [hud show:YES];
+        [hud hide:YES afterDelay:2];
+        return;
+    }
     self.infoDict = [NSMutableDictionary dictionaryWithDictionary:info];
     bView.lowImg.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"img")]];
     bView.titleLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"name")];
