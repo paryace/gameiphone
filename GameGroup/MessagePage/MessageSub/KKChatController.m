@@ -1477,8 +1477,8 @@ PlayingDelegate>
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.voiceImageView.image = KUIImage(@"SenderVoiceNodePlaying003");
 
-            cell.voiceImageView.frame =CGRectMake(320-size.width - padding, padding*2-4,20,20);
-            cell.audioTimeSizeLb.frame = CGRectMake(320-size.width-padding-30, padding*2-4, 30, 20);
+            cell.voiceImageView.frame =CGRectMake(320 - padding-75, padding*2-4,20,20);
+            cell.audioTimeSizeLb.frame = CGRectMake(320-padding-110, padding*2-4, 30, 20);
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60,(size.height+20)/2 + padding*2-15)status:status];
             
 //            cell.voiceImageView.frame =CGRectMake(320-size.width - padding, padding*2-2,20,20);
@@ -4075,7 +4075,7 @@ PlayingDelegate>
     
     NSLog(@"interval---%.0f",interval);
         dispatch_async(dispatch_get_main_queue(), ^{
-            if ((long long)interval<2) {
+            if ((long long)interval<1) {
                 /*
                  上传失败 删除本地已创建文件
                  */

@@ -125,7 +125,9 @@
             [self.mydelegate cancleRecordWithView:self];
             [self performSelector:@selector(changeBool) withObject:self afterDelay:1];
         }else{
-            [self.mydelegate RecordSuccessWithView:self];
+            //半秒后执行完成录音
+            [self performSelector:@selector(afterharfs) withObject:self afterDelay:.5f];
+            //一秒后令录音button 启用
             [self performSelector:@selector(changeBool) withObject:self afterDelay:1];
 
 //            [[RecorderManager sharedManager]stopRecording];
@@ -152,6 +154,11 @@
         
         
     }
+}
+-(void)afterharfs
+{
+    [self.mydelegate RecordSuccessWithView:self];
+
 }
 -(void)changeBool
 {
