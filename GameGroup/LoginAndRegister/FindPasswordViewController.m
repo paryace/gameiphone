@@ -553,6 +553,8 @@
         if (range.length == 1)//如果是输入字符，range的length会为0,删除字符为1
         {//判断如果是删除字符，就直接返回yes
             return YES;
+        }else if(range.location == 6){
+            return NO;
         }
         NSCharacterSet *cs;
         cs = [[NSCharacterSet characterSetWithCharactersInString:NUMBERS] invertedSet];
@@ -562,7 +564,21 @@
         BOOL canChange = [string isEqualToString:filtered];
         
         return canChange;
+        
+
+    }else if(m_newPassText_one ==textField){
+        if ([string isEqualToString:@" "])
+        {
+            return NO;
+        }
+
+    }else if (m_newPassText_two == textField){
+        if ([string isEqualToString:@" "])
+        {
+            return NO;
+        }
     }
+
     return YES;
 }
 
