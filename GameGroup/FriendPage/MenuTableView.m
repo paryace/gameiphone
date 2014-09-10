@@ -36,14 +36,23 @@
 -(void)setMenuTagList:(NSMutableArray*)array{
     _menuDataList = array;
     [_mTableView reloadData];
-    NSIndexPath *selectedIndexPath = [NSIndexPath indexPathForRow:3 inSection:0];
-    [_mTableView selectRowAtIndexPath:selectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+    
+    NSIndexPath *firstPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    [_mTableView selectRowAtIndexPath:firstPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+    if (self.delegate) {
+        [self.delegate itemClick:self DateDic:[_menuDataList objectAtIndex:0]];
+    }
 }
 
 -(void)setMenuTagList:(NSMutableArray*)keyArray DateDic:(NSMutableDictionary*)dataDic{
     _menuKeyList = keyArray;
     _menuDataDic = dataDic;
     [_mTableView reloadData];
+    NSIndexPath *firstPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    [_mTableView selectRowAtIndexPath:firstPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+    if (self.delegate) {
+        [self.delegate itemClick:self DateDic:[[_menuDataDic objectForKey:[_menuKeyList objectAtIndex:0]] objectAtIndex:0]];
+    }
 }
 
 #pragma mark -- UITableView Delegate
@@ -54,6 +63,12 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    int newRow = indexPath.row;
+    int oldRow = self.lastIndexPath.row;
+    if (newRow == oldRow){
+        return;
+    }
+    self.lastIndexPath = indexPath;
     if (self.delegate) {
         if (_isSecion) {
             [self.delegate itemClick:self DateDic:[[_menuDataDic objectForKey:[_menuKeyList objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row]];
@@ -106,17 +121,15 @@
     bgColorView.backgroundColor = kColorWithRGB(60, 175, 249, 1);
     bgColorView.layer.masksToBounds = YES;
     cell.selectedBackgroundView = bgColorView;
-    UILabel *tlb = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.bounds.size.width, 50)];
-    tlb.backgroundColor = [UIColor clearColor];
-    tlb.textColor = UIColorFromRGBA(0x8d8d8b, 1);
+    cell.textLabel.backgroundColor = [UIColor clearColor];
+    cell.textLabel.textColor = UIColorFromRGBA(0x8d8d8b, 1);
     if (_isSecion) {
-        tlb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey([[_menuDataDic objectForKey:[_menuKeyList objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row], @"tagName")];;
+        cell.textLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey([[_menuDataDic objectForKey:[_menuKeyList objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row], @"tagName")];;
     }else {
-        tlb.text = [_menuDataList objectAtIndex:indexPath.row];
+        cell.textLabel.text = [[_menuDataList objectAtIndex:indexPath.row] objectForKey:@"tagName"];
     }
-    tlb.textAlignment = NSTextAlignmentCenter;
-    tlb.font =[ UIFont systemFontOfSize:14];
-    [cell.contentView addSubview:tlb];
+    cell.textLabel.textAlignment = NSTextAlignmentCenter;
+    cell.textLabel.font =[ UIFont systemFontOfSize:14];
     return cell;
 }
 

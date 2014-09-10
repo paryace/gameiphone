@@ -11,11 +11,15 @@
 #import "MJRefresh.h"
 #import "LocationManager.h"
 #import "AddGroupViewController.h"
+#import "SearchGroupViewController.h"
 
 
 @interface NewSearchGroupController ()
 {
     UITableView * m_GroupTableView;
+    UISearchBar * mSearchBar;
+    UIView * baseBgView;
+    
     NSMutableArray * m_groupArray;
     NSInteger currentPageCount;
     
@@ -50,22 +54,37 @@
     [self.view addSubview:shareButton];
     
     
-    menuTableView = [[MenuTableView alloc] initWithFrame:CGRectMake(0, startX, 100, kScreenHeigth)];
-    menuTableView.isSecion = YES;
+    mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, startX,320, 44)];
+    [mSearchBar setPlaceholder:@"搜索群名或群号"];
+    mSearchBar.showsCancelButton=NO;
+    mSearchBar.delegate = self;
+    [self.view addSubview:mSearchBar];
+    
+    baseBgView = [[UIView alloc] initWithFrame:CGRectMake(0, startX+44, 320, kScreenHeigth)];
+    baseBgView.backgroundColor = [UIColor blackColor];
+    baseBgView.alpha = 0.5;
+    baseBgView.hidden = YES;
+    
+    menuTableView = [[MenuTableView alloc] initWithFrame:CGRectMake(0, startX+44, 100, kScreenHeigth)];
+    menuTableView.isSecion = NO;
     menuTableView.delegate = self;
     [self.view addSubview:menuTableView];
-    UIView * lineView = [[UIView alloc] initWithFrame:CGRectMake(100, startX, 0.5, kScreenHeigth)];
+    
+    UIView * lineView = [[UIView alloc] initWithFrame:CGRectMake(100, startX+44, 0.5, kScreenHeigth)];
     lineView.backgroundColor = UIColorFromRGBA(0xf6f6f6, 1);
     [self.view addSubview:lineView];
     
-    
     m_groupArray = [NSMutableArray array];
-    m_GroupTableView = [[UITableView alloc] initWithFrame:CGRectMake(100.5, startX, 320-100.5, self.view.frame.size.height - startX) style:UITableViewStylePlain];
+    m_GroupTableView = [[UITableView alloc] initWithFrame:CGRectMake(100.5, startX+44, 320-100.5, self.view.frame.size.height - startX) style:UITableViewStylePlain];
     m_GroupTableView.backgroundColor = [UIColor whiteColor];;
     m_GroupTableView.dataSource = self;
     m_GroupTableView.delegate = self;
     [GameCommon setExtraCellLineHidden:m_GroupTableView];
     [self.view addSubview:m_GroupTableView];
+    
+    UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+    [baseBgView addGestureRecognizer:tapGr];
+    [self.view addSubview:baseBgView];
 
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"搜索中...";
@@ -73,23 +92,38 @@
     [self addheadView];
     [self addFootView];
 
-    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1",@"gameid",@"212259",@"characterId", nil];
+    
+    self.gameid = @"1";
+    self.roleId = @"1736";
+    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1",@"gameid",@"1736",@"characterId", nil];
     [self getCardWithNetWithDic:dic];
 }
+-(void)viewTapped:(UITapGestureRecognizer*)sender
+{
+    [self hideBgView];
+}
+
 #pragma mark --- itemClick
 - (void)itemClick:(MenuTableView*)Sender DateDic:(NSMutableDictionary*)dataDic{
     self.tagsId = KISDictionaryHaveKey(dataDic, @"tagId");
     [self reloadData:NO];
 }
 
--(void)reloadData:(BOOL)isRefre{
-    currentPageCount = 0;
-    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
-    [paramDict setObject:@"20" forKey:@"maxSize"];
-    [paramDict setObject:self.tagsId forKey:@"tagId"];
-    [self getGroupListFromNetWithParam:paramDict method:@"245" isRefre:isRefre];
+-(void)getLocationForNet:(BOOL)isRefre
+{
+    if (!isRefre) {
+        [hud show:YES];
+    }
+    [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
+        [[TempData sharedInstance] setLat:lat Lon:lon];
+        [self reloadNearByData:isRefre];
+    } Failure:^{
+        [hud hide:YES];
+        [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
+    }
+     ];
 }
+
 
 #pragma mark ---获取网络请求数据
 -(void)getCardWithNetWithDic:(NSMutableDictionary *)paramDict
@@ -102,8 +136,16 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        
+        NSMutableArray * arr = [NSMutableArray array];
+        NSArray *array = [NSArray arrayWithObjects:@{@"tagName": @"附近组织",@"tagId":@"nearby"},@{@"tagName":@"热门",@"tagId":@"hot"}, nil];
+        [arr addObjectsFromArray:array];
         NSMutableArray * sortListArray = KISDictionaryHaveKey(responseObject, @"sortList");
-        [menuTableView setMenuTagList:sortListArray DateDic:responseObject];
+        for (NSString * tag in sortListArray) {
+            NSArray * arrayTemp = KISDictionaryHaveKey(responseObject, tag);
+            [arr addObjectsFromArray:arrayTemp];
+        }
+        [menuTableView setMenuTagList:arr];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
         [self showDialog:error];
@@ -198,8 +240,6 @@
                         [m_groupArray removeAllObjects];
                     }
                     [m_GroupTableView reloadData];
-                    m_alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"查询无结果" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
-                    [m_alertView show];
                 }
             }
         }
@@ -213,10 +253,10 @@
 -(void)addheadView
 {
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
-    [header setFrame:CGRectMake(100, 0, 320-100, 50)];
+    
     CGRect headerRect = header.arrowImage.frame;
     headerRect.size = CGSizeMake(30, 30);
-    headerRect.origin = CGPointMake(180, header.arrowImage.center.y);
+    headerRect.origin = CGPointMake(280, header.arrowImage.center.y);
     header.arrowImage.frame = headerRect;
     header.activityView.center = header.arrowImage.center;
     header.scrollView = m_GroupTableView;
@@ -242,6 +282,77 @@
     m_footer = footer;
 }
 
+-(void)reloadData:(BOOL)isRefre{
+    //服务器
+    if ([[GameCommon getNewStringWithId:self.tagsId]isEqualToString:@"realm"]) {
+        
+    }
+    //热门
+    else if ([[GameCommon getNewStringWithId:self.tagsId]isEqualToString:@"hot"]) {
+        [self reloadHotData:isRefre];
+    }
+    //附近的组织
+    else if ([[GameCommon getNewStringWithId:self.tagsId]isEqualToString:@"nearby"]) {
+        [self getLocationForNet:isRefre];
+    }
+    //标签
+    else {
+        [self reloadTagData:isRefre];
+    }
+}
+//标签
+-(void)reloadTagData:(BOOL)isRefre{
+    if (!self.tagsId) {
+        [hud hide:YES];
+        [m_header endRefreshing];
+        [m_footer endRefreshing];
+        return;
+    }
+    currentPageCount = 0;
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
+    [paramDict setObject:@"20" forKey:@"maxSize"];
+    [paramDict setObject:self.tagsId forKey:@"tagId"];
+    [self getGroupListFromNetWithParam:paramDict method:@"245" isRefre:isRefre];
+}
+//服务器
+-(void)reloadRealmData:(BOOL)isRefre{
+    
+}
+//热门群组
+-(void)reloadHotData:(BOOL)isRefre{
+    if (!self.tagsId) {
+        [hud hide:YES];
+        [m_header endRefreshing];
+        [m_footer endRefreshing];
+        return;
+    }
+    currentPageCount = 0;
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
+    [paramDict setObject:@"20" forKey:@"maxSize"];
+    [paramDict setObject:self.gameid forKey:@"gameid"];
+    [paramDict setObject:self.roleId forKey:@"characterId"];
+    [self getGroupListFromNetWithParam:paramDict method:@"257" isRefre:isRefre];
+}
+//附近的组织
+-(void)reloadNearByData:(BOOL)isRefre{
+    if (!self.tagsId) {
+        [hud hide:YES];
+        [m_header endRefreshing];
+        [m_footer endRefreshing];
+        return;
+    }
+    currentPageCount = 0;
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
+    [paramDict setObject:@"20" forKey:@"maxSize"];
+    [paramDict setObject:self.gameid forKey:@"gameid"];
+    [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
+    [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
+    [self getGroupListFromNetWithParam:paramDict method:@"237" isRefre:isRefre];
+}
+
 #pragma mark ---创建群
 -(void)didClickCreateGroup:(id)sender
 {
@@ -259,6 +370,72 @@
 {
     m_alertView.delegate  =nil;
 }
+
+#pragma mark ----取消按钮
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar{
+    [self hideBgView];
+    searchBar.text = @"";
+}
+
+#pragma mark ----键盘搜索按钮
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
+    [searchBar resignFirstResponder];
+    [self doSearch:searchBar];
+}
+
+#pragma mark ----搜索
+- (void)doSearch:(UISearchBar *)searchBar{
+    [self hideBgView];
+    if ([GameCommon isEmtity:searchBar.text])
+    {
+        UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"搜索条件不能为空" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        [alert show];
+        return;
+    }
+    SearchGroupViewController *groupView = [[SearchGroupViewController alloc]init];
+    groupView.conditiona = searchBar.text;
+    groupView.ComeType = SETUP_Search;
+    groupView.titleName = @"搜索结果";
+    [self.navigationController pushViewController:groupView animated:YES];
+    searchBar.text = @"";
+}
+
+#pragma mark ----获得焦点
+- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
+{
+    [self showBgView];
+    return YES;
+}
+#pragma mark ----失去焦点
+- (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar
+{
+    [self hideBgView];
+    return YES;
+}
+
+-(void)hideBgView{
+    [UIView animateWithDuration:0.2 animations:^{
+        baseBgView.alpha = 0.5;
+        
+        baseBgView.alpha = 0;
+    }completion:^(BOOL finished) {
+       baseBgView.hidden = YES;
+    }];
+
+   
+    [mSearchBar resignFirstResponder];
+    [mSearchBar setShowsCancelButton:NO animated:NO];
+}
+-(void)showBgView{
+    baseBgView.hidden = NO;
+    [UIView animateWithDuration:0.2 animations:^{
+        baseBgView.alpha = 0;
+        
+        baseBgView.alpha = 0.5;
+    }];
+    [mSearchBar setShowsCancelButton:YES animated:YES];
+}
+
 
 - (void)didReceiveMemoryWarning
 {

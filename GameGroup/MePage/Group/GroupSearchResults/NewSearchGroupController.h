@@ -10,7 +10,7 @@
 #import "MenuTableView.h"
 #import "NewGroupCell.h"
 
-@interface NewSearchGroupController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate,UIAlertViewDelegate,OnItemClickDelegate>
+@interface NewSearchGroupController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate,UIAlertViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate,OnItemClickDelegate>
 @property(nonatomic, retain) NSString * conditiona;//条件
 @property(nonatomic,copy)NSString *tagsId;
 @property(nonatomic,copy)NSString *realmStr;
