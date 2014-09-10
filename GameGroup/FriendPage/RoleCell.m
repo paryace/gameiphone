@@ -18,7 +18,7 @@
         self.glazzImgView = [[EGOImageView alloc]initWithFrame:CGRectMake(20, 10, 40, 40)];
         [self.contentView addSubview:self.glazzImgView];
         
-        self.roleLabel =[[ UILabel alloc]initWithFrame:CGRectMake(70, 10, 250, 20)];
+        self.roleLabel =[[ UILabel alloc]initWithFrame:CGRectMake(70, 10, 200, 20)];
         self.roleLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:15];
         self.roleLabel.textColor = [UIColor blackColor];
         self.roleLabel.backgroundColor =[ UIColor clearColor];

@@ -19,7 +19,7 @@
         self.gameImageView.image = KUIImage(@"wow_ guild");
         [self.contentView addSubview:self.gameImageView];
         
-        self.guildLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 10, 250, 20)];
+        self.guildLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 10, 200, 20)];
         self.guildLabel.textAlignment = NSTextAlignmentLeft;
         self.guildLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:15];
         self.guildLabel.backgroundColor = [UIColor clearColor];
