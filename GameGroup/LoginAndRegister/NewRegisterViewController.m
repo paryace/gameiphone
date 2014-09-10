@@ -216,7 +216,7 @@
     }else{
         [self.step1Button setImage:KUIImage(@"1_04") forState:UIControlStateNormal];
     }
-    [self.step1Button addTarget:self action:@selector(getVerCodeButton:) forControlEvents:UIControlEventTouchUpInside];
+    [self.step1Button addTarget:self action:@selector(judgeHaveRegiste) forControlEvents:UIControlEventTouchUpInside];
     [m_step1Scroll addSubview:self.step1Button];
 
  
@@ -358,17 +358,21 @@
 //    if ([[TempData sharedInstance] registerNeedMsg]) {
     if ([[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"REGISTERNEEDMSG"]] isEqualToString:@"1"]) {
         if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"time"]isEqualToString:@"mark"]&&[m_phoneNumText.text isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:@"phoneNumber"]]) {
+//        if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"time"]isEqualToString:@"mark"]) {
+            
             self.scrollView.contentOffset = CGPointMake(kScreenWidth, 0);
             topLabel.text = [NSString stringWithFormat:@"验证码已发送至手机号：%@，请注意查收！", m_phoneNumText.text];
+
         }else{
-        [self getVerificationCode];
         m_verCodeTextField.text = @"";
+        [self getVerificationCode];
+       
         }
     }else{
         NSString *str = [m_phoneNumText.text stringByReplacingOccurrencesOfString:@" " withString:@""];
         NSLog(@"str=%@",str);
         NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
-        [params setObject:m_phoneNumText.text forKey:@"username"];
+        [params setObject:str forKey:@"username"];
         NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
         [body addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
         [body setObject:params forKey:@"params"];
@@ -393,6 +397,64 @@
         }];
     }
 }
+- (void)judgeHaveRegiste
+{
+    [m_phoneNumText resignFirstResponder];
+    //判断字符为空
+    if (KISEmptyOrEnter(m_phoneNumText.text)) {
+        [self showAlertViewWithTitle:@"提示" message:@"请输入手机号！" buttonTitle:@"确定"];
+        return;
+    }
+    if (m_phoneNumText.text.length!=13) {
+        [self showAlertViewWithTitle:@"提示" message:@"请输入正确的手机号！" buttonTitle:@"确定"];
+        return;
+    }
+    if (!m_agreeButton.selected) {
+        [self showAlertViewWithTitle:@"提示" message:@"请勾选用户协议！" buttonTitle:@"确定"];
+        return;
+    }
+    
+        NSString *str = [m_phoneNumText.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+        NSLog(@"str=%@",str);
+        NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
+        [params setObject:str forKey:@"username"];
+        NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
+        [body addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+        [body setObject:params forKey:@"params"];
+        [body setObject:@"105" forKey:@"method"];
+        
+        hud.labelText = @"获取中...";
+        [hud show:YES];
+        [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            [hud hide:YES];
+            self.scrollView.contentOffset = CGPointMake(kScreenWidth*2, 0);
+            //            m_topImage.image = KUIImage(@"registerStep2");
+            m_titleLabel.text = @"个人信息";
+            if ([[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"REGISTERNEEDMSG"]] isEqualToString:@"1"]) {
+                        if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"time"]isEqualToString:@"mark"]&&[m_phoneNumText.text isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:@"phoneNumber"]]) {
+
+                    self.scrollView.contentOffset = CGPointMake(kScreenWidth, 0);
+                    topLabel.text = [NSString stringWithFormat:@"验证码已发送至手机号：%@，请注意查收！", m_phoneNumText.text];
+                    
+                }else{
+                    m_verCodeTextField.text = @"";
+                    [self getVerificationCode];
+                    
+                }
+            }
+        } failure:^(AFHTTPRequestOperation *operation, id error) {
+            if ([error isKindOfClass:[NSDictionary class]]) {
+                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+                {
+                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                    [alert show];
+                }
+            }
+            [hud hide:YES];
+        }];
+    
+
+}
 - (void)getVerificationCode
 {
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
@@ -416,10 +478,7 @@
 //        [m_phoneNumText resignFirstResponder];
         [m_verCodeTextField becomeFirstResponder];
         
-#pragma mark====================存储当前时间，判断是否需要服务器发送验证码
-     
-        
-        
+       
         topLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, 300, 50)];
         topLabel.numberOfLines = 2;
         topLabel.font = [UIFont boldSystemFontOfSize:13.0];
@@ -498,7 +557,7 @@
 //    [vercodeNextButton setTitle:@"下一步" forState:UIControlStateNormal];
 //    [self.vercodeNextButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
 //    self.vercodeNextButton.backgroundColor = [UIColor clearColor];
-    [self.vercodeNextButton addTarget:self action:@selector(vercodeNextButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.vercodeNextButton addTarget:self action:@selector(vercodeNextButtonClick2:) forControlEvents:UIControlEventTouchUpInside];
     [m_step1Scroll_verCode addSubview:self.vercodeNextButton];
 }
 - (void)didNextTF:(id)sender
@@ -579,7 +638,7 @@
         [m_refreshVCButton setTitle:[NSString stringWithFormat:@"重新发送(%d)", m_leftTime] forState:UIControlStateSelected];
 }
 
-- (void)vercodeNextButtonClick:(id)sender
+- (void)vercodeNextButtonClick2:(id)sender
 {
     [m_verCodeTextField resignFirstResponder];
     
@@ -601,10 +660,10 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [hud hide:YES];
-        if ([m_verCodeTimer isValid]) {
-            [m_verCodeTimer invalidate];
-            m_verCodeTimer = nil;
-        }
+//        if ([m_verCodeTimer isValid]) {
+//            [m_verCodeTimer invalidate];
+//            m_verCodeTimer = nil;
+//        }
         
         NSLog(@"%@", responseObject);
         
@@ -642,38 +701,7 @@
     [m_step2Scroll addSubview:m_photoButton];
 
     
-//    UIImageView *imageView = [[UIImageView alloc]initWithFrame:CGRectMake(170, 20, 80, 50)];
-//    imageView.image = KUIImage(@"headImgText");
-//    [m_step2Scroll addSubview:imageView];
-    
-    
-    
-//    m_sexManButton = [[UIButton alloc] initWithFrame:CGRectMake(130, 80, 65, 35)];
-//    [m_sexManButton setImage:KUIImage(@"man_normal") forState:UIControlStateNormal];
-//    [m_sexManButton setImage:KUIImage(@"man_click") forState:UIControlStateSelected];
-//    [m_sexManButton addTarget:self action:@selector(sexButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-//    [m_step2Scroll addSubview:m_sexManButton];
-//
-//    m_sexWomanButton = [[UIButton alloc] initWithFrame:CGRectMake(210, 80, 65, 35)];
-//    [m_sexWomanButton setImage:KUIImage(@"women_normal") forState:UIControlStateNormal];
-//    [m_sexWomanButton setImage:KUIImage(@"women_click") forState:UIControlStateSelected];
-//    m_sexWomanButton.selected = NO;
-//    [m_sexWomanButton addTarget:self action:@selector(sexButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-//    [m_step2Scroll addSubview:m_sexWomanButton];
-//
-//    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 120, 300, 40)];
-//    table_top.image = KUIImage(@"group_cardtf");
-//    [m_step2Scroll addSubview:table_top];
-//    
-//    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, 121, 300, 40)];
-//    table_bottom.image = KUIImage(@"table_bottom");
-//    [m_step2Scroll addSubview:table_bottom];
-    
-//    UILabel* table_label_two = [[UILabel alloc] initWithFrame:CGRectMake(20, 121, 100, 38)];
-//    table_label_two.text = @"密码";
-//    table_label_two.textColor = kColorWithRGB(102, 102, 102, 1.0);
-//    table_label_two.font = [UIFont boldSystemFontOfSize:15.0];
-//    [m_step2Scroll addSubview:table_label_two];
+
 #pragma mark===============================================
     UIView *sexView = [[UIView alloc]initWithFrame:CGRectMake(0, 135, 320, 45)];
     sexView.backgroundColor = [UIColor whiteColor];
