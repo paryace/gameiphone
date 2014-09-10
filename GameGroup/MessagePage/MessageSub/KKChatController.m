@@ -1957,7 +1957,6 @@ PlayingDelegate>
     if (![self isFileExist:ps]) {
         [data writeToFile:ps atomically:YES];
     }
-    
         [[PlayerManager sharedManager] playAudioWithFileName:ps delegate:self];
     }
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
@@ -3533,7 +3532,6 @@ PlayingDelegate>
     }
     [messageDict setObject:payloadStr forKey:@"payload"];
     [self addNewMessageToTable:messageDict];
-    [[MessageAckService singleton] addMessage:messageDict];
 }
 -(NSString*)getDomain:(NSString*)domain
 {
