@@ -7,12 +7,21 @@
 //
 
 #import <UIKit/UIKit.h>
-
+@protocol OnItemClickDelegate;
 @interface MenuTableView : UIView<UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic, strong) UITableView *mTableView;
 @property (strong, nonatomic)  NSMutableArray * menuDataList;
-@property (strong, nonatomic)  NSDictionary * menuDataDic;
+@property (strong, nonatomic)  NSMutableDictionary * menuDataDic;
 @property (strong, nonatomic)  NSMutableArray * menuKeyList;
 @property (nonatomic, assign) BOOL isSecion;
+
+@property(assign,nonatomic)id<OnItemClickDelegate> delegate;
 -(void)setMenuTagList:(NSMutableArray*)array;
+-(void)setMenuTagList:(NSMutableArray*)keyArray DateDic:(NSMutableDictionary*)dataDic;
+@end
+
+@protocol OnItemClickDelegate <NSObject>
+
+- (void)itemClick:(MenuTableView*)Sender DateDic:(NSMutableDictionary*)dataDic;
+
 @end

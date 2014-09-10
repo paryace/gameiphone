@@ -14,6 +14,10 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        _menuDataList = [NSMutableArray array];
+        _menuDataDic = [NSMutableDictionary dictionary];
+        _menuKeyList = [NSMutableArray array];
+        
         if (!_mTableView) {
             _mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width,frame.size.height) style:UITableViewStylePlain];
             _mTableView.backgroundColor = kColorWithRGB(251, 251, 251, 1);
@@ -36,6 +40,12 @@
     [_mTableView selectRowAtIndexPath:selectedIndexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
 }
 
+-(void)setMenuTagList:(NSMutableArray*)keyArray DateDic:(NSMutableDictionary*)dataDic{
+    _menuKeyList = keyArray;
+    _menuDataDic = dataDic;
+    [_mTableView reloadData];
+}
+
 #pragma mark -- UITableView Delegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -44,12 +54,31 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (_isSecion) {
-        
+    if (self.delegate) {
+        if (_isSecion) {
+            [self.delegate itemClick:self DateDic:[[_menuDataDic objectForKey:[_menuKeyList objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row]];
+        }else{
+            [self.delegate itemClick:self DateDic:[_menuDataList objectAtIndex:indexPath.row]];
+        }
     }
 }
 #pragma mark -- UITableView DataSource
 
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
+{
+    if (_isSecion) {
+        return [_menuKeyList objectAtIndex:section];
+    }
+    return @"";
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    if (_isSecion) {
+        return 30;
+    }
+    return 0;
+}
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     if (_isSecion) {
@@ -59,6 +88,9 @@
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if (_isSecion) {
+        return [[_menuDataDic objectForKey:[_menuKeyList objectAtIndex:section]] count];
+    }
     return _menuDataList.count;
 }
 
@@ -77,7 +109,11 @@
     UILabel *tlb = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.bounds.size.width, 50)];
     tlb.backgroundColor = [UIColor clearColor];
     tlb.textColor = UIColorFromRGBA(0x8d8d8b, 1);
-    tlb.text = @"陌游官方";
+    if (_isSecion) {
+        tlb.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey([[_menuDataDic objectForKey:[_menuKeyList objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row], @"tagName")];;
+    }else {
+        tlb.text = [_menuDataList objectAtIndex:indexPath.row];
+    }
     tlb.textAlignment = NSTextAlignmentCenter;
     tlb.font =[ UIFont systemFontOfSize:14];
     [cell.contentView addSubview:tlb];

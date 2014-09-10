@@ -12,7 +12,7 @@
 #import "MJRefresh.h"
 #import "LocationManager.h"
 #import "AddGroupViewController.h"
-#import "MenuTableView.h"
+
 
 @interface NewSearchGroupController ()
 {
@@ -40,9 +40,7 @@
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-    //    [self setTopViewWithTitle:@"群列表" withBackButton:YES];
-    
+    [super viewDidLoad];    
     [self setTopViewWithTitle:self.titleName withBackButton:YES];
     
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
@@ -53,10 +51,10 @@
     [self.view addSubview:shareButton];
     
     
-    NSArray * menuArray = @[@"1",@"2",@"3",@"4",@"1",@"2",@"3",@"4",@"1",@"2",@"3",@"4"];
     menuTableView = [[MenuTableView alloc] initWithFrame:CGRectMake(0, startX, 100, kScreenHeigth)];
+    menuTableView.isSecion = YES;
+    menuTableView.delegate = self;
     [self.view addSubview:menuTableView];
-    [menuTableView setMenuDataList:menuArray];
     
     m_groupArray = [NSMutableArray array];
     currentPageCount = 0;
@@ -65,51 +63,25 @@
     m_GroupTableView.delegate = self;
     [GameCommon setExtraCellLineHidden:m_GroupTableView];
     [self.view addSubview:m_GroupTableView];
-    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
-    [paramDict setObject:@"20" forKey:@"maxSize"];
-    
-    
+
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"搜索中...";
     [self.view addSubview:hud];
-    
-    switch (self.ComeType) {
-        case SETUP_Tags:
-            [paramDict setObject:self.tagsId forKey:@"tagId"];
-            [self getGroupListFromNetWithParam:paramDict method:@"245" isRefre:NO];
-            
-            break;
-        case SETUP_Search:
-            [paramDict setObject:self.conditiona forKey:@"param"];
-            [self getGroupListFromNetWithParam:paramDict method:@"234" isRefre:NO];
-            break;
-        case SETUP_SAMEREALM:
-            [paramDict setObject:self.gameid forKey:@"gameid"];
-            [paramDict setObject:self.realmStr forKey:@"gameRealm"];
-            [self getGroupListFromNetWithParam:paramDict method:@"243" isRefre:NO];
-            
-            break;
-        case SETUP_NEARBY:
-            [self getLocationForNet:NO];
-            
-            break;
-        case SETUP_HOT:
-            [paramDict setObject:self.gameid forKey:@"gameid"];
-            [paramDict setObject:self.roleId forKey:@"characterId"];
-            [self getGroupListFromNetWithParam:paramDict method:@"257" isRefre:NO];
-            break;
-        default:
-            break;
-    }
-    
     [self addheadView];
     [self addFootView];
-    
+
     NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1",@"gameid",@"212259",@"characterId", nil];
     [self getCardWithNetWithDic:dic];
 }
-
+#pragma mark --- itemClick
+- (void)itemClick:(MenuTableView*)Sender DateDic:(NSMutableDictionary*)dataDic{
+    self.tagsId = KISDictionaryHaveKey(dataDic, @"tagId");
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
+    [paramDict setObject:@"20" forKey:@"maxSize"];
+    [paramDict setObject:self.tagsId forKey:@"tagId"];
+    [self getGroupListFromNetWithParam:paramDict method:@"245" isRefre:NO];
+}
 
 #pragma mark ---获取网络请求数据
 -(void)getCardWithNetWithDic:(NSMutableDictionary *)paramDict
@@ -121,6 +93,9 @@
     [postDict setObject:@"236" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        NSMutableArray * sortListArray = KISDictionaryHaveKey(responseObject, @"sortList");
+        [menuTableView setMenuTagList:sortListArray DateDic:responseObject];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
         [self showDialog:error];
@@ -138,14 +113,10 @@
 
 }
 
-
-
-
 #pragma mark 表格
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return [m_groupArray count];
-    
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -244,35 +215,8 @@
         NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
         [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
         [paramDict setObject:@"20" forKey:@"maxSize"];
-        
-        switch (self.ComeType) {
-            case SETUP_Tags:
-                [paramDict setObject:self.tagsId forKey:@"tagId"];
-                [self getGroupListFromNetWithParam:paramDict method:@"245" isRefre:YES];
-                
-                break;
-            case SETUP_Search:
-                [paramDict setObject:self.conditiona forKey:@"param"];
-                [self getGroupListFromNetWithParam:paramDict method:@"234" isRefre:YES];
-                break;
-            case SETUP_SAMEREALM:
-                [paramDict setObject:self.gameid forKey:@"gameid"];
-                [paramDict setObject:self.realmStr forKey:@"gameRealm"];
-                [self getGroupListFromNetWithParam:paramDict method:@"243" isRefre:YES];
-                
-                break;
-            case SETUP_NEARBY:
-                [self getLocationForNet:YES];
-                
-                break;
-            case SETUP_HOT:
-                [paramDict setObject:self.gameid forKey:@"gameid"];
-                [paramDict setObject:self.roleId forKey:@"charaterId"];
-                [self getGroupListFromNetWithParam:paramDict method:@"257" isRefre:YES];
-                break;
-            default:
-                break;
-        }
+        [paramDict setObject:self.tagsId forKey:@"tagId"];
+        [self getGroupListFromNetWithParam:paramDict method:@"245" isRefre:YES];
     };
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
     };
@@ -295,59 +239,10 @@
         NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
         [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
         [paramDict setObject:@"20" forKey:@"maxSize"];
-        
-        switch (self.ComeType) {
-            case SETUP_Tags:
-                [paramDict setObject:self.tagsId forKey:@"tagId"];
-                [self getGroupListFromNetWithParam:paramDict method:@"245" isRefre:YES];
-                
-                break;
-            case SETUP_Search:
-                [paramDict setObject:self.conditiona forKey:@"param"];
-                [self getGroupListFromNetWithParam:paramDict method:@"234" isRefre:YES];
-                break;
-            case SETUP_SAMEREALM:
-                [paramDict setObject:self.gameid forKey:@"gameid"];
-                [paramDict setObject:self.realmStr forKey:@"gameRealm"];
-                [self getGroupListFromNetWithParam:paramDict method:@"243" isRefre:YES];
-                
-                break;
-            case SETUP_NEARBY:
-                [self getLocationForNet:YES];
-                
-                break;
-            case SETUP_HOT:
-                [paramDict setObject:self.gameid forKey:@"gameid"];
-                [paramDict setObject:self.roleId forKey:@"charaterId"];
-                [self getGroupListFromNetWithParam:paramDict method:@"257" isRefre:YES];
-                break;
-            default:
-                break;
-        }
-        
+        [paramDict setObject:self.tagsId forKey:@"tagId"];
+        [self getGroupListFromNetWithParam:paramDict method:@"245" isRefre:YES];
     };
     m_footer = footer;
-}
--(void)getLocationForNet:(BOOL)isRefre
-{
-    if (!isRefre) {
-        [hud show:YES];
-    }
-    [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
-        [[TempData sharedInstance] setLat:lat Lon:lon];
-        NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
-        [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
-        [paramDict setObject:@"20" forKey:@"maxSize"];
-        [paramDict setObject:self.gameid forKey:@"gameid"];
-        [paramDict setObject:@([[TempData sharedInstance] returnLat]) forKey:@"latitude"];
-        [paramDict setObject:@([[TempData sharedInstance] returnLon]) forKey:@"longitude"];
-        [self getGroupListFromNetWithParam:paramDict method:@"237" isRefre:YES];
-        
-    } Failure:^{
-        [hud hide:YES];
-        [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
-    }
-     ];
 }
 
 #pragma mark ---创建群
