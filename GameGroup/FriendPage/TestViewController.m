@@ -947,7 +947,7 @@
         case VIEW_TYPE_AttentionPage1://关注
         {
             UIButton *editButton=[UIButton buttonWithType:UIButtonTypeCustom];
-            editButton.frame=CGRectMake(270, startX - 38, 37, 30);
+            editButton.frame=CGRectMake(255, KISHighVersion_7 ? 20 : 0 , 65, 43);
             [editButton setBackgroundImage:KUIImage(@"beizhu") forState:UIControlStateNormal];
             [editButton setBackgroundImage:KUIImage(@"beizhu_click") forState:UIControlStateHighlighted];
             [self.view addSubview:editButton];
