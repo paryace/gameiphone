@@ -2814,6 +2814,7 @@ PlayingDelegate>
         [hud hide:YES];
     }];
 }
+//图片保存到相册后状态
 - (void)image: (UIImage *) image didFinishSavingWithError: (NSError *) error contextInfo: (void *) contextInfo
 {
     NSString *msg = nil ;
