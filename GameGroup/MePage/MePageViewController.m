@@ -567,7 +567,6 @@
                 [hud show:YES];
                 hud.labelText = nil;
                 [hud hide:YES afterDelay:2];
-//                [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
                 return;
             }
             [[Custom_tabbar showTabBar] hideTabBar:YES];

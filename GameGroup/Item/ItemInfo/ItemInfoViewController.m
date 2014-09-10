@@ -846,9 +846,7 @@
 {
 
     roleTabView.hidden = YES;
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"failedmsg")] isEqualToString:@"404"]
-        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"failedmsg")] isEqualToString:@"notSupport"]
-        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"gameid")] isEqualToString:@"3"]) {
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"failedmsg")] isEqualToString:@"404"]) {
         hud.mode = MBProgressHUDModeText;
         hud.detailsLabelText  =@"无法获取角色详情数据,由于角色不存在或暂不支持";
         hud.labelText = nil;
