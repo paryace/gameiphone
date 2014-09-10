@@ -34,6 +34,7 @@
     NSMutableArray *nameArray;
     NSMutableArray *imgArray;
     
+    SelectGameView *selectGameView;
 }
 
 @end
@@ -188,6 +189,13 @@
     [self.view addSubview:hud];
     
     
+    selectGameView = [[SelectGameView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
+    selectGameView.selectGameDelegate = self;
+    selectGameView.titleView.text = @"选择游戏";
+    selectGameView.backgroundColor = [UIColor whiteColor];
+    [selectGameView setDateWithNameArray:nameArray andImg:imgArray];
+    [self.view addSubview:selectGameView];
+    
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -211,20 +219,13 @@
     if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"list"]||[KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
         cell.rightImageView.hidden = NO;
         if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
-//            cell.contentTF.inputView =m_serverNamePick;
-            SelectGameView *testView = [[SelectGameView alloc]initWithFrame:CGRectMake(0, 0, 320, kScreenHeigth)];
-            testView.selectGameDelegate = self;
-            testView.titleView.text = @"选择游戏";
-            testView.backgroundColor = [UIColor whiteColor];
-            [testView setDateWithNameArray:nameArray andImg:imgArray];
-            cell.contentTF.inputView = testView;
-            cell.contentTF.inputAccessoryView= toolbar_server;
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickSelectGame:)];
+            [cell.contentTF addGestureRecognizer:tap];
             cell.serverButton.hidden = YES;
             cell.gameImg.hidden = NO;
             NSString * imageId=KISDictionaryHaveKey(dic, @"img");
             cell.gameImg.imageURL=[ImageService getImageUrl4:imageId];
-            m_serverNamePick.tag = indexPath.row;
-            toolbar_server.tag = indexPath.row;
+
             
         }else if([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"list"]){
             cell.serverButton.hidden =NO;
@@ -241,6 +242,11 @@
     }
     
     return cell;
+}
+- (void)clickSelectGame:(id)sender
+{
+    [selectGameView showSelf];
+    
 }
 #pragma mark -------选择游戏界面的代理
 -(void)selectGame:(NSInteger)characterDic

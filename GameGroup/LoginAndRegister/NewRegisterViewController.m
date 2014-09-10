@@ -1092,8 +1092,13 @@
     }else if (m_parssWordTf == textField)
     {
         if (range.location == 16)
+        {
             return NO;
-        return YES;
+        }else if ([string isEqualToString:@" "])
+        {
+            return NO;
+        }
+            return YES;
     }
    return YES;
 }

@@ -93,7 +93,7 @@
     
     #pragma mark --------------- 创建选择游戏的视图
 
-    self.gameTableView = [[SelectGameView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth)];
+    self.gameTableView = [[SelectGameView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
     self.gameTableView.titleView.text = @"选择游戏";
     self.gameTableView.backgroundColor = [UIColor whiteColor];
     self.gameTableView.selectGameDelegate = self;
@@ -266,9 +266,7 @@
 //
 - (void)didGameNameBt:(id)sender
 {
-
     [self.gameTableView showSelf];
-    [self.gameTableView.roleTableView reloadData];
 }
 #pragma mark ------返回到注册
 -(void)backToRegister:(id)sender
