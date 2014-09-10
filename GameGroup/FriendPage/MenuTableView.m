@@ -24,7 +24,7 @@
             _mTableView.delegate = self;
             _mTableView.showsVerticalScrollIndicator = NO;
             _mTableView.dataSource = self;
-            _mTableView.separatorStyle=UITableViewCellSeparatorStyleNone;
+            _mTableView.separatorStyle=UITableViewCellSeparatorStyleSingleLine;
             _mTableView.bounces = NO;
             [GameCommon setExtraCellLineHidden:_mTableView];
             [self addSubview:_mTableView];

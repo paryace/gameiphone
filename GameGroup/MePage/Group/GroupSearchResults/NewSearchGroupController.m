@@ -213,6 +213,7 @@
 -(void)addheadView
 {
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
+    [header setFrame:CGRectMake(100, 0, 320-100, 50)];
     CGRect headerRect = header.arrowImage.frame;
     headerRect.size = CGSizeMake(30, 30);
     headerRect.origin = CGPointMake(180, header.arrowImage.center.y);
