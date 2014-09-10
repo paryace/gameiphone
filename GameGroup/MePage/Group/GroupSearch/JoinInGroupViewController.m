@@ -312,7 +312,6 @@
         }
          [hud hide:YES];
     }];
-    
 }
 
 -(void)searchStrToNextPage:(id)sender

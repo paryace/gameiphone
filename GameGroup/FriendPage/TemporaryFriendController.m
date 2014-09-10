@@ -9,10 +9,12 @@
 #import "TemporaryFriendController.h"
 #import "NewPersonalTableViewCell.h"
 #import "TestViewController.h"
+#import "MenuTableView.h"
 
 @interface TemporaryFriendController (){
     NSMutableArray * dataArray;
     UITableView*  m_myTableView;
+    MenuTableView * menuTableView;
 }
 
 @end
@@ -40,11 +42,19 @@
     [self.view addSubview:delButton];
     [delButton addTarget:self action:@selector(cleanBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
+    NSArray * menuArray = @[@"1",@"2",@"3",@"4",@"1",@"2",@"3",@"4",@"1",@"2",@"3",@"4"];
+    menuTableView = [[MenuTableView alloc] initWithFrame:CGRectMake(0, startX, 100, kScreenHeigth)];
+    [self.view addSubview:menuTableView];
+    [menuTableView setMenuDataList:menuArray];
+    
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(100, startX, 320-100, self.view.bounds.size.height-startX)];
     m_myTableView.dataSource = self;
     m_myTableView.delegate = self;
     m_myTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     [self.view addSubview:m_myTableView];
+    
+    
+    
 }
 
 //举报邀请
