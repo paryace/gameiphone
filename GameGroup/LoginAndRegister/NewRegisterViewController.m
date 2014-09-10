@@ -36,6 +36,7 @@
 
     NSInteger count;
     
+    UILabel *topLabel;
 }
 @property(nonatomic,retain)NSString *imgID;
 @property(nonatomic,retain)UIButton *step1Button;
@@ -43,6 +44,7 @@
 @property(nonatomic,retain)UIImageView *sexImage;
 @property(nonatomic,retain)UIButton *sexButton;
 @property(nonatomic,retain)UIButton* step3Button;
+
 @end
 
 @implementation NewRegisterViewController
@@ -75,14 +77,25 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"" withBackButton:YES];
-   
+    
+    
+    
     self.view.backgroundColor = UIColorFromRGBA(0xf6f6f6, 1);
     
     m_topImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, startX, 320, 28)];
 //    m_topImage.image = KUIImage(@"registerStep1");
     [self.view addSubview:m_topImage];
+     
+    [self setTopViewWithTitle:@"" withBackButton:NO];
     
-    [self setTopViewWithTitle:@"" withBackButton:YES];
+    // 创建返回按钮
+    UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
+    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
+    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
+    backButton.backgroundColor = [UIColor clearColor];
+    [backButton addTarget:self action:@selector(backButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:backButton];
+
     
     m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, startX - 44, 220, 44)];
     m_titleLabel.textColor = [UIColor whiteColor];
@@ -344,7 +357,13 @@
     //    }
 //    if ([[TempData sharedInstance] registerNeedMsg]) {
     if ([[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"REGISTERNEEDMSG"]] isEqualToString:@"1"]) {
+        if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"time"]isEqualToString:@"mark"]&&[m_phoneNumText.text isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:@"phoneNumber"]]) {
+            self.scrollView.contentOffset = CGPointMake(kScreenWidth, 0);
+            topLabel.text = [NSString stringWithFormat:@"验证码已发送至手机号：%@，请注意查收！", m_phoneNumText.text];
+        }else{
         [self getVerificationCode];
+        m_verCodeTextField.text = @"";
+        }
     }else{
         NSString *str = [m_phoneNumText.text stringByReplacingOccurrencesOfString:@" " withString:@""];
         NSLog(@"str=%@",str);
@@ -390,18 +409,32 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
         [hud hide:YES];
+
+        
 #pragma mark====================resionFirstResponser
         self.scrollView.contentOffset = CGPointMake(kScreenWidth, 0);
 //        [m_phoneNumText resignFirstResponder];
         [m_verCodeTextField becomeFirstResponder];
-        UILabel* topLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, 300, 50)];
+        
+#pragma mark====================存储当前时间，判断是否需要服务器发送验证码
+     
+        
+        
+        topLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, 300, 50)];
         topLabel.numberOfLines = 2;
         topLabel.font = [UIFont boldSystemFontOfSize:13.0];
         topLabel.textColor = kColorWithRGB(128.0, 128, 128, 1.0);
         topLabel.text = [NSString stringWithFormat:@"验证码已发送至手机号：%@，请注意查收！", m_phoneNumText.text];
         topLabel.backgroundColor = [UIColor clearColor];
         [m_step1Scroll_verCode addSubview:topLabel];
+        
+        NSUserDefaults *time = [NSUserDefaults standardUserDefaults];
+        [time setObject:@"mark" forKey:@"time"];
+        [time setObject:m_phoneNumText.text forKey:@"phoneNumber"];
+
         [self startRefreshTime];
+        
+        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -453,7 +486,7 @@
     m_refreshVCButton.backgroundColor = [UIColor whiteColor];
     [m_refreshVCButton setTitleColor:kColorWithRGB(153, 153, 153, 1.0) forState:UIControlStateSelected];
     [m_refreshVCButton setTitleColor:kColorWithRGB(102, 102, 102, 1.0) forState:UIControlStateNormal];
-    [m_refreshVCButton addTarget:self action:@selector(refreshVCButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [m_refreshVCButton addTarget:self action:@selector(refreshVCButtonClick1:) forControlEvents:UIControlEventTouchUpInside];
     m_refreshVCButton.titleLabel.font = [UIFont boldSystemFontOfSize:15.0];
     [m_refreshVCButton setTitle:@"重新发送60s" forState:UIControlStateNormal];
     [m_step1Scroll_verCode addSubview:m_refreshVCButton];
@@ -485,7 +518,7 @@
     }
    
 }
-- (void)refreshVCButtonClick:(id)sender
+- (void)refreshVCButtonClick1:(id)sender
 {
     NSMutableDictionary* params = [[NSMutableDictionary alloc]init];
     [params setObject:m_phoneNumText.text forKey:@"phoneNum"];
@@ -1164,7 +1197,19 @@
     [textField resignFirstResponder];
     return YES;
 }
-
+- (void)backButtonAction:(id)sender
+{
+    CGPoint a = self.scrollView.contentOffset;
+    if (a.x == 0) {
+        [self.navigationController popViewControllerAnimated:YES];
+    }else if (a.x == 320){
+         self.scrollView.contentOffset = CGPointMake(0, 0);
+        topLabel.text = @"";
+    }else if (a.x ==640){
+        self.scrollView.contentOffset = CGPointMake(0, 0);
+    }
+    
+}
 /*
 #pragma mark - Navigation
 
