@@ -1,0 +1,243 @@
+//
+// Prefix header for all source files of the 'GameGroup' target in the 'GameGroup' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_4_0
+#warning "This project uses features only available in iOS SDK 4.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+    #import <SystemConfiguration/SystemConfiguration.h>
+    #import <MobileCoreServices/MobileCoreServices.h>
+    #import "AFNetworking.h"
+    #import "XMPPFramework.h"
+    #import "XMPPHelper.h"
+    #import "NetManager.h"
+    #import "BaseViewController.h"
+    #import "TempData.h"
+    #import "MobClick.h"//umeng
+    #import "GetDataAfterManager.h"
+    #import "NSLog.h"
+    #import "AppDelegate.h"
+    #define MR_SHORTHAND//避免写MR_前缀
+    #import "CoreData+MagicalRecord.h"
+    #import "DataStoreManager.h"
+    #import "NSString+SBJSON.h"
+    #import "CellButtonClickDelegate.h"
+    #import "WeiboSDK.h"
+    #import "Reachability.h"
+    #import "PBEmojiLabel.h"
+    #import "ImageService.h"
+    #import "UpLoadFileService.h"
+    #import "MessageService.h"
+    #import "UserManager.h"
+    #import "GroupManager.h"
+    #import "TeamManager.h"
+    #import "DownloadImageService.h"
+    #import "EGOImageButton.h"
+    #import "MessageAckService.h"
+    #import "GameListManager.h"
+    #import "MsgTypeManager.h"
+    #import "PreferencesMsgManager.h"
+    #import "MsgNotifityView.h"
+    #import "ItemManager.h"
+    #import "AudioManager.h"
+   #endif
+
+#define appType @"91"//91、appStore
+#define appChannel @"wx_test"//wx_test、91、appStore、tbt、ky,(如果测试请用"wx_test")
+
+
+//常量
+#define BaseClientUrl @"http://58.83.193.120/gamepro/request"//开机联网地址
+#define BaseUploadImageUrl  @"http://58.83.193.120/gamepro/fileserver/put"
+#define BaseImageUrl  @"http://58.83.193.120/gamepro/fileserver/get/"
+#define BaseDeleteImageUrl  @"http://58.83.193.120/gamepro/fileserver/delete/"
+#define monvbangURL @"http://58.83.193.120/h5/index.html"
+#define MymonvbangURL @"http://58.83.193.120/h5/index.html?"
+#define BaseHelpUrl @"http://58.83.193.120/faq/"
+#define QiniuBaseImageUrl @"http://gamepro.qiniudn.com/"//七牛图片服务器
+#define BinRoleUrl @"http://58.83.193.120/share/role.html?"
+#define BaseAuthRoleUrl @"http://58.83.193.120/share/certificate.html?"
+#define BaseDynamicShareUrl @"http://www.momotalk.com/moyo/releasemsg.html?"
+#define BaseLolRoleDetail @ "http://www.momotalk.com/share/"
+#define ShareUrl @"http://www.momotalk.com/share/teamroom.html?"
+#define BaseIp @"http://58.83.193.120"
+
+
+//#define BaseClientUrl @"http://221.122.66.243/gamepro/request"//开机联网地址 测试
+//#define BaseUploadImageUrl  @"http://221.122.66.243/gamepro/fileserver/put"
+//#define BaseImageUrl  @"http://221.122.66.243/gamepro/fileserver/get/"
+//#define BaseDeleteImageUrl  @"http://221.122.66.243/gamepro/fileserver/delete/"
+//#define monvbangURL @"http://221.122.66.243/h5/index.html"
+//#define MymonvbangURL @"http://221.122.66.243/h5/index.html?"
+//#define BaseHelpUrl @"http://211.122.66.243/faq/"
+//#define BinRoleUrl @"http://58.83.193.120/share/role.html?"
+//#define QiniuBaseImageUrl @"http://filesportal.qiniudn.com/"//七牛图片服务器
+//#define BaseAuthRoleUrl @"http://221.122.66.243/share/certificate.html?"//角色认证
+//#define BaseDynamicShareUrl @"http://www.momotalk.com/moyo/releasemsg.html?"
+//#define BaseLolRoleDetail @ "http://221.122.66.243/share/"
+//#define ShareUrl @"http://221.122.66.243/share/teamroom.html?"
+//#define BaseIp @"http://221.122.66.243"
+
+
+
+
+#define BaseDomain @"http://www.momotalk.com"
+#define NormalRequestTimeout  30.0f//联网最长时间
+
+#define LOCALTOKEN            @"lovePetLocalToken"
+#define LOCALACCOUNT          @"lovePetLocalAccountCreatedByChongWuQuan"
+#define USERNICKNAME          @"lovepetusernickname"
+
+#define ACCOUNT @"lovePetAccount"
+#define USERNICKNAME  @"lovepetusernickname"
+#define PASSWORD @"lovePetPassword"
+
+#define NUMBERS @"0123456789\n"//只允许输入数字
+#define kAlphaNum   @"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"//只允许输入数字和字母
+
+//define sender type 消息发送类型 根据这个存表
+#define COMMONUSER @"commonUser"//正常
+#define SAYHELLOS @"sayhellos"//关注
+#define RECOMMENDFRIEND @"recommendfriend"//好友推荐
+#define DAILYNEWS @"dailynews"//每日一文闻
+#define OTHERMESSAGE  @"otherMessage"//头衔 角色 战斗力
+#define GROUPMSG  @"groupmsg"//群组
+#define JOINGROUPMSG  @"joingroupmsg"//群组
+#define GROUPAPPLICATIONSTATE @"groupApplicationState"//群关系变化
+#define TEAMNOTIFITYMsg  @"teamnotifitymsg"//组队消息
+
+#define RECORDAUDIOBD @"recordAudioBoDong"  
+#define KSAVEAUDIOSUCCESS @"saveAudioSuccess" //本地保存声音成功
+
+#define OpenImage @"openImage"//开机图
+
+#define ZhaoHuLan  @"新朋友"
+#define kMyToken  @"MyToken"//我的token
+#define kMYUSERID @"MyUserId"//我的userid
+#define kMYPHONENUM @"MyPhoneNum"//我的手机号
+#define PhoneNumKey @"phoneKey"//用于判断是否自动登陆
+
+#define kDOMAIN @"domain"//xmpp服务器连接domain
+
+#define UploadImageToken @"uploadImageToken"//上传图片的token
+#define TokenEfficaciousTime @"tokenEfficaciousTime"//token剩余时间
+
+#define NewComment @"newCommentOfMyDynamic"
+
+#define NearByKey  @"nearBy_"//附近的玩家筛选
+#define NewNearByKey @"newNearBy"
+
+//#define NotUseSimulator  @"YES"//聊天的录音 只支持真机
+
+#define sorttype_1 @"sorttype_1"//取好友排序方式
+#define sorttype_2 @"sorttype_2"
+#define sorttype_3 @"sorttype_3"
+
+#define haveMyNews @"haveMyNews"//新我的动态
+#define haveFriendNews @"haveFriendNews"//好友动态
+
+#define isFirstOpen @"firstOpen"//好友列表等 第一次开启程序时获取 或 换帐号时
+#define FansCount @"fansCount"//粉丝总数
+#define FansFriendCount @"fansFriendCount"//粉丝和好友总数
+#define ZanCount @"zanCount"//赞过我的
+#define Billboard_msg_count @"billboard_msg_count"//公告的消息数
+#define Billboard_msg_count2 @"billboard_msg_count2"//公告的消息数
+#define Billboard_msg @"billboard_msg"//公告消息
+
+#define GroupDynamic_msg_count @"groupDynamic_msg_count"//群动态的消息数量
+#define GroupDynamic_msg @"groupDynamic_msg"//群动态的消息
+
+#define isFirstIntoMePage @"isFirstIntoMePage"//第一次进入“我”的页面
+
+#define kReloadContentKey @"reloadContent"//刷新联系人表的notification
+#define kReloadFansKey @"reloadFansKey"//刷新联系人表的notification
+
+#define kOpenData @"openData"//开机请求的数据
+
+#define kLastVersion @"lastVersion"//上个版本的版本号 因1.0是用username登陆 后面版本是userid 必须清掉聊天消息和关注表
+
+#define groupInfoUpload @"groupInfoUpdatedSuccess"//更新群信息
+#define userInfoUpload @"userInfoUpdatedSuccess"//更新用户信息
+#define teamInfoUpload @"teamInfoUpdatedSuccess"//更新组队信息
+#define teamInfoUploadFaile @"teamInfoUpdatedFaile"//更新组队信息失败
+
+#define UpdateCharacterInfo @"characterInfo"//更新角色信息
+#define UpdateTitleInfo @"ritleInfo"//更新头衔信息
+#define UpdateLastDynicmicInfo @"lastDynicmicInfo"//更新最后一条动太信息
+
+///组队
+#define UpdateTeamType @"updateTeamType"//更新组队标签
+#define UpdateTeamLable @"updateTeamLable"//更新组队分类
+#define UpdateFilterId @"updateFilterId"//组队房间过滤
+#define UpdateTeamMemberCount @"updateTeamMemberCount"//更新组队人数信息
+#define RoleRemoveNotify @"roleRemoveNotify"//角色移除消息
+#define kChangPosition @"changPosition"//位置信息改变
+#define kChangMemberList @"changMemberList"//组队人数
+#define kChangInplaceState @"changInplaceState"//更新就位确认状态
+#define kSendChangInplaceState @"sendChangInplaceState"//发起就位确认更新就位确认状态
+#define kResetChangInplaceState @"resetChangInplaceState"//初始化就位确认状态
+#define kSendSystemMessage @"sendSystemMessage"//发送系统消息
+#define kNewPreferMsg    @"newPreferMsg"
+
+
+
+#pragma mark --播放声音
+#define STARTPLAYAUDIO @"wx_playAudio"//开始播放
+#define STOPPLAYAUDIO @"wx_stopPalyAudio"//播放停止
+#define PLAYAUDIOERROR @"WX_playAudioError"//播放出错
+
+
+#define kNewMessageReceived @"newMessageReceived"
+#define kFriendHelloReceived @"friendHelloReceived"
+#define kNewsMessage @"newsMessage"
+#define kDeleteAttention @"deleteAttentionReceived"
+#define kOtherMessage    @"otherMessage"
+#define kJoinGroupMessage    @"joinGroupMessage"//申请加入群组
+#define kJoinSuccessGroupMessage @"joinGroupSuccessMessage"//加入群组消息
+#define kRecommendMessage    @"recommend"
+#define kDisbandGroup    @"disbandGroup"//解散群组
+#define kKickOffGroupGroup    @"kickOffGroupGroup"//离开群组
+#define kMessageAck @"messageAck"
+#define kteamMessage    @"teamMessage"//
+#define kteamRecommend    @"teamRecommend"//组队推荐
+#define kUpdateMsgCount    @"updateMsgCount"
+#define kJoinTeamMessage    @"joinTeamMessage"//申请加入组队
+#define kKickOffMyTeam   @"kickOffMyTeam"//我被踢出组队
+#define kDisbandMyTeam    @"disbandMyTeam"//我的组队被解散群组
+
+
+//常用方法
+#define KUIImage(name) ([UIImage imageNamed:name])
+#define RootDocPath ([NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)objectAtIndex:0])
+#define kColorWithRGB(r, g, b, a) \
+[UIColor colorWithRed:r/255.f green:g/255.f blue:b/255.f alpha:a]
+
+#define UIColorFromRGBA(rgbValue, alphaValue) \
+[UIColor \
+colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 \
+green:((float)((rgbValue & 0x00FF00) >> 8))/255.0 \
+blue:((float)(rgbValue & 0x0000FF))/255.0 \
+alpha:alphaValue]
+
+#define kScreenHeigth ([UIScreen mainScreen].bounds.size.height)
+#define kScreenWidth  ([UIScreen mainScreen].bounds.size.width)
+
+#define kFontSize(px) px/2
+
+//判断方法
+#define iPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)
+//判断字典里面是否包含某个Key值
+//直接用objectForkey取值  如果没有这个key会崩溃  使用这个宏取值就安全点
+
+#define KISDictionaryHaveKey(dict,key) [[dict allKeys] containsObject:key] && ([dict objectForKey:key] != (NSString*)[NSNull null]) ? [dict objectForKey:key] : @""
+
+
+#define KISEmptyOrEnter(text) ([text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length == 0)
+
+#define KISHighVersion_7 ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
