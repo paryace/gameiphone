@@ -76,7 +76,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"" withBackButton:YES];
+//    [self setTopViewWithTitle:@"" withBackButton:YES];
     
     
     

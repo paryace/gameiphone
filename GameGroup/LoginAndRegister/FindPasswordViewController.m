@@ -58,6 +58,9 @@
         default:
             break;
     }
+    hud = [[MBProgressHUD alloc]initWithView:self.view];
+    [self.view addSubview:hud];
+
 }
 #pragma mark 手机号码找回
 - (void)setPhoneFindView
@@ -84,7 +87,7 @@
 #pragma mark 输入手机号
 - (void)setPhoneView
 {
-    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 15, 300, 40)];
+    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(0, 15, kScreenWidth, 40)];
     table_top.image = KUIImage(@"table_top");
     [m_phoneNumView addSubview:table_top];
     
@@ -92,7 +95,7 @@
     table_arrow.image = KUIImage(@"arrow_bottom");
     [m_phoneNumView addSubview:table_arrow];
     
-    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, 55, 300, 40)];
+    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(0, 55, kScreenWidth, 40)];
     table_bottom.image = KUIImage(@"table_bottom");
     [m_phoneNumView addSubview:table_bottom];
     
@@ -171,7 +174,7 @@
 #pragma mark 输入验证码
 - (void)setVerCodeView
 {
-    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 60, 235, 40)];
+    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(0, 60, 215, 40)];
     table_top.image = KUIImage(@"text_bg");
     [m_verCodeView addSubview:table_top];
     
@@ -183,7 +186,7 @@
 
     m_leftTime = 60;
     
-    m_verCodeText = [[UITextField alloc] initWithFrame:CGRectMake(100, 60, 130, 40)];
+    m_verCodeText = [[UITextField alloc] initWithFrame:CGRectMake(70, 60, 130, 40)];
     m_verCodeText.placeholder = @"请输入验证码";
     m_verCodeText.returnKeyType = UIReturnKeyDone;
     m_verCodeText.delegate = self;
@@ -194,15 +197,15 @@
     m_verCodeText.clearButtonMode = UITextFieldViewModeWhileEditing;
     [m_verCodeView addSubview:m_verCodeText];
     
-    m_refreshVCButton = [[UIButton alloc] initWithFrame:CGRectMake(250, 60, 60, 40)];
+    m_refreshVCButton = [[UIButton alloc] initWithFrame:CGRectMake(217, 60, kScreenWidth-217, 40)];
     [m_refreshVCButton setBackgroundImage:KUIImage(@"gray_button_normal") forState:UIControlStateNormal];
     [m_refreshVCButton setBackgroundImage:KUIImage(@"gray_button") forState:UIControlStateSelected];
     [m_refreshVCButton setBackgroundImage:KUIImage(@"gray_button_click") forState:UIControlStateHighlighted];
     [m_refreshVCButton setTitleColor:kColorWithRGB(153, 153, 153, 1.0) forState:UIControlStateSelected];
     [m_refreshVCButton setTitleColor:kColorWithRGB(102, 102, 102, 1.0) forState:UIControlStateNormal];
     [m_refreshVCButton addTarget:self action:@selector(refreshVCButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    m_refreshVCButton.titleLabel.font = [UIFont boldSystemFontOfSize:15.0];
-    [m_refreshVCButton setTitle:@"60s" forState:UIControlStateNormal];
+    m_refreshVCButton.titleLabel.font = [UIFont boldSystemFontOfSize:14.0];
+    [m_refreshVCButton setTitle:@"重新发送" forState:UIControlStateNormal];
     [m_verCodeView addSubview:m_refreshVCButton];
     
     UIButton* vercodeNextButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 110, 300, 40)];
@@ -280,7 +283,7 @@
         [m_verCodeTimer invalidate];
         m_verCodeTimer = nil;
     }
-    [m_refreshVCButton setTitle:@"60s" forState:UIControlStateSelected];
+    [m_refreshVCButton setTitle:@"重新发送" forState:UIControlStateSelected];
     m_verCodeTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(refrenshVerCodeTime) userInfo:nil repeats:YES];
 }
 
@@ -298,7 +301,7 @@
         }
     }
     else
-        [m_refreshVCButton setTitle:[NSString stringWithFormat:@"重新发送（%d）", m_leftTime] forState:UIControlStateSelected];
+        [m_refreshVCButton setTitle:[NSString stringWithFormat:@"重新发送(%d)", m_leftTime] forState:UIControlStateSelected];
 }
 #pragma mark -获取验证码 下一步
 - (void)vercodeNextButtonClick:(id)sender
@@ -331,6 +334,7 @@
         
         m_verCodeView.hidden = YES;
         m_newPasswordView.hidden = NO;
+        [hud hide:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -355,11 +359,11 @@
     topLabel.text = @"请输入新密码";
     [m_newPasswordView addSubview:topLabel];
     
-    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(10, 35, 300, 40)];
+    UIImageView* table_top = [[UIImageView alloc] initWithFrame:CGRectMake(0, 35, kScreenWidth, 40)];
     table_top.image = KUIImage(@"table_top");
     [m_newPasswordView addSubview:table_top];
     
-    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(10, 75, 300, 40)];
+    UIImageView* table_bottom = [[UIImageView alloc] initWithFrame:CGRectMake(0, 75, kScreenWidth, 40)];
     table_bottom.image = KUIImage(@"table_bottom");
     [m_newPasswordView addSubview:table_bottom];
     
@@ -417,7 +421,7 @@
 - (void)newPassButtonOKClick:(id)sender
 {
     [self DetectNetwork];
-
+   
     [m_newPassText_one resignFirstResponder];
     [m_newPassText_two resignFirstResponder];
     if (m_newPassText_one.text.length < 6) {
