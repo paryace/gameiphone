@@ -431,8 +431,7 @@
      图片保存相册
      */
     if (picker.sourceType ==UIImagePickerControllerSourceTypeCamera) {
-
-    UIImageWriteToSavedPhotosAlbum(upImage, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+        UIImageWriteToSavedPhotosAlbum(upImage, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
     }
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
 
@@ -458,14 +457,14 @@
 
 - (void)image: (UIImage *) image didFinishSavingWithError: (NSError *) error contextInfo: (void *) contextInfo
 {
-    NSString *msg = nil ;
-    if(error != NULL){
-        msg = @"保存图片失败,请允许本应用访问您的相册";
-    }else{
-        msg = @"保存图片成功" ;
-    }
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定"otherButtonTitles:nil];
-    [alert show];
+//    NSString *msg = nil ;
+//    if(error != NULL){
+//        msg = @"保存图片失败,请允许本应用访问您的相册";
+//    }else{
+//        msg = @"保存图片成功" ;
+//    }
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定"otherButtonTitles:nil];
+//    [alert show];
 }
 
 

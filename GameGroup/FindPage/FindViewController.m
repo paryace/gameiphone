@@ -904,7 +904,7 @@
     imgV.image = afterImage;
     ;
     if (picker.sourceType ==UIImagePickerControllerSourceTypeCamera) {
-    UIImageWriteToSavedPhotosAlbum(selectImage, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+        UIImageWriteToSavedPhotosAlbum(selectImage, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
     }
     NSData *data = UIImageJPEGRepresentation(afterImage, 0.7);
     [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"bgImgForFinder_wx"];
@@ -975,14 +975,14 @@
 
 - (void)image: (UIImage *) image didFinishSavingWithError: (NSError *) error contextInfo: (void *) contextInfo
 {
-    NSString *msg = nil ;
-    if(error != NULL){
-        msg = @"保存图片失败,请允许本应用访问您的相册";
-    }else{
-        msg = @"保存图片成功" ;
-    }
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定"otherButtonTitles:nil];
-    [alert show];
+//    NSString *msg = nil ;
+//    if(error != NULL){
+//        msg = @"保存图片失败,请允许本应用访问您的相册";
+//    }else{
+//        msg = @"保存图片成功" ;
+//    }
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定"otherButtonTitles:nil];
+//    [alert show];
 }
 
 
