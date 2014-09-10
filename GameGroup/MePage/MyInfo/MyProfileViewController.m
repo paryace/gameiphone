@@ -263,6 +263,12 @@
 {
     NSLog(@"%@",info);
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];//Image
+    /*
+     图片保存相册
+     */
+    if (picker.sourceType ==UIImagePickerControllerSourceTypeCamera) {
+        UIImageWriteToSavedPhotosAlbum(upImage, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+    }
 
     NSString * imageName=[NSString stringWithFormat:@"%d_me.jpg",self.headImgArray.count];
     [self writeImageToFile:upImage ImageName:imageName];//完整路径
@@ -358,6 +364,19 @@
     }
     imageImdex++;
 }
+
+- (void)image: (UIImage *) image didFinishSavingWithError: (NSError *) error contextInfo: (void *) contextInfo
+{
+    NSString *msg = nil ;
+    if(error != NULL){
+        msg = @"保存图片失败,请允许本应用访问您的相册";
+    }else{
+        msg = @"保存图片成功" ;
+    }
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定"otherButtonTitles:nil];
+    [alert show];
+}
+
 
 -(void)replyImage
 {

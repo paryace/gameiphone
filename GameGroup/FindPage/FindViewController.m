@@ -902,6 +902,10 @@
     UIImage*selectImage = [info objectForKey:UIImagePickerControllerOriginalImage];
     UIImage * afterImage= [NetManager image2:selectImage centerInSize:CGSizeMake(self.view.bounds.size.width*2, self.view.bounds.size.height*2)];
     imgV.image = afterImage;
+    ;
+    if (picker.sourceType ==UIImagePickerControllerSourceTypeCamera) {
+    UIImageWriteToSavedPhotosAlbum(selectImage, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+    }
     NSData *data = UIImageJPEGRepresentation(afterImage, 0.7);
     [[NSUserDefaults standardUserDefaults]setObject:data forKey:@"bgImgForFinder_wx"];
     [self dismissViewControllerAnimated:YES completion:^{
@@ -969,7 +973,17 @@
     NSLog(@"manDic--%@",manDic);
 }
 
-
+- (void)image: (UIImage *) image didFinishSavingWithError: (NSError *) error contextInfo: (void *) contextInfo
+{
+    NSString *msg = nil ;
+    if(error != NULL){
+        msg = @"保存图片失败,请允许本应用访问您的相册";
+    }else{
+        msg = @"保存图片成功" ;
+    }
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定"otherButtonTitles:nil];
+    [alert show];
+}
 
 
 - (void)didReceiveMemoryWarning

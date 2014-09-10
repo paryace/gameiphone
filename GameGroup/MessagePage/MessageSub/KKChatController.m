@@ -2793,10 +2793,11 @@ PlayingDelegate>
     [hud show:YES];
     
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerOriginalImage"];
-    
+    if (picker.sourceType ==UIImagePickerControllerSourceTypeCamera) {
+
     UIImageWriteToSavedPhotosAlbum(upImage, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
 
-
+    }
 
     UIImage* thumbimg = [NetManager image:upImage centerInSize:CGSizeMake(200, 200)];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
