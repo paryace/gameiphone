@@ -1616,7 +1616,7 @@ PlayingDelegate>
         return cell;
     }
     
-    //普通消息
+    //普通消息／。
     else
     {
         static NSString *identifier = @"normalMsgCell";

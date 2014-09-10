@@ -628,6 +628,9 @@
 #pragma mark ---------头像
 -(void)buildStep2
 {
+    // 在step2scroll上添加一个手势，用于回收键盘
+    UITapGestureRecognizer *tapS2S = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(didS2SAction:)];
+    [m_step2Scroll addGestureRecognizer:tapS2S];
 //     [m_phoneNumText resignFirstResponder];
     m_photoButton = [[UIButton alloc] initWithFrame:CGRectMake(110, 10, 100, 100)];
     [m_photoButton setImage:KUIImage(@"touxiang_03") forState:UIControlStateNormal];
@@ -750,8 +753,13 @@
        [self.step3Button setImage:KUIImage(@"touxiang_22") forState:UIControlStateHighlighted];
     }
 }
+- (void)didS2SAction:(id)sender
+{
+    [m_parssWordTf resignFirstResponder];
+}
 - (void)selectSex:(id)sender
 {
+    [m_parssWordTf resignFirstResponder];
     UIActionSheet *sexAction = [[UIActionSheet alloc]initWithTitle:@"选择性别" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"男",@"女", nil];
     sexAction.tag = 231;
     [sexAction showInView:self.view];
@@ -998,18 +1006,7 @@
     
     //    m_photoImage = selectImage;
 }
-//图片保存到相册后状态
-- (void)image: (UIImage *) image didFinishSavingWithError: (NSError *) error contextInfo: (void *) contextInfo
-{
-    NSString *msg = nil ;
-    if(error != NULL){
-        msg = @"保存图片失败,请允许本应用访问您的相册";
-    }else{
-        msg = @"保存图片成功" ;
-    }
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定"otherButtonTitles:nil];
-    [alert show];
-}
+
 //将图片保存到本地，返回保存的路径
 -(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName
 {
