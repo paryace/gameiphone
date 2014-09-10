@@ -8,6 +8,7 @@
 
 #import "BaseViewController.h"
 #import "MenuTableView.h"
+#import "NewGroupCell.h"
 
 @interface NewSearchGroupController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate,UIScrollViewDelegate,UIAlertViewDelegate,OnItemClickDelegate>
 @property(nonatomic, retain) NSString * conditiona;//条件
