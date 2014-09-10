@@ -3424,7 +3424,7 @@ PlayingDelegate>
     [messageDict setObject:payloadStr forKey:@"payload"];
     
     [self addNewMessageToTable:messageDict];
-    [[MessageAckService singleton] addMessage:messageDict];
+//    [[MessageAckService singleton] addMessage:messageDict];
 }
 
 
