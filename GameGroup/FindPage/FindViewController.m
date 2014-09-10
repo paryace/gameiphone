@@ -26,6 +26,7 @@
     UIButton *nearByBtn;
     UIButton *moGirlBtn;
     UIButton *encoBtn;
+    UIButton *groupBtn;
     
     UIView *bottomView;
     UIImageView *m_notibgInfoImageView; //与我相关红点
@@ -533,7 +534,7 @@
 //    添加退拽手势
     [sameRealmBtn addTarget:self action:@selector(dragMoving:withEvent: )forControlEvents: UIControlEventTouchDragInside];
 //    添加点击手势
-    [sameRealmBtn addTarget:self action:@selector(enterOtherPage:) forControlEvents:UIControlEventTouchUpInside];
+    [sameRealmBtn addTarget:self action:@selector(enterOtherPage:withEvent:) forControlEvents:UIControlEventTouchUpInside];
     
     [self.view addSubview:sameRealmBtn];
     
@@ -544,7 +545,7 @@
         [nearByBtn addTarget:self action:@selector(dragMoving:withEvent: )forControlEvents: UIControlEventTouchDragInside];
     //    添加点击手势
 
-    [nearByBtn addTarget:self action:@selector(enterOtherPage:) forControlEvents:UIControlEventTouchUpInside];
+    [nearByBtn addTarget:self action:@selector(enterOtherPage:withEvent:) forControlEvents:UIControlEventTouchUpInside];
 
     [self.view addSubview:nearByBtn];
     
@@ -556,7 +557,7 @@
     [encoBtn addTarget:self action:@selector(dragMoving:withEvent: )forControlEvents: UIControlEventTouchDragInside];
     //    添加点击手势
 
-    [encoBtn addTarget:self action:@selector(enterOtherPage:) forControlEvents:UIControlEventTouchUpInside];
+    [encoBtn addTarget:self action:@selector(enterOtherPage:withEvent:) forControlEvents:UIControlEventTouchUpInside];
 
     [self.view addSubview:encoBtn];
     
@@ -568,226 +569,32 @@
     [moGirlBtn addTarget:self action:@selector(dragMoving:withEvent: )forControlEvents: UIControlEventTouchDragInside];
     //    添加点击手势
 
-    [moGirlBtn addTarget:self action:@selector(enterOtherPage:) forControlEvents:UIControlEventTouchUpInside];
+    [moGirlBtn addTarget:self action:@selector(enterOtherPage:withEvent:) forControlEvents:UIControlEventTouchUpInside];
 
     [self.view addSubview:moGirlBtn];
+    
+    
+    groupBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"mogirl_highlight" center:CGPointMake(160, KISHighVersion_7?79:59)];
+    groupBtn.hidden = YES;
+    //    添加退拽手势
+    
+    [groupBtn addTarget:self action:@selector(dragMoving:withEvent: )forControlEvents: UIControlEventTouchDragInside];
+    //    添加点击手势
+    [groupBtn addTarget:self action:@selector(enterOtherPage:withEvent:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:groupBtn];
 
 }
-
+//手指移动过程
 - (void) dragMoving: (UIButton *) c withEvent:(UIEvent *)ev
 {
     isDidClick =NO;
     c.center = [[[ev allTouches] anyObject] locationInView:self.view];
-
-    
-    NSArray *centerArray = [NSArray arrayWithObjects:@(c.center.x),@(c.center
-                            .y),nil];
-    if (c ==nearByBtn) {
-        [[NSUserDefaults standardUserDefaults]setObject:centerArray forKey:@"nearByBtn_center_wx"];
-    }
-    else if (c ==sameRealmBtn)
-    {
-        [[NSUserDefaults standardUserDefaults]setObject:centerArray forKey:@"sameBtn_center_wx"];
-    }
-    else if(c ==encoBtn)
-    {
-        [[NSUserDefaults standardUserDefaults]setObject:centerArray forKey:@"encoBtn_center_wx"];
-    }
-    else{
-        [[NSUserDefaults standardUserDefaults]setObject:centerArray forKey:@"moGirlBtn_center_wx"];
-    }
-    
 }
-
--(UIButton *)buildBttonWithFrame:(CGRect)frame backGroundColor:(UIColor *)bgColor bgImg:(NSString *)bgImg center:(CGPoint)center
-{
-    UIButton *button  = [[UIButton alloc]initWithFrame:frame];
-    button.backgroundColor = bgColor;
-    button.center = center;
-    [button setBackgroundImage:KUIImage(bgImg) forState:UIControlStateNormal];
-    return button;
-}
-
--(void)didClickMenu:(UIButton *)sender
-{
-    
-    if (drawView.showList) {
-        nearByBtn.hidden = NO;
-        bottomView.hidden = NO;
-        [self.view sendSubviewToBack:drawView];
-        [self.view sendSubviewToBack:imgV];
-
-        
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:0.4];
-
-        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"nearByBtn_center_wx"]) {
-            NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"nearByBtn_center_wx"];
-            float i =[centerArray[1]floatValue];
-            
-            NSLog(@"%d",KISHighVersion_7?79:59);
-            if (i>curren_hieght-110||i<(KISHighVersion_7?79:59)) {
-                if ([centerArray[1]floatValue]>curren_hieght-110) {
-                    nearByBtn.center = CGPointMake([centerArray[0]floatValue],curren_hieght-110);
-                }else if (i<KISHighVersion_7?79:59)
-                {
-                    nearByBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?79:59);
-                }
-            }
-            else{
-                nearByBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
-            }
-        }else{
-            nearByBtn.center = CGPointMake(80, 300);
-        }
-        [UIView commitAnimations];
-        [self performSelector:@selector(showSamerealm:) withObject:nil afterDelay:0.15];
-        [self performSelector:@selector(showEnco:) withObject:nil afterDelay:0.3];
-        [self performSelector:@selector(showMoGirl:) withObject:nil afterDelay:0.45];
-
-    }else{
-        sameRealmBtn.hidden = YES;
-        nearByBtn.hidden = YES;
-        moGirlBtn.hidden = YES;
-        encoBtn.hidden = YES;
-        
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:1];
-        sameRealmBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
-        nearByBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
-        moGirlBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
-        encoBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
-        [UIView commitAnimations];
-    }
-}
-
--(void)showSamerealm:(id)sender
-{
-    sameRealmBtn.hidden = NO;
-
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.4];
-
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sameBtn_center_wx"]) {
-        NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"sameBtn_center_wx"];
-        float i = [centerArray[1]floatValue];
-        
-        if (i>curren_hieght-110) {
-            sameRealmBtn.center = CGPointMake([centerArray[0]floatValue],curren_hieght-110);
-        }else if (i<(KISHighVersion_7?79:59))
-        {
-            sameRealmBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?79:59);
-            
-
-        }else{
-            sameRealmBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
-        }
-    }else{
-        sameRealmBtn.center = CGPointMake(80, 150);
-    }
-    [UIView commitAnimations];
-
-}
-
--(void)showMoGirl:(id)sender
-{
-    moGirlBtn.hidden = NO;
-
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.4];
-
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"moGirlBtn_center_wx"]) {
-        NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"moGirlBtn_center_wx"];
-        float i = [centerArray[1]floatValue];
-
-        if (i>curren_hieght-110) {
-            moGirlBtn.center = CGPointMake([centerArray[0]floatValue],curren_hieght-110);
-        }else if (i<(KISHighVersion_7?79:59))
-        {
-            moGirlBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?79:59);
-        }else{
-        moGirlBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
-        }
-    }else{
-        moGirlBtn.center = CGPointMake(240, 150);
-    }
-    [UIView commitAnimations];
-;
-
-}
-
--(void)showEnco:(id)sender
-{
-    encoBtn.hidden = NO;
-
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.4];
-
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"encoBtn_center_wx"]) {
-        NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"encoBtn_center_wx"];
-        float i = [centerArray[1]floatValue];
-
-        if (i>curren_hieght-110) {
-            encoBtn.center = CGPointMake([centerArray[0]floatValue], curren_hieght-110);
-            
-        }else if (i<(KISHighVersion_7?79:59))
-        {
-            encoBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?79:59);
-
-        }else{
-        encoBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
-        }
-    }else{
-        encoBtn.center = CGPointMake(240, 300);
-    }
-    [UIView commitAnimations];
-
- 
-}
-
-
--(void)changebuttonImgWithButton:(UIButton *)button framekey:(NSString *)framekey initialcenter:(CGPoint)initiAlcenter img:(NSString *)img durTime:(float)dTime delay:(float)delay img2:(NSString *)img2 durtime2:(float)dTime2 delay:(float)delay2
-{
-    [UIView animateWithDuration:0.5 animations:^{
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:0.4];
-        
-        if ([[NSUserDefaults standardUserDefaults]objectForKey:framekey]) {
-            NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:framekey];
-            if ([centerArray[1]floatValue]>curren_hieght-110) {
-                button.center = CGPointMake([centerArray[0]floatValue], curren_hieght-110);
-            }else{
-                button.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
-            }
-        }else{
-            button.center = initiAlcenter;
-        }
-        [UIView commitAnimations];
-        
-    } completion:^(BOOL finished){
-        if (finished) {
-            [UIView animateWithDuration:3 animations:^{
-                
-                [button setBackgroundImage:KUIImage(img) forState:UIControlStateNormal];
-                
-            } completion:^(BOOL finished){
-                if (finished) {
-                    
-                    [UIView beginAnimations:nil context:nil];
-                    [UIView setAnimationDelay:delay2];
-                    [UIView setAnimationDuration:dTime2];
-                    [button setBackgroundImage:KUIImage(img2) forState:UIControlStateNormal];
-                    [UIView commitAnimations];
-                }
-            }];
-        }
-    }];
-}
-
-
--(void)enterOtherPage:(UIButton *)sender
+//手指弹起
+-(void)enterOtherPage:(UIButton *)sender withEvent:(UIEvent *)ev
 {
     if (isDidClick ==NO) {
+        [self saveBtnCenter:sender withEvent:ev];
         isDidClick =YES;
         return;
     }
@@ -823,8 +630,186 @@
         realmsVC.gameid = KISDictionaryHaveKey(manDic, @"id");
         [self.navigationController pushViewController:realmsVC animated:YES];
     }
+    if (sender == groupBtn) {
+        [[Custom_tabbar showTabBar] hideTabBar:YES];
+        MyGroupViewController * gruupV = [[MyGroupViewController alloc] init];
+        [self.navigationController pushViewController:gruupV animated:YES];
+    }
+}
+//保存坐标
+-(void)saveBtnCenter:(UIButton *)sender withEvent:(UIEvent *)ev{
+    NSArray *centerArray = [NSArray arrayWithObjects:@(sender.center.x),@(sender.center
+                            .y),nil];
+    NSLog(@"----%@-----",centerArray);
+    if (sender ==nearByBtn) {
+        [[NSUserDefaults standardUserDefaults]setObject:centerArray forKey:@"nearByBtn_center_wx"];
+    }
+    else if (sender ==sameRealmBtn)
+    {
+        [[NSUserDefaults standardUserDefaults]setObject:centerArray forKey:@"sameBtn_center_wx"];
+    }
+    else if(sender ==encoBtn)
+    {
+        [[NSUserDefaults standardUserDefaults]setObject:centerArray forKey:@"encoBtn_center_wx"];
+    }
+    else if (sender == groupBtn)
+    {
+        [[NSUserDefaults standardUserDefaults]setObject:centerArray forKey:@"groBtn_center_wx"];
+    }
+    else{
+        [[NSUserDefaults standardUserDefaults]setObject:centerArray forKey:@"moGirlBtn_center_wx"];
+    }
+}
+//创建小球菜单按钮
+-(UIButton *)buildBttonWithFrame:(CGRect)frame backGroundColor:(UIColor *)bgColor bgImg:(NSString *)bgImg center:(CGPoint)center
+{
+    UIButton *button  = [[UIButton alloc]initWithFrame:frame];
+    button.backgroundColor = bgColor;
+    button.center = center;
+    [button setBackgroundImage:KUIImage(bgImg) forState:UIControlStateNormal];
+    return button;
 }
 
+-(void)didClickMenu:(UIButton *)sender
+{
+    
+    if (drawView.showList) {
+        bottomView.hidden = NO;
+        [self.view sendSubviewToBack:drawView];
+        [self.view sendSubviewToBack:imgV];
+        [self performSelector:@selector(showNearBy:) withObject:nil afterDelay:0];
+        [self performSelector:@selector(showSamerealm:) withObject:nil afterDelay:0.15];
+        [self performSelector:@selector(showEnco:) withObject:nil afterDelay:0.3];
+        [self performSelector:@selector(showMoGirl:) withObject:nil afterDelay:0.45];
+        [self performSelector:@selector(showGroup:) withObject:nil afterDelay:0.6];
+
+    }else{
+        sameRealmBtn.hidden = YES;
+        nearByBtn.hidden = YES;
+        moGirlBtn.hidden = YES;
+        encoBtn.hidden = YES;
+        groupBtn.hidden = YES;
+        
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:1];
+        sameRealmBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
+        nearByBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
+        moGirlBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
+        encoBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
+        groupBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
+        [UIView commitAnimations];
+    }
+}
+//显示附近的
+-(void)showNearBy:(id)sender{
+    nearByBtn.hidden = NO;
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.4];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"nearByBtn_center_wx"]) {
+        NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"nearByBtn_center_wx"];
+        float i =[centerArray[1]floatValue];
+        if (i>curren_hieght-110||i<(KISHighVersion_7?79:59)) {
+            if ([centerArray[1]floatValue]>curren_hieght-110) {
+                nearByBtn.center = CGPointMake([centerArray[0]floatValue],curren_hieght-110);
+            }else if (i<KISHighVersion_7?79:59){
+                nearByBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?79:59);
+            }
+        }
+        else{
+            nearByBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
+        }
+    }else{
+        nearByBtn.center = CGPointMake(80, 300);
+    }
+    [UIView commitAnimations];
+}
+//显示同服
+-(void)showSamerealm:(id)sender
+{
+    sameRealmBtn.hidden = NO;
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.4];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"sameBtn_center_wx"]) {
+        NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"sameBtn_center_wx"];
+        float i = [centerArray[1]floatValue];
+        if (i>curren_hieght-110) {
+            sameRealmBtn.center = CGPointMake([centerArray[0]floatValue],curren_hieght-110);
+        }else if (i<(KISHighVersion_7?79:59)){
+            sameRealmBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?79:59);
+        }else{
+            sameRealmBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
+        }
+    }else{
+        sameRealmBtn.center = CGPointMake(80, 150);
+    }
+    [UIView commitAnimations];
+}
+//显示群组
+-(void)showGroup:(id)sender
+{
+    groupBtn.hidden = NO;
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.4];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"groBtn_center_wx"]) {
+        NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"groBtn_center_wx"];
+        float i = [centerArray[1]floatValue];
+        if (i>curren_hieght-110) {
+            groupBtn.center = CGPointMake([centerArray[0]floatValue],curren_hieght-110);
+        }else if (i<(KISHighVersion_7?79:59)){
+            groupBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?79:59);
+        }else{
+            groupBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
+        }
+    }else{
+        groupBtn.center = CGPointMake(80, 150);
+    }
+    [UIView commitAnimations];
+}
+//显示魔女榜
+-(void)showMoGirl:(id)sender
+{
+    moGirlBtn.hidden = NO;
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.4];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"moGirlBtn_center_wx"]) {
+        NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"moGirlBtn_center_wx"];
+        float i = [centerArray[1]floatValue];
+        if (i>curren_hieght-110) {
+            moGirlBtn.center = CGPointMake([centerArray[0]floatValue],curren_hieght-110);
+        }else if (i<(KISHighVersion_7?79:59)){
+            moGirlBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?79:59);
+        }else{
+            moGirlBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
+        }
+    }else{
+        moGirlBtn.center = CGPointMake(240, 150);
+    }
+    [UIView commitAnimations];
+;
+
+}
+//显示许愿池
+-(void)showEnco:(id)sender
+{
+    encoBtn.hidden = NO;
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.4];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"encoBtn_center_wx"]) {
+        NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"encoBtn_center_wx"];
+        float i = [centerArray[1]floatValue];
+        if (i>curren_hieght-110) {
+            encoBtn.center = CGPointMake([centerArray[0]floatValue], curren_hieght-110);
+        }else if (i<(KISHighVersion_7?79:59)){
+            encoBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?79:59);
+
+        }else{
+            encoBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
+        }
+    }else{
+        encoBtn.center = CGPointMake(240, 300);
+    }
+    [UIView commitAnimations];
+}
 
 -(void)enterCirclePage:(id)sender
 {
