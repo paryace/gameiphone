@@ -408,8 +408,6 @@
     return YES;
 }
 
-          
-          
 -(long long)getCurrentTimeLong{
     NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
     nowTime = nowTime;
