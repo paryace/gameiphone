@@ -7,7 +7,7 @@
 //
 
 #import "LoginViewController.h"
-#import "RegisterViewController.h"
+//#import "RegisterViewController.h"
 #import "MessagePageViewController.h"
 #import "MePageViewController.h"
 #import "Custom_tabbar.h"

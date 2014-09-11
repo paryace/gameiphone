@@ -340,6 +340,18 @@
             NSString *requested = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"requested")];
             
             
+            NSMutableArray * coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] gameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"gameid")]];
+            NSMutableArray *arr = [NSMutableArray array];
+            for (NSDictionary *dic  in roleTabView.coreArray) {
+                if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
+                }else{
+                    [arr addObject:dic];
+                }
+            }
+            [roleTabView setDate:coreArray];
+            
+
+            
             
             if ([[m_mainDict allKeys]containsObject:@"type"]) {
                 m_typeLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"type"), @"value")];

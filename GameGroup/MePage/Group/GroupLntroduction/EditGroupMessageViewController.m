@@ -427,6 +427,12 @@
     }
     self.isChang = YES;
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerEditedImage"];//Image
+    /*
+     图片保存相册
+     */
+    if (picker.sourceType ==UIImagePickerControllerSourceTypeCamera) {
+        UIImageWriteToSavedPhotosAlbum(upImage, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+    }
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
 
     NSString * imageName=[NSString stringWithFormat:@"%@_group.jpg",uuid];
@@ -448,6 +454,19 @@
     [self dismissViewControllerAnimated:YES completion:^{
     }];
 }
+
+- (void)image: (UIImage *) image didFinishSavingWithError: (NSError *) error contextInfo: (void *) contextInfo
+{
+//    NSString *msg = nil ;
+//    if(error != NULL){
+//        msg = @"保存图片失败,请允许本应用访问您的相册";
+//    }else{
+//        msg = @"保存图片成功" ;
+//    }
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定"otherButtonTitles:nil];
+//    [alert show];
+}
+
 
 //将图片保存到本地，返回保存的路径
 -(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName

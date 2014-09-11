@@ -1145,7 +1145,7 @@ PlayingDelegate>
             [cell setHeadImgByMe:self.myHeadImg];
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell.thumbImgV setFrame:CGRectMake(50,35,40,40)];
-            bgImage = [[UIImage imageNamed:@"bubble_05"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:10 topCapHeight:22];
             if (contentSize.height>40) {
                 [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+32)];
             }else {
@@ -1175,7 +1175,7 @@ PlayingDelegate>
                 cell.senderNickName.text = userNickName;
             }
             
-            bgImage = [[UIImage imageNamed:@"bubble_04.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:@"bubble_norla_sender.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
 //            if (contentSize.height>40) {
 //                [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+33)];
 //            }else {
@@ -1228,7 +1228,7 @@ PlayingDelegate>
             [cell setHeadImgByMe:self.myHeadImg];
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell.thumbImgV setFrame:CGRectMake(50,40,40,40)];
-            bgImage = [[UIImage imageNamed:@"bubble_05"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:10 topCapHeight:22];
             if (contentSize.height>40) {
                 [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+32)];
             }else {
@@ -1251,7 +1251,7 @@ PlayingDelegate>
             cell.senderNickName.hidden=NO;
             cell.senderNickName.text = userNickName;
             
-            bgImage = [[UIImage imageNamed:@"bubble_04.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:@"bubble_norla_sender.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             if (contentSize.height>40) {
                 [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+33)];
             }else {
@@ -1305,7 +1305,7 @@ PlayingDelegate>
             [cell setHeadImgByMe:self.myHeadImg];
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell.thumbImgV setFrame:CGRectMake(55,40 + titleSize.height,40,40)];
-            bgImage = [[UIImage imageNamed:@"bubble_05"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:10 topCapHeight:22];
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+25)];
             cell.senderNickName.hidden=YES;
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
@@ -1333,7 +1333,7 @@ PlayingDelegate>
                 cell.senderNickName.text = userNickName;
             }
             
-            bgImage = [[UIImage imageNamed:@"bubble_04.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:@"bubble_norla_sender.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+18)];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.statusLabel.hidden = YES;
@@ -1616,7 +1616,7 @@ PlayingDelegate>
         return cell;
     }
     
-    //普通消息
+    //普通消息／。
     else
     {
         static NSString *identifier = @"normalMsgCell";
@@ -1957,7 +1957,6 @@ PlayingDelegate>
     if (![self isFileExist:ps]) {
         [data writeToFile:ps atomically:YES];
     }
-    
         [[PlayerManager sharedManager] playAudioWithFileName:ps delegate:self];
     }
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
@@ -2793,10 +2792,9 @@ PlayingDelegate>
     [hud show:YES];
     
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerOriginalImage"];
-    
-    UIImageWriteToSavedPhotosAlbum(upImage, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
-
-
+    if (picker.sourceType ==UIImagePickerControllerSourceTypeCamera) {
+        UIImageWriteToSavedPhotosAlbum(upImage, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+    }
 
     UIImage* thumbimg = [NetManager image:upImage centerInSize:CGSizeMake(200, 200)];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
@@ -2814,16 +2812,17 @@ PlayingDelegate>
         [hud hide:YES];
     }];
 }
+//图片保存到相册后状态
 - (void)image: (UIImage *) image didFinishSavingWithError: (NSError *) error contextInfo: (void *) contextInfo
 {
-    NSString *msg = nil ;
-    if(error != NULL){
-        msg = @"保存图片失败,请允许本应用访问您的相册";
-    }else{
-        msg = @"保存图片成功" ;
-    }
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定"otherButtonTitles:nil];
-    [alert show];
+//    NSString *msg = nil ;
+//    if(error != NULL){
+//        msg = @"保存图片失败,请允许本应用访问您的相册";
+//    }else{
+//        msg = @"保存图片成功" ;
+//    }
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定"otherButtonTitles:nil];
+//    [alert show];
 }
 
 //将图片保存到本地，返回保存的路径
@@ -3423,7 +3422,7 @@ PlayingDelegate>
     [messageDict setObject:payloadStr forKey:@"payload"];
     
     [self addNewMessageToTable:messageDict];
-    [[MessageAckService singleton] addMessage:messageDict];
+//    [[MessageAckService singleton] addMessage:messageDict];
 }
 
 
@@ -3531,7 +3530,6 @@ PlayingDelegate>
     }
     [messageDict setObject:payloadStr forKey:@"payload"];
     [self addNewMessageToTable:messageDict];
-    [[MessageAckService singleton] addMessage:messageDict];
 }
 -(NSString*)getDomain:(NSString*)domain
 {

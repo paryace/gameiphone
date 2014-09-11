@@ -10,7 +10,7 @@
 #import "SearchRoleViewController.h"
 #import "RealmsSelectViewController.h"
 #import "AboutRoleCell.h"
-
+#import "SelectGameView.h"
 typedef enum
 {
     SEARCH_TYPE_ROLE=0,
@@ -18,6 +18,6 @@ typedef enum
 }SearchViewType;
 
 
-@interface SearchJSViewController : BaseViewController<UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource,SearchRoleDelegate,RealmSelectDelegate,UITableViewDataSource,UITableViewDelegate>
+@interface SearchJSViewController : BaseViewController<UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource,SearchRoleDelegate,RealmSelectDelegate,UITableViewDataSource,UITableViewDelegate,SelectGameDelegate>
 @property(nonatomic,assign)SearchViewType myViewType;
 @end

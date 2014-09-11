@@ -223,6 +223,7 @@
             [cell.contentTF addGestureRecognizer:tap];
             cell.serverButton.hidden = YES;
             cell.gameImg.hidden = NO;
+            cell.rightImageView.enabled = NO;
             NSString * imageId=KISDictionaryHaveKey(dic, @"img");
             cell.gameImg.imageURL=[ImageService getImageUrl4:imageId];
 
