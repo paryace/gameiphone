@@ -9,7 +9,7 @@
 #import "BaseViewController.h"
 #import "ReusableView.h"
 #import "GroupInformationViewController.h"
-@interface MyGroupViewController : BaseViewController<UICollectionViewDataSource,UICollectionViewDelegate,GroupBillBoardDeleGate,GroupEditRefreshInfoDelegate>
+@interface MyGroupViewController : BaseViewController<UICollectionViewDataSource,UICollectionViewDelegate,GroupBillBoardDeleGate,GroupEditRefreshInfoDelegate,UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,copy)NSString *gameid;
 @end
 
