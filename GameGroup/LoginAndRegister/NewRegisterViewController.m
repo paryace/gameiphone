@@ -899,6 +899,10 @@
    
     imagePath=[self writeImageToFile:selectImage ImageName:@"register.jpg"];
 }
+- (void)image: (UIImage *) image didFinishSavingWithError: (NSError *) error contextInfo: (void *) contextInfo
+{
+  
+}
 
 //将图片保存到本地，返回保存的路径
 -(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName
