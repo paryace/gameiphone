@@ -400,24 +400,13 @@
 //是否需要重新请求验证码
 -(BOOL)iSReQuestCode{
     NSString *phoneNum = [m_phoneNumText.text stringByReplacingOccurrencesOfString:@" " withString:@""];
-    long long oldTime =([[[NSUserDefaults standardUserDefaults]objectForKey:@"time"] longLongValue]);
-    long long nowTime = [self getCurrentTimeLong];
-    if ((60-(nowTime-oldTime)>0)&&[phoneNum isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:@"phoneNumber"]]) {
+    NSString * remark = [[NSUserDefaults standardUserDefaults]objectForKey:@"time"];
+    if ([remark isEqualToString:@"remark"]&&[phoneNum isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:@"phoneNumber"]]) {
         return NO;
     }
     return YES;
 }
 
--(long long)getCurrentTimeLong{
-    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
-    nowTime = nowTime;
-    return (long long)nowTime;
-}
--(NSString *)getCurrentTimeStr{
-    NSTimeInterval nowTime = [[NSDate date] timeIntervalSince1970];
-    nowTime = nowTime;
-    return [NSString stringWithFormat:@"%lld",(long long)nowTime];
-}
 //获取验证码
 - (void)getVerificationCode:(BOOL)isReSend
 {
@@ -437,7 +426,7 @@
             [self jumpToNextPage];
         }
         NSUserDefaults *time = [NSUserDefaults standardUserDefaults];
-        [time setObject:[self getCurrentTimeStr] forKey:@"time"];
+        [time setObject:@"remark" forKey:@"time"];
         [time setObject:phoneNum forKey:@"phoneNumber"];
         [self startRefreshTime];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
