@@ -426,13 +426,14 @@
         hud.labelText = @"获取中...";
         [hud show:YES];
         [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            [hud hide:YES];
-            self.scrollView.contentOffset = CGPointMake(kScreenWidth*2, 0);
+            
+//            self.scrollView.contentOffset = CGPointMake(kScreenWidth*2, 0);
             //            m_topImage.image = KUIImage(@"registerStep2");
-            m_titleLabel.text = @"个人信息";
+//            m_titleLabel.text = @"个人信息";
             if ([[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"REGISTERNEEDMSG"]] isEqualToString:@"1"]) {
+                
                         if ([[[NSUserDefaults standardUserDefaults]objectForKey:@"time"]isEqualToString:@"mark"]&&[m_phoneNumText.text isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:@"phoneNumber"]]) {
-
+                   [hud hide:YES];
                     self.scrollView.contentOffset = CGPointMake(kScreenWidth, 0);
                     topLabel.text = [NSString stringWithFormat:@"验证码已发送至手机号：%@，请注意查收！", m_phoneNumText.text];
                     
