@@ -425,6 +425,7 @@
         if (!isReSend) {
             [self jumpToNextPage];
         }
+        
         NSUserDefaults *time = [NSUserDefaults standardUserDefaults];
         [time setObject:@"remark" forKey:@"time"];
         [time setObject:phoneNum forKey:@"phoneNumber"];

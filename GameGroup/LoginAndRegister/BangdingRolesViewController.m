@@ -91,7 +91,7 @@
     UITapGestureRecognizer *tap1 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapGS:)];
     [mainScrollView addGestureRecognizer:tap1];
     
-    #pragma mark --------------- 创建选择游戏的视图
+#pragma mark --------------- 创建选择游戏的视图
 
     self.gameTableView = [[SelectGameView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
     self.gameTableView.titleView.text = @"选择游戏";

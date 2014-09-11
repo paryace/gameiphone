@@ -11,6 +11,7 @@
 #import "SearchWithGameViewController.h"
 #import "HelpViewController.h"
 #import "EGOImageView.h"
+#import "SelectGameView.h"
 @interface SearchJSViewController ()
 {
     UIScrollView *m_roleView;
@@ -25,7 +26,11 @@
     UIButton* m_okButton;
     AboutRoleCell *aboutRoleCell;
     UILabel *helpLabel;
+    
+    NSMutableArray *nameArray;
+    NSMutableArray *imgArray;
 }
+@property (nonatomic,strong)SelectGameView *gameTableView;
 @end
 
 @implementation SearchJSViewController
@@ -126,17 +131,6 @@
     [m_roleView addSubview:m_myTableView];
     [GameCommon setExtraCellLineHidden:m_myTableView];
     
-    
-    m_serverNamePick = [[UIPickerView alloc]initWithFrame:CGRectMake(0, 0, 320, 200)];
-    m_serverNamePick.dataSource = self;
-    m_serverNamePick.delegate = self;
-    m_serverNamePick.showsSelectionIndicator = YES;
-    
-    toolbar_server = [[UIToolbar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-    toolbar_server.tintColor = [UIColor blackColor];
-    UIBarButtonItem*rb_server = [[UIBarButtonItem alloc]initWithTitle:@"完成" style:UIBarButtonItemStyleDone target:self action:@selector(selectServerNameOK:)];
-    rb_server.tintColor = [UIColor blackColor];
-    toolbar_server.items = @[rb_server];
 
     m_okButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 150, 300, 40)];
     [m_okButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
@@ -152,6 +146,57 @@
     hud.labelText = @"搜索中...";
     [self.view addSubview:hud];
     
+    
+    self.gameTableView = [[SelectGameView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
+    self.gameTableView.titleView.text = @"选择游戏";
+    self.gameTableView.backgroundColor = [UIColor whiteColor];
+    self.gameTableView.selectGameDelegate = self;
+    nameArray = [NSMutableArray array];
+    imgArray = [NSMutableArray array];
+    for (int i=0; i<[gameInfoArray count]; i++) {
+        NSDictionary * dic = [gameInfoArray objectAtIndex:i];
+        NSString * name = [dic objectForKey:@"name"];
+        NSString * img = [dic objectForKey:@"img"];
+        [nameArray addObject:name];
+        [imgArray addObject:img];
+    }
+    [self.gameTableView setDateWithNameArray:nameArray andImg:imgArray];
+    
+    [self.view addSubview:self.gameTableView];
+
+    
+}
+-(void)selectGame:(NSInteger)characterDic
+{
+    if ([gameInfoArray count] != 0) {
+        NSDictionary *dict =[gameInfoArray objectAtIndex:characterDic];
+        
+        NSMutableArray *sarchArray = [NSMutableArray array] ;
+        [sarchArray removeAllObjects];
+        if (self.myViewType == SEARCH_TYPE_ROLE) {
+            sarchArray =[[dict objectForKey:@"gameParams" ] objectForKey:@"searchCharacterParams"];
+        }else{
+            sarchArray =[[dict objectForKey:@"gameParams"]objectForKey:@"searchOrganizationParams"];
+            if (![sarchArray isKindOfClass:[NSArray class]]||sarchArray.count<1) {
+                [self showAlertViewWithTitle:@"提示" message:@"此游戏暂不支持组织查找" buttonTitle:@"确定"];
+                return;
+            }
+        }
+        [m_dataArray removeAllObjects];
+        
+        NSDictionary *firstDic = [NSDictionary dictionaryWithObjectsAndKeys:@"选择游戏",@"name",[dict objectForKey:@"name"],@"content",@"picker",@"type",[dict objectForKey:@"id"],@"gameid",KISDictionaryHaveKey(dict,@"img"),@"img",nil];
+        
+        [m_dataArray addObject:firstDic];
+        [m_dataArray addObjectsFromArray:[[dict objectForKey:@"gameParams" ] objectForKey:@"commonParams"]];
+        [m_dataArray addObjectsFromArray:sarchArray];
+        m_okButton.hidden = NO;
+        helpLabel.hidden = NO;
+        m_myTableView.frame = CGRectMake(0, 44, 320, 44*m_dataArray.count);
+        helpLabel.frame = CGRectMake(10, 50+44*m_dataArray.count, 300, 20);
+        m_okButton.frame = CGRectMake(10, 74+44*m_dataArray.count, 300, 40);
+        [m_myTableView reloadData];
+    }
+
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
@@ -175,9 +220,10 @@
     if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"list"]||[KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
         cell.rightImageView.hidden = NO;
         if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
-            cell.contentTF.inputView =m_serverNamePick;
-            cell.contentTF.inputAccessoryView= toolbar_server;
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(didSelectGame:)];
+            [cell.contentTF addGestureRecognizer:tap];
             cell.serverButton.hidden = YES;
+            cell.rightImageView.enabled = NO;
             cell.gameImg.hidden = NO;
 //            cell.gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: KISDictionaryHaveKey(dic, @"img")]];
             
@@ -202,7 +248,10 @@
     
     return cell;
 }
-
+-(void)didSelectGame:(id)sender
+{
+    [self.gameTableView showSelf];
+}
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
