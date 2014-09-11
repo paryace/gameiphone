@@ -217,15 +217,16 @@
     cell.contentTF.text = KISDictionaryHaveKey(dic, @"content");
     cell.contentTF.tag = indexPath.row;
     cell.contentTF.placeholder = KISDictionaryHaveKey(dic, @"tip");
+    
     if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"list"]||[KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
         cell.rightImageView.hidden = NO;
+        
         if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"picker"]) {
-            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(didSelectGame:)];
-            [cell.contentTF addGestureRecognizer:tap];
+            cell.contentTF.userInteractionEnabled = NO;
             cell.serverButton.hidden = YES;
             cell.rightImageView.enabled = NO;
             cell.gameImg.hidden = NO;
-//            cell.gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: KISDictionaryHaveKey(dic, @"img")]];
+//            cell.gameImg.imageURL = [NSURL URLWithString:[BaseImageUrl stringByAppendingString: KISDictionaryHaveKey(dic, @"img")]]
             
             NSString * imageId=KISDictionaryHaveKey(dic, @"img");
             cell.gameImg.imageURL = [ImageService getImageUrl4:imageId];
@@ -248,13 +249,19 @@
     
     return cell;
 }
--(void)didSelectGame:(id)sender
+//- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+//{
+//    return NO;
+//}
+-(void)didSelectGame
 {
     [self.gameTableView showSelf];
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+    if (indexPath.row == 0) {
+        [self didSelectGame];
+    }
 }
 
 

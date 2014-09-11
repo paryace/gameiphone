@@ -113,20 +113,21 @@
     NSMutableArray * gameidss=[NSMutableArray arrayWithArray:[GameCommon getGameids:[GameCommon getNewStringWithId:KISDictionaryHaveKey(userDic, @"gameids")]]];
     drawView.tableArray = [NSMutableArray arrayWithArray:[drawView.tableDic allKeys]];
     if (gameidss &&gameidss.count>0) {
+        
         for (int i =0; i<drawView.tableArray.count; i++) {
             NSMutableArray *arr = [NSMutableArray arrayWithArray:[drawView.tableDic objectForKey:drawView.tableArray[i]]];
-            for (int j =0; j<arr.count; j++) {
+            for (int j = arr.count-1; j>=0; j--) {
                 NSDictionary *dic = arr[j];
                 if (![gameidss containsObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")]]) {
                     [arr removeObject:dic];
-                    [drawView.tableDic setObject:arr forKey:[drawView.tableArray objectAtIndex:i]];
                 }
             }
+            [drawView.tableDic setObject:arr forKey:[drawView.tableArray objectAtIndex:i]];
         }
         
         NSMutableArray *asr = [NSMutableArray array];
-        for (int i = 0; i<drawView.tableArray.count; i++) {
-            NSString *str = [drawView.tableArray objectAtIndex:drawView.tableArray.count-i-1];
+        for (int i = drawView.tableArray.count-1; i>=0; i--) {
+            NSString *str = [drawView.tableArray objectAtIndex:i];
             NSArray *array = [drawView.tableDic objectForKey:str];
             if (!array||array.count<1) {
                 [drawView.tableDic removeObjectForKey:str];
@@ -140,7 +141,6 @@
         }
         [drawView.tv reloadData];
     }
-
 }
 
 -(UIStatusBarStyle)preferredStatusBarStyle{
