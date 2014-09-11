@@ -17,6 +17,7 @@
 #import "MyGroupViewController.h"
 #import "JoinGroupViewController.h"
 #import "DSCircleCount.h"
+#import "NewSearchGroupController.h"
 #define mTime 0.5
 
 @interface FindViewController ()
@@ -651,7 +652,7 @@
     }
     if (sender == groupBtn) {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
-        MyGroupViewController * gruupV = [[MyGroupViewController alloc] init];
+        NewSearchGroupController * gruupV = [[NewSearchGroupController alloc] init];
         gruupV.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")];
         [self.navigationController pushViewController:gruupV animated:YES];
     }
