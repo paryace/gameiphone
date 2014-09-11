@@ -422,6 +422,7 @@
             {
                 if ([[GameCommon getNewStringWithId:gameid] isEqualToString:@"3"]) {
                     cell.authBg.image = KUIImage(@"");
+                    cell.heardImg.imageURL = [ImageService getImageUrl3:img Width:80];
                 }else{
                     cell.authBg.image= KUIImage(@"chara_auth_3");
                     cell.authBg.hidden =NO;
