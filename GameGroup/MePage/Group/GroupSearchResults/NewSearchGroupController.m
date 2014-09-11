@@ -273,7 +273,6 @@
     CGRect headerRect = header.arrowImage.frame;
     headerRect.size = CGSizeMake(20, 20);
     header.arrowImage.frame = headerRect;
-    header.activityView.center = header.arrowImage.center;
     header.scrollView = m_GroupTableView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         [self reloadData:YES];
@@ -286,7 +285,6 @@
     CGRect headerRect = footer.arrowImage.frame;
     headerRect.size = CGSizeMake(20, 20);
     footer.arrowImage.frame = headerRect;
-    footer.activityView.center = footer.arrowImage.center;
     footer.scrollView = m_GroupTableView;
     
     footer.scrollView = m_GroupTableView;
