@@ -169,9 +169,12 @@
         gbMsgCountImageView.hidden = NO;
         if (msgCount > 99) {
             gbMsgCountLable.text = @"99+";
-        }
-        else{
+            gbMsgCountImageView.frame = CGRectMake(45, 5, 25, 18);
+            gbMsgCountLable.frame = CGRectMake(0, 0, 25, 18);
+        }else{
             gbMsgCountLable.text =[NSString stringWithFormat:@"%d",msgCount] ;
+            gbMsgCountLable.frame = CGRectMake(0, 0, 18, 18);
+            gbMsgCountImageView.frame = CGRectMake(45, 5, 18, 18);
         }
         groupMsgTitleLable.text =[NSString stringWithFormat:@"%d条新的群公告",msgCount];
     }else
@@ -266,7 +269,7 @@
     UILabel *groupTitleLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 10, 100, 18)];
     groupTitleLabel.backgroundColor = [UIColor clearColor];
     groupTitleLabel.font = [UIFont boldSystemFontOfSize:18];
-    groupTitleLabel.text  = @"我的组织";
+    groupTitleLabel.text  = @"我的世界";
     groupTitleLabel.textColor = [UIColor whiteColor];
     groupTitleLabel.textAlignment = NSTextAlignmentLeft;
     [groupView addSubview:groupTitleLabel];
@@ -306,20 +309,20 @@
     iconImageView.layer.masksToBounds = YES;
     [bottomView addSubview:iconImageView];
 
-    //红点 - 公告
-    gbMsgCountImageView = [[UIImageView alloc] initWithFrame:CGRectMake(40, 5, 18, 18)];
-    [gbMsgCountImageView setImage:[UIImage imageNamed:@"redCB.png"]];
-     gbMsgCountImageView.hidden = YES;
-    [bottomView addSubview:gbMsgCountImageView];
-    
-    //未读公告消息
-    gbMsgCountLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 18, 18)];
-    [gbMsgCountLable setBackgroundColor:[UIColor clearColor]];
-    [gbMsgCountLable setTextAlignment:NSTextAlignmentCenter];
-    [gbMsgCountLable setTextColor:[UIColor whiteColor]];
-    gbMsgCountLable.font = [UIFont systemFontOfSize:14.0];
-    gbMsgCountLable.text = @"20";
-    [gbMsgCountImageView addSubview:gbMsgCountLable];
+//    //红点 - 公告
+//    gbMsgCountImageView = [[UIImageView alloc] initWithFrame:CGRectMake(40, 5, 18, 18)];
+//    [gbMsgCountImageView setImage:[UIImage imageNamed:@"redCB.png"]];
+//     gbMsgCountImageView.hidden = YES;
+//    [bottomView addSubview:gbMsgCountImageView];
+//    
+//    //未读公告消息
+//    gbMsgCountLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 18, 18)];
+//    [gbMsgCountLable setBackgroundColor:[UIColor clearColor]];
+//    [gbMsgCountLable setTextAlignment:NSTextAlignmentCenter];
+//    [gbMsgCountLable setTextColor:[UIColor whiteColor]];
+//    gbMsgCountLable.font = [UIFont systemFontOfSize:14.0];
+//    gbMsgCountLable.text = @"20";
+//    [gbMsgCountImageView addSubview:gbMsgCountLable];
     
     //红点 - 朋友圈
     m_notibgGbImageView = [[UIImageView alloc] initWithFrame:CGRectMake(40, 5, 15, 15)];
@@ -582,6 +585,23 @@
     //    添加点击手势
     [groupBtn addTarget:self action:@selector(enterOtherPage:withEvent:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:groupBtn];
+    
+    
+    //红点 - 公告
+    gbMsgCountImageView = [[UIImageView alloc] initWithFrame:CGRectMake(45, 5, 18, 18)];
+    [gbMsgCountImageView setImage:[UIImage imageNamed:@"redCB.png"]];
+    gbMsgCountImageView.hidden = YES;
+    [groupBtn addSubview:gbMsgCountImageView];
+    
+    //未读公告消息
+    gbMsgCountLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 18, 18)];
+    [gbMsgCountLable setBackgroundColor:[UIColor clearColor]];
+    [gbMsgCountLable setTextAlignment:NSTextAlignmentCenter];
+    [gbMsgCountLable setTextColor:[UIColor whiteColor]];
+    gbMsgCountLable.font = [UIFont systemFontOfSize:12.0];
+    gbMsgCountLable.text = @"20";
+    [gbMsgCountImageView addSubview:gbMsgCountLable];
+
 
 }
 //手指移动过程
@@ -823,9 +843,10 @@
 
 -(void)enterGroupList:(id)sender
 {
-    [[Custom_tabbar showTabBar] hideTabBar:YES];
-    MyGroupViewController * gruupV = [[MyGroupViewController alloc] init];
-    [self.navigationController pushViewController:gruupV animated:YES];
+//    [[Custom_tabbar showTabBar] hideTabBar:YES];
+//    MyGroupViewController * gruupV = [[MyGroupViewController alloc] init];
+//    [self.navigationController pushViewController:gruupV animated:YES];
+    
 }
 
 -(void)enterLeaderImage:(id)sender
