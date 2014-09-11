@@ -177,18 +177,18 @@
             gbMsgCountLable.frame = CGRectMake(0, 0, 18, 18);
             gbMsgCountImageView.frame = CGRectMake(45, 5, 18, 18);
         }
-        groupMsgTitleLable.text =[NSString stringWithFormat:@"%d条新的群公告",msgCount];
+//        groupMsgTitleLable.text =[NSString stringWithFormat:@"%d条新的群公告",msgCount];
     }else
     {
         gbMsgCountImageView.hidden = YES;
         NSInteger groupCount = [DataStoreManager queryGroupCount];
         if (groupCount>0) {
              m_notibgGbImageView.hidden = YES;
-            groupMsgTitleLable.text =[NSString stringWithFormat:@"%@%d%@",@"您已加入了",groupCount,@"个群"];
+//            groupMsgTitleLable.text =[NSString stringWithFormat:@"%@%d%@",@"您已加入了",groupCount,@"个群"];
         }else {
              m_notibgGbImageView.hidden = NO;
             [[Custom_tabbar showTabBar] notificationWithNumber:NO AndTheNumber:1 OrDot:YES WithButtonIndex:3];
-            groupMsgTitleLable.text =@"您还未加入组织";
+//            groupMsgTitleLable.text =@"您还未加入组织";
         }
     }
 }
@@ -280,7 +280,7 @@
     groupMsgTitleLable.textAlignment = NSTextAlignmentLeft;
     groupMsgTitleLable.textColor = UIColorFromRGBA(0x9e9e9e, 1);
     groupMsgTitleLable.font = [UIFont systemFontOfSize:11];
-    groupMsgTitleLable.text = @"没有群公告";
+    groupMsgTitleLable.text = @"今日n条动态";
     [groupView addSubview:groupMsgTitleLable];
     
     UIImageView * lineImage = [[UIImageView alloc] initWithFrame:CGRectMake(165, 10, 1, 40)];
