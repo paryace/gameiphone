@@ -110,9 +110,11 @@
     NSMutableArray * tempRealmStrArray = [NSMutableArray array];
     NSMutableArray *coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     for (NSMutableDictionary * dic in coreArray) {
-        if (![tempRealmStrArray containsObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"simpleRealm")]]) {
-            [tempRealmStrArray addObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"simpleRealm")]];
-            [tempArray addObject:@{@"tagName":[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"simpleRealm")],@"tagId":@"realm"}];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:self.gameid]) {
+            if (![tempRealmStrArray containsObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"simpleRealm")]]) {
+                [tempRealmStrArray addObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"simpleRealm")]];
+                [tempArray addObject:@{@"tagName":[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"simpleRealm")],@"tagId":@"realm"}];
+            }
         }
     }
     [menuTableView addMenuTagList:tempArray];
@@ -269,7 +271,6 @@
 -(void)addheadView
 {
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
-    
     CGRect headerRect = header.arrowImage.frame;
     headerRect.size = CGSizeMake(20, 20);
     header.arrowImage.frame = headerRect;
