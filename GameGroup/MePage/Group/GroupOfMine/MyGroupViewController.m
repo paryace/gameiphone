@@ -98,13 +98,13 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     
     
     cellView = [[UIView alloc]initWithFrame:CGRectMake(0, startX+(70+10+imageHight+5), 320, 200)];
-    UILabel *lajiLabel= [[ UILabel alloc]initWithFrame:CGRectMake(0, 10, 320, 20)];
-    lajiLabel.backgroundColor = [UIColor clearColor];
-    lajiLabel.textColor = [UIColor grayColor];
-    lajiLabel.text = @"立即添加游戏组织,开始更好的游戏体验!";
-    lajiLabel.textAlignment = NSTextAlignmentCenter;
-    lajiLabel.font = [UIFont systemFontOfSize:12];
-    [cellView addSubview:lajiLabel];
+//    UILabel *lajiLabel= [[ UILabel alloc]initWithFrame:CGRectMake(0, 10, 320, 20)];
+//    lajiLabel.backgroundColor = [UIColor clearColor];
+//    lajiLabel.textColor = [UIColor grayColor];
+//    lajiLabel.text = @"立即添加游戏组织,开始更好的游戏体验!";
+//    lajiLabel.textAlignment = NSTextAlignmentCenter;
+//    lajiLabel.font = [UIFont systemFontOfSize:12];
+//    [cellView addSubview:lajiLabel];
     [self.view addSubview:cellView];
     [self loadCacheGroupList];
     [self getGroupListFromNet];
@@ -188,8 +188,8 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [myGroupArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
          return (NSComparisonResult)NSOrderedAscending;
     }];
-    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"addphoto",@"backgroundImg", nil];
-    [myGroupArray addObject:dic];
+//    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"addphoto",@"backgroundImg", nil];
+//    [myGroupArray addObject:dic];
     if (myGroupArray.count<4) {
         groupCollectionView.frame = CGRectMake(0, startX, 320, 70+10+imageHight+5);
         cellView.frame = CGRectMake(0, startX+(70+10+imageHight+5), 320, 200);
@@ -229,16 +229,16 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary *dic = [myGroupArray objectAtIndex:indexPath.row];
-    if (indexPath.row ==myGroupArray.count-1) {
-        NewSearchGroupController *joinIn = [[NewSearchGroupController alloc]init];
-        joinIn.gameid = self.gameid;
-        [self.navigationController pushViewController:joinIn animated:YES];
-    }else{
+//    if (indexPath.row ==myGroupArray.count-1) {
+//        NewSearchGroupController *joinIn = [[NewSearchGroupController alloc]init];
+//        joinIn.gameid = self.gameid;
+//        [self.navigationController pushViewController:joinIn animated:YES];
+//    }else{
         GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
         gr.groupId =KISDictionaryHaveKey(dic, @"groupId");
         gr.isAudit = NO;
         [self.navigationController pushViewController:gr animated:YES];
-    }
+//    }
 }
 
 -(UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath

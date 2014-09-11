@@ -179,7 +179,7 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (section==0) {
-        return 1;
+        return 2;
     }
     if (keyArr.count>section) {
         return [[resultArray objectForKey:[keyArr objectAtIndex:section]] count];
@@ -207,13 +207,13 @@
             cell = [[FriendFirstCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellTop];
         }
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-//        if (indexPath.row ==0) {
+        if (indexPath.row ==0) {
             cell.headImageView.image = KUIImage(@"search_role");
             cell.titleLabel.text = @"查找游戏角色";
-//        }else{
-//            cell.headImageView.image = KUIImage(@"my_team");
-//            cell.titleLabel.text = @"我的组织";
-//        }
+        }else{
+            cell.headImageView.image = KUIImage(@"my_team");
+            cell.titleLabel.text = @"我的组织";
+        }
         return cell;
     }
     
@@ -294,13 +294,13 @@
     [[Custom_tabbar showTabBar] hideTabBar:YES];
 
     if (indexPath.section==0) {
-//        if (indexPath.row ==0) {
+        if (indexPath.row ==0) {
             SearchJSViewController *search_role = [[SearchJSViewController alloc]init];
             [self.navigationController pushViewController:search_role animated:YES];
-//        }else{
-//            MyGroupViewController * my_group = [[MyGroupViewController alloc]init];
-//            [self.navigationController pushViewController:my_group animated:YES];
-//        }
+        }else{
+            MyGroupViewController * my_group = [[MyGroupViewController alloc]init];
+            [self.navigationController pushViewController:my_group animated:YES];
+        }
         return;
     }
     NSDictionary * tempDict =[[resultArray objectForKey:[keyArr objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
