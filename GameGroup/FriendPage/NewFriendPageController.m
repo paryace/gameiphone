@@ -9,7 +9,7 @@
 #import "NewFriendPageController.h"
 #import "MJRefreshHeaderView.h"
 #import "NewPersonalTableViewCell.h"
-
+#import "SearchJSViewController.h"
 #import "MessageAddressViewController.h"
 #import "AddContactViewController.h"
 #import "FunsOfOtherViewController.h"
@@ -22,6 +22,8 @@
 #import "MJRefresh.h"
 #import "FriendTopCell.h"
 #import "MyGroupCell.h"
+#import "MyGroupViewController.h"
+#import "FriendFirstCell.h"
 @interface NewFriendPageController (){
     
     UILabel*        m_titleLabel;
@@ -56,6 +58,15 @@
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"" withBackButton:NO];
+    
+    UIButton *addFriendBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    [addFriendBtn setBackgroundImage:KUIImage(@"friends_add_normal") forState:UIControlStateNormal];
+    [addFriendBtn setBackgroundImage:KUIImage(@"friends_add_click") forState:UIControlStateHighlighted];
+    [addFriendBtn setBackgroundImage:KUIImage(@"friends_add_click") forState:UIControlStateSelected];
+    addFriendBtn.backgroundColor = [UIColor clearColor];
+    [addFriendBtn addTarget:self action:@selector(addFriends:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:addFriendBtn];
+
     self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
     resultArray =[NSMutableDictionary dictionary];
@@ -77,6 +88,8 @@
         m_myTableView.sectionIndexBackgroundColor = [UIColor clearColor];
     }
     m_myTableView.sectionIndexTrackingBackgroundColor = [UIColor clearColor];
+    m_myTableView.sectionIndexColor = UIColorFromRGBA(0xbcbcbc, 1);
+        
     [self.view addSubview:m_myTableView];
     self.view.backgroundColor=[UIColor blackColor];
     
@@ -105,6 +118,13 @@
     
     [self getFriendDateFromDataSore];
     [self addheadView];
+}
+-(void)addFriends:(id)sender
+{
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    AddFriendsViewController * addV = [[AddFriendsViewController alloc] init];
+    [self.navigationController pushViewController:addV animated:YES];
+
 }
 #pragma mark 刷新表格
 - (void)reloadContentList:(NSNotification*)notification
@@ -159,7 +179,7 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (section==0) {
-        return 1;
+        return 2;
     }
     if (keyArr.count>section) {
         return [[resultArray objectForKey:[keyArr objectAtIndex:section]] count];
@@ -175,15 +195,26 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section==0) {
-        if (indexPath.row == 0) {
-            static NSString * stringCellTop = @"cellTop";
-            FriendTopCell * cellTop = [[FriendTopCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellTop];
-            cellTop.friendTabDelegate=self;
-            cellTop.lable1.text=fanstr;
-            CGSize textSize =[fanstr sizeWithFont:[UIFont systemFontOfSize:11] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
-            cellTop.lable1.frame=CGRectMake(((80-textSize.width)/2),40, 80 ,20);
-            return cellTop;
+        static NSString * stringCellTop = @"cellTop";
+        //            FriendTopCell * cellTop = [[FriendTopCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellTop];
+        //            cellTop.friendTabDelegate=self;
+        //            cellTop.lable1.text=fanstr;
+        //            CGSize textSize =[fanstr sizeWithFont:[UIFont systemFontOfSize:11] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
+        //            cellTop.lable1.frame=CGRectMake(((80-textSize.width)/2),40, 80 ,20);
+        //            return cellTop;
+        FriendFirstCell *cell = [tableView dequeueReusableCellWithIdentifier:stringCellTop];
+        if (!cell) {
+            cell = [[FriendFirstCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellTop];
         }
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        if (indexPath.row ==0) {
+            cell.headImageView.image = KUIImage(@"search_role");
+            cell.titleLabel.text = @"查找游戏角色";
+        }else{
+            cell.headImageView.image = KUIImage(@"my_team");
+            cell.titleLabel.text = @"我的组织";
+        }
+        return cell;
     }
     
     static NSString * stringCell3 = @"cell";
@@ -259,11 +290,19 @@
 //点击Table进入个人详情
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-    if (indexPath.section==0) {
-        return;
-    }
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
     [[Custom_tabbar showTabBar] hideTabBar:YES];
+
+    if (indexPath.section==0) {
+        if (indexPath.row ==0) {
+            SearchJSViewController *search_role = [[SearchJSViewController alloc]init];
+            [self.navigationController pushViewController:search_role animated:YES];
+        }else{
+            MyGroupViewController * my_group = [[MyGroupViewController alloc]init];
+            [self.navigationController pushViewController:my_group animated:YES];
+        }
+        return;
+    }
     NSDictionary * tempDict =[[resultArray objectForKey:[keyArr objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row];
     TestViewController *detailVC = [[TestViewController alloc]init];
     detailVC.userId = KISDictionaryHaveKey(tempDict, @"userid");
