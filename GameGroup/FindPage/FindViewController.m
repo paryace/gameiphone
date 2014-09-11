@@ -574,7 +574,7 @@
     [self.view addSubview:moGirlBtn];
     
     
-    groupBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"mogirl_highlight" center:CGPointMake(160, KISHighVersion_7?79:59)];
+    groupBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"group_highlight" center:CGPointMake(160, KISHighVersion_7?79:59)];
     groupBtn.hidden = YES;
     //    添加退拽手势
     
