@@ -10,5 +10,6 @@
 #import "ReusableView.h"
 #import "GroupInformationViewController.h"
 @interface MyGroupViewController : BaseViewController<UICollectionViewDataSource,UICollectionViewDelegate,GroupBillBoardDeleGate,GroupEditRefreshInfoDelegate>
+@property(nonatomic,copy)NSString *gameid;
 @end
 

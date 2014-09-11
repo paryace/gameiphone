@@ -85,6 +85,7 @@
     UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
     [baseBgView addGestureRecognizer:tapGr];
     [self.view addSubview:baseBgView];
+    
 
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"搜索中...";
@@ -93,9 +94,10 @@
     [self addFootView];
 
     
-    self.gameid = @"1";
-    self.roleId = @"1736";
-    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1",@"gameid",@"1736",@"characterId", nil];
+    NSArray *array = [NSArray arrayWithObjects:@{@"tagName":@"热门",@"tagId":@"hot"}, @{@"tagName": @"附近组织",@"tagId":@"nearby"},nil];
+    [menuTableView addMenuTagList:array];
+    [self getRealmList];
+    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1",@"gameid", nil];
     [self getCardWithNetWithDic:dic];
 }
 -(void)viewTapped:(UITapGestureRecognizer*)sender
@@ -103,15 +105,32 @@
     [self hideBgView];
 }
 
+-(void)getRealmList{
+    NSMutableArray * tempArray = [NSMutableArray array];
+    NSMutableArray * tempRealmStrArray = [NSMutableArray array];
+    NSMutableArray *coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
+    for (NSMutableDictionary * dic in coreArray) {
+        if (![tempRealmStrArray containsObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"simpleRealm")]]) {
+            [tempRealmStrArray addObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"simpleRealm")]];
+            [tempArray addObject:@{@"tagName":[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"simpleRealm")],@"tagId":@"realm"}];
+        }
+    }
+    [menuTableView addMenuTagList:tempArray];
+}
+
 #pragma mark --- itemClick
 - (void)itemClick:(MenuTableView*)Sender DateDic:(NSMutableDictionary*)dataDic{
-    self.tagsId = KISDictionaryHaveKey(dataDic, @"tagId");
+    self.tagsId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dataDic, @"tagId")];
+    if ([self.tagsId isEqualToString:@"realm"]) {
+        self.realmStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dataDic, @"tagName")];
+    }
     [self reloadData:NO];
 }
 
 -(void)getLocationForNet:(BOOL)isRefre
 {
     if (!isRefre) {
+        hud.labelText = @"正在定位...";
         [hud show:YES];
     }
     [[LocationManager sharedInstance] startCheckLocationWithSuccess:^(double lat, double lon) {
@@ -119,9 +138,11 @@
         [self reloadNearByData:isRefre];
     } Failure:^{
         [hud hide:YES];
-        [self showAlertViewWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" buttonTitle:@"确定"];
-    }
-     ];
+        [m_header endRefreshing];
+        [m_footer endRefreshing];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+        [alert show];
+    }];
 }
 
 
@@ -132,20 +153,14 @@
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"236" forKey:@"method"];
+    [postDict setObject:@"311" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-        
-        NSMutableArray * arr = [NSMutableArray array];
-        NSArray *array = [NSArray arrayWithObjects:@{@"tagName": @"附近组织",@"tagId":@"nearby"},@{@"tagName":@"热门",@"tagId":@"hot"}, nil];
-        [arr addObjectsFromArray:array];
-        NSMutableArray * sortListArray = KISDictionaryHaveKey(responseObject, @"sortList");
-        for (NSString * tag in sortListArray) {
-            NSArray * arrayTemp = KISDictionaryHaveKey(responseObject, tag);
-            [arr addObjectsFromArray:arrayTemp];
+        if (responseObject && [responseObject isKindOfClass:[NSArray class]]) {
+             [menuTableView addMenuTagList:responseObject];
         }
-        [menuTableView setMenuTagList:arr];
+       
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
         [self showDialog:error];
@@ -213,6 +228,7 @@
 -(void)getGroupListFromNetWithParam:(NSDictionary *)paramDict method:(NSString *)method isRefre:(BOOL)isRefre
 {
     if (!isRefre) {
+        hud.labelText = @"正在请求...";
         [hud show:YES];
     }
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -255,8 +271,7 @@
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
     
     CGRect headerRect = header.arrowImage.frame;
-    headerRect.size = CGSizeMake(30, 30);
-    headerRect.origin = CGPointMake(280, header.arrowImage.center.y);
+    headerRect.size = CGSizeMake(20, 20);
     header.arrowImage.frame = headerRect;
     header.activityView.center = header.arrowImage.center;
     header.scrollView = m_GroupTableView;
@@ -269,8 +284,7 @@
 {
     MJRefreshFooterView *footer = [MJRefreshFooterView footer];
     CGRect headerRect = footer.arrowImage.frame;
-    headerRect.size = CGSizeMake(30, 30);
-    headerRect.origin = CGPointMake(180, footer.arrowImage.center.y);
+    headerRect.size = CGSizeMake(20, 20);
     footer.arrowImage.frame = headerRect;
     footer.activityView.center = footer.arrowImage.center;
     footer.scrollView = m_GroupTableView;
@@ -285,7 +299,7 @@
 -(void)reloadData:(BOOL)isRefre{
     //服务器
     if ([[GameCommon getNewStringWithId:self.tagsId]isEqualToString:@"realm"]) {
-        
+        [self reloadRealmData:isRefre];
     }
     //热门
     else if ([[GameCommon getNewStringWithId:self.tagsId]isEqualToString:@"hot"]) {
@@ -317,7 +331,19 @@
 }
 //服务器
 -(void)reloadRealmData:(BOOL)isRefre{
-    
+    if (!self.tagsId) {
+        [hud hide:YES];
+        [m_header endRefreshing];
+        [m_footer endRefreshing];
+        return;
+    }
+    currentPageCount = 0;
+    NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
+    [paramDict setObject:@"20" forKey:@"maxSize"];
+    [paramDict setObject:self.gameid forKey:@"gameid"];
+    [paramDict setObject:self.realmStr forKey:@"gameRealm"];
+    [self getGroupListFromNetWithParam:paramDict method:@"243" isRefre:isRefre];
 }
 //热门群组
 -(void)reloadHotData:(BOOL)isRefre{
@@ -332,7 +358,6 @@
     [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
     [paramDict setObject:@"20" forKey:@"maxSize"];
     [paramDict setObject:self.gameid forKey:@"gameid"];
-    [paramDict setObject:self.roleId forKey:@"characterId"];
     [self getGroupListFromNetWithParam:paramDict method:@"257" isRefre:isRefre];
 }
 //附近的组织

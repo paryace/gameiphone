@@ -107,7 +107,9 @@ static  LocationManager *sharedInstance=nil;
                 if (jj-hh>20) {
                     _mapView.showsUserLocation = NO;
                     [locationManager stopUpdatingLocation];
-                    failure();
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        failure();
+                    });
                     break;
                 }
             }

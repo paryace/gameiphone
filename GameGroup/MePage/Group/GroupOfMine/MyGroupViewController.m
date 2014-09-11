@@ -14,6 +14,7 @@
 #import "SearchGroupViewController.h"
 #import "AddGroupViewController.h"
 #import "BillboardViewController.h"
+#import "NewSearchGroupController.h"
 
 @interface MyGroupViewController ()
 {
@@ -226,13 +227,12 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     return cell;
 }
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
-
 {
     NSDictionary *dic = [myGroupArray objectAtIndex:indexPath.row];
     if (indexPath.row ==myGroupArray.count-1) {
-        JoinInGroupViewController *joinIn = [[JoinInGroupViewController alloc]init];
+        NewSearchGroupController *joinIn = [[NewSearchGroupController alloc]init];
+        joinIn.gameid = self.gameid;
         [self.navigationController pushViewController:joinIn animated:YES];
-  
     }else{
         GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
         gr.groupId =KISDictionaryHaveKey(dic, @"groupId");

@@ -644,7 +644,6 @@
         
     }
     if (sender ==sameRealmBtn) {
-        NSLog(@"123123123312313");
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         SameRealmViewController* realmsVC = [[SameRealmViewController alloc] init];
         realmsVC.gameid = KISDictionaryHaveKey(manDic, @"id");
@@ -653,6 +652,7 @@
     if (sender == groupBtn) {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         MyGroupViewController * gruupV = [[MyGroupViewController alloc] init];
+        gruupV.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")];
         [self.navigationController pushViewController:gruupV animated:YES];
     }
 }

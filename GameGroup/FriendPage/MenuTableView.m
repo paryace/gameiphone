@@ -44,6 +44,18 @@
     }
 }
 
+-(void)addMenuTagList:(NSMutableArray*)array{
+    [_menuDataList addObjectsFromArray:array];
+    [_mTableView reloadData];
+    if (_menuDataList && _menuDataList.count>0) {
+        NSIndexPath *firstPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        [_mTableView selectRowAtIndexPath:firstPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+        if (self.delegate) {
+            [self.delegate itemClick:self DateDic:[_menuDataList objectAtIndex:0]];
+        }
+    }
+}
+
 -(void)setMenuTagList:(NSMutableArray*)keyArray DateDic:(NSMutableDictionary*)dataDic{
     _menuKeyList = keyArray;
     _menuDataDic = dataDic;

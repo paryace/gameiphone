@@ -12,7 +12,6 @@
 #import "CardCell.h"
 #import "CardTitleView.h"
 #import "EGOImageView.h"
-#import "NewSearchGroupController.h"
 
 @interface JoinInGroupViewController ()
 {
@@ -333,11 +332,8 @@
 #pragma mark ---创建群
 -(void)didClickCreateGroup:(id)sender
 {
-//    AddGroupViewController *addGroupView =[[ AddGroupViewController alloc]init];
-//    [self.navigationController pushViewController:addGroupView animated:YES];
-
-    NewSearchGroupController *groupView = [[NewSearchGroupController alloc]init];
-    [self.navigationController pushViewController:groupView animated:YES];
+    AddGroupViewController *addGroupView =[[ AddGroupViewController alloc]init];
+    [self.navigationController pushViewController:addGroupView animated:YES];
 }
 
 

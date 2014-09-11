@@ -18,6 +18,7 @@
 
 @property(assign,nonatomic)id<OnItemClickDelegate> delegate;
 -(void)setMenuTagList:(NSMutableArray*)array;
+-(void)addMenuTagList:(NSMutableArray*)array;
 -(void)setMenuTagList:(NSMutableArray*)keyArray DateDic:(NSMutableDictionary*)dataDic;
 @end
 

@@ -42,7 +42,7 @@
         self.cricleLable.textColor = [UIColor grayColor];
         [self addSubview:self.cricleLable];
         
-        self.levelLable= [[UILabel alloc] initWithFrame:CGRectMake(320-35-100, 10, 30, 18)];
+        self.levelLable= [[UILabel alloc] initWithFrame:CGRectMake(320-35-100, 10, 30, 15)];
         [self.levelLable setTextAlignment:NSTextAlignmentCenter];
         self.levelLable.backgroundColor = kColorWithRGB(119, 137, 203, 1);
         self.levelLable.textColor = [UIColor whiteColor];
