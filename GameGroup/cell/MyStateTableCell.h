@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "EGOImageView.h"
 
+@protocol myStateTableDelegate;
+
 @interface MyStateTableCell : UITableViewCell
 
 @property (strong,nonatomic) EGOImageView * headImageV;
@@ -16,7 +18,7 @@
 @property (strong,nonatomic) UILabel* titleLabel;
 @property (strong,nonatomic) UILabel * nameLabel;
 @property (strong,nonatomic) UILabel* timeLabel;
-
+@property (nonatomic,assign)id<myStateTableDelegate>mydelegate;
 @property (strong,nonatomic) UIButton * cellButton;
 
 @property (strong,nonatomic) UILabel* fansLabel;
@@ -25,5 +27,10 @@
 @property (strong,nonatomic) NSString* zanNum;
 
 //- (void)refreshCell;
+
+@end
+@protocol myStateTableDelegate <NSObject>
+
+-(void)enterFansPageWithCell:(MyStateTableCell *)cell;
 
 @end
