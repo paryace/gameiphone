@@ -7,7 +7,8 @@
 //
 
 #import "BaseViewController.h"
+#import "MyStateTableCell.h"
 
-@interface MePageViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, CellButtonClickDelegate, UIAlertViewDelegate>
+@interface MePageViewController : BaseViewController<UITableViewDataSource, UITableViewDelegate, CellButtonClickDelegate, UIAlertViewDelegate,myStateTableDelegate>
 
 @end

@@ -18,14 +18,13 @@
 #import "MyNormalTableCell.h"
 #import "SetViewController.h"
 #import "TitleObjTableCell.h"
-#import "MyStateTableCell.h"
 #import "NewsViewController.h"
 #import "UserManager.h"
 #import "GroupInformationViewController.h"
 #import "FunsOfOtherViewController.h"
 #import "MyCircleViewController.h"
 #import "H5CharacterDetailsViewController.h"
-
+#import "MyFansPageViewController.h"
 @interface MePageViewController ()
 {
     UITableView*  m_myTableView;
@@ -348,6 +347,7 @@
         if (cell == nil) {
             cell = [[MyStateTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         }
+        cell.mydelegate = self;
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         if([m_hostInfo.state isKindOfClass:[NSDictionary class]] && [[m_hostInfo.state allKeys] count] != 0)//动态
@@ -521,6 +521,18 @@
     }
     return Nil;
 }
+
+#pragma mark----进入粉丝界面
+-(void)enterFansPageWithCell:(MyStateTableCell *)cell
+{
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    NSString *userid=[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    MyFansPageViewController *fans = [[MyFansPageViewController alloc]init];
+    fans.userId = userid;
+    [self.navigationController pushViewController:fans animated:YES];
+
+}
+
 
 - (void)myStateClick:(id)sender
 {
