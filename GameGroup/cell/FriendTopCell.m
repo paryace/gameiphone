@@ -61,6 +61,7 @@
 -(UIButton *)getUIBtn:(NSInteger)i{
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.tag = i;
+    [button  setExclusiveTouch :YES];
     button.frame = CGRectMake(i*80, 0, 80, 60);
     [button addTarget:self action:@selector(btnAction:)
      forControlEvents:UIControlEventTouchUpInside];
