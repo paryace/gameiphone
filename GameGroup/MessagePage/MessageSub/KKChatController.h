@@ -97,7 +97,6 @@ CustomInputDelegate>
     BOOL ifAudio;
     BOOL ifEmoji;
     
-//    UIButton * audioBtn;
     UIButton * picBtn;
     
     UIButton * audioplayButton;
@@ -129,9 +128,6 @@ CustomInputDelegate>
 @property (nonatomic, strong) UIButton *titleButton;  //
 @property (nonatomic, strong) UIImageView* topImageView;
 @property (nonatomic, strong) MsgNotifityView * dotPosition;
-//@property (strong,nonatomic) MsgNotifityView * dotVApp;//申请
-//@property (strong,nonatomic) MsgNotifityView * dotVInplace;//就位
-//@property (strong,nonatomic) MsgNotifityView * dotVPosition;//位置
 @property (strong, nonatomic)  NSString* myHeadImg; //我的头像
 @property (strong, nonatomic)  NSString* myNickName; //我的昵称
 @property(nonatomic, retain) NSString *chatUserImg; //聊天对象的头像

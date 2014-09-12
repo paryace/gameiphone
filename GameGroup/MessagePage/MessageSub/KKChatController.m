@@ -190,7 +190,9 @@ PlayingDelegate>
         [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
         //ack反馈消息通知
         [[NSNotificationCenter defaultCenter] removeObserver:self name:kJoinTeamMessage object:nil];
+        [[RecorderManager sharedManager]cancelRecording];//退出页面，停止录音
     }
+    
     [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.chatWithUser];
     if ([self.type isEqualToString:@"normal"]) {
         [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser Successcompletion:^(BOOL success, NSError *error) {
@@ -1812,12 +1814,12 @@ PlayingDelegate>
     CGRect rect = [self.view convertRect:tempBtn.frame fromView:cell.contentView];
     
     NSDictionary *dic = [[[messages objectAtIndex:indexPathTo.row]objectForKey:@"payload"]JSONValue];
-    if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"audio"]) {
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")]isEqualToString:@"audio"]) {
         [menu setMenuItems:[NSArray arrayWithObjects:delItem,nil]];
     }else{
         [menu setMenuItems:[NSArray arrayWithObjects:copyItem,delItem,nil]];
     }
-        [menu setTargetRect:CGRectMake(rect.origin.x, rect.origin.y, 60, 90) inView:self.view];
+    [menu setTargetRect:CGRectMake(rect.origin.x, rect.origin.y, 60, 90) inView:self.view];
     [menu setMenuVisible:YES animated:YES];
 }
 #pragma mark - Views
