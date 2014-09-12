@@ -307,8 +307,11 @@
 #pragma  mark---- pickview选择确认键方法
 - (void)step2ButtonOK:(id)sender
 {
+    hud.labelText = @"获取中...";
+    [hud show:YES];
     if (!m_dataArray||m_dataArray.count<2) {
         [self showAlertViewWithTitle:@"提示" message:@"请将信息填写完整" buttonTitle:@"确定"];
+        [hud hide:YES];
         return;
     }
     NSLog(@"dataArray=%@",m_dataArray);
@@ -321,21 +324,19 @@
             UIButton * bvtt = (UIButton *)[self.view viewWithTag:1001];
             if (!bvtt.titleLabel.text||[bvtt.titleLabel.text isEqualToString:@""]||[bvtt.titleLabel.text isEqualToString:@" "]) {
                 [self showAlertViewWithTitle:@"提示" message:@"请选择正确的服务器" buttonTitle:@"确定"];
+                [hud hide:YES];
                 return;
             }
             [params setObject:bvtt.titleLabel.text forKey:KISDictionaryHaveKey(dic, @"param")];
         }else if(i == 2){
             UITextField * bvt = (UITextField *)[self.view viewWithTag:100000+i];
-//            UIButton * bvt = (UIButton *)[self.view viewWithTag:1001];
             if (!bvt.text||[bvt.text isEqualToString:@""]||[bvt.text isEqualToString:@" "]) {
                 [self showAlertViewWithTitle:@"提示" message:[NSString stringWithFormat:@"请输入您的%@",KISDictionaryHaveKey(dic, @"name")] buttonTitle:@"确定"];
+                [hud hide:YES];
                 return;
             }
             [params setObject:bvt.text forKey:KISDictionaryHaveKey(dic, @"param")];
         }
-        NSLog(@"dic=%@",dic);
-        NSLog(@"key=%@",KISDictionaryHaveKey(dic, @"param"));
-        NSLog(@"params =%@",params);
     }
     
     NSMutableDictionary* body = [[NSMutableDictionary alloc]init];
@@ -343,8 +344,6 @@
     [body setObject:params forKey:@"params"];
     [body setObject:@"115" forKey:@"method"];
     
-    hud.labelText = @"获取中...";
-    [hud show:YES];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         NSDictionary* dic = responseObject;

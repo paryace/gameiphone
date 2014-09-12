@@ -76,13 +76,13 @@
     table_label_one.font = [UIFont boldSystemFontOfSize:kLabelFont];
     [self.view addSubview:table_label_one];
     
-    UILabel* table_label_two = [[UILabel alloc] initWithFrame:CGRectMake(20, 56 + startX, 80, 38)];
+    UILabel* table_label_two = [[UILabel alloc] initWithFrame:CGRectMake(20, 57 + startX, 80, 38)];
     table_label_two.text = @"手机号";
     table_label_two.textColor = kColorWithRGB(128, 128, 128, 1.0);
     table_label_two.font = [UIFont boldSystemFontOfSize:kLabelFont];
     [self.view addSubview:table_label_two];
     
-    UILabel* table_label_three = [[UILabel alloc] initWithFrame:CGRectMake(20, 96 + startX, 80, 38)];
+    UILabel* table_label_three = [[UILabel alloc] initWithFrame:CGRectMake(20, 99 + startX, 80, 38)];
     table_label_three.text = @"密 码";
     table_label_three.textColor = kColorWithRGB(128, 128, 128, 1.0);
     table_label_three.font = [UIFont boldSystemFontOfSize:kLabelFont];
