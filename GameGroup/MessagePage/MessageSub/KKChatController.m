@@ -184,6 +184,8 @@ PlayingDelegate>
         [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
         //ack反馈消息通知
         [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
+        //ack反馈消息通知
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:kJoinTeamMessage object:nil];
     }
     [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.chatWithUser];
     if ([self.type isEqualToString:@"normal"]) {
@@ -290,6 +292,7 @@ PlayingDelegate>
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//收到确认或者取消就位确认状态
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];//发起就位确认状态
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//初始化就位确认状态
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
     
     
     
@@ -558,7 +561,9 @@ PlayingDelegate>
 #pragma mark 用户详情
 -(void)userInfoClick
 {
-    oTherPage = YES;
+    if (!self.isTeam) {
+        oTherPage = YES;
+    }
     if ([self.type isEqualToString:@"normal"]) {
         TestViewController *detailV = [[TestViewController alloc]init];
         detailV.userId = self.chatWithUser;
@@ -977,6 +982,12 @@ PlayingDelegate>
 #pragma mark 接收到初始化就位确认消息通知,改变就位确认状态
 -(void)resetChangInplaceState:(NSNotification*)notification{
     [self.newTeamMenuView resetChangInplaceState];
+}
+
+#pragma mark 申请加入组队消息
+-(void)joinTeamReceived:(NSNotification *)notification{
+    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(notification.userInfo, @"groupId")];
+    [self.newTeamApplyListView joinTeamReceived:groupId];
 }
 //------------------------------------------------------------------------------------------------------------
 

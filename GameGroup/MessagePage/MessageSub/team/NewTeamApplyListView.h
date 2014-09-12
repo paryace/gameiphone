@@ -23,6 +23,8 @@
 - (id)initWithFrame:(CGRect)frame GroupId:(NSString*)groupId RoomId:(NSString*)roomId GameId:(NSString*)gameId teamUsershipType:(BOOL)teamUsershipType;
 -(void)showView;//显示视图view
 -(void)hideView;//隐藏视图view
+#pragma mark 申请加入组队消息
+-(void)joinTeamReceived:(NSString *)groupId;
 @end
 
 @protocol ApplyDetailDelegate <NSObject>

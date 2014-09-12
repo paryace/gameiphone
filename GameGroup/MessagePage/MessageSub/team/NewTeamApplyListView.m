@@ -20,7 +20,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         //申请加入组队通知
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
+//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
         self.groipId = groupId;
         self.teamUsershipType = teamUsershipType;
         self.roomId = roomId;
@@ -307,9 +307,8 @@
 }
 
 #pragma mark 申请加入组队消息
--(void)joinTeamReceived:(NSNotification *)notification
+-(void)joinTeamReceived:(NSString *)groupId
 {
-    NSString * groupId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(notification.userInfo, @"groupId")];
     if (![groupId isEqualToString:[GameCommon getNewStringWithId:self.groipId]]) {
         return;
     }
@@ -324,7 +323,6 @@
     }
     [self getZU];
     [m_TableView reloadData];
-    NSLog(@"申请加入组队消息--->>%@",notification.userInfo);
 }
 //显示
 -(void)showView{
