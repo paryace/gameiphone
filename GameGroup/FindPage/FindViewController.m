@@ -782,7 +782,7 @@
             groupBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
         }
     }else{
-        groupBtn.center = CGPointMake(80, 150);
+        groupBtn.center = CGPointMake(160, 225);
     }
     [UIView commitAnimations];
 }
