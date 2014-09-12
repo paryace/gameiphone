@@ -1982,6 +1982,7 @@ PlayingDelegate>
      判断文件是否存在 如果不存在就保存
      
      */
+        [[AudioManager singleton]isHaveThisFolderWithFilePath:[NSString stringWithFormat:@"%@/voice",RootDocPath]];
     if (![self isFileExist:ps]) {
         NSLog(@"ps---%@",ps);
         [data writeToFile:ps atomically:YES];

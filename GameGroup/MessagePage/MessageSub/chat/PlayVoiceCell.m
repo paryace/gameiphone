@@ -22,6 +22,7 @@
 {
     self = [super init];
     if (self) {
+
     }
     return self;
 }
@@ -33,7 +34,8 @@
         isPlay = NO;
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(stopPlay:) name:STOPPLAYAUDIO object:nil] ;
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(startPaly:) name:STARTPLAYAUDIO object:nil] ;
-        
+        receivedData = [NSMutableData data];
+
         gifArray1 = [NSMutableArray array];
         [gifArray1 addObject:KUIImage(@"SenderVoiceNodePlaying001")];
         [gifArray1 addObject:KUIImage(@"SenderVoiceNodePlaying002")];
@@ -152,6 +154,8 @@
     }
 }
 
+#pragma mark --- 下载语音消息并且保存到沙盒
+
 -(void)downLoadAudioFromNet:(NSString *)net address:(NSString *)address
 {
     if (![self isFileExist:address]) {
@@ -183,16 +187,21 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-        NSString *ps = [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"messageid")]]];
+    NSString *ps = [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"messageid")]]];
     //    //把图像数据存入cache中
     NSLog(@"ps==%@",ps);
-
-    [receivedData writeToFile:ps atomically:YES];
-//    
-//    if([_delegate respondsToSelector:@selector(imageDownLoader:downLoadSuccessWithImage:)]){
-//        UIImage *image = [UIImage imageWithData:_receivedData];
-//        [_delegate imageDownLoader:self downLoadSuccessWithImage:image];
-//    }
+    
+    [[AudioManager singleton]isHaveThisFolderWithFilePath:[NSString stringWithFormat:@"%@/voice",RootDocPath]];
+    
+    [receivedData writeToFile:ps atomically:NO];
+    
+    
+    
+    //
+    //    if([_delegate respondsToSelector:@selector(imageDownLoader:downLoadSuccessWithImage:)]){
+    //        UIImage *image = [UIImage imageWithData:_receivedData];
+    //        [_delegate imageDownLoader:self downLoadSuccessWithImage:image];
+    //    }
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
