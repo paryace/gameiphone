@@ -683,6 +683,7 @@ PlayingDelegate>
     CGRect reTop = self.topItemView.frame;
     [UIView animateWithDuration:0.3 animations:^{
         self.topImageView.hidden = NO;
+        
         self.newTeamMenuView.alpha = 1;
         
         self.newTeamMenuView.alpha = 0;
@@ -705,6 +706,7 @@ PlayingDelegate>
     CGRect reTop = self.topItemView.frame;
     [self hideKeyEmView];
     [UIView animateWithDuration:0.3 animations:^{
+        [self.view bringSubviewToFront:self.newTeamMenuView];
         self.newTeamMenuView.hidden = NO;
         [self.newTeamMenuView showView];
         self.newTeamMenuView.alpha = 0;
@@ -837,6 +839,7 @@ PlayingDelegate>
 -(void)showApplyListViewInSection
 {
     [UIView animateWithDuration:0.3 animations:^{
+        [self.view bringSubviewToFront:self.newTeamApplyListView];
         self.newTeamApplyListView.hidden = NO;
         [self.newTeamApplyListView showView];
         self.newTeamApplyListView.alpha = 0;
