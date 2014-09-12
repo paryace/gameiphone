@@ -9,9 +9,10 @@
 #import "BaseViewController.h"
 #import "TableViewDatasourceDidChange.h"
 #import "EmojiView.h"
+#import "CTAssetsPickerController.h"
 
 
-@interface SendNewsViewController : BaseViewController<UIAlertViewDelegate,EmojiViewDelegate,QiniuUploadDelegate>
+@interface SendNewsViewController : BaseViewController<UIAlertViewDelegate,EmojiViewDelegate,QiniuUploadDelegate,CTAssetsPickerControllerDelegate>
 
 @property (nonatomic,weak)id<TableViewDatasourceDidChange>delegate;
 @property (nonatomic, strong)UIImage* titleImage;//分享头衔

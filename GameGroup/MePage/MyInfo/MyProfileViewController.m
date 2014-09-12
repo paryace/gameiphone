@@ -233,8 +233,7 @@
                 [self presentViewController:imagePicker animated:YES completion:^{
                     
                 }];
-            }
-            else {
+            }else {
                 UIAlertView *cameraAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相机" delegate:self cancelButtonTitle:@"好的" otherButtonTitles:nil];
                 [cameraAlert show];
             }
@@ -246,6 +245,12 @@
                 imagePicker.allowsEditing = YES;
             }
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
+//                CTAssetsPickerController *picker = [[CTAssetsPickerController alloc] init];
+//                picker.maximumNumberOfSelection = 9 - uploadImagePathArray.count;
+//                picker.assetsFilter = [ALAssetsFilter allAssets];
+//                picker.delegate = self;
+//                [self presentViewController:picker animated:YES completion:NULL];
+                
                 imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
                 [self presentViewController:imagePicker animated:YES completion:^{
                     
@@ -258,7 +263,16 @@
         }
     }
 }
+#pragma mark - Assets Picker Delegate
 
+- (void)assetsPickerController:(CTAssetsPickerController *)picker didFinishPickingAssets:(NSArray *)assets
+{
+    for (ALAsset * asset in assets) {
+        UIImage * image = [UIImage imageWithCGImage:asset.thumbnail];
+        NSLog(@"-----%@-----",image);
+        [self chooseImage:image];
+    }
+}
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     NSLog(@"%@",info);
@@ -269,7 +283,11 @@
     if (picker.sourceType ==UIImagePickerControllerSourceTypeCamera) {
         UIImageWriteToSavedPhotosAlbum(upImage, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
     }
+    [self chooseImage:upImage];
+}
 
+-(void)chooseImage:(UIImage*)upImage{
+    
     NSString * imageName=[NSString stringWithFormat:@"%d_me.jpg",self.headImgArray.count];
     [self writeImageToFile:upImage ImageName:imageName];//完整路径
     NSString * imageLocalUrl=[NSString stringWithFormat:@"<local>%@",imageName];//本地文件名
@@ -277,13 +295,11 @@
     if (self.headImgArray) {
         tempArray = [NSMutableArray arrayWithArray:self.headImgArray];
     }
-    else
-    {
+    else{
         tempArray = [NSMutableArray array];
     }
     [tempArray addObject:imageLocalUrl];
     [uploadImagePathArray addObject:imageName];
-    
     [m_photoWall addPhoto:imageLocalUrl];
     self.headImgArray = tempArray;
     [m_myTableView reloadData];

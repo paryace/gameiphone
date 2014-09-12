@@ -13,6 +13,7 @@
 #import "TextLabelTableCell.h"
 #import "QiniuUploadDelegate.h"
 #import "EditMessageViewController.h"
+#import "CTAssetsPickerController.h"
 
 typedef  enum
 {
@@ -34,7 +35,8 @@ HGPhotoWallDelegate,
 UIAlertViewDelegate,
 BirthDayDelegate,
 QiniuUploadDelegate,
-editMessageDelegate
+editMessageDelegate,
+CTAssetsPickerControllerDelegate
 >
 
 @property(nonatomic,strong)NSString*  nickName;

@@ -329,31 +329,23 @@
                 }
                 if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
                     imagePicker.sourceType=UIImagePickerControllerSourceTypeCamera;
-
                     [self presentViewController:imagePicker animated:YES completion:^{
                         
                     }];
-                }
-                else {
+                }else {
                     UIAlertView *cameraAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相机" delegate:nil cancelButtonTitle:@"好的" otherButtonTitles:nil];
                     [cameraAlert show];
                 }
             }break;
             case 1:
             {
-                UIImagePickerController * imagePicker;
-                if (imagePicker==nil) {
-                    imagePicker=[[UIImagePickerController alloc]init];
-                    imagePicker.delegate=self;
-                }
                 if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
-                    imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
-
-                    [self presentViewController:imagePicker animated:YES completion:^{
-                        
-                    }];
-                }
-                else {
+                    CTAssetsPickerController *picker = [[CTAssetsPickerController alloc] init];
+                    picker.maximumNumberOfSelection = 9 - uploadImagePathArray.count;
+                    picker.assetsFilter = [ALAssetsFilter allAssets];
+                    picker.delegate = self;
+                    [self presentViewController:picker animated:YES completion:NULL];
+                }else {
                     UIAlertView *libraryAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相册" delegate:nil cancelButtonTitle:@"了解" otherButtonTitles:nil];
                     [libraryAlert show];
                 }
@@ -377,26 +369,41 @@
         }
     }
 }
+#pragma mark - Assets Picker Delegate
+
+- (void)assetsPickerController:(CTAssetsPickerController *)picker didFinishPickingAssets:(NSArray *)assets
+{
+    for (ALAsset * asset in assets) {
+        UIImage * image = [UIImage imageWithCGImage:asset.thumbnail];
+         NSLog(@"-----%@-----",image);
+         [self chooseImage:image];
+    }
+}
+
 #pragma mark - imagePickerController delegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    if (self.pictureArray == nil) {
-        self.pictureArray = [[NSMutableArray alloc]init];
-    }
-    PhotoB.hidden = NO;
     [picker dismissViewControllerAnimated:YES completion:^{}];
-
     UIImage*selectImage = [info objectForKey:UIImagePickerControllerOriginalImage];
     if (picker.sourceType ==UIImagePickerControllerSourceTypeCamera) {
         UIImageWriteToSavedPhotosAlbum(selectImage, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
     }
+    [self chooseImage:selectImage];
+}
+
+
+
+-(void)chooseImage:(UIImage*)selectImage{
+    if (self.pictureArray == nil) {
+        self.pictureArray = [[NSMutableArray alloc]init];
+    }
+    PhotoB.hidden = NO;
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
     NSString * imageName=[NSString stringWithFormat:@"%@.jpg",uuid];
     NSString * imagePath=[self writeImageToFile:selectImage ImageName:imageName];//完整路径
     if (imagePath) {
         [uploadImagePathArray addObject:imageName];
     }
-    
     UIImageView* imageV = [[UIImageView alloc]initWithFrame:PhotoB.frame];
     imageV.userInteractionEnabled = YES;
     imageV.image = [NetManager image2:selectImage centerInSize:CGSizeMake(160,160)];
@@ -413,8 +420,8 @@
     UITapGestureRecognizer *tapGR = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapImage:)];
     [imageV addGestureRecognizer:tapGR];
     selectImage =nil;
-    
 }
+
 - (void)image: (UIImage *) image didFinishSavingWithError: (NSError *) error contextInfo: (void *) contextInfo
 {
     //    NSString *msg = nil ;
