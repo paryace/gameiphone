@@ -849,7 +849,8 @@ PlayingDelegate>
 #pragma mark -- 跳转角色详情
 -(void)itemApplyListOnClick:(NSDictionary*)charaDic{
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"failedmsg")] isEqualToString:@"404"]
-        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"failedmsg")] isEqualToString:@"notSupport"]) {
+        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"failedmsg")] isEqualToString:@"notSupport"]
+        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"gameid")] isEqualToString:@"3"]) {
         [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
         return;
     }

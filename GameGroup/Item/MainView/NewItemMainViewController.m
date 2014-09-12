@@ -9,8 +9,6 @@
 #import "NewItemMainViewController.h"
 #import "CreateItemViewController.h"
 #import "ItemInfoViewController.h"
-#import "MyRoomViewController.h"
-#import "FindItemViewController.h"
 #import "PreferenceEditViewController.h"
 #import "ItemManager.h"
 #import "NewCreateItemViewController.h"

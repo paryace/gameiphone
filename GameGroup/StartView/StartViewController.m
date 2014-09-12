@@ -20,7 +20,7 @@
 #import "NewFriendPageController.h"
 #import "DownloadImageService.h"
 #import "Appdelegate.h"
-#import "ItemBaseViewController.h"
+#import "NewItemMainViewController.h"
 #define kStartViewShowTime  (2.0f) //开机页面 显示时长
 
 @interface StartViewController ()
@@ -100,7 +100,7 @@
     
     // 组队页面
     
-    ItemBaseViewController *itemBase = [[ItemBaseViewController alloc]init];
+    NewItemMainViewController *itemBase = [[NewItemMainViewController alloc]init];
     itemBase.hidesBottomBarWhenPushed = YES;
     UINavigationController *navigationController_center = [[UINavigationController alloc]initWithRootViewController:itemBase];
     navigationController_center.navigationBarHidden  = YES;
