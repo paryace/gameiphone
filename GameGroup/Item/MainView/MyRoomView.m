@@ -213,6 +213,10 @@
             if ([self.myDelegate respondsToSelector:@selector(didClickMyRoomWithView: dic:)]) {
                 [self.myDelegate didClickMyRoomWithView:self dic:dic];
             }
+        }else{
+            if ([self.myDelegate respondsToSelector:@selector(didClickCreateTeamWithView:)]) {
+                [self.myDelegate didClickCreateTeamWithView:self];
+            }
         }
     }else if(indexPath.section ==1){
         if (self.myJoinRoomList&&self.myJoinRoomList.count>0) {
