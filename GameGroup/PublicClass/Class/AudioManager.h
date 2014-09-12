@@ -19,5 +19,5 @@
 #pragma mark----重写地址
 
 -(void)RewriteTheAddressWithAddress:(NSString *)name1 name2:(NSString *)name2;
-
+-(void)isHaveThisFolderWithFilePath:(NSString *)filePath;
 @end

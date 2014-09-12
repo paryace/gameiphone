@@ -42,6 +42,15 @@ static AudioManager *m_audioManager = NULL;
     [[NSFileManager defaultManager] moveItemAtPath:[NSString stringWithFormat:@"%@/vocie/%@",RootDocPath,name1] toPath:[NSString stringWithFormat:@"%@/%@",RootDocPath,[self changeStringWithString:name2]] error:nil];
 }
 
+-(void)isHaveThisFolderWithFilePath:(NSString *)filePath
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL result = [fileManager fileExistsAtPath:filePath];
+    if (!result) {
+        [fileManager createDirectoryAtPath:[NSString stringWithFormat:@"%@/voice",RootDocPath] withIntermediateDirectories:YES attributes:nil error:nil];
+        
+    }
 
+}
 
 @end
