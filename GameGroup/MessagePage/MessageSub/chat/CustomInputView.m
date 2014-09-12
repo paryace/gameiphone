@@ -10,7 +10,6 @@
 @implementation CustomInputView
 {
     UIButton * m_RecordImageView;
-    BOOL isRecordMove;
     CGPoint currentLocation;
     CGPoint originalLocation;
     BOOL isReady;
@@ -74,7 +73,6 @@
         [self.mydelegate beginRecordWithView:self];
     }
 }
-
 //取消本次录音
 - (void)holdDownButtonTouchUpOutside {
     [self.mydelegate cancleRecordWithView:self];
@@ -86,7 +84,6 @@
     [self performSelector:@selector(afterharfs) withObject:self afterDelay:.5f];
     //一秒后令录音button 启用
     [self performSelector:@selector(changeBool) withObject:self afterDelay:1];
-    isRecordMove = NO;
 }
 //手指移动到取消录制范围
 - (void)holdDownDragOutside {
@@ -96,7 +93,6 @@
 - (void)holdDownDragInside {
     [self.mydelegate  touchMoveBackWithView:self];
 }
-
 
 -(void)hiddenStartRecordBtn:(id)sender
 {
