@@ -246,7 +246,7 @@
             }
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
 //                CTAssetsPickerController *picker = [[CTAssetsPickerController alloc] init];
-//                picker.maximumNumberOfSelection = 9 - uploadImagePathArray.count;
+//                picker.maximumNumberOfSelection = 9 - self.headImgArray.count;
 //                picker.assetsFilter = [ALAssetsFilter allAssets];
 //                picker.delegate = self;
 //                [self presentViewController:picker animated:YES completion:NULL];
