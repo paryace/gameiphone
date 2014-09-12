@@ -31,7 +31,6 @@
 #import "MePageViewController.h"
 #import "Custom_tabbar.h"
 #import "NewFriendPageController.h"
-#import "ItemBaseViewController.h"
 #import "NewItemMainViewController.h"
 #import "MessagePageViewController.h"
 #import "LocationManager.h"

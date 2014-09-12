@@ -46,6 +46,7 @@
     #import "MsgNotifityView.h"
     #import "ItemManager.h"
     #import "AudioManager.h"
+    #import "AudioDownLoader.h"
    #endif
 
 #define appType @"91"//91、appStore

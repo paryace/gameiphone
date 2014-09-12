@@ -31,7 +31,6 @@
     UIButton *m_getOutBtn;
     BottomView *bView;
     UIAlertView * backAlert;
-    NSString *descriptionStr;
     UILabel *titleLabel1;
     UILabel *m_typeLabel;
     UILabel *m_timeLabel;
@@ -74,7 +73,6 @@
     [m_getOutBtn addTarget:self action:@selector(didClickShareItem:) forControlEvents:UIControlEventTouchUpInside];
     m_getOutBtn.hidden = YES;
     [self.view addSubview:m_getOutBtn];
-    [self setRightBtn];
     
     isJoinIn = YES;
     m_mainDict = [NSMutableDictionary dictionary];
@@ -93,23 +91,26 @@
     roleTabView.mydelegate  =self;
     roleTabView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.5];
     roleTabView.roleTableView.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:.7];
-
     roleTabView.hidden = YES;
     roleTabView.mydelegate  =self;
-    NSMutableArray *coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     [self.view addSubview:roleTabView];
-    [roleTabView setDate:coreArray];
+    [self setCharacterList:self.gameid];
+    
     hud  = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
     [self GETInfoWithNet:NO];
 }
 
--(void)setRightBtn
+-(void)setRightBtn:(NSString*)teamUsershipType
 {
-    if (self.isCaptain) {
+    [m_getOutBtn setTitle:@"退出" forState:UIControlStateNormal];
+    if ([teamUsershipType intValue]==0) {
+        m_getOutBtn.hidden = NO;
         [m_getOutBtn setTitle:@"解散" forState:UIControlStateNormal];
+    }else if([teamUsershipType intValue]==1){
+        m_getOutBtn.hidden = NO;
     }else{
-        [m_getOutBtn setTitle:@"退出" forState:UIControlStateNormal];
+        m_getOutBtn.hidden = YES;
     }
 }
 #pragma mark ---创建选择角色模块
@@ -140,7 +141,7 @@
 #pragma mark --分享组队
 -(void)didClickShareItem:(id)sender
 {
-    if (self.isCaptain) {
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")] intValue] == 0) {
         jiesanAlert =[[ UIAlertView alloc]initWithTitle:@"提示" message:@"您确定要解散队伍吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"解散", nil];
         jiesanAlert.tag = 10000001;
         [jiesanAlert show];
@@ -312,18 +313,10 @@
 -(void)joinInItem:(UIButton *)sender
 {
     sender = (UIButton *)[self.view viewWithTag:120];
-//    if (isJoinIn==YES) {
-//        itemRoleBtn.hidden =NO;
-//        [self.view bringSubviewToFront:itemRoleBtn];
-//        [sender setBackgroundImage:KUIImage(@"realy_item") forState:UIControlStateNormal];
-//        isJoinIn =NO;
-//
-//    }else{
-        [self JoinInThisItemWithNet];
+    [self JoinInThisItemWithNet];
 }
 
-/*typeName  teamInfo options type1-->创建者  Value1 第一行 value2 第二行  */
-#pragma mark ---NET
+#pragma mark ---请求角色详情
 -(void)GETInfoWithNet:(BOOL)isRefre
 {
     if (!isRefre) {
@@ -338,53 +331,57 @@
             m_mainDict = responseObject;
             NSString *teamUsershipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")];
             NSString *requested = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"requested")];
-            
-            
-            NSMutableArray * coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] gameid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(responseObject, @"createTeamUser"), @"gameid")]];
-            NSMutableArray *arr = [NSMutableArray array];
-            for (NSDictionary *dic  in roleTabView.coreArray) {
-                if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
-                }else{
-                    [arr addObject:dic];
-                }
-            }
-            [roleTabView setDate:coreArray];
-            
-
-            
-            
-            if ([[m_mainDict allKeys]containsObject:@"type"]) {
-                m_typeLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"type"), @"value")];
-            }else{
-                m_typeLabel.text = @"";
-            }
-            titleLabel1.text = KISDictionaryHaveKey(m_mainDict, @"description");
-            NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"createDate")]];
-            NSString *lb2Str = [NSString stringWithFormat:@"%@",timeStr];
-            m_timeLabel.text = lb2Str;
-            CGSize size = [m_typeLabel.text sizeWithFont:m_typeLabel.font constrainedToSize:CGSizeMake(MAXFLOAT, 25) lineBreakMode:NSLineBreakByCharWrapping];
-            m_typeLabel.frame = CGRectMake((320-size.width)/2, 0, size.width, 25);
-            m_timeLabel.frame =CGRectMake(165+size.width/2, 0, 110, 25);
-
-            [self queryMyRoleWithArr:KISDictionaryHaveKey(responseObject, @"memberList")];
-            descriptionStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"description")];
+            NSMutableArray * memberList = KISDictionaryHaveKey(responseObject, @"memberList");
+            NSMutableArray * claimedList = KISDictionaryHaveKey(responseObject, @"claimedList");
+            [self setTeamTopInfo];
+            [self queryMyRoleWithArr:memberList];
             [self setGetOutBtn:teamUsershipType Requested:requested];
-            [self setCaptain:teamUsershipType];
-            [self setRightBtn];
+            [self setRightBtn:teamUsershipType];
             [self setTitleMsg:responseObject];
-            [claimedList_dataArray removeAllObjects];
-            [claimedList_dataArray addObjectsFromArray:KISDictionaryHaveKey(responseObject, @"claimedList")];
-            if ([KISDictionaryHaveKey(responseObject, @"memberList") isKindOfClass:[NSArray class]]) {
-                [m_dataArray removeAllObjects];
-                [m_dataArray addObjectsFromArray:[self comm:KISDictionaryHaveKey(responseObject, @"memberList")]];
-            }
             
+            if ([claimedList isKindOfClass:[NSArray class]]) {
+                [claimedList_dataArray removeAllObjects];
+                [claimedList_dataArray addObjectsFromArray:claimedList];
+            }
+            if ([memberList isKindOfClass:[NSArray class]]) {
+                [m_dataArray removeAllObjects];
+                [m_dataArray addObjectsFromArray:[self comm:memberList]];
+            }
             [m_myTableView reloadData];
         }
     } reError:^(id error) {
         [hud hide:YES];
         [self showAlertDialog:error];
     }];
+}
+
+
+-(void)setTeamTopInfo{
+    if ([[m_mainDict allKeys]containsObject:@"type"]) {
+        m_typeLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(m_mainDict, @"type"), @"value")];
+    }else{
+        m_typeLabel.text = @"";
+    }
+    titleLabel1.text = KISDictionaryHaveKey(m_mainDict, @"description");
+    NSString *timeStr = [GameCommon getTimeWithMessageTime:[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"createDate")]];
+    NSString *lb2Str = [NSString stringWithFormat:@"%@",timeStr];
+    m_timeLabel.text = lb2Str;
+    CGSize size = [m_typeLabel.text sizeWithFont:m_typeLabel.font constrainedToSize:CGSizeMake(MAXFLOAT, 25) lineBreakMode:NSLineBreakByCharWrapping];
+    m_typeLabel.frame = CGRectMake((320-size.width)/2, 0, size.width, 25);
+    m_timeLabel.frame =CGRectMake(165+size.width/2, 0, 110, 25);
+}
+
+
+-(void)setCharacterList:(NSString*)gameId{
+    NSMutableArray * coreArray =  [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] gameid:[GameCommon getNewStringWithId:gameId]];
+    NSMutableArray *arr = [NSMutableArray array];
+    for (NSDictionary *dic  in roleTabView.coreArray) {
+        if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
+        }else{
+            [arr addObject:dic];
+        }
+    }
+    [roleTabView setDate:coreArray];
 }
 
 //排序
@@ -402,8 +399,6 @@
         }else{
             str = @"Z";
         }
-       
-        
         chineseString.string=[NSString stringWithString:str];
         chineseString.memberInfo = memberDic;
         if(chineseString.string==nil){
@@ -453,26 +448,15 @@
     NSArray *arr = [NSArray array] ;
     NSArray *titlearr = [NSArray array] ;
     if ([teamUsershipType intValue]==0) {
-//        arr = @[@"sendMsg_normal",@"groupEdit"];
-//        titlearr = @[@"",@""];
-        m_getOutBtn.hidden = NO;
         [self noHaveBottomView];
-    }
-    else if([teamUsershipType intValue]==1)
-    {
-//        arr = @[@"sendMsg_normal",@"groupEdit"];
-//        titlearr = @[@"",@""];
-        m_getOutBtn.hidden = NO;
+    }else if([teamUsershipType intValue]==1){
         [self noHaveBottomView];
-    }
-    else{
-        m_getOutBtn.hidden = YES;
+    }else{
         titlearr = @[@"",([requested intValue]==1)?@"再次申请":@"申请加入"];
         arr = @[@"",@"team_join_low"];
         [self buildbelowbutotnWithArray:arr TitleTexts:titlearr shiptype:[teamUsershipType intValue]];
         [self haveBottomView];
     }
-//    [self buildbelowbutotnWithArray:arr TitleTexts:titlearr shiptype:[teamUsershipType intValue]];
 }
 //带底部按钮
 -(void)haveBottomView{
@@ -481,16 +465,6 @@
 //不带底部按钮
 -(void)noHaveBottomView{
     m_myTableView .frame=CGRectMake(0, startX, kScreenWidth, kScreenHeigth-startX);
-}
-
--(void)setCaptain:(NSString*)shipType
-{
-    if ([shipType intValue] == 0) {
-        self.isCaptain = YES;
-    }
-    else{
-        self.isCaptain = NO;
-    }
 }
 
 #pragma mark ----tableview delegate  datasourse
@@ -595,41 +569,27 @@
     if (indexPath.section==0) {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
-        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
-            ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]
-            ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:@"3"]) {
-            
-            hud.mode = MBProgressHUDModeText;
-            hud.detailsLabelText  =@"无法获取角色详情数据,由于角色不存在或暂不支持";
-            hud.labelText = nil;
-            [hud show:YES];
-            [hud hide:YES afterDelay:2];
-            
-            
-            return;
-        }
-        H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
-        VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
-        VC.gameId =  KISDictionaryHaveKey(dic, @"gameid");
-        [self.navigationController pushViewController:VC animated:YES];
+        [self toH5CharacterDetailPage:dic];
     }else {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         NSDictionary *dic = [claimedList_dataArray objectAtIndex:indexPath.row];
-        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
-            ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]
-            ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:@"3"]) {
-            hud.mode = MBProgressHUDModeText;
-            hud.detailsLabelText  =@"无法获取角色详情数据,由于角色不存在或暂不支持";
-            hud.labelText = nil;
-            [hud show:YES];
-            [hud hide:YES afterDelay:2];
-            return;
-        }
-        H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
-        VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")];
-        VC.gameId = [GameCommon getNewStringWithId: KISDictionaryHaveKey(dic, @"gameid")];
-        [self.navigationController pushViewController:VC animated:YES];
+        [self toH5CharacterDetailPage:dic];
     }
+}
+
+
+-(void)toH5CharacterDetailPage:(NSDictionary*)dic{
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"404"]
+        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"failedmsg")] isEqualToString:@"notSupport"]
+        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")] isEqualToString:@"3"]) {
+        
+        [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+        return;
+    }
+    H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
+    VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")];
+    VC.gameId = [GameCommon getNewStringWithId: KISDictionaryHaveKey(dic, @"gameid")];
+    [self.navigationController pushViewController:VC animated:YES];
 }
 
 - (void)headImgClick:(ItemInfoCell*)Sender{
@@ -638,22 +598,22 @@
         if (Sender.tag<m_dataArray.count) {
             NSDictionary *dic = [m_dataArray objectAtIndex:Sender.tag];
             NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
-            TestViewController *itemInfo = [[TestViewController alloc]init];
-            itemInfo.userId = userid;
-            [self.navigationController pushViewController:itemInfo animated:YES];
+            [self toUserInfoPage:userid];
         }
     }else if (indexPath.section == 1) {
         if (Sender.tag<claimedList_dataArray.count) {
             NSDictionary *dic = [claimedList_dataArray objectAtIndex:Sender.tag];
             NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")];
-            TestViewController *itemInfo = [[TestViewController alloc]init];
-            itemInfo.userId = userid;
-            [self.navigationController pushViewController:itemInfo animated:YES];
+            [self toUserInfoPage:userid];
         }
     }
-    
-    
-   
+}
+
+
+-(void)toUserInfoPage:(NSString*)userId{
+    TestViewController *itemInfo = [[TestViewController alloc]init];
+    itemInfo.userId = userId;
+    [self.navigationController pushViewController:itemInfo animated:YES];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -667,7 +627,7 @@
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (section==0) {
-        return nil; //[self getHeadView];
+        return nil;
     }else{
         UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 30)];
         view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
@@ -732,7 +692,7 @@
 
 -(void)changeInfo1
 {
-    if (self.isCaptain) {
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"teamUsershipType")] intValue] == 0) {
         EditInfoViewController *editInfo = [[EditInfoViewController alloc]init];
         editInfo.itemId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"roomId")];
         editInfo.firstStr =[GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"description")];
@@ -762,10 +722,7 @@
         if (indexPath.section == 0) {
             [self removeItemer:indexPath.row];
         }else{
-            NSLog(@"%d",indexPath.row);
             [self removeClaimed:indexPath.row];
-//            NSDictionary *dic = claimedList_dataArray[indexPath.row];
-//            [self deleteMenberFromList:KISDictionaryHaveKey(dic, @"roomId") GameId:self.gameid MemberId:KISDictionaryHaveKey(dic, @"memberId") MemberTeamUserId:nil];
         }
     }
 }
@@ -790,7 +747,7 @@
     [self deleteMenberFromList:KISDictionaryHaveKey(dic, @"roomId") GameId:self.gameid MemberId:KISDictionaryHaveKey(dic, @"memberId") MemberTeamUserId:nil];
 }
 
-#pragma mark ---删除成员
+#pragma mark ---解散队伍
 -(void)removeItemer:(NSInteger)row
 {
     NSDictionary *dic = m_dataArray[row];
@@ -854,23 +811,18 @@
     [customView addSubview:imageView];
     return customView;
 }
+//选择角色
 -(void)didClickChooseWithView:(RoleTabView*)view info:(NSDictionary *)info
 {
-
     roleTabView.hidden = YES;
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(info, @"failedmsg")] isEqualToString:@"404"]) {
-        hud.mode = MBProgressHUDModeText;
-        hud.detailsLabelText  =@"无法获取角色详情数据,由于角色不存在或暂不支持";
-        hud.labelText = nil;
-        [hud show:YES];
-        [hud hide:YES afterDelay:2];
+        [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
         return;
     }
     self.infoDict = [NSMutableDictionary dictionaryWithDictionary:info];
     bView.lowImg.imageURL = [ImageService getImageStr2:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"img")]];
     bView.titleLabel.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"name")];
     bView.gameIcon.imageURL = [ImageService getImageUrl4:[GameCommon putoutgameIconWithGameId:KISDictionaryHaveKey(self.infoDict, @"gameid")]];
-    
     bView.realmLb.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"simpleRealm")];
     bView.topLabel.hidden = YES;
 }
@@ -881,7 +833,7 @@
         [self showAlertViewWithTitle:@"提示" message:@"您还没有选择角色,请点击左侧摁键选择角色再申请加入" buttonTitle:@"确定"];
         return;
     }
-    
+    hud.detailsLabelText  = @"";
     hud.labelText = @"操作中...";
     [hud show:YES];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];

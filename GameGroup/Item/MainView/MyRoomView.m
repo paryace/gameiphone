@@ -20,8 +20,6 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        //删除角色
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(roleRemove:) name:RoleRemoveNotify object:nil];
         //我的组队解散该群
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDisbandGroup:) name:kDisbandMyTeam object:nil];
         //我被剔出该群
@@ -212,6 +210,10 @@
             dic = [self.myCreateRoomList objectAtIndex:indexPath.row];
             if ([self.myDelegate respondsToSelector:@selector(didClickMyRoomWithView: dic:)]) {
                 [self.myDelegate didClickMyRoomWithView:self dic:dic];
+            }
+        }else{
+            if ([self.myDelegate respondsToSelector:@selector(didClickCreateTeamWithView:)]) {
+                [self.myDelegate didClickCreateTeamWithView:self];
             }
         }
     }else if(indexPath.section ==1){
@@ -458,10 +460,8 @@
     [self.myListTableView reloadData];
 }
 
-#pragma mark -- 删除角色
--(void)roleRemove:(NSNotification*)notification{
-    NSDictionary * msg = notification.userInfo;
-    [self didRoleRomeve:[GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"characterId")]];
+-(void)roleRemove:(NSString*)characterId{
+    [self didRoleRomeve:characterId];
 }
 
 #pragma mark 我的群组解散通知

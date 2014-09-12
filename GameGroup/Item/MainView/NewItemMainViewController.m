@@ -9,8 +9,6 @@
 #import "NewItemMainViewController.h"
 #import "CreateItemViewController.h"
 #import "ItemInfoViewController.h"
-#import "MyRoomViewController.h"
-#import "FindItemViewController.h"
 #import "PreferenceEditViewController.h"
 #import "ItemManager.h"
 #import "NewCreateItemViewController.h"
@@ -24,13 +22,10 @@
     MyRoomView  *room;
     UITableView * m_mylistTableView;
     UIImageView *customImageView;
-//    UISegmentedControl *seg ;
     UIButton* sortingBtn;//排序
     UIButton* createBtn;//创建
     MsgNotifityView * dotV;
-    
     NSString *userid;
-    
     UIButton *m_button1;
     UIButton *m_button2;
     
@@ -53,36 +48,18 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [[Custom_tabbar showTabBar] hideTabBar:NO];
-    
-    if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-        userid =[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
-        firstView.selectCharacter = nil;
-        firstView.selectType = nil;
-        [firstView setTitleInfo];
-//        [firstView initSearchConditions];
+    [firstView setCharacterData:[DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
+    if ([firstView ifShowSelectCharacterMenu]) {
+        return;
     }
-    firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    
-//    NSMutableArray *arr = [NSMutableArray array];
-//    for (NSDictionary *dic  in firstView.firstDataArray) {
-//        if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
-//            NSLog(@"++++++++%@",dic);
-//        }else{
-//            [arr addObject:dic];
-//        }
-//    }
-//    [firstView.firstDataArray removeAllObjects];
-//    [firstView.firstDataArray  addObjectsFromArray:arr];
-    
-    
-
+    if (![[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:@"oldUserid"]]) {
+        [[NSUserDefaults standardUserDefaults] setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"oldUserid"];
+        [firstView initSearchConditions];//使用上次的搜索条件
+    }
 }
 -(void)viewDidAppear:(BOOL)animated
 {
-//    NSString *str = [[NSUserDefaults standardUserDefaults]objectForKey:@"LoignRefreshPreference_wx"];
-//    if ([str isEqualToString:@"refreshPreference"]) {
-        [self getMyRoomFromNet];
-//    }
+    [self getMyRoomFromNet];
 }
 
 - (void)viewDidLoad
@@ -93,6 +70,8 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newPreferMsgReceive:) name:kNewPreferMsg object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateRoomState:) name:@"updateRoomState" object:nil];
+    //删除角色
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(roleRemove:) name:RoleRemoveNotify object:nil];
     
     UIImageView* topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
     topImageView.userInteractionEnabled = YES;
@@ -154,26 +133,9 @@
     firstView = [[FirstView alloc]initWithFrame:CGRectMake(0, 0, 320, customView.frame.size.height)];
     firstView.backgroundColor = [UIColor whiteColor];
     firstView.myDelegate = self;
-    firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    
-    /*
-     去除角色列表中的404 和notSupport 的角色
-     */
-
-//    NSMutableArray *arr = [NSMutableArray array];
-//    for (NSDictionary *dic  in firstView.firstDataArray) {
-//        if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
-//            NSLog(@"++++++++%@",dic);
-//        }else{
-//            [arr addObject:dic];
-//        }
-//    }
-//    [firstView.firstDataArray removeAllObjects];
-//    [firstView.firstDataArray  addObjectsFromArray:arr];
-
     [customView addSubview:firstView];
     [self reloadMsgCount];
-    [firstView initSearchConditions];//使用上次的搜索条件
+//    [firstView initSearchConditions];//使用上次的搜索条件
     
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
@@ -400,6 +362,14 @@
 #pragma mark --刷新消息数量
 -(void)reloadMsgCount{
 //    [self displayTabbarNotification];
+}
+
+#pragma mark -- 删除角色
+-(void)roleRemove:(NSNotification*)notification{
+    NSDictionary * msg = notification.userInfo;
+    NSString * characterid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"characterId")];
+    [room roleRemove:characterid];
+    [firstView removeCharacterDetail:characterid];
 }
 
 -(void)updateRoomState:(NSNotification*)notification{

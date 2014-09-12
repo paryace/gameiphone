@@ -10,7 +10,6 @@
 #import "CreateItemViewController.h"
 #import "NewCreateItemViewController.h"
 #import "ItemInfoViewController.h"
-#import "MyRoomViewController.h"
 #import "CreateTeamCell.h"
 #import "ItemManager.h"
 #import "KxMenu.h"
@@ -134,6 +133,10 @@
 }
 
 
+-(void)setCharacterData:(NSMutableArray*)dataList{
+    self.firstDataArray = dataList;
+}
+
 -(void)hiddenSearchBarKeyBoard
 {
     tagView.hidden = YES;
@@ -231,12 +234,57 @@
     selectDescription =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectDescription_",userId]];
     self.selectPreferenceId =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectPreferenceId_",userId]];
     if (!self.selectCharacter) {
+        [self resetData];
         [self.dropDownView showHide:0];
         return;
     }
     [self reloInfo:YES];
 }
 
+
+-(BOOL)ifShowSelectCharacterMenu{
+    NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    NSMutableDictionary * cacheCharacterInfo =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",userId]];
+    if (!cacheCharacterInfo||!self.selectCharacter) {
+        [self resetData];
+        if (![self.dropDownView isShow]) {
+            [self.dropDownView showHide:0];
+        }
+        return YES;
+    }
+    return NO;
+}
+
+-(void)resetData{
+    self.selectCharacter = nil;
+    self.selectType = nil;
+    self.selectFilter = nil;
+    selectDescription = @"";
+    [self setTitleInfo];
+    [m_dataArray removeAllObjects];
+    [m_myTabelView reloadData];
+}
+
+
+-(void)removeCharacterDetail:(NSString*)characterId{
+    [self removeCharacterFromMenuList:characterId];
+    NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    NSMutableDictionary * nowCharacter =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",userId]];
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(nowCharacter,@"id")] isEqualToString:characterId]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",userId]];
+         [self initSearchConditions];
+    }
+}
+
+-(void)removeCharacterFromMenuList:(NSString*)characterId{
+    NSMutableArray * teamArray = [self.firstDataArray mutableCopy];
+    for (NSMutableDictionary * dic in teamArray) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")] isEqualToString:characterId]) {
+            [self.firstDataArray removeObject:dic];
+        }
+    }
+
+}
 
 
 -(void)viewTapped:(UITapGestureRecognizer*)sender
@@ -526,12 +574,6 @@
     
 //    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"myMemberId")]isEqualToString:@""]||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"myMemberId")]isEqualToString:@""]) {
         ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
-        NSString *userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic , @"createTeamUser"), @"userid")];
-        if ([userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-            itemInfo.isCaptain = YES;
-        }else{
-            itemInfo.isCaptain =NO;
-        }
         itemInfo.infoDict = [NSMutableDictionary dictionaryWithDictionary:self.selectCharacter];
         itemInfo.itemId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")];
         itemInfo.gameid =[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"gameid")];

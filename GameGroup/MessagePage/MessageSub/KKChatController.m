@@ -169,6 +169,10 @@ PlayingDelegate>
     //ack消息监听//消息是否发送成功
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:)name:kMessageAck object:nil];
+    
+    //初始化就位确认状态
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kJoinTeamMessage object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
     [self refreTitleText];
     [self showErrorDialog];
     if ([self.type isEqualToString:@"group"]) {
@@ -291,8 +295,7 @@ PlayingDelegate>
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//收到确认或者取消就位确认状态
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];//发起就位确认状态
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//初始化就位确认状态
-     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//
     
     
     
@@ -683,6 +686,7 @@ PlayingDelegate>
     CGRect reTop = self.topItemView.frame;
     [UIView animateWithDuration:0.3 animations:^{
         self.topImageView.hidden = NO;
+        
         self.newTeamMenuView.alpha = 1;
         
         self.newTeamMenuView.alpha = 0;
@@ -705,6 +709,7 @@ PlayingDelegate>
     CGRect reTop = self.topItemView.frame;
     [self hideKeyEmView];
     [UIView animateWithDuration:0.3 animations:^{
+        [self.view bringSubviewToFront:self.newTeamMenuView];
         self.newTeamMenuView.hidden = NO;
         [self.newTeamMenuView showView];
         self.newTeamMenuView.alpha = 0;
@@ -837,6 +842,7 @@ PlayingDelegate>
 -(void)showApplyListViewInSection
 {
     [UIView animateWithDuration:0.3 animations:^{
+        [self.view bringSubviewToFront:self.newTeamApplyListView];
         self.newTeamApplyListView.hidden = NO;
         [self.newTeamApplyListView showView];
         self.newTeamApplyListView.alpha = 0;
@@ -849,7 +855,8 @@ PlayingDelegate>
 #pragma mark -- 跳转角色详情
 -(void)itemApplyListOnClick:(NSDictionary*)charaDic{
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"failedmsg")] isEqualToString:@"404"]
-        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"failedmsg")] isEqualToString:@"notSupport"]) {
+        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"failedmsg")] isEqualToString:@"notSupport"]
+        ||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"gameid")] isEqualToString:@"3"]) {
         [self showMessageWithContent:@"无法获取角色详情数据,由于角色不存在或暂不支持" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
         return;
     }
@@ -928,6 +935,7 @@ PlayingDelegate>
 
 //跳转位置页面
 -(void)positionAction{
+    oTherPage = YES;
     LocationViewController *itemInfo = [[LocationViewController alloc]init];
     itemInfo.gameid = self.gameId;
     itemInfo.mydelegate = self;
@@ -935,6 +943,7 @@ PlayingDelegate>
 }
 //邀请好友页面
 -(void)invitationAtion{
+    oTherPage = YES;
     TeamInvitationController *invc = [[TeamInvitationController alloc]init];
     invc.gameId = [GameCommon getNewStringWithId:self.gameId];
     invc.groupId = [GameCommon getNewStringWithId:self.chatWithUser];
@@ -944,6 +953,7 @@ PlayingDelegate>
 
 //组队详情
 -(void)teamInfoAction{
+    oTherPage = YES;
     ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
     itemInfo.itemId = [GameCommon getNewStringWithId:self.roomId];
     itemInfo.gameid =[GameCommon getNewStringWithId:self.gameId];
@@ -1591,6 +1601,13 @@ PlayingDelegate>
                 cell.audioRedImg.hidden= YES;
             }
             
+            cell.infoDict = payload;
+            NSString *filePath =[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:KISDictionaryHaveKey(payload, @"messageid")]];
+            NSString *ps = [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payload, @"messageid")]]];
+
+            [cell downLoadAudioFromNet:filePath address:ps];
+            
+            
             [cell setHeadImgByChatUser:userImage];
             if([self.type isEqualToString:@"normal"]){
                 cell.senderNickName.hidden=YES;
@@ -1966,6 +1983,7 @@ PlayingDelegate>
      
      */
     if (![self isFileExist:ps]) {
+        NSLog(@"ps---%@",ps);
         [data writeToFile:ps atomically:YES];
     }
         [[PlayerManager sharedManager] playAudioWithFileName:ps delegate:self];

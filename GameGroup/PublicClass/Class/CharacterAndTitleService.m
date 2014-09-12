@@ -101,9 +101,12 @@ static CharacterAndTitleService * characterAndTitleService = NULL;
 
 //删除角色信息
 -(void)deleteCharacher:(NSString*)characherId{
-    [DataStoreManager deleteDSCharactersByCharactersId:[GameCommon getNewStringWithId:characherId]];
-    [self deleteTitle:characherId];
-    [[PreferencesMsgManager singleton] deletePreferences:characherId];
+    [DataStoreManager deleteDSCharactersByCharactersId:[GameCommon getNewStringWithId:characherId] successCompletion:^(BOOL success, NSError *error) {
+         [self deleteTitle:characherId];
+         NSDictionary * dic = @{@"characterId":characherId};
+        [[NSNotificationCenter defaultCenter] postNotificationName:RoleRemoveNotify object:nil userInfo:dic];
+        [[PreferencesMsgManager singleton] deletePreferences:characherId];
+    }];
 }
 //删除头衔信息
 -(void)deleteTitle:(NSString*)characherId{
