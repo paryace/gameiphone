@@ -130,7 +130,7 @@
                     
                     break;
                 case 4:
-                    cell.leftImageView.image = KUIImage(@"activationCode");
+                    cell.leftImageView.image = KUIImage(@"activationCode1");
                     cell.titleLable.text = @"兑换码";
                     
                     break;
