@@ -47,8 +47,8 @@
 }
 -(void)viewWillAppear:(BOOL)animated
 {
-    [firstView setCharacterData:[DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
     [[Custom_tabbar showTabBar] hideTabBar:NO];
+    [firstView setCharacterData:[DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
     if ([firstView ifShowSelectCharacterMenu]) {
         return;
     }

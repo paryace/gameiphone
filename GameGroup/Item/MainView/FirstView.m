@@ -267,13 +267,23 @@
 
 
 -(void)removeCharacterDetail:(NSString*)characterId{
+    [self removeCharacterFromMenuList:characterId];
     NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     NSMutableDictionary * nowCharacter =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",userId]];
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(nowCharacter,@"id")] isEqualToString:characterId]) {
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",userId]];
          [self initSearchConditions];
     }
-    
+}
+
+-(void)removeCharacterFromMenuList:(NSString*)characterId{
+    NSMutableArray * teamArray = [self.firstDataArray mutableCopy];
+    for (NSMutableDictionary * dic in teamArray) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"id")] isEqualToString:characterId]) {
+            [self.firstDataArray removeObject:dic];
+        }
+    }
+
 }
 
 
