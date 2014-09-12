@@ -169,6 +169,10 @@ PlayingDelegate>
     //ack消息监听//消息是否发送成功
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:)name:kMessageAck object:nil];
+    
+    //初始化就位确认状态
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kJoinTeamMessage object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
     [self refreTitleText];
     [self showErrorDialog];
     if ([self.type isEqualToString:@"group"]) {
@@ -291,8 +295,7 @@ PlayingDelegate>
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//收到确认或者取消就位确认状态
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];//发起就位确认状态
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//初始化就位确认状态
-     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//
     
     
     
@@ -932,6 +935,7 @@ PlayingDelegate>
 
 //跳转位置页面
 -(void)positionAction{
+    oTherPage = YES;
     LocationViewController *itemInfo = [[LocationViewController alloc]init];
     itemInfo.gameid = self.gameId;
     itemInfo.mydelegate = self;
@@ -939,6 +943,7 @@ PlayingDelegate>
 }
 //邀请好友页面
 -(void)invitationAtion{
+    oTherPage = YES;
     TeamInvitationController *invc = [[TeamInvitationController alloc]init];
     invc.gameId = [GameCommon getNewStringWithId:self.gameId];
     invc.groupId = [GameCommon getNewStringWithId:self.chatWithUser];
@@ -948,6 +953,7 @@ PlayingDelegate>
 
 //组队详情
 -(void)teamInfoAction{
+    oTherPage = YES;
     ItemInfoViewController *itemInfo = [[ItemInfoViewController alloc]init];
     itemInfo.itemId = [GameCommon getNewStringWithId:self.roomId];
     itemInfo.gameid =[GameCommon getNewStringWithId:self.gameId];
