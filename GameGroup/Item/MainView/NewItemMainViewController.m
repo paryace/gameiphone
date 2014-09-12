@@ -51,36 +51,15 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     [[Custom_tabbar showTabBar] hideTabBar:NO];
-    
-    if (![userid isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
-        userid =[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
-        firstView.selectCharacter = nil;
-        firstView.selectType = nil;
-        [firstView setTitleInfo];
-//        [firstView initSearchConditions];
+    if (![[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:@"oldUserid"]]) {
+        [[NSUserDefaults standardUserDefaults] setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"oldUserid"];
+        [firstView initSearchConditions];//使用上次的搜索条件
     }
     firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    
-//    NSMutableArray *arr = [NSMutableArray array];
-//    for (NSDictionary *dic  in firstView.firstDataArray) {
-//        if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
-//            NSLog(@"++++++++%@",dic);
-//        }else{
-//            [arr addObject:dic];
-//        }
-//    }
-//    [firstView.firstDataArray removeAllObjects];
-//    [firstView.firstDataArray  addObjectsFromArray:arr];
-    
-    
-
 }
 -(void)viewDidAppear:(BOOL)animated
 {
-//    NSString *str = [[NSUserDefaults standardUserDefaults]objectForKey:@"LoignRefreshPreference_wx"];
-//    if ([str isEqualToString:@"refreshPreference"]) {
-        [self getMyRoomFromNet];
-//    }
+    [self getMyRoomFromNet];
 }
 
 - (void)viewDidLoad
@@ -153,25 +132,10 @@
     firstView.backgroundColor = [UIColor whiteColor];
     firstView.myDelegate = self;
     firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-    
-    /*
-     去除角色列表中的404 和notSupport 的角色
-     */
-
-//    NSMutableArray *arr = [NSMutableArray array];
-//    for (NSDictionary *dic  in firstView.firstDataArray) {
-//        if ([KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"notSupport"]||[KISDictionaryHaveKey(dic, @"failedmsg") isEqualToString:@"404"]) {
-//            NSLog(@"++++++++%@",dic);
-//        }else{
-//            [arr addObject:dic];
-//        }
-//    }
-//    [firstView.firstDataArray removeAllObjects];
-//    [firstView.firstDataArray  addObjectsFromArray:arr];
 
     [customView addSubview:firstView];
     [self reloadMsgCount];
-    [firstView initSearchConditions];//使用上次的搜索条件
+//    [firstView initSearchConditions];//使用上次的搜索条件
     
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];

@@ -230,6 +230,8 @@
     selectDescription =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectDescription_",userId]];
     self.selectPreferenceId =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectPreferenceId_",userId]];
     if (!self.selectCharacter) {
+        [m_dataArray removeAllObjects];
+        [m_myTabelView reloadData];
         [self.dropDownView showHide:0];
         return;
     }
