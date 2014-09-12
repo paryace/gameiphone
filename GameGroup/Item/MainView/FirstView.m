@@ -133,6 +133,10 @@
 }
 
 
+-(void)setCharacterData:(NSMutableArray*)dataList{
+    self.firstDataArray = dataList;
+}
+
 -(void)hiddenSearchBarKeyBoard
 {
     tagView.hidden = YES;
@@ -230,14 +234,47 @@
     selectDescription =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectDescription_",userId]];
     self.selectPreferenceId =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectPreferenceId_",userId]];
     if (!self.selectCharacter) {
-        [m_dataArray removeAllObjects];
-        [m_myTabelView reloadData];
+        [self resetData];
         [self.dropDownView showHide:0];
         return;
     }
     [self reloInfo:YES];
 }
 
+
+-(BOOL)ifShowSelectCharacterMenu{
+    NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    NSMutableDictionary * cacheCharacterInfo =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",userId]];
+    if (!cacheCharacterInfo) {
+        [self resetData];
+        if (![self.dropDownView isShow]) {
+            [self.dropDownView showHide:0];
+        }
+        return YES;
+    }
+    return NO;
+}
+
+-(void)resetData{
+    self.selectCharacter = nil;
+    self.selectType = nil;
+    self.selectFilter = nil;
+    selectDescription = @"";
+    [self setTitleInfo];
+    [m_dataArray removeAllObjects];
+    [m_myTabelView reloadData];
+}
+
+
+-(void)removeCharacterDetail:(NSString*)characterId{
+    NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    NSMutableDictionary * nowCharacter =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",userId]];
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(nowCharacter,@"id")] isEqualToString:characterId]) {
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",userId]];
+         [self initSearchConditions];
+    }
+    
+}
 
 
 -(void)viewTapped:(UITapGestureRecognizer*)sender

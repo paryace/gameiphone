@@ -45,6 +45,9 @@
 -(void)hideDrowList;//隐藏弹出菜单
 -(void)setTitleInfo;
 -(void)hiddenSearchBarKeyBoard;
+-(BOOL)ifShowSelectCharacterMenu;
+-(void)setCharacterData:(NSMutableArray*)dataList;
+-(void)removeCharacterDetail:(NSString*)characterId;
 
 @end
 

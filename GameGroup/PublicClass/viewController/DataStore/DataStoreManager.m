@@ -3250,6 +3250,23 @@
     }];
 }
 
+//删除单个角色
++(void)deleteDSCharactersByCharactersId:(NSString*)charactersId successCompletion:(MRSaveCompletionHandler)successCompletion
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"charactersId==[c]%@",charactersId];
+        DSCharacters * dbCharacters = [DSCharacters MR_findFirstWithPredicate:predicate inContext:localContext];
+        if (dbCharacters) {
+            [dbCharacters MR_deleteInContext:localContext];
+        }
+    }
+     completion:^(BOOL success, NSError *error) {
+         if (successCompletion) {
+             successCompletion(success,error);
+         }
+     }];
+}
+
 //删除所有头衔
 +(void)deleteAllDSTitle:(NSString*)userid
 {
@@ -3266,7 +3283,7 @@
 }
 
 //根据角色id删除头衔
-+(void)deleteDSTitleByCharactersId:(NSString*)charactersId
++(void)deleteDSTitleByCharactersId:(NSString*)charactersId successCompletion:(MRSaveCompletionHandler)successCompletion
 {
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         NSPredicate * predicate = [NSPredicate predicateWithFormat:@"characterid==[c]%@",charactersId];
@@ -3280,6 +3297,20 @@
      completion:^(BOOL success, NSError *error) {
          
      }];
+}
+
+//根据角色id删除头衔
++(void)deleteDSTitleByCharactersId:(NSString*)charactersId
+{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlockAndWait:^(NSManagedObjectContext *localContext) {
+        NSPredicate * predicate = [NSPredicate predicateWithFormat:@"characterid==[c]%@",charactersId];
+        NSArray * dbTitles = [DSTitle MR_findAllWithPredicate:predicate inContext:localContext];
+        if (dbTitles.count>0) {
+            for (DSTitle* title in dbTitles) {
+                [title MR_deleteInContext:localContext];
+            }
+        }
+    }];
 }
 //根据Type删除头衔
 +(void)deleteDSTitleByType:(NSString*)hide Userid:(NSString*)userid

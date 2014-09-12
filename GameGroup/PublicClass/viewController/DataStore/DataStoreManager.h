@@ -335,9 +335,13 @@
 
 //删除单个角色
 +(void)deleteDSCharactersByCharactersId:(NSString*)charactersId;
++(void)deleteDSCharactersByCharactersId:(NSString*)charactersId successCompletion:(MRSaveCompletionHandler)successCompletion;
 
 //根据角色id删除头衔
 +(void)deleteDSTitleByCharactersId:(NSString*)charactersId;
+//根据角色id删除头衔
++(void)deleteDSTitleByCharactersId:(NSString*)charactersId successCompletion:(MRSaveCompletionHandler)successCompletion;
+
 
 //根据Type删除头衔
 +(void)deleteDSTitleByType:(NSString*)hide Userid:(NSString*)userid;

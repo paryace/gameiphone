@@ -22,6 +22,7 @@
 
 -(void)initMyRoomListData:(NSMutableDictionary*)dic;
 -(void)stopRefre;
+-(void)roleRemove:(NSString*)characterId;
 @end
 
 @protocol MyroomDelegate <NSObject>

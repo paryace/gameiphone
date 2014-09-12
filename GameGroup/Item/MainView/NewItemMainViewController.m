@@ -22,13 +22,10 @@
     MyRoomView  *room;
     UITableView * m_mylistTableView;
     UIImageView *customImageView;
-//    UISegmentedControl *seg ;
     UIButton* sortingBtn;//排序
     UIButton* createBtn;//创建
     MsgNotifityView * dotV;
-    
     NSString *userid;
-    
     UIButton *m_button1;
     UIButton *m_button2;
     
@@ -50,12 +47,15 @@
 }
 -(void)viewWillAppear:(BOOL)animated
 {
+    [firstView setCharacterData:[DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]];
     [[Custom_tabbar showTabBar] hideTabBar:NO];
+    if ([firstView ifShowSelectCharacterMenu]) {
+        return;
+    }
     if (![[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:@"oldUserid"]]) {
         [[NSUserDefaults standardUserDefaults] setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID] forKey:@"oldUserid"];
         [firstView initSearchConditions];//使用上次的搜索条件
     }
-    firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
 }
 -(void)viewDidAppear:(BOOL)animated
 {
@@ -70,6 +70,8 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newPreferMsgReceive:) name:kNewPreferMsg object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateRoomState:) name:@"updateRoomState" object:nil];
+    //删除角色
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(roleRemove:) name:RoleRemoveNotify object:nil];
     
     UIImageView* topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
     topImageView.userInteractionEnabled = YES;
@@ -131,8 +133,6 @@
     firstView = [[FirstView alloc]initWithFrame:CGRectMake(0, 0, 320, customView.frame.size.height)];
     firstView.backgroundColor = [UIColor whiteColor];
     firstView.myDelegate = self;
-    firstView.firstDataArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
-
     [customView addSubview:firstView];
     [self reloadMsgCount];
 //    [firstView initSearchConditions];//使用上次的搜索条件
@@ -362,6 +362,14 @@
 #pragma mark --刷新消息数量
 -(void)reloadMsgCount{
 //    [self displayTabbarNotification];
+}
+
+#pragma mark -- 删除角色
+-(void)roleRemove:(NSNotification*)notification{
+    NSDictionary * msg = notification.userInfo;
+    NSString * characterid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(msg, @"characterId")];
+    [room roleRemove:characterid];
+    [firstView removeCharacterDetail:characterid];
 }
 
 -(void)updateRoomState:(NSNotification*)notification{

@@ -60,8 +60,6 @@ static PreferencesMsgManager *preferencesMsgManager = NULL;
 //根据角色id删除偏好
 -(void)deletePreferences:(NSString*)characterId Completion:(MRSaveCompletionHandler)completion{
     [DataStoreManager deletePreferenceInfoByCharacterId:[GameCommon getNewStringWithId:characterId] Successcompletion:^(BOOL success, NSError *error) {
-        NSDictionary * dic = @{@"characterId":characterId};
-        [[NSNotificationCenter defaultCenter] postNotificationName:RoleRemoveNotify object:nil userInfo:dic];
         if (completion) {
             completion(success, error);
         }
