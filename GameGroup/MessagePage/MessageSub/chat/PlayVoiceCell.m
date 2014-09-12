@@ -14,6 +14,9 @@
     BOOL isPlay;
     NSMutableArray *gifArray1;
     NSMutableArray *gifArray2;
+    NSMutableData *receivedData;
+    NSURLConnection *connection;
+    
 }
 - (instancetype)init
 {
@@ -149,7 +152,62 @@
     }
 }
 
+-(void)downLoadAudioFromNet:(NSString *)net address:(NSString *)address
+{
+    if (![self isFileExist:address]) {
+//        dispatch_queue_t queue = dispatch_queue_create("downloadAudios.com.living.game", NULL);
+//        dispatch_async(queue, ^{
+            NSURL *url = [NSURL URLWithString:net];
+            NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
+            connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+//        });
+    }
+}
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+    NSLog(@"%lld",[httpResponse expectedContentLength]);
+}
 
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+{
+    [receivedData appendData:data];
+//    CGFloat progress = 0;
+//    progress = [receivedData length]/totalLength;
+    
+//    if([_delegate respondsToSelector:@selector(imageDownLoader:progress:)]){
+//        [_delegate imageDownLoader:self progress:progress];
+//    }
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection
+{
+        NSString *ps = [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"messageid")]]];
+    //    //把图像数据存入cache中
+    NSLog(@"ps==%@",ps);
+
+    [receivedData writeToFile:ps atomically:YES];
+//    
+//    if([_delegate respondsToSelector:@selector(imageDownLoader:downLoadSuccessWithImage:)]){
+//        UIImage *image = [UIImage imageWithData:_receivedData];
+//        [_delegate imageDownLoader:self downLoadSuccessWithImage:image];
+//    }
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+//    if([_delegate respondsToSelector:@selector(imageDownLoader:failedWithError:)]){
+//        [_delegate imageDownLoader:self failedWithError:error];
+//    }
+}
+#pragma mark ---判断文件是否存在于沙盒
+- (BOOL)isFileExist:(NSString *)fileName
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL result = [fileManager fileExistsAtPath:fileName];
+    return result;
+}
 
 
 - (void)awakeFromNib

@@ -1601,6 +1601,13 @@ PlayingDelegate>
                 cell.audioRedImg.hidden= YES;
             }
             
+            cell.infoDict = payload;
+            NSString *filePath =[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:KISDictionaryHaveKey(payload, @"messageid")]];
+            NSString *ps = [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payload, @"messageid")]]];
+
+            [cell downLoadAudioFromNet:filePath address:ps];
+            
+            
             [cell setHeadImgByChatUser:userImage];
             if([self.type isEqualToString:@"normal"]){
                 cell.senderNickName.hidden=YES;
@@ -1976,6 +1983,7 @@ PlayingDelegate>
      
      */
     if (![self isFileExist:ps]) {
+        NSLog(@"ps---%@",ps);
         [data writeToFile:ps atomically:YES];
     }
         [[PlayerManager sharedManager] playAudioWithFileName:ps delegate:self];
