@@ -60,22 +60,22 @@
     mSearchBar.delegate = self;
     [self.view addSubview:mSearchBar];
     
-    baseBgView = [[UIView alloc] initWithFrame:CGRectMake(0, startX+44, 320, kScreenHeigth)];
+    baseBgView = [[UIView alloc] initWithFrame:CGRectMake(0, startX+44, 320, self.view.frame.size.height-startX-44)];
     baseBgView.backgroundColor = [UIColor blackColor];
     baseBgView.alpha = 0.5;
     baseBgView.hidden = YES;
     
-    menuTableView = [[MenuTableView alloc] initWithFrame:CGRectMake(0, startX+44, 100, kScreenHeigth)];
+    menuTableView = [[MenuTableView alloc] initWithFrame:CGRectMake(0, startX+44, 100, self.view.frame.size.height-startX-44)];
     menuTableView.isSecion = NO;
     menuTableView.delegate = self;
     [self.view addSubview:menuTableView];
     
-    UIView * lineView = [[UIView alloc] initWithFrame:CGRectMake(100, startX+44, 0.5, kScreenHeigth)];
+    UIView * lineView = [[UIView alloc] initWithFrame:CGRectMake(100, startX+44, 0.5, self.view.frame.size.height-startX-44)];
     lineView.backgroundColor = UIColorFromRGBA(0xf6f6f6, 1);
     [self.view addSubview:lineView];
     
     m_groupArray = [NSMutableArray array];
-    m_GroupTableView = [[UITableView alloc] initWithFrame:CGRectMake(100.5, startX+44, 320-100.5, self.view.frame.size.height - startX) style:UITableViewStylePlain];
+    m_GroupTableView = [[UITableView alloc] initWithFrame:CGRectMake(100.5, startX+44, 320-100.5, self.view.frame.size.height - startX-44) style:UITableViewStylePlain];
     m_GroupTableView.backgroundColor = [UIColor whiteColor];;
     m_GroupTableView.dataSource = self;
     m_GroupTableView.delegate = self;

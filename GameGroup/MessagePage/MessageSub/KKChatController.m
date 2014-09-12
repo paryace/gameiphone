@@ -1812,7 +1812,7 @@ PlayingDelegate>
     CGRect rect = [self.view convertRect:tempBtn.frame fromView:cell.contentView];
     
     NSDictionary *dic = [[[messages objectAtIndex:indexPathTo.row]objectForKey:@"payload"]JSONValue];
-    if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"audio"]) {
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"type")]isEqualToString:@"audio"]) {
         [menu setMenuItems:[NSArray arrayWithObjects:delItem,nil]];
     }else{
         [menu setMenuItems:[NSArray arrayWithObjects:copyItem,delItem,nil]];
