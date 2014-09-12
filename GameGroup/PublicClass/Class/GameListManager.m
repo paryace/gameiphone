@@ -81,7 +81,7 @@ static GameListManager * gameListManager = NULL;
         if (resuccess) {
             resuccess(newDic);
         }
-        [[GameCommon shareGameCommon] openSuccessWithInfo:responseObject From:@"firstOpen"];
+        [[GameCommon shareGameCommon] openSuccessWithInfo:responseObject From:@"gameListOpen"];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         if (refailure) {
             refailure(error);

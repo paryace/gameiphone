@@ -752,8 +752,7 @@ static GameCommon *my_gameCommon = NULL;
     [postDict setObject:@"225" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]?[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]:@"" forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        [self openSuccessWithInfo:responseObject From:@"firstOpen"];
+        [self openSuccessWithInfo:responseObject From:@"gameListOpen"];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
     }];
@@ -761,7 +760,6 @@ static GameCommon *my_gameCommon = NULL;
 
 -(void)openSuccessWithInfo:(NSDictionary *)dict From:(NSString *)where
 {
-//    NSString * version = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString *)kCFBundleVersionKey];
     [[TempData sharedInstance] setRegisterNeedMsg:[KISDictionaryHaveKey(dict, @"registerNeedMsg") doubleValue]];
     if ([[dict allKeys] containsObject:@"registerNeedMsg"]) {
             [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"registerNeedMsg") forKey:@"REGISTERNEEDMSG"];
@@ -769,19 +767,17 @@ static GameCommon *my_gameCommon = NULL;
     }
 
     
-    if ([KISDictionaryHaveKey(dict, @"clientUpdate") doubleValue]) {
-        [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"clientUpdateUrl") forKey:@"IOSURL"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"检测到新版本，您要升级吗?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"立刻升级", nil];
-        alert.tag = 21;
-        [alert show];
+    if ([where isEqualToString:@"firstOpen"]) {
+        if ([KISDictionaryHaveKey(dict, @"clientUpdate") doubleValue]) {
+            [[NSUserDefaults standardUserDefaults] setObject:KISDictionaryHaveKey(dict, @"clientUpdateUrl") forKey:@"IOSURL"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"检测到新版本，您要升级吗?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"立刻升级", nil];
+            alert.tag = 21;
+            [alert show];
+        }else{
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"IOSURL"];
+        }
     }
-    else
-    {
-        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"IOSURL"];
-    }
-    
-    
     NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     NSMutableDictionary* openData = [NSMutableDictionary dictionaryWithContentsOfFile:path] ? [NSMutableDictionary dictionaryWithContentsOfFile:path] : [NSMutableDictionary dictionaryWithCapacity:1];
     if ([KISDictionaryHaveKey(dict, @"gamelist_update") boolValue]) {
