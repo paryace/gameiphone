@@ -245,7 +245,7 @@
 -(BOOL)ifShowSelectCharacterMenu{
     NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
     NSMutableDictionary * cacheCharacterInfo =  [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"%@%@",@"selectCharacter_",userId]];
-    if (!cacheCharacterInfo) {
+    if (!cacheCharacterInfo||!self.selectCharacter) {
         [self resetData];
         if (![self.dropDownView isShow]) {
             [self.dropDownView showHide:0];
