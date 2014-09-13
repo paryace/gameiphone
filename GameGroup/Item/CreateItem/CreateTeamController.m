@@ -138,7 +138,6 @@
 
 -(void)initCharacterView{
     if (selectCharacter) {
-        selectType = [self getCacheType:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
         [self selectCharacterAction:selectCharacter];
     }else{
         selectTypeAndNumberPersonView.hidden = YES;
@@ -176,6 +175,7 @@
         m_miaoshuTV.text = @"";
         placeholderL.hidden = NO;
         m_ziNumLabel.text = @"30/30";
+        selectType = [self getCacheType:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
         [self getTypes:[GameCommon getNewStringWithId:KISDictionaryHaveKey(characterInfo, @"gameid")]];
     }
 }
@@ -190,12 +190,12 @@
 //缓存上次创建选择的分类
 -(void)cacheType:(NSMutableDictionary*)typeInfo GameId:(NSString*)gameId CharacterId:(NSString*)characterId{
     NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-    [[NSUserDefaults standardUserDefaults]setObject:typeInfo forKey:[NSString stringWithFormat:@"createSelectType_%@_%@_%@",userId,gameId,characterId]];
+    [[NSUserDefaults standardUserDefaults]setObject:typeInfo forKey:[NSString stringWithFormat:@"createSelectType_%@_%@",userId,gameId]];
 }
 //从缓存取出上次创建选择的分类
 -(NSMutableDictionary*)getCacheType:(NSString*)gameId CharacterId:(NSString*)characterId{
     NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-    return [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"createSelectType_%@_%@_%@",userId,gameId,characterId]];
+    return [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"createSelectType_%@_%@",userId,gameId]];
 }
 
 

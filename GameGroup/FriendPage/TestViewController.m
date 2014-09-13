@@ -68,6 +68,7 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:userInfoUpload object:nil];
     wxSDArray = [NSMutableArray array];
     littleImgArray = [NSMutableArray array];
+    self.isOnClick = NO;
     NSDictionary *dic = [self getUserInfo:self.userId];//获取缓存
     if (dic) {//本地有
         self.hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
@@ -938,6 +939,7 @@
             [editButton setBackgroundImage:KUIImage(@"beizhu") forState:UIControlStateNormal];
             [editButton setBackgroundImage:KUIImage(@"beizhu_click") forState:UIControlStateHighlighted];
             editButton.titleLabel.font = [UIFont boldSystemFontOfSize:15];
+            [editButton  setExclusiveTouch :YES];
             [editButton addTarget:self action:@selector(editButtonClick:) forControlEvents:UIControlEventTouchUpInside];
             [self.view addSubview:editButton];
 
@@ -952,6 +954,7 @@
             [editButton setBackgroundImage:KUIImage(@"beizhu") forState:UIControlStateNormal];
             [editButton setBackgroundImage:KUIImage(@"beizhu_click") forState:UIControlStateHighlighted];
             [self.view addSubview:editButton];
+            [editButton  setExclusiveTouch :YES];
             [editButton addTarget:self action:@selector(editButtonClick:) forControlEvents:UIControlEventTouchUpInside];
             
             attentionOffBtn = [self setCenterBtn:@"Focus_off_normal" ClickImage:@"Focus_off_click"];
@@ -984,6 +987,7 @@
                                   bgImage:KUIImage(@"chat_normal")
                                   HighImage:KUIImage(@"chat_click")
                                   selectImage:Nil];
+        [button_right  setExclusiveTouch :YES];
         [button_right addTarget:self action:@selector(startChat:) forControlEvents:UIControlEventTouchUpInside];
         [self.view addSubview:button_right];
     }
@@ -1221,6 +1225,7 @@
 }
 - (void)todoSomething:(id)sender
 {
+    self.isOnClick = NO;
     if (self.isChatPage) {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
         [self.navigationController popViewControllerAnimated:YES];
@@ -1236,8 +1241,9 @@
 }
 - (void)startChat:(id)sender
 {
+    self.isOnClick = YES;
     [[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(todoSomething:) object:sender];
-    [self performSelector:@selector(todoSomething:) withObject:sender afterDelay:0.3f];
+    [self performSelector:@selector(todoSomething:) withObject:sender afterDelay:0.2f];
     
 
 }
@@ -1330,6 +1336,9 @@
 #pragma mark 修改备注名字
 - (void)editButtonClick:(id)sender
 {
+    if (self.isOnClick) {
+        return;
+    }
     SetRemarkNameViewController* VC = [[SetRemarkNameViewController alloc] init];
     VC.userName = self.hostInfo.userName;
     VC.nickName = self.hostInfo.nickName;
