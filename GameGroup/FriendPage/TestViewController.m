@@ -377,10 +377,11 @@
 -(void)ltttt:(id)sender
 {
     NSLog(@"1111");
-        KKChatController * kkchat = [[KKChatController alloc] init];
-        kkchat.chatWithUser = self.hostInfo.userId;
-        kkchat.type = @"normal";
-        [self.navigationController pushViewController:kkchat animated:YES];
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    KKChatController * kkchat = [[KKChatController alloc] init];
+    kkchat.chatWithUser = self.hostInfo.userId;
+    kkchat.type = @"normal";
+    [self.navigationController pushViewController:kkchat animated:YES];
 }
 - (void)buildMainView
 {
@@ -1218,19 +1219,27 @@
         }
     }];
 }
-
-- (void)startChat:(id)sender
+- (void)todoSomething:(id)sender
 {
     if (self.isChatPage) {
+        [[Custom_tabbar showTabBar] hideTabBar:YES];
         [self.navigationController popViewControllerAnimated:YES];
     }
     else//直接进入聊天页面
     {
+        [[Custom_tabbar showTabBar] hideTabBar:YES];
         KKChatController * kkchat = [[KKChatController alloc] init];
         kkchat.chatWithUser = self.hostInfo.userId;
         kkchat.type = @"normal";
         [self.navigationController pushViewController:kkchat animated:YES];
     }
+}
+- (void)startChat:(id)sender
+{
+    [[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(todoSomething:) object:sender];
+    [self performSelector:@selector(todoSomething:) withObject:sender afterDelay:0.3f];
+    
+
 }
 //添加好友
 - (void)addFriendClick:(id)sender
