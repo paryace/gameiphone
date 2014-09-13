@@ -297,8 +297,8 @@
     cell.distLabel.text = (titleName==nil||[titleName isEqualToString:@""]) ? @"暂无头衔" : titleName;
     cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"rarenum") integerValue]];
     CGSize nameSize = [cell.nameLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
-    cell.nameLabel.frame = CGRectMake(80, 5, nameSize.width + 5, 20);
-    cell.sexImg.frame = CGRectMake(80 + nameSize.width, 5, 20, 20);
+    cell.nameLabel.frame = CGRectMake(70, 5, nameSize.width + 5, 20);
+    cell.sexImg.frame = CGRectMake(70 + nameSize.width, 5, 20, 20);
     NSArray * gameids=[GameCommon getGameids:KISDictionaryHaveKey(tempDict, @"gameids")];
     [cell setGameIconUIView:gameids];
     return cell;
@@ -352,16 +352,41 @@
 }
 //返回索引的字母
 #pragma mark 索引
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
+//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
+//{
+//    if (tableView ==searchController.searchResultsTableView) {
+//        return nil;
+//    }else{
+//    if (section==0) {
+//        return @"";
+//    }
+//    NSString * keyName =[keyArr objectAtIndex:section];
+//    return keyName;
+//    }
+//}
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    if (tableView ==searchController.searchResultsTableView) {
-        return nil;
-    }else{
-    if (section==0) {
-        return @"";
+    if (tableView ==m_myTableView) {
+        UIView *view = [[UIView alloc]init];
+        view.backgroundColor = UIColorFromRGBA(0xd9dad7, 1);
+        UIView *subView =[[ UIView alloc]initWithFrame:CGRectMake(0, 1, 320, 19)];
+        subView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+        
+        NSString * keyName =[keyArr objectAtIndex:section];
+        UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, 20, 20)];
+        lb.textColor = UIColorFromRGBA(0x999999, 1);
+        lb.backgroundColor = [UIColor clearColor];
+        lb.textAlignment = NSTextAlignmentCenter;
+        lb.text =keyName;
+        lb.font = [UIFont boldSystemFontOfSize:12];
+        [subView addSubview:lb];
+        
+        [view addSubview:subView];
+        return view;
+
     }
-    NSString * keyName =[keyArr objectAtIndex:section];
-    return keyName;
+    else{
+        return nil;
     }
 }
 // 返回索引列表的集合

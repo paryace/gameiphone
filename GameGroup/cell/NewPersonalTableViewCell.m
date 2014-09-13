@@ -16,13 +16,13 @@
     if (self) {
         self.bgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
         
-        self.headImageV = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 6, 45, 45)];
+        self.headImageV = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 7.5, 45, 45)];
         self.headImageV.backgroundColor = [UIColor whiteColor];
         self.headImageV.layer.cornerRadius = 5;
         self.headImageV.layer.masksToBounds=YES;
         [self.bgView addSubview:self.headImageV];
         
-        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 7, 90, 20)];
+        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 7, 90, 20)];
         [self.nameLabel setTextAlignment:NSTextAlignmentLeft];
         [self.nameLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self.nameLabel setBackgroundColor:[UIColor clearColor]];
@@ -33,7 +33,7 @@
         self.sexImg.backgroundColor = [UIColor clearColor];
         [self.bgView addSubview:self.sexImg];
         
-        self.distLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 31, 240, 20)];
+        self.distLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 31, 240, 20)];
         [self.distLabel setTextColor:[UIColor blackColor]];
         [self.distLabel setFont:[UIFont systemFontOfSize:13]];
         [self.distLabel setBackgroundColor:[UIColor clearColor]];
