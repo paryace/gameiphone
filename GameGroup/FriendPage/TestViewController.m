@@ -945,6 +945,7 @@
 
             delFriendBtn = [self setCenterBtn:@"del_friend_normal" ClickImage:@"del_friend_click"];
             [delFriendBtn addTarget:self action:@selector(deleteFriend:) forControlEvents:UIControlEventTouchUpInside];
+            [delFriendBtn  setExclusiveTouch :YES];
             [self.view addSubview:delFriendBtn];
         }break;
         case VIEW_TYPE_AttentionPage1://关注
@@ -960,17 +961,20 @@
             attentionOffBtn = [self setCenterBtn:@"Focus_off_normal" ClickImage:@"Focus_off_click"];
             [attentionOffBtn addTarget:self action:@selector(cancelAttentionClick:) forControlEvents:UIControlEventTouchUpInside];
             [self.view addSubview:attentionOffBtn];
+            [attentionOffBtn  setExclusiveTouch :YES];
         }  break;
         case VIEW_TYPE_FansPage1://粉丝
         {
             addFriendBtn = [self setCenterBtn:@"add_friend_normal" ClickImage:@"add_friend_click"];
             [addFriendBtn addTarget:self action:@selector(addFriendClick:) forControlEvents:UIControlEventTouchUpInside];
+            [addFriendBtn  setExclusiveTouch :YES];
             [self.view addSubview:addFriendBtn];
         }break;
         case VIEW_TYPE_STRANGER1://陌生人
         {
             attentionBtn=[self setCenterBtn:@"Focus_on_normal" ClickImage:@"Focus_on_3_click"];
             [attentionBtn addTarget:self action:@selector(attentionClick:) forControlEvents:UIControlEventTouchUpInside];
+             [attentionBtn  setExclusiveTouch :YES];
             [self.view addSubview:attentionBtn];
         }break;
         default:
@@ -1033,6 +1037,9 @@
 
 - (void)deleteFriend:(id)sender
 {
+    if (self.isOnClick) {
+        return;
+    }
     UIAlertView* alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您确定要删除该好友吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
     alter.tag = 234;
     [alter show];
@@ -1250,11 +1257,17 @@
 //添加好友
 - (void)addFriendClick:(id)sender
 {
+    if (self.isOnClick) {
+        return;
+    }
     [self addFriend:@"2"];
 }
 //添加关注
 - (void)attentionClick:(id)sender
 {
+    if (self.isOnClick) {
+        return;
+    }
     [self addFriend:@"1"];
 }
 
@@ -1328,6 +1341,9 @@
 
 - (void)cancelAttentionClick:(id)sender
 {
+    if (self.isOnClick) {
+        return;
+    }
     UIAlertView* alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"确实取消对该用户的关注吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
     alter.tag = 345;
     [alter show];
