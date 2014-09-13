@@ -162,6 +162,7 @@ PlayingDelegate>
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
     oTherPage=NO;
     //接收消息监听
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
