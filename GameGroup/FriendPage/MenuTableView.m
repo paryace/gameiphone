@@ -70,7 +70,7 @@
 #pragma mark -- UITableView Delegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 50;
+    return 40;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -123,25 +123,24 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *identifier = @"myCell00";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-    if (cell ==nil) {
-        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+    static NSString * stringCell3 = @"cell";
+    GroupTagCell * cell = [tableView dequeueReusableCellWithIdentifier:stringCell3];
+    if (!cell) {
+        cell = [[GroupTagCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCell3];
     }
+
+    
     cell.backgroundColor = kColorWithRGB(251, 251, 251, 1);
     UIView *bgColorView = [[UIView alloc] init];
     bgColorView.backgroundColor = kColorWithRGB(60, 175, 249, 1);
     bgColorView.layer.masksToBounds = YES;
     cell.selectedBackgroundView = bgColorView;
-    cell.textLabel.backgroundColor = [UIColor clearColor];
-    cell.textLabel.textColor = UIColorFromRGBA(0x8d8d8b, 1);
+    
     if (_isSecion) {
-        cell.textLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey([[_menuDataDic objectForKey:[_menuKeyList objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row], @"tagName")];;
+        cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey([[_menuDataDic objectForKey:[_menuKeyList objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row], @"tagName")];;
     }else {
-        cell.textLabel.text = [[_menuDataList objectAtIndex:indexPath.row] objectForKey:@"tagName"];
+        cell.titleLabel.text = [[_menuDataList objectAtIndex:indexPath.row] objectForKey:@"tagName"];
     }
-    cell.textLabel.textAlignment = NSTextAlignmentCenter;
-    cell.textLabel.font =[ UIFont systemFontOfSize:14];
     return cell;
 }
 

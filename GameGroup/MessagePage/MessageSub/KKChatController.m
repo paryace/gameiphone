@@ -2769,16 +2769,22 @@ PlayingDelegate>
 
         case 0: //相册
         {
-            if (imagePicker==nil) {
-                imagePicker=[[UIImagePickerController alloc]init];
-                imagePicker.delegate=self;
-                imagePicker.allowsEditing = NO;
-            }
+//            if (imagePicker==nil) {
+//                imagePicker=[[UIImagePickerController alloc]init];
+//                imagePicker.delegate=self;
+//                imagePicker.allowsEditing = NO;
+//            }
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
                 oTherPage = YES;
-                imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
-                [self presentViewController:imagePicker animated:YES completion:^{
-                }];
+//                imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
+//                [self presentViewController:imagePicker animated:YES completion:^{
+//                }];
+                
+                CTAssetsPickerController *picker = [[CTAssetsPickerController alloc] init];
+                picker.maximumNumberOfSelection = 9;
+                picker.assetsFilter = [ALAssetsFilter allAssets];
+                picker.delegate = self;
+                [self presentViewController:picker animated:YES completion:NULL];
             }
             else {
                 UIAlertView *libraryAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相册" delegate:self cancelButtonTitle:@"了解" otherButtonTitles:nil];
@@ -2820,41 +2826,45 @@ PlayingDelegate>
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"正在处理图片...";
     [picker.view.superview addSubview:hud];
-    
     [hud show:YES];
-    
     UIImage * upImage = (UIImage *)[info objectForKey:@"UIImagePickerControllerOriginalImage"];
     if (picker.sourceType ==UIImagePickerControllerSourceTypeCamera) {
         UIImageWriteToSavedPhotosAlbum(upImage, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
     }
+    [self chooseImage:upImage];
+}
 
+#pragma mark - Assets Picker Delegate
+- (void)assetsPickerController:(CTAssetsPickerController *)picker didFinishPickingAssets:(NSArray *)assets
+{
+    for (ALAsset * asset in assets) {
+        UIImage * image = [UIImage imageWithCGImage:asset.thumbnail];
+        [self chooseImage:image];
+    }
+}
+
+
+-(void)chooseImage:(UIImage*)upImage{
     UIImage* thumbimg = [NetManager image:upImage centerInSize:CGSizeMake(200, 200)];
     NSString* uuid = [[GameCommon shareGameCommon] uuid];
-    
     NSData *thumbImageData = UIImageJPEGRepresentation(thumbimg, 1);
     NSData *upImageData = [self compressImage:upImage];
-    
     NSString* openImgPath=[self writeImageToFile:thumbImageData];
     NSString* upImagePath=[self writeImageToFile:upImageData];
     if (openImgPath!=nil) {
         [self sendImageMsgD:openImgPath BigImagePath:upImagePath UUID:uuid Body:@"[图片]"]; //一条图片消息写到本地
-    }else{
     }
     [self dismissViewControllerAnimated:YES completion:^{
         [hud hide:YES];
     }];
 }
+
+
+
+
 //图片保存到相册后状态
 - (void)image: (UIImage *) image didFinishSavingWithError: (NSError *) error contextInfo: (void *) contextInfo
 {
-//    NSString *msg = nil ;
-//    if(error != NULL){
-//        msg = @"保存图片失败,请允许本应用访问您的相册";
-//    }else{
-//        msg = @"保存图片成功" ;
-//    }
-//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定"otherButtonTitles:nil];
-//    [alert show];
 }
 
 //将图片保存到本地，返回保存的路径
@@ -4197,28 +4207,41 @@ PlayingDelegate>
     [menu setMenuVisible:YES animated:YES];
 }
 
-//发送图片消息
--(void)sendMsg:(NSString *)imageId Index:(NSInteger)index
-{
-    [self sendImageMsg:imageId UUID:KISDictionaryHaveKey(messages[index], @"messageuuid")];//改图片地址，并发送消息
-}
-
-//发送语音消息
--(void)sendAudioMsg:(NSString *)audio Index:(NSInteger)index
-{
-    [self sendAudioMsg:audio UUID:KISDictionaryHaveKey(messages[index], @"messageuuid")];
-}
 //上传中
--(void)uploading:(NSInteger)cellIndex{//上传中
+-(void)uploading:(NSInteger)cellIndex Type:(NSString*)type{//上传中
     [self refreMessageStatus:cellIndex Status:@"9"];
 }
 //上传完成
--(void)uploadFinish:(NSInteger)cellIndex{//完成
+-(void)uploadFinish:(NSInteger)cellIndex FileKey:(NSString*)fileKey Type:(NSString*)type{//完成
+    NSLog(@"上传完成-----%d",cellIndex);
     [self refreMessageStatus:cellIndex Status:@"2"];
+    if ([type isEqualToString:@"image"]) {//图片
+        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(cellIndex) inSection:0];
+        KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
+        cell.progressView.hidden = YES;
+        [self sendImageMsg:fileKey UUID:KISDictionaryHaveKey(messages[cellIndex], @"messageuuid")];//改图片地址，并发送消息
+    }else if ([type isEqualToString:@"audio"]){//语音
+        [self sendAudioMsg:fileKey UUID:KISDictionaryHaveKey(messages[cellIndex], @"messageuuid")];
+    }
 }
 //上传失败
--(void)uploadFail:(NSInteger)cellIndex{//上传失败
+-(void)uploadFail:(NSInteger)cellIndex Type:(NSString*)type{//上传失败
     [self refreMessageStatus:cellIndex Status:@"8"];
+    if ([type isEqualToString:@"image"]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"发送图片失败请重新发送" delegate:nil cancelButtonTitle:@"知道啦"otherButtonTitles:nil];
+        [alert show];
+        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(cellIndex) inSection:0];
+        KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
+        cell.progressView.hidden = YES;
+    }
+}
+//上传进度
+-(void)uploadProgressUpdated:(NSInteger)cellIndex percent:(float)percent Type:(NSString*)type{
+    if ([type isEqualToString:@"image"]) {
+        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(cellIndex) inSection:0];
+        KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
+        cell.progressView.progress = percent;
+    }
 }
 
 - (void)didReceiveMemoryWarning

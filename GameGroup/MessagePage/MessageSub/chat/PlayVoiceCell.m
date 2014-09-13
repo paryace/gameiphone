@@ -118,7 +118,7 @@
     NSString * state = [NSString stringWithFormat:@"%@",KISDictionaryHaveKey(self.message, @"status")];
     if ([state isEqualToString:@"10"]) {//假如还没有执行上传操作
         if (self.uploaddelegate) {
-            [self.uploaddelegate uploading:index];
+            [self.uploaddelegate uploading:index Type:@"audio"];
         }
         cellIndex=index;
         UpLoadFileService * up = [[UpLoadFileService alloc] init];
@@ -137,10 +137,7 @@
     NSLog(@"上传成功");
     NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];
     if (self.uploaddelegate) {
-        [self.uploaddelegate uploadFinish:cellIndex];//上传完成
-    }
-    if (self.mydelegate) {
-        [self.mydelegate sendAudioMsg:response Index:cellIndex];
+        [self.uploaddelegate uploadFinish:cellIndex FileKey:response Type:@"audio"];//上传完成
     }
 }
 //上传失败代理回调
@@ -150,7 +147,7 @@
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"发送语音失败请重新发送" delegate:nil cancelButtonTitle:@"知道啦"otherButtonTitles:nil];
     [alert show];
     if (self.uploaddelegate) {
-        [self.uploaddelegate uploadFail:cellIndex];//上传失败
+        [self.uploaddelegate uploadFail:cellIndex Type:@"audio"];//上传失败
     }
 }
 

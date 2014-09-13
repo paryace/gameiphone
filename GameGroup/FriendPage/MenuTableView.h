@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "GroupTagCell.h"
 @protocol OnItemClickDelegate;
 @interface MenuTableView : UIView<UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic, strong) UITableView *mTableView;

@@ -38,6 +38,7 @@
 #import "SendFileMessageDelegate.h"
 #import "TeamInvitationController.h"
 #import "CustomInputView.h"
+#import "CTAssetsPickerController.h"
 
 @class AppDelegate, XMPPHelper;
 
@@ -68,7 +69,8 @@ SendAudioMsgDeleGate,
 ApplyDetailDelegate,
 SendFileMessageDelegate,
 UIGestureRecognizerDelegate,
-CustomInputDelegate>
+CustomInputDelegate,
+CTAssetsPickerControllerDelegate>
 
 {
     NSString * userName;

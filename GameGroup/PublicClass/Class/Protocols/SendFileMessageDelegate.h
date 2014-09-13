@@ -12,7 +12,8 @@
 
 @optional
 
--(void)uploading:(NSInteger)cellIndex;
--(void)uploadFinish:(NSInteger)cellIndex;
--(void)uploadFail:(NSInteger)cellIndex;
+-(void)uploading:(NSInteger)cellIndex Type:(NSString*)type;
+-(void)uploadFinish:(NSInteger)cellIndex FileKey:(NSString*)fileKey Type:(NSString*)type;
+-(void)uploadFail:(NSInteger)cellIndex Type:(NSString*)type;
+-(void)uploadProgressUpdated:(NSInteger)cellIndex percent:(float)percent Type:(NSString*)type;
 @end
