@@ -70,17 +70,32 @@
 }
 
 #pragma mark -- 分类请求成功通知
--(void)setTypeArray:(id)responseObject{
+-(void)setTypeArray:(id)responseObject SelectType:(NSMutableDictionary*)selectType{
     if ([responseObject isKindOfClass:[NSArray class]]) {
         [responseObject removeObjectAtIndex:0];
         [self.m_typeArray removeAllObjects];
         [self.m_typeArray addObjectsFromArray:responseObject];
         [self.m_typePickerView reloadAllComponents];
-        [self.m_typePickerView selectRow:self.m_typeArray.count/2 inComponent:0 animated:YES];
+        NSInteger item = 0;
+        if (selectType) {
+            item = [self getTypeItem:[KISDictionaryHaveKey(selectType, @"constId") integerValue] TypeArray:self.m_typeArray];
+        }
+        [self.m_typePickerView selectRow:item inComponent:0 animated:YES];
         if (self.selectTypeDelegate) {
-            [self.selectTypeDelegate selectType:[self.m_typeArray objectAtIndex:self.m_typeArray.count/2]];
+            [self.selectTypeDelegate selectType:[self.m_typeArray objectAtIndex:item]];
         }
     }
+}
+-(NSInteger)getTypeItem:(NSInteger)constId TypeArray:(NSMutableArray*)array{
+    if (array.count>0) {
+        for (int i = 0; i<array.count; i++) {
+            if ([KISDictionaryHaveKey([array objectAtIndex:i], @"constId") integerValue] == constId) {
+                return i;
+            }
+        }
+        return 0;
+    }
+    return 0;
 }
 
 #pragma mark 选择器

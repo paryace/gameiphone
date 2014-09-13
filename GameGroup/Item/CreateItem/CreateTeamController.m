@@ -372,7 +372,7 @@
 -(void)getTypes:(NSString *)gameid
 {
     [[ItemManager singleton] getTeamType:gameid reSuccess:^(id responseObject) {
-        [selectTypeAndNumberPersonView setTypeArray:responseObject];
+        [selectTypeAndNumberPersonView setTypeArray:responseObject SelectType:selectType];
     } reError:^(id error) {
         [self showErrorAlert:error];
     }];
