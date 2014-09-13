@@ -22,18 +22,18 @@
         self.headImageV.layer.masksToBounds=YES;
         [self.bgView addSubview:self.headImageV];
         
-        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 5, 90, 20)];
+        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 7, 90, 20)];
         [self.nameLabel setTextAlignment:NSTextAlignmentLeft];
         [self.nameLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self.nameLabel setBackgroundColor:[UIColor clearColor]];
         [self.contentView addSubview:self.nameLabel];
         
         
-        self.sexImg = [[UIImageView alloc] initWithFrame:CGRectMake(170, 5, 20, 20)];
+        self.sexImg = [[UIImageView alloc] initWithFrame:CGRectMake(170, 7, 20, 20)];
         self.sexImg.backgroundColor = [UIColor clearColor];
         [self.bgView addSubview:self.sexImg];
         
-        self.distLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 35, 240, 20)];
+        self.distLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 31, 240, 20)];
         [self.distLabel setTextColor:[UIColor blackColor]];
         [self.distLabel setFont:[UIFont systemFontOfSize:13]];
         [self.distLabel setBackgroundColor:[UIColor clearColor]];
@@ -53,7 +53,7 @@
     }
     int gamecount = gameIds.count>3?3:gameIds.count;
     
-    CGFloat w=(gamecount*20)+(gamecount*6)-6;
+    CGFloat w=(gamecount*23);
     UIView *gV=[self getGameIconUIView:gameIds X:320-30-w Y:20 Width:w Height:20];
     gV.tag=122222;
     [self.bgView addSubview:gV];
@@ -61,6 +61,9 @@
 -(UIView*)getGameIconUIView:(NSArray*)gameIds X:(CGFloat)x Y:(CGFloat)y Width:(CGFloat)width Height:(CGFloat)height
 {
     UIView *gameIconView=[[UIView alloc]initWithFrame:CGRectMake(x, y, width, height)];
+//    gameIconView.backgroundColor = [UIColor grayColor];
+    NSLog(@"ffff-------%@",gameIconView);
+
     for (int i=0 ; i<gameIds.count;i++) {
         if (i<3) {
             NSString * gameid=[gameIds objectAtIndex:i];
