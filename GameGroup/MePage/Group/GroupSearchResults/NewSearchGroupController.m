@@ -76,6 +76,7 @@
     
     m_groupArray = [NSMutableArray array];
     m_GroupTableView = [[UITableView alloc] initWithFrame:CGRectMake(80.5, startX+44, 320-80.5, self.view.frame.size.height - startX-44) style:UITableViewStylePlain];
+    m_GroupTableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     m_GroupTableView.backgroundColor = [UIColor whiteColor];;
     m_GroupTableView.dataSource = self;
     m_GroupTableView.delegate = self;
