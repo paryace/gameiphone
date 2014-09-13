@@ -587,7 +587,7 @@
         return;
     }
     H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
-    VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"characterId")];
+    VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
     VC.gameId = [GameCommon getNewStringWithId: KISDictionaryHaveKey(dic, @"gameid")];
     [self.navigationController pushViewController:VC animated:YES];
 }

@@ -48,7 +48,7 @@
     
     m_maxZiShu = 30;
     selectCharacter = self.selectRoleDict;
-    selectType = self.selectTypeDict;
+//    selectType = self.selectTypeDict;
     m_tagArray = [NSMutableArray array];
     
     mainView = [[UIView alloc] initWithFrame:CGRectMake(0, startX,self.view.frame.size.width, self.view.frame.size.height-startX)];
@@ -121,10 +121,6 @@
     customPhotoCollectionView.backgroundColor = [UIColor clearColor];;
     [mainView addSubview:customPhotoCollectionView];
 
-    
-    
-    
-    
     characterView = [[CharacterView alloc]initWithFrame:CGRectMake(0, startX, 320, kScreenHeigth-startX)];
     characterView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     characterView.characterDelegate = self;
@@ -133,17 +129,21 @@
     
     m_RoleArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     [characterView setDate:m_RoleArray];
-    
-    if (selectCharacter) {
-        [self selectCharacterAction:selectCharacter];
-    }else{
-        selectTypeAndNumberPersonView.hidden = YES;
-         [characterView showSelf];
-    }
-    
+    [self initCharacterView];
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"操作中...";
+}
+
+
+-(void)initCharacterView{
+    if (selectCharacter) {
+        selectType = [self getCacheType:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
+        [self selectCharacterAction:selectCharacter];
+    }else{
+        selectTypeAndNumberPersonView.hidden = YES;
+        [characterView showSelf];
+    }
 }
 
 -(void)onCLick:(UIButton*)action{
@@ -187,6 +187,18 @@
         [self getTag:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(typeInfo, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
     }
 }
+//缓存上次创建选择的分类
+-(void)cacheType:(NSMutableDictionary*)typeInfo GameId:(NSString*)gameId CharacterId:(NSString*)characterId{
+    NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    [[NSUserDefaults standardUserDefaults]setObject:typeInfo forKey:[NSString stringWithFormat:@"createSelectType_%@_%@_%@",userId,gameId,characterId]];
+}
+//从缓存取出上次创建选择的分类
+-(NSMutableDictionary*)getCacheType:(NSString*)gameId CharacterId:(NSString*)characterId{
+    NSString * userId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
+    return [[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"createSelectType_%@_%@_%@",userId,gameId,characterId]];
+}
+
+
 -(void)selectPersonCountAction:(NSMutableDictionary*)personCountInfo{
     if (personCountInfo) {
         selectPeopleCount = personCountInfo;
@@ -315,6 +327,7 @@
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        [self cacheType:selectType GameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"id")]];
         //发送通知 刷新我的组队页面
         [[TeamManager singleton] saveTeamInfo:responseObject GameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(selectCharacter, @"gameid")]];
         [[GroupManager singleton] getGroupInfoWithNet:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"groupId")]];

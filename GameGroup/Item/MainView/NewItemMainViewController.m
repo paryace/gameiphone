@@ -151,17 +151,7 @@
 
 //创建
 -(void)create:(id)sender{
-    NSArray *arr =[room.listDict objectForKey:@"OwnedRooms"];
-    if (arr.count==2) {
-        [self showAlertViewWithTitle:@"提示" message:@"最多只能创建两个队伍" buttonTitle:@"确定"];
-        return;
-    }
-    [[Custom_tabbar showTabBar] hideTabBar:YES];
-    CreateTeamController *cretItm =[[CreateTeamController alloc]init];
-    cretItm.selectRoleDict = firstView. selectCharacter;
-    cretItm.selectTypeDict = firstView.selectType;
-    
-    [self.navigationController pushViewController: cretItm animated:YES];
+    [self joumpToCreatePage];
 }
 
 //进入偏好
@@ -304,8 +294,20 @@
 
 -(void)didClickCreateTeamWithView:(MyRoomView *)view
 {
-    CreateTeamController *cretItm = [[CreateTeamController alloc]init];
-    [self.navigationController pushViewController:cretItm animated:YES];
+    [self joumpToCreatePage];
+}
+
+-(void)joumpToCreatePage{
+    NSArray *arr =[room.listDict objectForKey:@"OwnedRooms"];
+    if (arr.count==2) {
+        [self showAlertViewWithTitle:@"提示" message:@"最多只能创建两个队伍" buttonTitle:@"确定"];
+        return;
+    }
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    CreateTeamController *cretItm =[[CreateTeamController alloc]init];
+    cretItm.selectRoleDict = firstView. selectCharacter;
+    cretItm.selectTypeDict = firstView.selectType;
+    [self.navigationController pushViewController: cretItm animated:YES];
 }
 
 #pragma mark --解散队伍
