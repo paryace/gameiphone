@@ -11,6 +11,7 @@
 @protocol ItemClickDelegate;
 @interface SearchResultView : UIView<UITableViewDelegate,UITableViewDataSource,UISearchBarDelegate, UISearchDisplayDelegate>
 @property (nonatomic, strong) UITableView *mTableView;
+@property (nonatomic, strong) UIView *baseView;
 @property (nonatomic, strong) MySearchBar *m_searchBar;
 @property (strong, nonatomic)  NSMutableArray * searchResultView;
 @property(assign,nonatomic)id<ItemClickDelegate> delegate;
