@@ -15,6 +15,7 @@
 #import "TeachMeViewController.h"
 #import "PuthMessageViewController.h"
 #import "TestViewController.h"
+#import "MySearchBar.h"
 
 @interface MessageAddressViewController ()<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,DodeAddressCellDelegate,MFMessageComposeViewControllerDelegate,testViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate>
 {
@@ -22,7 +23,7 @@
     BOOL appAllowGetAddress;
     UITableView * _tableView;
 
-    UISearchBar * mSearchBar;
+    MySearchBar * mSearchBar;
     UISearchDisplayController *searchController;
 }
 //@property (nonatomic,retain)UISwitch* swith;
@@ -149,7 +150,7 @@
 //    }
     
     //初始化搜索条
-    mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    mSearchBar = [[MySearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
     [mSearchBar setPlaceholder:@"关键字搜索"];
     mSearchBar.delegate = self;
     [mSearchBar sizeToFit];

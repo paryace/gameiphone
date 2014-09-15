@@ -22,7 +22,7 @@
         self.headImageV.layer.masksToBounds=YES;
         [self.bgView addSubview:self.headImageV];
         
-        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 7, 90, 20)];
+        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(65, 7, 90, 20)];
         [self.nameLabel setTextAlignment:NSTextAlignmentLeft];
         [self.nameLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self.nameLabel setBackgroundColor:[UIColor clearColor]];
@@ -33,7 +33,7 @@
         self.sexImg.backgroundColor = [UIColor clearColor];
         [self.bgView addSubview:self.sexImg];
         
-        self.distLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 31, 240, 20)];
+        self.distLabel = [[UILabel alloc] initWithFrame:CGRectMake(65, 31, 200, 20)];
         [self.distLabel setTextColor:[UIColor blackColor]];
         [self.distLabel setFont:[UIFont systemFontOfSize:13]];
         [self.distLabel setBackgroundColor:[UIColor clearColor]];

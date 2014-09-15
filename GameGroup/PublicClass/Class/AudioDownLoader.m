@@ -28,32 +28,33 @@
     [super dealloc];
 }
 
-- (instancetype)initWithURLString:(NSString *)urlStr delegate:(id<AudioDownLoaderDelegate>)delegate
+- (instancetype)initWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId delegate:(id<AudioDownLoaderDelegate>)delegate
 {
-    return [self initWithURLString:urlStr delegate:delegate tag:0];
+    return [self initWithURLString:urlStr MessageId:messageId delegate:delegate tag:0];
 }
 
-- (instancetype)initWithURLString:(NSString *)urlStr delegate:(id<AudioDownLoaderDelegate>)delegate tag:(NSUInteger)tag
+- (instancetype)initWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId delegate:(id<AudioDownLoaderDelegate>)delegate tag:(NSUInteger)tag
 {
     self = [super init];
     if (self) {
         [self setUrlStr:urlStr];
         [self setDelegate:delegate];
         [self setTag:tag];
+        [self setMessageId:messageId];
     }
     return self;
 }
 
-+ (instancetype)imageDownloaderWithURLString:(NSString *)urlStr delegate:(id<AudioDownLoaderDelegate>)delegate tag:(NSUInteger)tag
++ (instancetype)fileDownloaderWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId delegate:(id<AudioDownLoaderDelegate>)delegate tag:(NSUInteger)tag
 {
-    AudioDownLoader *downloader = [[AudioDownLoader alloc] initWithURLString:urlStr delegate:delegate tag:tag];
+    AudioDownLoader *downloader = [[AudioDownLoader alloc] initWithURLString:urlStr MessageId:messageId delegate:delegate tag:tag];
     [downloader startDownload];
     return [downloader autorelease];
 }
 
-+ (instancetype)imageDownloaderWithURLString:(NSString *)urlStr delegate:(id<AudioDownLoaderDelegate>)delegate
++ (instancetype)fileDownloaderWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId delegate:(id<AudioDownLoaderDelegate>)delegate
 {
-    return [self imageDownloaderWithURLString:urlStr delegate:delegate tag:0];
+    return [self fileDownloaderWithURLString:urlStr MessageId:messageId delegate:delegate tag:0];
 }
 
 - (void)startDownload
@@ -62,25 +63,19 @@
     if (_urlStr == nil) {
         return;
     }
-    NSLog(@"%@",kCacheDirectory);
-    //先查看 cache中 是否已经有这个图片了。
-    NSFileManager *fm = [NSFileManager defaultManager];
-    NSString *imageName = [self.urlStr stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
-    NSString *filePath = [kCacheDirectory stringByAppendingPathComponent:imageName];
+    NSString * filePath = [self getVoideFilePath:_messageId];
     //如果有，我们直接用
-    if ([fm fileExistsAtPath:filePath]) {
+    if ([self isFileExist:filePath]) {
+        _receivedData = [NSData dataWithContentsOfURL:[NSURL URLWithString:filePath]];
         if([_delegate respondsToSelector:@selector(imageDownLoader:downLoadSuccessWithImage:)]){
-            UIImage *image = [UIImage imageWithData:_receivedData];
-            [_delegate imageDownLoader:self downLoadSuccessWithImage:image];
+            [_delegate fileDownLoader:self downLoadSuccessWithImage:_receivedData];
         }
     }else{    //如果没有，我们就去下载
         self.receivedData = [NSMutableData data];
         NSURL *url = [NSURL URLWithString:_urlStr];
         NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-        
         //在创建新的连接之前，取消旧的连接
         [self cancelDownload];
-        
         _connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
         [request release];
     }
@@ -91,39 +86,44 @@
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
     NSLog(@"%lld",[httpResponse expectedContentLength]);
 }
-
-
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
     [_receivedData appendData:data];
     CGFloat progress = 0;
-    //progress = [_receivedData length]/totalLength;
-    
     if([_delegate respondsToSelector:@selector(imageDownLoader:progress:)]){
-        [_delegate imageDownLoader:self progress:progress];
+        [_delegate fileDownLoader:self progress:progress];
     }
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    NSString *imageName = [self.urlStr stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
-    NSString *filePath = [kCacheDirectory stringByAppendingPathComponent:imageName];
-    //把图像数据存入cache中
-    [_receivedData writeToFile:filePath atomically:YES];
-    
+    //把数据存入cache中
+    NSString *ps = [self getVoideFilePath:_messageId];
+    [[AudioManager singleton]isHaveThisFolderWithFilePath:[NSString stringWithFormat:@"%@/voice",RootDocPath]];
+    [_receivedData writeToFile:ps atomically:YES];
     if([_delegate respondsToSelector:@selector(imageDownLoader:downLoadSuccessWithImage:)]){
-        UIImage *image = [UIImage imageWithData:_receivedData];
-        [_delegate imageDownLoader:self downLoadSuccessWithImage:image];
+        [_delegate fileDownLoader:self downLoadSuccessWithImage:_receivedData];
     }
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
     if([_delegate respondsToSelector:@selector(imageDownLoader:failedWithError:)]){
-        [_delegate imageDownLoader:self failedWithError:error];
+        [_delegate fileDownLoader:self failedWithError:error];
     }
 }
 
+-(NSString*)getVoideFilePath:(NSString*)messageId{
+    return [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:messageId]]];
+}
+
+#pragma mark ---判断文件是否存在于沙盒
+- (BOOL)isFileExist:(NSString *)fileName
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL result = [fileManager fileExistsAtPath:fileName];
+    return result;
+}
 
 - (void)cancelDownload
 {
