@@ -19,7 +19,7 @@
 #import "DSCircleCount.h"
 #import "NewSearchGroupController.h"
 #define mTime 0.5
-
+#import "MyWorldViewController.h"
 @interface FindViewController ()
 {
     UIButton *menuButotn;
@@ -844,9 +844,10 @@
 
 -(void)enterGroupList:(id)sender
 {
-//    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
 //    MyGroupViewController * gruupV = [[MyGroupViewController alloc] init];
-//    [self.navigationController pushViewController:gruupV animated:YES];
+    MyWorldViewController *myWorldVC = [[MyWorldViewController alloc]init];
+    [self.navigationController pushViewController:myWorldVC animated:YES];
     
 }
 
