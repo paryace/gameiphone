@@ -80,11 +80,11 @@
     int newRow = indexPath.row;
     int oldRow = self.lastIndexPath.row;
     _nowIndexs = indexPath.row;
+    [_mTableView reloadData];
     if (newRow == oldRow){
         return;
     }
     self.lastIndexPath = indexPath;
-    [_mTableView reloadData];
     if (self.delegate) {
         if (_isSecion) {
             [self.delegate itemClick:self DateDic:[[_menuDataDic objectForKey:[_menuKeyList objectAtIndex:indexPath.section]] objectAtIndex:indexPath.row]];

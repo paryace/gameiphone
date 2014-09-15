@@ -58,6 +58,7 @@
     [mSearchBar setPlaceholder:@"搜索群名或群号"];
     mSearchBar.showsCancelButton=NO;
     mSearchBar.delegate = self;
+    //<---背景图片
     [self.view addSubview:mSearchBar];
     
     baseBgView = [[UIView alloc] initWithFrame:CGRectMake(0, startX+44, 320, self.view.frame.size.height-startX-44)];
@@ -65,7 +66,11 @@
     baseBgView.alpha = 0.5;
     baseBgView.hidden = YES;
     
+    UIImageView * uiImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, startX+44, 80, self.view.frame.size.height-startX-44)];
+    uiImage.image = KUIImage(@"menu_bg");
+    [self.view addSubview:uiImage];
     menuTableView = [[MenuTableView alloc] initWithFrame:CGRectMake(0, startX+44, 80, self.view.frame.size.height-startX-44)];
+    menuTableView.backgroundColor = [UIColor clearColor];
     menuTableView.isSecion = NO;
     menuTableView.delegate = self;
     [self.view addSubview:menuTableView];
