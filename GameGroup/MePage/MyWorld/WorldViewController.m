@@ -64,6 +64,9 @@ typedef enum : NSUInteger {
     double latitude;
     
     NSMutableArray *areaArray;
+    //是否是上拉加载更多
+    BOOL isRefresh;
+    NSInteger refreshCount;
 }
 @property (nonatomic, assign) CommentInputType commentInputType;
 @property (nonatomic, strong) EmojiView *theEmojiView;
@@ -110,8 +113,8 @@ typedef enum : NSUInteger {
     cellhightarray = [NSMutableDictionary dictionary];
     delcommentDic = [NSMutableDictionary dictionary];
     areaArray = [NSMutableArray array];
-    
-   
+    isRefresh = NO;
+    refreshCount = 0;
     
     
     
@@ -168,6 +171,7 @@ typedef enum : NSUInteger {
 }
 - (void)netWork
 {
+    [hud show:YES];
     //获取经纬度
     [[LocationManager sharedInstance]startCheckLocationWithSuccess:^(double lat, double lon) {
         longitude = lon;
@@ -267,7 +271,14 @@ typedef enum : NSUInteger {
 
     [paramDic setObject:[NSString stringWithFormat:@"%f",longitude] forKey:@"longitude"];
     [paramDic setObject:[NSString stringWithFormat:@"%f",latitude] forKey:@"latitude"];
+    //判断是否是上拉加载更多
+    if (isRefresh==YES) {
+    NSString *str = [NSString stringWithFormat:@"%d",refreshCount*20+20];
+    [paramDic setObject:str forKey:@"firstResult"];
+        
+    }else{
     [paramDic setObject:@"0" forKey:@"firstResult"];
+    }
     [paramDic setObject:@"20" forKey:@"maxSize"];
     [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [dict setObject:paramDic forKey:@"params"];
@@ -278,17 +289,17 @@ typedef enum : NSUInteger {
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"reponsObject =%@",responseObject);
 
-//            if (m_currPageCount ==0) {
-//                [m_dataArray removeAllObjects];
-//                NSMutableArray *arr  = [NSMutableArray array];
-//                NSArray *arrays = [NSArray arrayWithArray:responseObject];
-//                for (int i =0; i<arrays.count; i++) {
-//                    [arr addObject:[self contentAnalyzer:arrays[i] withReAnalyzer:NO]];
-//                    NSDictionary *dic = [responseObject objectAtIndex:i];
-//                    [areaArray addObject:KISDictionaryHaveKey(dic, @"pushArea")];
-//                }
-//                [m_dataArray addObjectsFromArray:arr];
-//            }else{
+            if (m_currPageCount ==0) {//此情况用于下拉刷新，和第一次加载页面
+                [m_dataArray removeAllObjects];
+                NSMutableArray *arr  = [NSMutableArray array];
+                NSArray *arrays = [NSArray arrayWithArray:responseObject];
+                for (int i =0; i<arrays.count; i++) {
+                    [arr addObject:[self contentAnalyzer:arrays[i] withReAnalyzer:NO]];
+                    NSDictionary *dic = [responseObject objectAtIndex:i];
+                    [areaArray addObject:KISDictionaryHaveKey(dic, @"pushArea")];
+                }
+                [m_dataArray addObjectsFromArray:arr];
+            }else{
                 NSMutableArray *arr  = [NSMutableArray array];
                 NSArray *arrays = [NSArray arrayWithArray:responseObject];
                 for (int i =0; i<arrays.count; i++) {
@@ -297,11 +308,10 @@ typedef enum : NSUInteger {
                    [areaArray addObject:KISDictionaryHaveKey(dic, @"pushArea")];
                 }
                 [m_dataArray addObjectsFromArray:arr];
-//            }
+            }
             m_currPageCount ++;
             [m_myTableView reloadData];
-            
-//        }
+    
         [m_footer endRefreshing];
         [m_header endRefreshing];
         [hud hide:YES];
@@ -643,6 +653,7 @@ typedef enum : NSUInteger {
         m_currPageCount = 0;
         hud.labelText = @"加载中...";
 //        [self getInfoWithNet];
+        [self netWork];
         
     };
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
@@ -664,7 +675,9 @@ typedef enum : NSUInteger {
     footer.scrollView = m_myTableView;
     footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         hud.labelText = @"加载中...";
-        [self getInfoWithNet];
+        isRefresh = YES;
+        refreshCount++;
+        [self netWork];
     };
     m_footer = footer;
 }
