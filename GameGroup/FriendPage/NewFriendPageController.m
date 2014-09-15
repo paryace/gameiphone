@@ -125,7 +125,7 @@
     [m_searchBar addSubview:searchV];
     m_myTableView.tableHeaderView = m_searchBar;
     
-    searchResultView = [[SearchResultView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-50)];
+    searchResultView = [[SearchResultView alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 320, self.view.bounds.size.height-(KISHighVersion_7 ? 20 : 0)-50)];
     searchResultView.hidden = YES;
     searchResultView.delegate = self;
     [self.view addSubview:searchResultView];
