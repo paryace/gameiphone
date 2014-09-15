@@ -9,7 +9,6 @@
 #import "CustomInputView.h"
 @implementation CustomInputView
 {
-    UIButton * m_RecordImageView;
     CGPoint currentLocation;
     CGPoint originalLocation;
     BOOL isReady;
@@ -36,16 +35,16 @@
         [self addSubview:customAudioBtn];
         
         //录音button
-        m_RecordImageView = [[UIButton alloc]initWithFrame:CGRectMake(41, 7, 206, 29)];
-        m_RecordImageView.userInteractionEnabled = YES;
-        [m_RecordImageView setImage:KUIImage(@"chat_recordAudio_normal") forState:UIControlStateNormal];
-        [m_RecordImageView setImage:KUIImage(@"chat_recordAudio_click") forState:UIControlStateHighlighted];
-        [m_RecordImageView addTarget:self action:@selector(holdDownButtonTouchDown) forControlEvents:UIControlEventTouchDown];
-        [m_RecordImageView addTarget:self action:@selector(holdDownButtonTouchUpOutside) forControlEvents:UIControlEventTouchUpOutside];
-        [m_RecordImageView addTarget:self action:@selector(holdDownButtonTouchUpInside) forControlEvents:UIControlEventTouchUpInside];
-        [m_RecordImageView addTarget:self action:@selector(holdDownDragOutside) forControlEvents:UIControlEventTouchDragExit];
-        [m_RecordImageView addTarget:self action:@selector(holdDownDragInside) forControlEvents:UIControlEventTouchDragEnter];
-        [self addSubview:m_RecordImageView];
+        _RecordImageView = [[UIButton alloc]initWithFrame:CGRectMake(41, 7, 206, 29)];
+        _RecordImageView.userInteractionEnabled = YES;
+        [_RecordImageView setImage:KUIImage(@"chat_recordAudio_normal") forState:UIControlStateNormal];
+        [_RecordImageView setImage:KUIImage(@"chat_recordAudio_click") forState:UIControlStateHighlighted];
+        [_RecordImageView addTarget:self action:@selector(holdDownButtonTouchDown) forControlEvents:UIControlEventTouchDown];
+        [_RecordImageView addTarget:self action:@selector(holdDownButtonTouchUpOutside) forControlEvents:UIControlEventTouchUpOutside];
+        [_RecordImageView addTarget:self action:@selector(holdDownButtonTouchUpInside) forControlEvents:UIControlEventTouchUpInside];
+        [_RecordImageView addTarget:self action:@selector(holdDownDragOutside) forControlEvents:UIControlEventTouchDragExit];
+        [_RecordImageView addTarget:self action:@selector(holdDownDragInside) forControlEvents:UIControlEventTouchDragEnter];
+        [self addSubview:_RecordImageView];
         
         //加号button
         UIButton *customKKchatAddBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -66,7 +65,7 @@
 
 
 
-//开始录音
+//手指按下开始录音
 - (void)holdDownButtonTouchDown {
     if (isReady ==YES){
         isReady = NO;
@@ -107,7 +106,7 @@
 {
     [self.mydelegate didClickkkchatAddBtnWithView:self];
 }
-
+//正常录音完成
 -(void)afterharfs
 {
     [self.mydelegate RecordSuccessWithView:self];
@@ -120,7 +119,7 @@
 
 -(void)rechangReadyState{
     if (isReady == NO) {
-        [self changeBool];
+         isReady =YES;
     }
 }
 

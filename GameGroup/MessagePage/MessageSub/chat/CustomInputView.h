@@ -10,6 +10,7 @@
 
 @protocol CustomInputDelegate;
 @interface CustomInputView : UIView
+@property (strong,nonatomic) UIButton * RecordImageView;
 @property (nonatomic,assign)id<CustomInputDelegate>mydelegate;
 -(void)rechangReadyState;
 @end

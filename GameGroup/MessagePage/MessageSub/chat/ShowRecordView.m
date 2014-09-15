@@ -16,7 +16,6 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code
         self.backgroundColor = kColorWithRGB(0, 0, 0, .7);
         self.imageView = [[ UIImageView alloc]initWithFrame:CGRectMake(0, 0, 150, 150)];
         self.imageView.center = CGPointMake(self.center.x, self.center.y-100);
@@ -32,7 +31,7 @@
 }
 -(void)changeBDimgWithimg:(double)lowPassResults
 {
-    
+    self.hidden  = NO;
     if (0<lowPassResults<=0.14) {
         [self.m_bodongImg setImage:[UIImage imageNamed:@"third_xiemessage_record_ani1"]];
         NSLog(@"111");
@@ -58,15 +57,34 @@
 
 }
 
+//手指按下开始录音
+- (void)holdDownButtonTouchDown {
 
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
 }
-*/
+//取消本次录音
+- (void)holdDownButtonTouchUpOutside {
+    self.imageView.image = KUIImage(@"third_xiemessage_record_icon");
+    self.m_bodongImg.hidden = NO;
+    self.backgroundColor = UIColorFromRGBA(0x000000, .7);
+}
+//正常录音完成
+- (void)holdDownButtonTouchUpInside {
+    self.imageView.image = KUIImage(@"third_xiemessage_record_icon");
+    self.m_bodongImg.hidden = NO;
+    self.backgroundColor = UIColorFromRGBA(0x000000, .7);
+}
+//手指移动到取消录制范围
+- (void)holdDownDragOutside {
+    self.imageView.image = KUIImage(@"cancleRecord_1") ;
+    self.m_bodongImg.hidden = YES;
+    self.backgroundColor = UIColorFromRGBA(0xf75757, .7);
+}
+//手指移动回来重新录制
+- (void)holdDownDragInside {
+    self.imageView.image = KUIImage(@"third_xiemessage_record_icon");
+    self.m_bodongImg.hidden = NO;
+    self.backgroundColor = UIColorFromRGBA(0x000000, .7);
+}
+
 
 @end

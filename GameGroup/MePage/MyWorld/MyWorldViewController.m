@@ -9,7 +9,6 @@
 #import "MyWorldViewController.h"
 #import "LocationManager.h"
 #import "MyWorldCell.h"
-#import "MyWorldWithPictureCell.h"
 #import "ImgCollCell.h"
 @interface MyWorldViewController ()
 {

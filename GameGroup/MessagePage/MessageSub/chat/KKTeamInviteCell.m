@@ -46,7 +46,7 @@
         self.attView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 220, 25)];
         [self.contentView addSubview:self.attView];
         
-        UIImageView *img = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 210, 1)];
+        UIImageView *img = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 210, 1)];
         img.image = KUIImage(@"msg_line");
         [self.attView addSubview:img];
         

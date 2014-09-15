@@ -119,8 +119,6 @@ PlayingDelegate>
     NSMutableArray *gifArray2;
     BOOL isPlaying;
     UIButton * titleBtn;//右上角button
-    
- 
     CustomInputView *custview;//录音框架
 }
 
@@ -139,7 +137,6 @@ PlayingDelegate>
 @property (nonatomic,strong) UIButton * topItemView;
 @property (nonatomic,strong) UIImageView * leftImage;
 @property (nonatomic,strong) UIImageView * rightImage;
-//@property (nonatomic, assign) BOOL isPlaying;
 @property (nonatomic, copy) NSString * filename;// 声音路径
 @property (nonatomic,assign)NSInteger clickCellNum;
 @end
@@ -325,12 +322,6 @@ PlayingDelegate>
     recordAudio = [[RecordAudio alloc]init];
     recordAudio.delegate = self;
     curAudio = [[NSData alloc]init];
-
-    
-//    gifArray1 = [NSMutableArray arrayWithObjects:@"SenderVoiceNodePlaying001",@"SenderVoiceNodePlaying002",@"SenderVoiceNodePlaying003", nil];
-
-//    gifArray2 = [NSMutableArray arrayWithObjects:@"ReceiverVoiceNodePlaying001",@"ReceiverVoiceNodePlaying002",@"ReceiverVoiceNodePlaying003", nil];
-    
     
     uDefault = [NSUserDefaults standardUserDefaults];
     currentID = [uDefault objectForKey:@"account"];
@@ -349,26 +340,11 @@ PlayingDelegate>
     ifEmoji = NO;
     [self.view addSubview:self.inPutView];  //输入框
     
-    /*
-     
-     打开则开启语音界面
-     
-     
-     将 inputview中的 entryImageView.frame --> CGRectMake(50, 7, 185, 35);
-     把Audiobtn add到inputview中
-     更改self。textview的frame 同上
-     
-      */
-//    self.customInputView.hidden = YES;//语音输入框默认隐藏
-
-    
     [self setTopViewWithTitle];
     custview= [[ CustomInputView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-44,320,44)];
     custview.mydelegate = self;
     custview.hidden = YES;
     [self.view addSubview:custview];
-
-    
     
      [self changMsgToRead];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification
@@ -441,7 +417,6 @@ PlayingDelegate>
     }
     [self goBack];
     showRecordView = [[ShowRecordView alloc]initWithFrame:CGRectMake(0, startX,320 , self.view.bounds.size.height-startX-50)];
-//    showRecordView.center = self.view.center;
     showRecordView.hidden = YES;
     [self.view addSubview:showRecordView];
     
@@ -803,9 +778,6 @@ PlayingDelegate>
 }
 
 -(void)hideMenuView{
-//    UIAlertView * errorDialog = [[UIAlertView alloc] initWithTitle:@"提示" message:teamUsershipType?@"您的组队已成功，请在游戏中等待队友寻找你进行游戏。如果队员未能及时报道，就来陌游催一催吧!":@"您的组队已成功，请在游戏中添加队长的角色xxx，进行精彩的游戏吧！" delegate:self cancelButtonTitle:@"确定"otherButtonTitles:nil, nil];
-//    [errorDialog show];
-    
     isMenuShow = NO;
     [self hideExtendedChooseView];
 }
@@ -1101,7 +1073,7 @@ PlayingDelegate>
             [cell setHeadImgByMe:self.myHeadImg];
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell.thumbImgV setFrame:CGRectMake(55,40 + titleSize.height,40,40)];
-            bgImage = [[UIImage imageNamed:@"bubble_05"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:10 topCapHeight:22];
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
              cell.senderNickName.hidden=YES;
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
@@ -1127,7 +1099,7 @@ PlayingDelegate>
                 cell.senderNickName.text = userNickName;
             }
             
-            bgImage = [[UIImage imageNamed:@"bubble_04.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:@"bubble_norla_sender.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height + 20)];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.statusLabel.hidden = YES;
@@ -1144,7 +1116,6 @@ PlayingDelegate>
         if (cell == nil) {
             cell = [[KKTeamInviteCell alloc] initWithMessage:dict reuseIdentifier:identifier];
         }
-//        cell.backgroundColor  = [UIColor greenColor];
         cell.myChatCellDelegate = self;
         [cell setMessageDictionary:dict];
         NSDictionary* msgDic = [[self.finalMessageArray objectAtIndex:indexPath.row] JSONValue];
@@ -1200,12 +1171,7 @@ PlayingDelegate>
             }
             
             bgImage = [[UIImage imageNamed:@"bubble_norla_sender.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
-//            if (contentSize.height>40) {
-//                [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+33)];
-//            }else {
-                [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+18)];
-//            }(padding-10+45,padding*2-15+offHight,size.width+25,size.height + 20)
-
+            [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+18)];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.statusLabel.hidden = YES;
             cell.failImage.hidden=YES;
@@ -1301,7 +1267,6 @@ PlayingDelegate>
             cell = [[KKTeamInviteCell alloc] initWithMessage:dict reuseIdentifier:identifier];
         }
         cell.lowType = 2;
-
         cell.myChatCellDelegate = self;
         [cell setMessageDictionary:dict];
         NSDictionary* msgDic = [[self.finalMessageArray objectAtIndex:indexPath.row] JSONValue];
@@ -1340,7 +1305,6 @@ PlayingDelegate>
             [cell.contentLabel setFrame:CGRectMake(padding + 50 +28,35 + titleSize.height + (titleSize.height > 0 ? 5 : 0), contentSize.width,contentSize.height)];
             
             [cell.attView setFrame:CGRectMake(320-size.width - padding-20-10-30,cell.bgImageView.frame.origin.y+cell.bgImageView.frame.size.height-30, 220, 30)];
-            
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
         }else
         {
@@ -1367,7 +1331,6 @@ PlayingDelegate>
             [cell.lineImage  setFrame:CGRectMake(cell.titleLabel.frame.origin.x,cell.titleLabel.frame.origin.y+cell.titleLabel.frame.size.height+2,size.width+10,1)];
             cell.lineImage.hidden=YES;
             [cell.attView setFrame:CGRectMake(padding-5+45,cell.bgImageView.frame.origin.y+cell.bgImageView.frame.size.height-27, 220, 25)];
-//            [cell.attView setFrame:CGRectMake(padding-5+45, 90 + titleSize.height, 220, 25)];
         }
         return cell;
     }
@@ -1603,14 +1566,8 @@ PlayingDelegate>
             }else {
                 cell.audioRedImg.hidden= YES;
             }
-            
-            cell.infoDict = payload;
-            NSString *filePath =[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:KISDictionaryHaveKey(payload, @"messageid")]];
-            NSString *ps = [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(payload, @"messageid")]]];
-
-            [cell downLoadAudioFromNet:filePath address:ps];
-            
-            
+            cell.payloadDict = payload;
+            [cell downLoadAudioFromNet];
             [cell setHeadImgByChatUser:userImage];
             if([self.type isEqualToString:@"normal"]){
                 cell.senderNickName.hidden=YES;
@@ -1891,27 +1848,11 @@ PlayingDelegate>
     _audioBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     _audioBtn.frame =CGRectMake(10, self.inPutView.frame.size.height-9.5f-25, 25, 25);
     _audioBtn.backgroundColor = [UIColor clearColor];
-//    _audioBtn.titleLabel.numberOfLines = 0;
-//    [_audioBtn setImageEdgeInsets:UIEdgeInsetsMake(8, 8, 8, 8)];
-
     [_audioBtn setImage:KUIImage(@"audioBtn") forState:UIControlStateNormal];
     [_audioBtn addTarget:self action:@selector(showStartRecordBtn:) forControlEvents:UIControlEventTouchUpInside];
     return _audioBtn;
 }
 
-/*
- 创建录音秃瓢
- 
- */
-#pragma mark-----通知  录音中 更改图片
--(void)showRecordAudioDB:(NSNotification*)info
-{
-    NSDictionary *dic = info.userInfo;
-    double cus = [[dic objectForKey:@"low"] doubleValue];
-    showRecordView.hidden  = NO;
-    showRecordView.imageView.image = KUIImage(@"third_xiemessage_record_icon");
-    [showRecordView changeBDimgWithimg:cus];
-}
 #pragma mark----录音发送录音方法
 -(void)showStartRecordBtn:(UIButton *)sender
 {
@@ -1945,12 +1886,13 @@ PlayingDelegate>
 
 #pragma mark --播放
 #pragma mark ---播放声音
-
 -(void)playAudio:(UIButton *)sender
 {
-    
+    NSInteger i = sender.tag-1;
+    NSMutableDictionary *dic = [messages objectAtIndex:i];
+    NSDictionary *dict = [[dic objectForKey:@"payload"]JSONValue];
     if (isPlaying) {
-        if (self.clickCellNum ==sender.tag-1) {
+        if (self.clickCellNum == i) {
             [[PlayerManager sharedManager] stopPlaying];
             return;
         }
@@ -1959,52 +1901,31 @@ PlayingDelegate>
         PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
         [cell stopPlay];
     }
-    
-//    if ( ! isPlaying) {
-        [PlayerManager sharedManager].delegate = nil;
-        
-        isPlaying = YES;
-        NSInteger i = sender.tag-1;
-        self.clickCellNum = i;
-        NSMutableDictionary *dic = [messages objectAtIndex:i];
-        NSDictionary *dict = [[dic objectForKey:@"payload"]JSONValue];
-    
+    [PlayerManager sharedManager].delegate = nil;
+    isPlaying = YES;
+    self.clickCellNum = i;
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"sender")]isEqualToString:@"0"]&&[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"sender")]isEqualToString:@"you"]) {
         [[PlayerManager sharedManager] playAudioWithFileName:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")] delegate:self];
     }else{
         NSString *filePath =[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]];
-
-    [dic setObject:@"2" forKey:@"audioType"];
-    [DataStoreManager changeAudioTypeWithMsgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"messageuuid")] table:self.type];
-    
+        [dic setObject:@"2" forKey:@"audioType"];
+        [DataStoreManager changeAudioTypeWithMsgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"messageuuid")] table:self.type];
         NSData *data =[NSData dataWithContentsOfURL:[NSURL URLWithString:filePath]];
-    
         NSString *ps = [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]]];
-    
-    /*
-     判断文件是否存在 如果不存在就保存
-     
-     */
+        /*
+        判断文件是否存在 如果不存在就保存
+        */
         [[AudioManager singleton]isHaveThisFolderWithFilePath:[NSString stringWithFormat:@"%@/voice",RootDocPath]];
-    if (![self isFileExist:ps]) {
-        NSLog(@"ps---%@",ps);
-        [data writeToFile:ps atomically:YES];
-    }
+        if (![self isFileExist:ps]) {
+            [data writeToFile:ps atomically:YES];
+        }
         [[PlayerManager sharedManager] playAudioWithFileName:ps delegate:self];
     }
-        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
-        PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
-        cell.cellCount = indexPath.row;
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
+    PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
+    cell.cellCount = indexPath.row;
     cell.audioRedImg.hidden = YES;
-        [cell startPaly];
-//    }
-//    else {
-//        isPlaying = NO;
-//        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(sender.tag-1) inSection:0];
-//        PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
-//        [cell stopPlay];
-////        [[PlayerManager sharedManager] stopPlaying];
-//    }
+    [cell startPaly];
 }
 
 #pragma mark ---判断文件是否存在于沙盒
@@ -2024,63 +1945,17 @@ PlayingDelegate>
     if (result) {
         [fileManager removeItemAtPath:fileName error:nil];
     }
-    
 }
 
-//- (void)PlayVoice:(NSData *)data {
-//    
-//    if(data.length>0)[recordAudio play:data];
-//}
-//-(void)saveAudioSuccessed:(id)sender
-//{
-//    saveAudioSuccess =YES;
-//}
-
-//-(void)stopRecording:(UIButton *)sender
-//{
-//    endRecordTime = [NSDate timeIntervalSinceReferenceDate];
-//    showRecordView . hidden = YES;
-//    NSURL *url = [recordAudio stopRecord];
-//    
-//    endRecordTime -= startRecordTime;
-//    if (endRecordTime<1.00f) {
-//        NSLog(@"录音时间过短");
-////        [self showMsg:@"录音时间过短,应大于2秒"];
-//        [self showMessageWindowWithContent:@"录音时间过短,应大于2秒" imageType:0];
-//        return;
-//    } else if (endRecordTime>30.00f){
-//        [self showMessageWindowWithContent:@"录音时间过长,应小于30秒" imageType:0];
-//        return;
-//    }
-//    NSDate *date = [NSDate date];
-//    NSDateFormatter  *dateformatter=[[NSDateFormatter alloc] init];
-//    [dateformatter setDateFormat:@"YYYYMMdd"];
-//    NSString * locationString=[dateformatter stringFromDate:date];
-//    NSString* uuid = [[GameCommon shareGameCommon] uuid];
-
-    
-//    if (url != nil) {
-//        
-//        curAudio = EncodeWAVEToAMR([NSData dataWithContentsOfURL:url],1,16,uuid);
-//        
-////        if (curAudio) {
-////            [curAudio retain];
-////        }
-//    }
-//    if (curAudio.length >0) {
-//        [self sendAudioMsgD:[NSString stringWithFormat:@"%@/%@.amr",RootDocPath,uuid] UUID:uuid Body:@"[语音]"];
-//    } else {
-//        
-//    }
-
-//}
-
-//-(void)playAudioWithCell:(PlayVoiceCell*)cell
-//{
-//    NSDictionary *dic = [messages objectAtIndex:cell.tag];
-//    
-//}
-
+#pragma mark ----停止播放
+- (void)playingStoped {
+    for (PlayVoiceCell *cell in [self.tView visibleCells]  ) {
+        if ([cell isKindOfClass:[PlayVoiceCell class]]) {
+            [cell.voiceImageView stopAnimating];
+        }
+    }
+    isPlaying = NO;
+}
 
 //设置返回按钮上面的消息数量
 -(void)setBackButtonNoreadMsg
@@ -2198,7 +2073,6 @@ PlayingDelegate>
     if (!_kkChatAddButton) {
         _kkChatAddButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _kkChatAddButton.frame = CGRectMake(253, self.inPutView.frame.size.height-9.5f-25, 25, 25);
-//        [_kkChatAddButton setImageEdgeInsets:UIEdgeInsetsMake(8, 8, 8, 8)];
         [_kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal"]forState:UIControlStateNormal];
         [_kkChatAddButton addTarget:self action:@selector(kkChatAddButtonClick:)forControlEvents:UIControlEventTouchUpInside];
     }
@@ -2210,7 +2084,6 @@ PlayingDelegate>
         _emojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         _emojiBtn.frame = CGRectMake(285, self.inPutView.frame.size.height-9.5-25,25,25);
         [_emojiBtn setImage:[UIImage imageNamed:@"emoji.png"] forState:UIControlStateNormal];
-//        [_emojiBtn setImageEdgeInsets:UIEdgeInsetsMake(8, 8, 8, 8)];
         [_emojiBtn addTarget:self action:@selector(kkChatEmojiBtnClicked:)forControlEvents:UIControlEventTouchUpInside];
     }
     return _emojiBtn;
@@ -3465,7 +3338,6 @@ PlayingDelegate>
     [messageDict setObject:payloadStr forKey:@"payload"];
     
     [self addNewMessageToTable:messageDict];
-//    [[MessageAckService singleton] addMessage:messageDict];
 }
 
 
@@ -4045,7 +3917,18 @@ PlayingDelegate>
     }
     self.available = state;
 }
-
+#pragma mark ----组队信息更新成功
+-(void)teamInfoUploadNotification:(NSNotification*)notification{
+    if (notification.userInfo&&[notification.userInfo isKindOfClass:[NSDictionary class]]) {
+        NSString * groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(notification.userInfo, @"groupId")];
+        if ([groupId isEqualToString:[GameCommon getNewStringWithId:self.chatWithUser]]) {
+            if (self.newTeamMenuView) {
+                [self.newTeamMenuView setMemberListss];
+            }
+        }
+        
+    }
+}
 -(BOOL)repeat:(NSDictionary*)tempDic{
     if (messages.count<3) {
         for (int i = 0;i < messages.count;i++) {
@@ -4281,47 +4164,27 @@ PlayingDelegate>
 
 #pragma mark----各种声音的
 #pragma mark - Recording & Playing Delegate
-
 - (void)recordingFinishedWithFileName:(NSString *)filePath time:(NSTimeInterval)interval {
-//    self.levelMeter.progress = 0;
-//    self.filename = filePath;
-//    [self.consoleLabel performSelectorOnMainThread:@selector(setText:)
-//                                        withObject:[NSString stringWithFormat:@"录音完成: %@", [self.filename substringFromIndex:[self.filename rangeOfString:@"Documents"].location]]
-//                                     waitUntilDone:NO];
-    
-//    NSString *filePaths = [self.filename substringFromIndex:[self.filename rangeOfString:@"Documents"].location];
-    showRecordView.imageView.image = KUIImage(@"third_xiemessage_record_icon");
-    showRecordView.m_bodongImg.hidden = NO;
-    showRecordView.backgroundColor = UIColorFromRGBA(0x000000, .7);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ((long long)interval<1) {//录音小于
+            /*
+             上传失败 删除本地已创建文件
+             */
+            [self isFileExistDelete:filePath];
+            [self showMessageWindowWithContent:@"录音时间太短" imageType:4];
+            custview.RecordImageView.userInteractionEnabled = NO;
+            [self performSelector:@selector(duduud) withObject:self afterDelay:1];
+            return;
+        }
+        NSString *uuid = [self getuuidWithNS:filePath];
+        [self sendAudioMsgD:filePath time:interval UUID:uuid Body:@"[语音]"];
+    });
 
-    
-    NSLog(@"interval---%.0f",interval);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if ((long long)interval<1) {
-                /*
-                 上传失败 删除本地已创建文件
-                 */
-
-                [self isFileExistDelete:filePath];
-                
-                
-                [self showMessageWindowWithContent:@"录音时间太短" imageType:4];
-//               self performSelector:withObject:afterDelay
-                _startRecordBtn.userInteractionEnabled = NO;
-                self.textView.hidden = YES;
-                [self performSelector:@selector(duduud) withObject:self afterDelay:2];
-                return;
-            }
-            NSString *uuid = [self getuuidWithNS:filePath];
-//            [self sendAudioMsgD:filePath UUID:uuid Body:@"[语音]"];
-            [self sendAudioMsgD:filePath time:interval UUID:uuid Body:@"[语音]"];
-        });
-    
 }
+//防止频繁点击
 -(void)duduud
 {
-    _startRecordBtn.userInteractionEnabled = YES;
-    self.textView.hidden = NO;
+    custview.RecordImageView.userInteractionEnabled = YES;
 }
 -(NSString *)getuuidWithNS:(NSString *)str
 {
@@ -4330,111 +4193,76 @@ PlayingDelegate>
     return ar[0];
 
 }
+#pragma mark ----录音超时
 - (void)recordingTimeout {
     [[RecorderManager sharedManager]stopRecording];
     [self showMessageWindowWithContent:@"录音超时,最长60秒" imageType:4];
-    
-    
 }
-
+#pragma mark ----停止录音
 - (void)recordingStopped {
-
     showRecordView.hidden=YES;
 }
-
+#pragma mark ----录音失败
 - (void)recordingFailed:(NSString *)failureInfoString {
-//    self.consoleLabel.text = @"录音失败";
     [[RecorderManager sharedManager]cancelRecording];
     [self isFileExistDelete:failureInfoString];
     [self showMessageWindowWithContent:@"录音失败" imageType:4];
-    
-    
-    
 }
-
+#pragma mark ----录音动画
 - (void)levelMeterChanged:(float)levelMeter {
-//    self.levelMeter.progress = levelMeter;
-    NSLog(@"------%f",levelMeter);
     showRecordView.hidden  = NO;
     [showRecordView changeBDimgWithimg:levelMeter];
 }
 
-- (void)playingStoped {
-    for (PlayVoiceCell *cell in [self.tView visibleCells]  ) {
-        if ([cell isKindOfClass:[PlayVoiceCell class]]) {
-//            if ([cell.voiceImageView isAnimating]) {
-                [cell.voiceImageView stopAnimating];
-//            }
-        }
 
-    }
-     isPlaying = NO;
-//    self.consoleLabel.text = [NSString stringWithFormat:@"播放完成: %@", [self.filename substringFromIndex:[self.filename rangeOfString:@"Documents"].location]];
-}
-
--(void)teamInfoUploadNotification:(NSNotification*)notification{
-    if (notification.userInfo&&[notification.userInfo isKindOfClass:[NSDictionary class]]) {
-        NSString * groupId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(notification.userInfo, @"groupId")];
-        if ([groupId isEqualToString:[GameCommon getNewStringWithId:self.chatWithUser]]) {
-            if (self.newTeamMenuView) {
-                [self.newTeamMenuView setMemberListss];
-            }
-        }
-       
-    }
-    
-    NSLog(@"");
-}
 
 #pragma mark ----CustomInputViewDelegate
--(void)beginRecordWithView:(UIView *)view//点击开始
+#pragma mark ----手指按下开始录音
+-(void)beginRecordWithView:(UIView *)view
 {
     [[PlayerManager sharedManager]stopPlaying];
     [RecorderManager sharedManager].delegate = self;
     [[RecorderManager sharedManager] startRecording];
 }
--(void)touchMovedWithView:(UIView *)view//移动向上超过20
+#pragma mark ----手指移动到取消录制范围
+-(void)touchMovedWithView:(UIView *)view
 {
-    showRecordView.imageView.image = KUIImage(@"cancleRecord_1") ;
-    showRecordView.m_bodongImg.hidden = YES;
-    showRecordView.backgroundColor = UIColorFromRGBA(0xf75757, .7);
+    [showRecordView holdDownDragOutside];
 }
-
--(void)touchMoveBackWithView:(UIView *)view//移动向上小雨20
+#pragma mark ----手指移动回来重新录制
+-(void)touchMoveBackWithView:(UIView *)view
 {
-    showRecordView.imageView.image = KUIImage(@"third_xiemessage_record_icon");
-    showRecordView.m_bodongImg.hidden = NO;
-    showRecordView.backgroundColor = UIColorFromRGBA(0x000000, .7);
+    [showRecordView holdDownDragInside];
 }
-
--(void)RecordSuccessWithView:(UIView *)view//点击完成 录制成功
+#pragma mark ----正常录音完成
+-(void)RecordSuccessWithView:(UIView *)view
 {
+    [showRecordView holdDownButtonTouchUpInside];
     [[RecorderManager sharedManager]stopRecording];
 }
-
--(void)cancleRecordWithView:(UIView *)view;//点击完成 录制失败
+#pragma mark ----取消本次录音
+-(void)cancleRecordWithView:(UIView *)view;
 {
-    showRecordView.imageView.image = KUIImage(@"third_xiemessage_record_icon");
-    showRecordView.m_bodongImg.hidden = NO;
-    showRecordView.backgroundColor = UIColorFromRGBA(0x000000, .7);
+    [showRecordView holdDownButtonTouchUpOutside];
     [[RecorderManager sharedManager]cancelRecording];
 
 }
-
--(void)didClickEmjoWithView:(UIView *)view //点击表情buton
+#pragma mark ----点击表情buton
+-(void)didClickEmjoWithView:(UIView *)view
 {
     [self kkChatEmojiBtnClicked:self.emojiBtn];
     custview.hidden = YES;
     self.inPutView.hidden  = NO;
 
 }
-
--(void)didClickkkchatAddBtnWithView:(UIView *)view//点击加号
+#pragma mark ----点击加号
+-(void)didClickkkchatAddBtnWithView:(UIView *)view
 {
     [self kkChatAddButtonClick:self.kkChatAddButton];
     custview.hidden = YES;
     self.inPutView.hidden  = NO;
 }
+#pragma mark ----
 -(void)didClickAudioWithView:(UIView *)view
 {
     custview.hidden = YES;
@@ -4444,14 +4272,21 @@ PlayingDelegate>
 
 -(void)viewDidDisappear:(BOOL)animated
 {
+    [self duduud];
     [[PlayerManager sharedManager] stopPlaying];
-    [[RecorderManager sharedManager]stopRecording];
+    [[RecorderManager sharedManager]cancelRecording];
 }
 
-
+/*
+ 锁屏状态停止播放
+ 锁屏状态停止录音
+ */
 - (void)applicationWillResignActive:(NSNotification *)notification
 {
-
+    NSLog(@"-------锁屏，home键，停止录制声音--------");
+    [self duduud];
+    [[PlayerManager sharedManager]stopPlaying];
+    [[RecorderManager sharedManager]cancelRecording];
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)notification
