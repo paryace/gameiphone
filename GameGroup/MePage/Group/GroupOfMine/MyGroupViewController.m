@@ -236,12 +236,18 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     cell.headImageView.placeholderImage = KUIImage(@"group_icon");
     cell.headImageView.imageURL = [ImageService getImageUrl3:KISDictionaryHaveKey(cellDic, @"backgroundImg") Width:120];
     cell.titleLabel.text = KISDictionaryHaveKey(cellDic, @"groupName");
+    NSString * gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(cellDic, @"gameid")];
+    NSString * imageId = [GameCommon putoutgameIconWithGameId:gameId];
+    cell.gameImageView.imageURL = [ImageService getImageStr:imageId Width:100];
+    cell.memberCountLable.text = [NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(cellDic, @"currentMemberNum"),KISDictionaryHaveKey(cellDic, @"maxMemberNum")];
+    cell.describeLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(cellDic, @"info")];
+    cell.leveLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(cellDic, @"level")];
     return cell;
 
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 60;
+    return 76;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {

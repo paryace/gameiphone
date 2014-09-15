@@ -11,6 +11,10 @@
 
 @interface MyGroupsTableViewCell : UITableViewCell
 @property (nonatomic,strong)EGOImageView * headImageView;
+@property (nonatomic,strong)EGOImageView * gameImageView;
 @property (nonatomic,strong)UILabel *titleLabel;
+@property (nonatomic,strong)UILabel *memberCountLable;
+@property (nonatomic,strong)UILabel *describeLable;
+@property (nonatomic,strong)UILabel *leveLable;
 
 @end

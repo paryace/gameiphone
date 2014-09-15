@@ -68,6 +68,7 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getInfoFromUserManager:) name:userInfoUpload object:nil];
     wxSDArray = [NSMutableArray array];
     littleImgArray = [NSMutableArray array];
+    self.isOnClick = NO;
     NSDictionary *dic = [self getUserInfo:self.userId];//获取缓存
     if (dic) {//本地有
         self.hostInfo = [[HostInfo alloc] initWithHostInfo:dic];
@@ -377,10 +378,11 @@
 -(void)ltttt:(id)sender
 {
     NSLog(@"1111");
-        KKChatController * kkchat = [[KKChatController alloc] init];
-        kkchat.chatWithUser = self.hostInfo.userId;
-        kkchat.type = @"normal";
-        [self.navigationController pushViewController:kkchat animated:YES];
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    KKChatController * kkchat = [[KKChatController alloc] init];
+    kkchat.chatWithUser = self.hostInfo.userId;
+    kkchat.type = @"normal";
+    [self.navigationController pushViewController:kkchat animated:YES];
 }
 - (void)buildMainView
 {
@@ -937,11 +939,13 @@
             [editButton setBackgroundImage:KUIImage(@"beizhu") forState:UIControlStateNormal];
             [editButton setBackgroundImage:KUIImage(@"beizhu_click") forState:UIControlStateHighlighted];
             editButton.titleLabel.font = [UIFont boldSystemFontOfSize:15];
+            [editButton  setExclusiveTouch :YES];
             [editButton addTarget:self action:@selector(editButtonClick:) forControlEvents:UIControlEventTouchUpInside];
             [self.view addSubview:editButton];
 
             delFriendBtn = [self setCenterBtn:@"del_friend_normal" ClickImage:@"del_friend_click"];
             [delFriendBtn addTarget:self action:@selector(deleteFriend:) forControlEvents:UIControlEventTouchUpInside];
+            [delFriendBtn  setExclusiveTouch :YES];
             [self.view addSubview:delFriendBtn];
         }break;
         case VIEW_TYPE_AttentionPage1://关注
@@ -951,22 +955,26 @@
             [editButton setBackgroundImage:KUIImage(@"beizhu") forState:UIControlStateNormal];
             [editButton setBackgroundImage:KUIImage(@"beizhu_click") forState:UIControlStateHighlighted];
             [self.view addSubview:editButton];
+            [editButton  setExclusiveTouch :YES];
             [editButton addTarget:self action:@selector(editButtonClick:) forControlEvents:UIControlEventTouchUpInside];
             
             attentionOffBtn = [self setCenterBtn:@"Focus_off_normal" ClickImage:@"Focus_off_click"];
             [attentionOffBtn addTarget:self action:@selector(cancelAttentionClick:) forControlEvents:UIControlEventTouchUpInside];
             [self.view addSubview:attentionOffBtn];
+            [attentionOffBtn  setExclusiveTouch :YES];
         }  break;
         case VIEW_TYPE_FansPage1://粉丝
         {
             addFriendBtn = [self setCenterBtn:@"add_friend_normal" ClickImage:@"add_friend_click"];
             [addFriendBtn addTarget:self action:@selector(addFriendClick:) forControlEvents:UIControlEventTouchUpInside];
+            [addFriendBtn  setExclusiveTouch :YES];
             [self.view addSubview:addFriendBtn];
         }break;
         case VIEW_TYPE_STRANGER1://陌生人
         {
             attentionBtn=[self setCenterBtn:@"Focus_on_normal" ClickImage:@"Focus_on_3_click"];
             [attentionBtn addTarget:self action:@selector(attentionClick:) forControlEvents:UIControlEventTouchUpInside];
+             [attentionBtn  setExclusiveTouch :YES];
             [self.view addSubview:attentionBtn];
         }break;
         default:
@@ -983,6 +991,7 @@
                                   bgImage:KUIImage(@"chat_normal")
                                   HighImage:KUIImage(@"chat_click")
                                   selectImage:Nil];
+        [button_right  setExclusiveTouch :YES];
         [button_right addTarget:self action:@selector(startChat:) forControlEvents:UIControlEventTouchUpInside];
         [self.view addSubview:button_right];
     }
@@ -1028,6 +1037,9 @@
 
 - (void)deleteFriend:(id)sender
 {
+    if (self.isOnClick) {
+        return;
+    }
     UIAlertView* alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您确定要删除该好友吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
     alter.tag = 234;
     [alter show];
@@ -1218,28 +1230,44 @@
         }
     }];
 }
-
-- (void)startChat:(id)sender
+- (void)todoSomething:(id)sender
 {
+    self.isOnClick = NO;
     if (self.isChatPage) {
+        [[Custom_tabbar showTabBar] hideTabBar:YES];
         [self.navigationController popViewControllerAnimated:YES];
     }
     else//直接进入聊天页面
     {
+        [[Custom_tabbar showTabBar] hideTabBar:YES];
         KKChatController * kkchat = [[KKChatController alloc] init];
         kkchat.chatWithUser = self.hostInfo.userId;
         kkchat.type = @"normal";
         [self.navigationController pushViewController:kkchat animated:YES];
     }
 }
+- (void)startChat:(id)sender
+{
+    self.isOnClick = YES;
+    [[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(todoSomething:) object:sender];
+    [self performSelector:@selector(todoSomething:) withObject:sender afterDelay:0.2f];
+    
+
+}
 //添加好友
 - (void)addFriendClick:(id)sender
 {
+    if (self.isOnClick) {
+        return;
+    }
     [self addFriend:@"2"];
 }
 //添加关注
 - (void)attentionClick:(id)sender
 {
+    if (self.isOnClick) {
+        return;
+    }
     [self addFriend:@"1"];
 }
 
@@ -1313,6 +1341,9 @@
 
 - (void)cancelAttentionClick:(id)sender
 {
+    if (self.isOnClick) {
+        return;
+    }
     UIAlertView* alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"确实取消对该用户的关注吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
     alter.tag = 345;
     [alter show];
@@ -1321,6 +1352,9 @@
 #pragma mark 修改备注名字
 - (void)editButtonClick:(id)sender
 {
+    if (self.isOnClick) {
+        return;
+    }
     SetRemarkNameViewController* VC = [[SetRemarkNameViewController alloc] init];
     VC.userName = self.hostInfo.userName;
     VC.nickName = self.hostInfo.nickName;

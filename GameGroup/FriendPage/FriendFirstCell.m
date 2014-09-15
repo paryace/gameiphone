@@ -21,9 +21,9 @@
         self.headImageView.layer.masksToBounds=YES;
         [self.contentView addSubview:self.headImageView];
         
-        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(80, 0, 150, 60)];
+        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 0, 150, 60)];
         [self.titleLabel setTextAlignment:NSTextAlignmentLeft];
-        [self.titleLabel setFont:[UIFont systemFontOfSize:14.0]];
+        [self.titleLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self.titleLabel setBackgroundColor:[UIColor clearColor]];
         [self.contentView addSubview:self.titleLabel];
 

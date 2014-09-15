@@ -175,7 +175,7 @@
             }
             else if (indexPath.row ==1)
             {
-                if ([[NSUserDefaults standardUserDefaults]objectForKey:@"IOSURL"]==nil) {
+                if (![[NSUserDefaults standardUserDefaults]objectForKey:@"IOSURL"]) {
                     [self showAlertViewWithTitle:nil message:@"您已经是最新版本了" buttonTitle:@"确定"];
                 }else{
                     upDataAlert = [[UIAlertView alloc]initWithTitle:nil message:@"现在有新版本,是否更新?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
