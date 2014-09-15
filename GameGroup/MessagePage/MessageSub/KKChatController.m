@@ -1073,7 +1073,7 @@ PlayingDelegate>
             [cell setHeadImgByMe:self.myHeadImg];
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell.thumbImgV setFrame:CGRectMake(55,40 + titleSize.height,40,40)];
-            bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:10 topCapHeight:22];
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
              cell.senderNickName.hidden=YES;
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
@@ -1116,7 +1116,6 @@ PlayingDelegate>
         if (cell == nil) {
             cell = [[KKTeamInviteCell alloc] initWithMessage:dict reuseIdentifier:identifier];
         }
-//        cell.backgroundColor  = [UIColor greenColor];
         cell.myChatCellDelegate = self;
         [cell setMessageDictionary:dict];
         NSDictionary* msgDic = [[self.finalMessageArray objectAtIndex:indexPath.row] JSONValue];
@@ -1896,9 +1895,11 @@ PlayingDelegate>
 
 -(void)playAudio:(UIButton *)sender
 {
-    
+    NSInteger i = sender.tag-1;
+    NSMutableDictionary *dic = [messages objectAtIndex:i];
+    NSDictionary *dict = [[dic objectForKey:@"payload"]JSONValue];
     if (isPlaying) {
-        if (self.clickCellNum ==sender.tag-1) {
+        if (self.clickCellNum == i) {
             [[PlayerManager sharedManager] stopPlaying];
             return;
         }
@@ -1907,52 +1908,31 @@ PlayingDelegate>
         PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
         [cell stopPlay];
     }
-    
-//    if ( ! isPlaying) {
-        [PlayerManager sharedManager].delegate = nil;
-        
-        isPlaying = YES;
-        NSInteger i = sender.tag-1;
-        self.clickCellNum = i;
-        NSMutableDictionary *dic = [messages objectAtIndex:i];
-        NSDictionary *dict = [[dic objectForKey:@"payload"]JSONValue];
-    
+    [PlayerManager sharedManager].delegate = nil;
+    isPlaying = YES;
+    self.clickCellNum = i;
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"sender")]isEqualToString:@"0"]&&[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"sender")]isEqualToString:@"you"]) {
         [[PlayerManager sharedManager] playAudioWithFileName:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")] delegate:self];
     }else{
         NSString *filePath =[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]];
-
-    [dic setObject:@"2" forKey:@"audioType"];
-    [DataStoreManager changeAudioTypeWithMsgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"messageuuid")] table:self.type];
-    
+        [dic setObject:@"2" forKey:@"audioType"];
+        [DataStoreManager changeAudioTypeWithMsgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"messageuuid")] table:self.type];
         NSData *data =[NSData dataWithContentsOfURL:[NSURL URLWithString:filePath]];
-    
         NSString *ps = [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]]];
-    
-    /*
-     判断文件是否存在 如果不存在就保存
-     
-     */
+        /*
+        判断文件是否存在 如果不存在就保存
+        */
         [[AudioManager singleton]isHaveThisFolderWithFilePath:[NSString stringWithFormat:@"%@/voice",RootDocPath]];
-    if (![self isFileExist:ps]) {
-        NSLog(@"ps---%@",ps);
-        [data writeToFile:ps atomically:YES];
-    }
+        if (![self isFileExist:ps]) {
+            [data writeToFile:ps atomically:YES];
+        }
         [[PlayerManager sharedManager] playAudioWithFileName:ps delegate:self];
     }
-        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
-        PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
-        cell.cellCount = indexPath.row;
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
+    PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
+    cell.cellCount = indexPath.row;
     cell.audioRedImg.hidden = YES;
-        [cell startPaly];
-//    }
-//    else {
-//        isPlaying = NO;
-//        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(sender.tag-1) inSection:0];
-//        PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
-//        [cell stopPlay];
-////        [[PlayerManager sharedManager] stopPlaying];
-//    }
+    [cell startPaly];
 }
 
 #pragma mark ---判断文件是否存在于沙盒

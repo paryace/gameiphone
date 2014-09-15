@@ -22,7 +22,6 @@
 @property (nonatomic, assign) int            cellCount;
 @property (nonatomic, strong) NSDictionary * infoDict;
 -(void)uploadAudio:(NSInteger)index;
--(void)setIMGAnimationWithArray:(NSMutableArray *)array; //设置动画img
 -(void)downLoadAudioFromNet:(NSString *)net address:(NSString *)address;
 -(void)startPaly;
 -(void)stopPlay;
@@ -30,7 +29,5 @@
 @protocol SendAudioMsgDeleGate <NSObject>
 
 -(void)sendAudioMsg:(NSString *)audio Index:(NSInteger)index;
--(void)refreStatus:(NSInteger)cellIndex;
--(void)playAudioWithCell:(PlayVoiceCell*)cell;
 
 @end

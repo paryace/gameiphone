@@ -11,7 +11,6 @@
 @implementation PlayVoiceCell
 {
     NSInteger cellIndex;
-    BOOL isPlay;
     NSMutableArray *gifArray1;
     NSMutableArray *gifArray2;
     NSMutableData *receivedData;
@@ -30,8 +29,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
-        isPlay = NO;
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(stopPlay:) name:STOPPLAYAUDIO object:nil] ;
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(startPaly:) name:STARTPLAYAUDIO object:nil] ;
         receivedData = [NSMutableData data];
@@ -45,15 +42,10 @@
         [gifArray2 addObject:KUIImage(@"ReceiverVoiceNodePlaying001")];
         [gifArray2 addObject:KUIImage(@"ReceiverVoiceNodePlaying002")];
         [gifArray2 addObject:KUIImage(@"ReceiverVoiceNodePlaying003")];
-
-//        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(startPaly:) name:@"playingAudio" object:nil];
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(stopPlay:) name:@"StopPlayingAudio" object:nil];
         
 
-//        self.backgroundColor = [UIColor greenColor];
         self.voiceImageView = [[UIImageView alloc]initWithFrame:CGRectMake(5, 0, 10, 10)];
         self.voiceImageView.image = KUIImage(@"SenderVoiceNodePlaying003");
-//        [self.voiceImageView startAnimating];
         [self addSubview:self.voiceImageView];
         
         self.audioTimeSizeLb = [[UILabel alloc]initWithFrame:CGRectMake(20, 0, 20, 20)];
@@ -62,30 +54,12 @@
         self.audioTimeSizeLb.font = [UIFont boldSystemFontOfSize:12];
         self.audioTimeSizeLb.textAlignment =NSTextAlignmentCenter;
         [self addSubview:self.audioTimeSizeLb];
-//        [self.voiceImageView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(playAudio:)]];
-        
         self.audioRedImg = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 10, 10)];
         self.audioRedImg.image = KUIImage(@"msg_audio_red");
         [self addSubview:self.audioRedImg];
         
     }
     return self;
-}
--(void)setIMGAnimationWithArray:(NSMutableArray *)array
-{
-//    self.voiceImageView.animationImages = array; //动画图片数组
-    [self.voiceImageView setAnimationImages:array];
-}
--(void)playAudio:(id)sender
-{
-    if (!isPlay) {
-        isPlay = YES;
-        [self startPaly];
-        [self.mydelegate playAudioWithCell:self];
-    }else{
-        isPlay =NO;
-        [self stopPlay];
-    }
 }
 
 -(void)startPaly
@@ -167,12 +141,13 @@
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
     NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-    NSLog(@"%lld",[httpResponse expectedContentLength]);
+    NSLog(@"---didReceiveResponse---%lld",[httpResponse expectedContentLength]);
 }
 
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
+     NSLog(@"----data-----%@",data);
     [receivedData appendData:data];
 }
 
@@ -185,6 +160,7 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
+    
 }
 #pragma mark ---判断文件是否存在于沙盒
 - (BOOL)isFileExist:(NSString *)fileName
