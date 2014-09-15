@@ -1886,7 +1886,6 @@ PlayingDelegate>
 
 #pragma mark --播放
 #pragma mark ---播放声音
-
 -(void)playAudio:(UIButton *)sender
 {
     NSInteger i = sender.tag-1;
@@ -1946,7 +1945,16 @@ PlayingDelegate>
     if (result) {
         [fileManager removeItemAtPath:fileName error:nil];
     }
-    
+}
+
+#pragma mark ----停止播放
+- (void)playingStoped {
+    for (PlayVoiceCell *cell in [self.tView visibleCells]  ) {
+        if ([cell isKindOfClass:[PlayVoiceCell class]]) {
+            [cell.voiceImageView stopAnimating];
+        }
+    }
+    isPlaying = NO;
 }
 
 //设置返回按钮上面的消息数量
@@ -4175,15 +4183,7 @@ PlayingDelegate>
     showRecordView.hidden  = NO;
     [showRecordView changeBDimgWithimg:levelMeter];
 }
-#pragma mark ----停止播放
-- (void)playingStoped {
-    for (PlayVoiceCell *cell in [self.tView visibleCells]  ) {
-        if ([cell isKindOfClass:[PlayVoiceCell class]]) {
-            [cell.voiceImageView stopAnimating];
-        }
-    }
-     isPlaying = NO;
-}
+
 
 
 #pragma mark ----CustomInputViewDelegate
