@@ -16,7 +16,7 @@
 @property(nonatomic,strong)NSMutableArray  *  m_countArray;
 @property(nonatomic,assign)id<SelectTypeDelegate>selectTypeDelegate;
 
--(void)setTypeArray:(id)responseObject;
+-(void)setTypeArray:(id)responseObject SelectType:(NSMutableDictionary*)selectType;
 -(void)setNumberArray:(id)responseObject SelectType:(NSMutableDictionary*)selectType;
 @end
 
