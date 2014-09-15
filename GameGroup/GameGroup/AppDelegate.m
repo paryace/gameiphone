@@ -15,7 +15,6 @@
 #import "GetDataAfterManager.h"
 #import "BaseViewController.h"
 #import "ReconnectMessage.h"
-#import "AddAddressBookViewController.h"
 #import "XMPPping.h"
 #import "UserManager.h"
 #import "OfflineComment.h"

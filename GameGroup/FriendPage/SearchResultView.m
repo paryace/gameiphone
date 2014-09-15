@@ -137,8 +137,6 @@
 #pragma mark ----失去焦点
 - (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar
 {
-//    [_m_searchBar setShowsCancelButton:NO animated:YES];
-//    [self.delegate hideSearchResultView];
     return YES;
 }
 #pragma mark ----获得焦点

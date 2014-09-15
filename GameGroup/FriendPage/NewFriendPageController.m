@@ -538,14 +538,6 @@
     [self.navigationController pushViewController:mas animated:YES];
 }
 
-//#pragma mark ----获得焦点
-//- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
-//{
-//    [searchResultView showSelf];
-//    [self showSearchResultView];
-//    return YES;
-//}
-
 -(void)showSearchResultView{
     [UIView animateWithDuration:0.3 animations:^{
         topImageView.frame = CGRectMake(0, -(KISHighVersion_7 ? 64 : 44), 320, KISHighVersion_7 ? 64 : 44);

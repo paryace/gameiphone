@@ -285,8 +285,10 @@
             if (cell == nil) {
                 cell = [[OutDodeAddressTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
             }
+            cell.inviteV.tag = indexPath.row;
             cell.backgroundColor = UIColorFromRGBA(0xffffff, 1);
             cell.indexPath = indexPath;
+            cell.isSearch = YES;
             cell.delegate = self;
             cell.nameL.text = [self.searchOutAddressArray[indexPath.row] objectForKey:@"name"];
             cell.photoNoL.text = [self.searchOutAddressArray[indexPath.row] objectForKey:@"mobileid"];
@@ -350,7 +352,9 @@
             if (cell == nil) {
                 cell = [[OutDodeAddressTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
             }
+            cell.inviteV.tag = indexPath.row;
             cell.indexPath = indexPath;
+            cell.isSearch = NO;
             cell.delegate = self;
             cell.nameL.text = [self.outAddressArray[indexPath.row] objectForKey:@"name"];
             cell.photoNoL.text = [self.outAddressArray[indexPath.row] objectForKey:@"mobileid"];
@@ -536,53 +540,55 @@
 
 -(void)DodeAddressCellTouchButtonWithIndexPath:(NSIndexPath *)indexPath IsSearch:(BOOL)isSearch
 {
-    if (indexPath.section == 0) {
-        NSMutableDictionary * dic;
-        if (isSearch) {
-            dic = self.searchAddressArray[indexPath.row];
-        }else{
-            dic = self.addressArray[indexPath.row];
-        }
-        [self reloadTableView:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]];
+    NSMutableDictionary * dic;
+    if (isSearch) {
+        dic = self.searchAddressArray[indexPath.row];
+    }else{
+        dic = self.addressArray[indexPath.row];
+    }
+    [self reloadTableView:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")]];
+    [self showMessageWindowWithContent:@"添加成功" imageType:0];
+    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [paramDict setObject:dic[@"userid"] forKey:@"frienduserid"];
+    [paramDict setObject:@"5" forKey:@"type"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict setObject:@"109" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         
-        
-        
-        
-        [self showMessageWindowWithContent:@"添加成功" imageType:0];
-        NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-        NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-        [paramDict setObject:dic[@"userid"] forKey:@"frienduserid"];
-        [paramDict setObject:@"5" forKey:@"type"];
-        [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-        [postDict setObject:paramDict forKey:@"params"];
-        [postDict setObject:@"109" forKey:@"method"];
-        [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-        [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            
-        } failure:^(AFHTTPRequestOperation *operation, id error) {
-            if ([error isKindOfClass:[NSDictionary class]]) {
-                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-                {
-                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                    [alert show];
-                }
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        if ([error isKindOfClass:[NSDictionary class]]) {
+            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+            {
+                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+                [alert show];
             }
-        }];
-    }else
-    {
-        if ([MFMessageComposeViewController canSendText]) {
-            MFMessageComposeViewController *picker = [[MFMessageComposeViewController alloc] init];
-            picker.messageComposeDelegate = self;
+        }
+    }];
+}
+
+
+
+-(void)DodeAddressCell:(NSIndexPath *)indexPath IsSearch:(BOOL)isSearch
+{
+    if ([MFMessageComposeViewController canSendText]) {
+        MFMessageComposeViewController *picker = [[MFMessageComposeViewController alloc] init];
+        picker.messageComposeDelegate = self;
+        if (isSearch) {
+            picker.recipients = [NSArray arrayWithObject:[self.searchOutAddressArray[indexPath.row] objectForKey:@"mobileid"]];
+        }else{
             picker.recipients = [NSArray arrayWithObject:[self.outAddressArray[indexPath.row] objectForKey:@"mobileid"]];
-            picker.body=[NSString stringWithFormat:@"游戏里找不到我的时候, 来陌游找我. 下载地址:www.momotalk.com"];
-            [self presentViewController:picker animated:YES completion:^{
-                
-            }];
         }
-        else {
-            UIAlertView *alertV = [[UIAlertView alloc]initWithTitle:nil message:@"您的设备不支持短信功能" delegate:nil cancelButtonTitle:@"知道啦" otherButtonTitles: nil];
-            [alertV show];
-        }
+        
+        picker.body=[NSString stringWithFormat:@"游戏里找不到我的时候, 来陌游找我. 下载地址:www.momotalk.com"];
+        [self presentViewController:picker animated:YES completion:^{
+            
+        }];
+    }else {
+        UIAlertView *alertV = [[UIAlertView alloc]initWithTitle:nil message:@"您的设备不支持短信功能" delegate:nil cancelButtonTitle:@"知道啦" otherButtonTitles: nil];
+        [alertV show];
     }
 }
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {

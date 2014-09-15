@@ -27,14 +27,14 @@
         _photoNoL.textColor = UIColorFromRGBA(0x868686, 1);
         _photoNoL.font = [UIFont systemFontOfSize:14];
         [self.contentView addSubview:_photoNoL];
-        UIButton * inviteV = [UIButton buttonWithType:UIButtonTypeCustom];
-        inviteV.titleLabel.font = [UIFont systemFontOfSize:14];
-        [inviteV setTitle:@"" forState:UIControlStateNormal];
-        [inviteV setBackgroundImage:[UIImage imageNamed:@"inv_friend_normal"] forState:UIControlStateNormal];
-        [inviteV setBackgroundImage:[UIImage imageNamed:@"inv_friend_click"] forState:UIControlStateHighlighted];
-        [inviteV addTarget:self action:@selector(inviteFriend) forControlEvents:UIControlEventTouchUpInside];
-        inviteV.frame = CGRectMake(250, 18, 47.5, 28);
-        [self.contentView addSubview:inviteV];
+        _inviteV = [UIButton buttonWithType:UIButtonTypeCustom];
+        _inviteV.titleLabel.font = [UIFont systemFontOfSize:14];
+        [_inviteV setTitle:@"" forState:UIControlStateNormal];
+        [_inviteV setBackgroundImage:[UIImage imageNamed:@"inv_friend_normal"] forState:UIControlStateNormal];
+        [_inviteV setBackgroundImage:[UIImage imageNamed:@"inv_friend_click"] forState:UIControlStateHighlighted];
+        [_inviteV addTarget:self action:@selector(inviteFriend) forControlEvents:UIControlEventTouchUpInside];
+        _inviteV.frame = CGRectMake(250, 18, 47.5, 28);
+        [self.contentView addSubview:_inviteV];
         UIView * lineV = [[UIView alloc]initWithFrame:CGRectMake(0, 59, 320, 1)];
         lineV.backgroundColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1];
         [self.contentView addSubview:lineV];
@@ -44,8 +44,8 @@
 }
 - (void)inviteFriend
 {
-    if (self.delegate&& [_delegate respondsToSelector:@selector(DodeAddressCellTouchButtonWithIndexPath:)]) {
-        [_delegate DodeAddressCellTouchButtonWithIndexPath:self.indexPath];
+    if (self.delegate) {
+        [_delegate DodeAddressCell:self.indexPath IsSearch:self.isSearch];
     }
 }
 - (void)awakeFromNib

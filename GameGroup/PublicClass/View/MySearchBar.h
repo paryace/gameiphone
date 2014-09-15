@@ -8,4 +8,6 @@
 
 #import <UIKit/UIKit.h>
 @interface MySearchBar : UISearchBar
+- (void)changeBarTextfieldWithColor;
+- (void)changeBarCancelButtonWithColor;
 @end
