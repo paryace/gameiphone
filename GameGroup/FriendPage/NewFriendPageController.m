@@ -118,7 +118,7 @@
     [topImageView addSubview:searchV];
     //初始化搜索条
     m_searchBar = [[MySearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-    [m_searchBar setPlaceholder:@"关键字搜索服务器"];
+    [m_searchBar setPlaceholder:@"关键字搜索"];
     m_searchBar.delegate = self;
     m_searchBar.showsCancelButton=NO;
     [m_searchBar sizeToFit];
