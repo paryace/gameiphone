@@ -1073,7 +1073,7 @@ PlayingDelegate>
             [cell setHeadImgByMe:self.myHeadImg];
             [cell setMePosition:self.isTeam TeanPosition:KISDictionaryHaveKey(dict, @"teamPosition")];
             [cell.thumbImgV setFrame:CGRectMake(55,40 + titleSize.height,40,40)];
-            bgImage = [[UIImage imageNamed:@"bubble_05"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:@"bubble_norla_you.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setFrame:CGRectMake(320-size.width - padding-20-10-30,padding*2-15,size.width+25,size.height+20)];
              cell.senderNickName.hidden=YES;
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
@@ -1099,7 +1099,7 @@ PlayingDelegate>
                 cell.senderNickName.text = userNickName;
             }
             
-            bgImage = [[UIImage imageNamed:@"bubble_04.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            bgImage = [[UIImage imageNamed:@"bubble_norla_sender.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height + 20)];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.statusLabel.hidden = YES;
@@ -1172,12 +1172,7 @@ PlayingDelegate>
             }
             
             bgImage = [[UIImage imageNamed:@"bubble_norla_sender.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
-//            if (contentSize.height>40) {
-//                [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+33)];
-//            }else {
-                [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+18)];
-//            }(padding-10+45,padding*2-15+offHight,size.width+25,size.height + 20)
-
+            [cell.bgImageView setFrame:CGRectMake(padding-10+45,padding*2-15+offHight,size.width+25,size.height+18)];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.statusLabel.hidden = YES;
             cell.failImage.hidden=YES;
@@ -1273,7 +1268,6 @@ PlayingDelegate>
             cell = [[KKTeamInviteCell alloc] initWithMessage:dict reuseIdentifier:identifier];
         }
         cell.lowType = 2;
-
         cell.myChatCellDelegate = self;
         [cell setMessageDictionary:dict];
         NSDictionary* msgDic = [[self.finalMessageArray objectAtIndex:indexPath.row] JSONValue];
@@ -1312,7 +1306,6 @@ PlayingDelegate>
             [cell.contentLabel setFrame:CGRectMake(padding + 50 +28,35 + titleSize.height + (titleSize.height > 0 ? 5 : 0), contentSize.width,contentSize.height)];
             
             [cell.attView setFrame:CGRectMake(320-size.width - padding-20-10-30,cell.bgImageView.frame.origin.y+cell.bgImageView.frame.size.height-30, 220, 30)];
-            
             [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
         }else
         {
@@ -1339,7 +1332,6 @@ PlayingDelegate>
             [cell.lineImage  setFrame:CGRectMake(cell.titleLabel.frame.origin.x,cell.titleLabel.frame.origin.y+cell.titleLabel.frame.size.height+2,size.width+10,1)];
             cell.lineImage.hidden=YES;
             [cell.attView setFrame:CGRectMake(padding-5+45,cell.bgImageView.frame.origin.y+cell.bgImageView.frame.size.height-27, 220, 25)];
-//            [cell.attView setFrame:CGRectMake(padding-5+45, 90 + titleSize.height, 220, 25)];
         }
         return cell;
     }
