@@ -18,24 +18,16 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code
-        UIImageView * imageV = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 33)];
-        imageV.image = [UIImage imageNamed:@"table_heard_bg"];
+        self.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
+        UIImageView * imageV = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 35)];
+        imageV.backgroundColor = UIColorFromRGBA(0xf8f8f8, 1);
         [self addSubview:imageV];
-        self.titleL = [[UILabel alloc]initWithFrame:CGRectMake(10, 4, 300, 20)];
+        self.titleL = [[UILabel alloc]initWithFrame:CGRectMake(10, 7.5, 300, 20)];
         _titleL.backgroundColor = [UIColor clearColor];
+        _titleL.textColor = UIColorFromRGBA(0x999999, 1);
         [self addSubview:_titleL];
     }
     return self;
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
 
 @end

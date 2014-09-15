@@ -8,5 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "FriendTopCell.h"
-@interface NewFriendPageController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate, UIActionSheetDelegate,UIScrollViewDelegate,FriendTabDelegate>
+#import "MenuTableView.h"
+#import "SearchResultView.h"
+@interface NewFriendPageController : BaseViewController<UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate, UIActionSheetDelegate,UIScrollViewDelegate,FriendTabDelegate,ItemClickDelegate>
 @end

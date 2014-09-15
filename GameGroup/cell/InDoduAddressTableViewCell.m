@@ -16,16 +16,17 @@
     if (self) {
         // Initialization code
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        self.contentView.backgroundColor = kColorWithRGB(246, 246, 246, 1.0);
+        self.contentView.backgroundColor = UIColorFromRGBA(0xffffff, 1);
         self.headerImage = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
         _headerImage.placeholderImage = [UIImage imageNamed:@"people_man"];
         [self.contentView addSubview:_headerImage];
         self.nameL = [[UILabel alloc]initWithFrame:CGRectMake(70, 10, 200, 20)];
         _nameL.backgroundColor = [UIColor clearColor];
+        _nameL.textColor = UIColorFromRGBA(0x333333, 1);
         [self.contentView addSubview:_nameL];
         self.photoNoL = [[UILabel alloc]initWithFrame:CGRectMake(70, 35, 200, 20)];
         _photoNoL.backgroundColor = [UIColor clearColor];
-        _photoNoL.textColor = [UIColor grayColor];
+        _photoNoL.textColor = UIColorFromRGBA(0x868686, 1);
         _photoNoL.font = [UIFont systemFontOfSize:14];
         [self.contentView addSubview:_photoNoL];
         self.addFriendB = [UIButton buttonWithType:UIButtonTypeCustom];

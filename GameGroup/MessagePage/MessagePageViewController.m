@@ -16,7 +16,6 @@
 #import "BangdingRolesViewController.h"
 #import "OtherMsgsViewController.h"
 #import "NewFriendRecommendViewController.h"
-#import "AddAddressBookViewController.h"
 #import "EveryDataNewsViewController.h"
 #import "ReconnectMessage.h"
 #import "UserManager.h"
