@@ -24,6 +24,7 @@
 #import "MyGroupCell.h"
 #import "MyGroupViewController.h"
 #import "FriendFirstCell.h"
+#import "MySearchBar.h"
 
 @interface NewFriendPageController (){
     
@@ -35,7 +36,7 @@
     UITableView*  m_myTableView;
     NSString *fansNum;
     NSString *fanstr;
-    UISearchBar *m_searchBar;
+    MySearchBar *m_searchBar;
     UISearchDisplayController * searchController;
     NSMutableArray * m_searchArray;
     NSMutableArray * m_allSearchArray;
@@ -102,7 +103,7 @@
     UIView * mSearchView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
     mSearchView.backgroundColor = [UIColor clearColor];
     //初始化搜索条
-    m_searchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0, 340, 44)];
+    m_searchBar = [[MySearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
     [m_searchBar setPlaceholder:@"关键字搜索服务器"];
     m_searchBar.delegate = self;
     [m_searchBar sizeToFit];
@@ -112,9 +113,7 @@
     [searchController setDelegate:self];
     [searchController setSearchResultsDataSource:self];
     [searchController setSearchResultsDelegate:self];
-//    if (KISHighVersion_7) {
-//        searchController.searchResultsTableView.tableHeaderView = mSearchView;
-//    }
+
     m_myTableView.tableHeaderView = mSearchView;
 //    searchController.searchResultsTableView.frame =CGRectMake(0, 100, 320, 200);
 //    UIView *footView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
@@ -262,7 +261,7 @@
 
     NSDictionary * tempDict;
     if (tableView ==searchController.searchResultsTableView) {
-    tempDict =[m_searchArray objectAtIndex:indexPath.row];
+        tempDict =[m_searchArray objectAtIndex:indexPath.row];
     }else{
     if (resultArray.count==0||keyArr.count==0) {
         return nil;
@@ -330,6 +329,13 @@
 {
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
     [[Custom_tabbar showTabBar] hideTabBar:YES];
+    if (tableView == searchController.searchResultsTableView) {
+        NSDictionary * tempDict =[m_searchArray objectAtIndex:indexPath.row];
+        TestViewController *detailVC = [[TestViewController alloc]init];
+        detailVC.userId = KISDictionaryHaveKey(tempDict, @"userid");
+        [self.navigationController pushViewController:detailVC animated:YES];
+        return;
+    }
 
     if (indexPath.section==0) {
         if (indexPath.row ==0) {
@@ -350,28 +356,13 @@
     detailVC.userId = KISDictionaryHaveKey(tempDict, @"userid");
     [self.navigationController pushViewController:detailVC animated:YES];
 }
-//返回索引的字母
 #pragma mark 索引
-//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
-//{
-//    if (tableView ==searchController.searchResultsTableView) {
-//        return nil;
-//    }else{
-//    if (section==0) {
-//        return @"";
-//    }
-//    NSString * keyName =[keyArr objectAtIndex:section];
-//    return keyName;
-//    }
-//}
+
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (tableView ==m_myTableView) {
         UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 20)];
         view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
-//        UIView *subView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0.5f, 320, 19.5f)];
-//        subView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
-        
         NSString * keyName =[keyArr objectAtIndex:section];
         UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, 20, 20)];
         lb.textColor = UIColorFromRGBA(0x999999, 1);
@@ -380,8 +371,6 @@
         lb.text =keyName;
         lb.font = [UIFont boldSystemFontOfSize:12];
         [view addSubview:lb];
-        
-//        [view addSubview:subView];
         return view;
 
     }
@@ -591,34 +580,26 @@
 }
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
-    searchController.searchResultsTableView.frame = CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-50);
-    NSLog(@"%@",searchText);
+    
     if ([searchText isEqualToString:@""]) {
+        searchController.searchResultsTableView.frame = CGRectMake(0, startX+44, 320, self.view.bounds.size.height-startX-50);
         [m_searchArray removeAllObjects];
         [searchController.searchResultsTableView reloadData];
         return;
     }
+    searchController.searchResultsTableView.frame = CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-50);
+    [self reloadSearchList:searchText];
+}
+
+
+-(void)reloadSearchList:(NSString*)searchText{
     NSMutableArray *arr = [NSMutableArray array];
     for (int i = 0; i<m_allSearchArray.count; i++) {
         NSDictionary *dic = m_allSearchArray[i];
         [arr addObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"nickname")]];
     }
-    
-//    NSString *keyName = @"";
-//    if (_searchState == DataSearchStateBank) {
-//        keyName = [Bank keyName];
-//    }
-    /**< 模糊查找*/
-//    NSDictionary *tempDict = [NSDictionary dictionaryWithObjectsAndKeys:searchText,@"nickname", nil];
-//    [tempDict setObject:searchText forKey:@"nickname"];
     NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"SELF contains[cd] %@", searchText];
-    /**< 精确查找*/
-    //  NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"%K == %@", keyName, searchText];
-    
-    NSLog(@"predicate %@",predicateString);
-    
     NSMutableArray  *filteredArray = [NSMutableArray arrayWithArray:[arr filteredArrayUsingPredicate:predicateString]];
-    
     for (NSDictionary *tempdic in m_allSearchArray) {
         for (NSString  *predicateStr in filteredArray) {
             if ([[tempdic objectForKey:@"nickname"]isEqualToString:predicateStr]&&![m_searchArray containsObject:tempdic]) {
@@ -626,18 +607,12 @@
             }
         }
     }
-    
-//    m_searchArray = filteredArray;
     [searchController.searchResultsTableView reloadData];
-
 }
 - (BOOL)searchBar:(UISearchBar *)searchBar shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     return YES;
 }
-
-
-
 
 - (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar
 {

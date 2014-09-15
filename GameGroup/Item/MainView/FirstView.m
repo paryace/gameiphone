@@ -14,12 +14,13 @@
 #import "ItemManager.h"
 #import "KxMenu.h"
 #import "MJRefresh.h"
+#import "MySearchBar.h"
 #import "KKChatController.h"
 @implementation FirstView
 {
     UITableView *m_myTabelView;
     UITextField *roleTextf;
-    UISearchBar * mSearchBar;
+    MySearchBar * mSearchBar;
     UIView *tagView;
     UIView *screenView;
     UIButton *screenBtn;
@@ -81,16 +82,9 @@
         //初始化搜索条
         UIView *tableheadView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
         tableheadView.backgroundColor = UIColorFromRGBA(0xd9d9d9, 1);
-        mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0,320, 44)];
+        mSearchBar = [[MySearchBar alloc]initWithFrame:CGRectMake(0, 0,320, 44)];
         mSearchBar.backgroundColor = kColorWithRGB(27, 29, 35, 1);
         [mSearchBar setPlaceholder:@"请输入你想找的队伍信息"];
-//        if ([[[UIDevice currentDevice] systemVersion] floatValue]<7.0) {
-//            [[[mSearchBar subviews] objectAtIndex:0] removeFromSuperview];
-//        }
-//        if ([mSearchBar respondsToSelector:@selector(barTintColor)]) {
-//            [mSearchBar setBarTintColor:[UIColor clearColor]];
-//            [mSearchBar setBarTintColor:UIColorFromRGBA(0xd9d9d9, 1)];
-//        }
         mSearchBar.showsCancelButton=NO;
         mSearchBar.delegate = self;
         [mSearchBar sizeToFit];
