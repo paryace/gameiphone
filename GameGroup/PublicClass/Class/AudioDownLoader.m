@@ -109,6 +109,7 @@
     NSString *imageName = [self.urlStr stringByReplacingOccurrencesOfString:@"/" withString:@"_"];
     NSString *filePath = [kCacheDirectory stringByAppendingPathComponent:imageName];
     //把图像数据存入cache中
+    [[AudioManager singleton]isHaveThisFolderWithFilePath:[NSString stringWithFormat:@"%@/voice",RootDocPath]];
     [_receivedData writeToFile:filePath atomically:YES];
     
     if([_delegate respondsToSelector:@selector(imageDownLoader:downLoadSuccessWithImage:)]){

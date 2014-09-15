@@ -49,7 +49,7 @@
     #import "AudioDownLoader.h"
    #endif
 
-#define appType @"91"//91、appStore
+#define appType @"development"//91、appStore,production(新的正式),development(新的测试)
 #define appChannel @"wx_test"//wx_test、91、appStore、tbt、ky,(如果测试请用"wx_test")
 
 
