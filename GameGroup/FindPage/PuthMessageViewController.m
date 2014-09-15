@@ -52,9 +52,9 @@
     UIButton * button = [UIButton buttonWithType:UIButtonTypeCustom];
     [button setTitle:@"发送邀请" forState:UIControlStateNormal];
     [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [button setBackgroundImage:[UIImage imageNamed:@"btn_updata_normol"] forState:UIControlStateNormal];
-    [button setBackgroundImage:[UIImage imageNamed:@"btn_updata_click"] forState:UIControlStateHighlighted];
-    button.frame = CGRectMake(30, 180, 260, 40);
+    [button setBackgroundImage:[UIImage imageNamed:@"blue_button_normal"] forState:UIControlStateNormal];
+    [button setBackgroundImage:[UIImage imageNamed:@"blue_button_click"] forState:UIControlStateHighlighted];
+    button.frame = CGRectMake(10, 200, 300, 50);
     [button addTarget:self action:@selector(puthMessage) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:button];
     

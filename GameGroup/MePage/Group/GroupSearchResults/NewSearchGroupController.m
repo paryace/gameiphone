@@ -12,12 +12,13 @@
 #import "LocationManager.h"
 #import "AddGroupViewController.h"
 #import "SearchGroupViewController.h"
+#import "MySearchBar.h"
 
 
 @interface NewSearchGroupController ()
 {
     UITableView * m_GroupTableView;
-    UISearchBar * mSearchBar;
+    MySearchBar * mSearchBar;
     UIView * baseBgView;
     
     NSMutableArray * m_groupArray;
@@ -54,7 +55,7 @@
     [self.view addSubview:shareButton];
     
     
-    mSearchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, startX,320, 44)];
+    mSearchBar = [[MySearchBar alloc]initWithFrame:CGRectMake(0, startX,320, 44)];
     [mSearchBar setPlaceholder:@"搜索群名或群号"];
     mSearchBar.showsCancelButton=NO;
     mSearchBar.delegate = self;

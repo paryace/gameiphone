@@ -29,6 +29,7 @@
 @interface NewFriendPageController (){
     
     UILabel*        m_titleLabel;
+    UIImageView* topImageView;
     MJRefreshHeaderView *m_header;
     NSMutableDictionary *resultArray;//数据集合
     NSMutableArray * keyArr;//字母集合
@@ -37,6 +38,7 @@
     NSString *fansNum;
     NSString *fanstr;
     MySearchBar *m_searchBar;
+    SearchResultView * searchResultView;
     UISearchDisplayController * searchController;
     NSMutableArray * m_searchArray;
     NSMutableArray * m_allSearchArray;
@@ -63,15 +65,32 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"" withBackButton:NO];
+    UIImageView *hideImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 20 : 0)];
+    hideImage.userInteractionEnabled = YES;
+    hideImage.backgroundColor = kColorWithRGB(23, 161, 240, 1.0);
+    hideImage.image = KUIImage(@"nav_bg");
+    [self.view addSubview:hideImage];
     
+    
+    topImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44)];
+    topImageView.userInteractionEnabled = YES;
+    topImageView.backgroundColor = kColorWithRGB(23, 161, 240, 1.0);
+    topImageView.image = KUIImage(@"nav_bg");
+    [self.view addSubview:topImageView];
+    
+    m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, KISHighVersion_7 ? 20 : 0, 220, 44)];
+    m_titleLabel.textColor = [UIColor whiteColor];
+    m_titleLabel.backgroundColor = [UIColor clearColor];
+    m_titleLabel.textAlignment = NSTextAlignmentCenter;
+    m_titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    [topImageView addSubview:m_titleLabel];
     UIButton *addFriendBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [addFriendBtn setBackgroundImage:KUIImage(@"friends_add_normal") forState:UIControlStateNormal];
     [addFriendBtn setBackgroundImage:KUIImage(@"friends_add_click") forState:UIControlStateHighlighted];
     [addFriendBtn setBackgroundImage:KUIImage(@"friends_add_click") forState:UIControlStateSelected];
     addFriendBtn.backgroundColor = [UIColor clearColor];
     [addFriendBtn addTarget:self action:@selector(addFriends:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:addFriendBtn];
+    [topImageView addSubview:addFriendBtn];
 
     self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadContentList:) name:kReloadContentKey object:nil];
@@ -79,13 +98,6 @@
     m_allSearchArray = [NSMutableArray array];
     keyArr=[NSMutableArray array];
     m_searchArray = [NSMutableArray array];
-    m_titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, startX - 44, 220, 44)];
-    m_titleLabel.textColor = [UIColor whiteColor];
-    m_titleLabel.backgroundColor = [UIColor clearColor];
-    m_titleLabel.text = @"联系人";
-    m_titleLabel.textAlignment = NSTextAlignmentCenter;
-    m_titleLabel.font = [UIFont boldSystemFontOfSize:20];
-    [self.view addSubview:m_titleLabel];
     
     m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-50)];
     m_myTableView.dataSource = self;
@@ -100,54 +112,39 @@
     [self.view addSubview:m_myTableView];
     self.view.backgroundColor=[UIColor blackColor];
     
-    UIView * mSearchView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-    mSearchView.backgroundColor = [UIColor clearColor];
+    UIButton *searchV = [[UIButton alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+    searchV.backgroundColor = [UIColor clearColor];
+    [searchV addTarget:self action:@selector(searchResult:) forControlEvents:UIControlEventTouchUpInside];
+    [topImageView addSubview:searchV];
     //初始化搜索条
     m_searchBar = [[MySearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
     [m_searchBar setPlaceholder:@"关键字搜索服务器"];
     m_searchBar.delegate = self;
+    m_searchBar.showsCancelButton=NO;
     [m_searchBar sizeToFit];
-    [mSearchView addSubview:m_searchBar];
-    //初始化UISearchDisplayController
-    searchController = [[UISearchDisplayController alloc] initWithSearchBar:m_searchBar contentsController:self];
-    [searchController setDelegate:self];
-    [searchController setSearchResultsDataSource:self];
-    [searchController setSearchResultsDelegate:self];
-
-    m_myTableView.tableHeaderView = mSearchView;
-//    searchController.searchResultsTableView.frame =CGRectMake(0, 100, 320, 200);
-//    UIView *footView =[[ UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 50)];
-//    footView.backgroundColor = [UIColor clearColor];
-//    
-//    UIImageView *iconImg = [[UIImageView alloc]initWithFrame:CGRectMake(80, 15, 20, 20)];
-//    iconImg.image =KUIImage(@"phoneNote");
-//    [footView addSubview:iconImg];
-//    
-//    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(0, 1, 320, 50)];
-//    label.backgroundColor = [UIColor clearColor];
-//    label.text = @"手机通讯录";
-//    label.font = [UIFont boldSystemFontOfSize:18];
-//    label.textAlignment = NSTextAlignmentCenter;
-//    [footView addSubview:label];
-//    
-//    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-//    button.frame = CGRectMake(10, 3, 300,44);
-//    
-//    button.backgroundColor = [UIColor clearColor];
-//    [button addTarget:self action:@selector(enterPhoneAddress:) forControlEvents:UIControlEventTouchUpInside];
-//    [footView addSubview:button];
-//    
-//    m_myTableView.tableFooterView = footView;
+    [m_searchBar addSubview:searchV];
+    m_myTableView.tableHeaderView = m_searchBar;
+    
+    searchResultView = [[SearchResultView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-50)];
+    searchResultView.hidden = YES;
+    searchResultView.delegate = self;
+    [self.view addSubview:searchResultView];
+    
     
     [self getFriendDateFromDataSore];
     [self addheadView];
 }
+
 -(void)addFriends:(id)sender
 {
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     AddFriendsViewController * addV = [[AddFriendsViewController alloc] init];
     [self.navigationController pushViewController:addV animated:YES];
 
+}
+-(void)searchResult:(id)sender{
+    [searchResultView showSelf];
+    [self showSearchResultView];
 }
 #pragma mark 刷新表格
 - (void)reloadContentList:(NSNotification*)notification
@@ -176,7 +173,6 @@
         case 2:
         {
             [[Custom_tabbar showTabBar] hideTabBar:YES];
-//            MessageAddressViewController *addVC = [[MessageAddressViewController alloc]init];
             InterestingPerpleViewController *addVC = [[InterestingPerpleViewController alloc]init];
             [self.navigationController pushViewController:addVC animated:YES];
         }
@@ -227,12 +223,6 @@
 {
     if (indexPath.section==0&&tableView ==m_myTableView) {
         static NSString * stringCellTop = @"cellTop";
-        //            FriendTopCell * cellTop = [[FriendTopCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellTop];
-        //            cellTop.friendTabDelegate=self;
-        //            cellTop.lable1.text=fanstr;
-        //            CGSize textSize =[fanstr sizeWithFont:[UIFont systemFontOfSize:11] constrainedToSize:CGSizeMake(MAXFLOAT,30)];
-        //            cellTop.lable1.frame=CGRectMake(((80-textSize.width)/2),40, 80 ,20);
-        //            return cellTop;
         FriendFirstCell *cell = [tableView dequeueReusableCellWithIdentifier:stringCellTop];
         if (!cell) {
             cell = [[FriendFirstCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellTop];
@@ -357,7 +347,12 @@
     [self.navigationController pushViewController:detailVC animated:YES];
 }
 #pragma mark 索引
-
+- (void)itemClick:(MenuTableView*)Sender DateDic:(NSMutableDictionary*)dataDic{
+    TestViewController *detailVC = [[TestViewController alloc]init];
+    detailVC.userId = KISDictionaryHaveKey(dataDic, @"userid");
+    [self.navigationController pushViewController:detailVC animated:YES];
+}
+#pragma mark 索引
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (tableView ==m_myTableView) {
@@ -391,13 +386,12 @@
     if (tableView ==searchController.searchResultsTableView) {
         return 0;
     }else{
-    if (section==0) {
-        return 0;
-    }else{
-        return 20;
+        if (section==0) {
+            return 0;
+        }else{
+            return 20;
+        }
     }
-    }
-    
 }
 #pragma mark 请求数据
 - (void)getFriendListFromNet
@@ -544,53 +538,33 @@
     [self.navigationController pushViewController:mas animated:YES];
 }
 
+//#pragma mark ----获得焦点
+//- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
+//{
+//    [searchResultView showSelf];
+//    [self showSearchResultView];
+//    return YES;
+//}
 
-
-#pragma mark---searchbar delegate
-
-- (void)searchBarTextDidBeginEditing:(UISearchBar *)_searchBar
-{
-	[self.searchDisplayController.searchBar setShowsCancelButton:NO];
+-(void)showSearchResultView{
+    [UIView animateWithDuration:0.3 animations:^{
+        topImageView.frame = CGRectMake(0, -(KISHighVersion_7 ? 64 : 44), 320, KISHighVersion_7 ? 64 : 44);
+        m_myTableView.frame = CGRectMake(0, 20, 320, self.view.bounds.size.height-20-50);
+        searchResultView.frame = CGRectMake(0, 20, 320, self.view.bounds.size.height-20-50);
+    }completion:^(BOOL finished) {
+        searchResultView.hidden = NO;
+    }];
 }
-
-- (void)searchBarCancelButtonClicked:(UISearchBar *)_searchBar
-{
-	[self.searchDisplayController setActive:NO animated:YES];
-	[searchController.searchResultsTableView reloadData];
+-(void)hideSearchResultView{
+    [searchResultView hideSelf];
+    [UIView animateWithDuration:0.3 animations:^{
+        searchResultView.hidden = YES;
+        topImageView.frame = CGRectMake(0, 0, 320, KISHighVersion_7 ? 64 : 44);
+        m_myTableView.frame = CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-50);
+        searchResultView.frame = CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-44-50);
+    }completion:^(BOOL finished) {
+    }];
 }
-
-- (void)searchBarSearchButtonClicked:(UISearchBar *)_searchBar
-{
-	[self.searchDisplayController setActive:NO animated:YES];
-	[searchController.searchResultsTableView reloadData];
-}
-
-- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
-{
-    return YES;
-}
-
-- (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar
-{
-    return YES;
-}
-- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
-{
-    
-}
-- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
-{
-    
-    if ([searchText isEqualToString:@""]) {
-        searchController.searchResultsTableView.frame = CGRectMake(0, startX+44, 320, self.view.bounds.size.height-startX-50);
-        [m_searchArray removeAllObjects];
-        [searchController.searchResultsTableView reloadData];
-        return;
-    }
-    searchController.searchResultsTableView.frame = CGRectMake(0, startX, 320, self.view.bounds.size.height-startX-50);
-    [self reloadSearchList:searchText];
-}
-
 
 -(void)reloadSearchList:(NSString*)searchText{
     NSMutableArray *arr = [NSMutableArray array];
@@ -607,26 +581,10 @@
             }
         }
     }
-    [searchController.searchResultsTableView reloadData];
-}
-- (BOOL)searchBar:(UISearchBar *)searchBar shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
-{
-    return YES;
+    searchResultView.searchResultView = m_searchArray;
+    [searchResultView.mTableView reloadData];
 }
 
-- (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar
-{
-    
-}
-
-- (void)searchBarResultsListButtonClicked:(UISearchBar *)searchBar
-{
-    
-}
-- (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope
-{
-    
-}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
