@@ -7,6 +7,7 @@
 //
 
 #import "PlayVoiceCell.h"
+#import "AudioDownLoader.h"
 
 @implementation PlayVoiceCell
 {
@@ -129,45 +130,13 @@
 }
 
 #pragma mark --- 下载语音消息并且保存到沙盒
-
--(void)downLoadAudioFromNet:(NSString *)net address:(NSString *)address
+-(void)downLoadAudioFromNet
 {
-    if (![self isFileExist:address]) {
-        NSURL *url = [NSURL URLWithString:net];
-        NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-        connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-    }
-}
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
-{
-    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
-    NSLog(@"---didReceiveResponse---%lld",[httpResponse expectedContentLength]);
+    [AudioDownLoader fileDownloaderWithURLString:[self getUrlPath:KISDictionaryHaveKey(self.payloadDict, @"messageid")] MessageId:KISDictionaryHaveKey(self.payloadDict, @"messageid") delegate:nil];
 }
 
-
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
-{
-     NSLog(@"----data-----%@",data);
-    [receivedData appendData:data];
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
-{
-    NSString *ps = [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.infoDict, @"messageid")]]];
-    [[AudioManager singleton]isHaveThisFolderWithFilePath:[NSString stringWithFormat:@"%@/voice",RootDocPath]];
-    [receivedData writeToFile:ps atomically:NO];
-}
-
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
-{
-    
-}
-#pragma mark ---判断文件是否存在于沙盒
-- (BOOL)isFileExist:(NSString *)fileName
-{
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    BOOL result = [fileManager fileExistsAtPath:fileName];
-    return result;
+-(NSString*)getUrlPath:(NSString*)messageId{
+    return [NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:messageId]];
 }
 
 @end

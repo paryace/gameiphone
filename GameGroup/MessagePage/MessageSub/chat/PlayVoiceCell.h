@@ -12,7 +12,7 @@
 
 @protocol SendAudioMsgDeleGate;
 
-@interface PlayVoiceCell : KKChatCell<QiniuUploadDelegate,RecordAudioDelegate,NSURLConnectionDataDelegate>
+@interface PlayVoiceCell : KKChatCell<QiniuUploadDelegate,RecordAudioDelegate>
 @property (nonatomic, strong) UILabel      *audioTimeSizeLb;
 @property (nonatomic, strong) UIImageView  * voiceImageView;
 @property (nonatomic, assign) id<SendAudioMsgDeleGate>mydelegate;
@@ -20,9 +20,9 @@
 @property (nonatomic, copy)   NSString     * sendType;
 @property (nonatomic, strong) UIImageView  * audioRedImg;
 @property (nonatomic, assign) int            cellCount;
-@property (nonatomic, strong) NSDictionary * infoDict;
+@property (nonatomic, strong) NSDictionary * payloadDict;
 -(void)uploadAudio:(NSInteger)index;
--(void)downLoadAudioFromNet:(NSString *)net address:(NSString *)address;
+-(void)downLoadAudioFromNet;
 -(void)startPaly;
 -(void)stopPlay;
 @end
