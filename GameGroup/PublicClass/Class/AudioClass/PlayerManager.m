@@ -27,11 +27,6 @@ static PlayerManager *mPlayerManager = nil;
         if (mPlayerManager == nil)
         {
             mPlayerManager = [[PlayerManager alloc] init];
-            
-            [[NSNotificationCenter defaultCenter] addObserver:mPlayerManager
-                                                     selector:@selector(sensorStateChange:)
-                                                         name:@"UIDeviceProximityStateDidChangeNotification"
-                                                       object:nil];
         }
     }
     return mPlayerManager;
@@ -53,17 +48,9 @@ static PlayerManager *mPlayerManager = nil;
 
 - (id)init {
     if (self = [super init]) {
-        
-        //初始化播放器的时候如下设置
-        UInt32 sessionCategory = kAudioSessionCategory_PlayAndRecord;
-        AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(sessionCategory), &sessionCategory);
-        UInt32 audioRouteOverride = kAudioSessionOverrideAudioRoute_Speaker;
-        AudioSessionSetProperty(kAudioSessionProperty_OverrideAudioRoute, sizeof(audioRouteOverride), &audioRouteOverride);
-        
-        AVAudioSession *audioSession = [AVAudioSession sharedInstance];
-        //默认情况下扬声器播放
-        [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
-        [audioSession setActive:YES error:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sensorStateChange:)name:@"UIDeviceProximityStateDidChangeNotification"object:nil];
+        [self stopProximityMonitering];
+        [[AVAudioSession sharedInstance] setActive:YES error:nil];//设置可以在静音模式下播放
     }
     return self;
 }
@@ -72,45 +59,15 @@ static PlayerManager *mPlayerManager = nil;
     if ( ! filename) {
         return;
     }
-    NSLog(@"%lu",(unsigned long)[filename rangeOfString:@".spx"].location);
-
     if ([filename rangeOfString:@".spx"].location != NSNotFound) {
-        [[AVAudioSession sharedInstance] setActive:YES error:nil];
-        
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionDuckOthers error:nil];
         [self stopPlaying];
         self.delegate = newDelegate;
-        
         self.decapsulator = [[Decapsulator alloc] initWithFileName:filename];
         self.decapsulator.delegate = self;
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
         [self.decapsulator play];
-        
         [self startProximityMonitering];
-    }
-    else if ([filename rangeOfString:@".mp3"].location != NSNotFound) {
-        if ( ! [[NSFileManager defaultManager] fileExistsAtPath:filename]) {
-            NSLog(@"要播放的文件不存在:%@", filename);
-            [self.delegate playingStoped];
-            [newDelegate playingStoped];
-            return;
-        }
-        [self.delegate playingStoped];
-        self.delegate = newDelegate;
-        
-        NSError *error;
-        self.avAudioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:[NSURL URLWithString:filename] error:&error];
-        if (self.avAudioPlayer) {
-            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
-            [[AVAudioSession sharedInstance] setActive:YES error:nil];
-            self.avAudioPlayer.delegate = self;
-            [self.avAudioPlayer play];
-            [self startProximityMonitering];
-        }
-        else {
-            [self.delegate playingStoped];
-        }
-    }
-    else {
+    }else {
         [self.delegate playingStoped];
     }
 }
@@ -121,14 +78,11 @@ static PlayerManager *mPlayerManager = nil;
 
     if (self.decapsulator) {
         [self.decapsulator stopPlaying];
-//        self.decapsulator.delegate = nil;   //此行如果放在上一行之前会导致回调问题
         self.decapsulator = nil;
     }
     if (self.avAudioPlayer) {
         [self.avAudioPlayer stop];
         self.avAudioPlayer = nil;
-        
-//        [self.delegate playingStoped];
     }
     
     [self.delegate playingStoped];
@@ -142,12 +96,9 @@ static PlayerManager *mPlayerManager = nil;
 - (void)sensorStateChange:(NSNotification *)notification {
     //如果此时手机靠近面部放在耳朵旁，那么声音将通过听筒输出，并将屏幕变暗
     if ([[UIDevice currentDevice] proximityState] == YES) {
-        NSLog(@"Device is close to user");
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
-    }
-    else {
-        NSLog(@"Device is not close to user");
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord withOptions:AVAudioSessionCategoryOptionDuckOthers error:nil];
+    }else {
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionDuckOthers error:nil];
     }
 }
 
@@ -157,7 +108,6 @@ static PlayerManager *mPlayerManager = nil;
 }
 
 - (void)stopProximityMonitering {
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     [[UIDevice currentDevice] setProximityMonitoringEnabled:NO];
     NSLog(@"关闭距离监听");
 }

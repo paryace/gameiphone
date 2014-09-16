@@ -1861,7 +1861,6 @@ PlayingDelegate>
     custview.hidden = NO;
 }
 
-
 #pragma mark --播放
 #pragma mark ---播放声音
 -(void)playAudio:(UIButton *)sender
@@ -1870,7 +1869,7 @@ PlayingDelegate>
     NSMutableDictionary *dic = [messages objectAtIndex:i];
     NSDictionary *dict = [[dic objectForKey:@"payload"]JSONValue];
     if (isPlaying) {
-        [self startPayloadAudioAnimation:self.clickCellNum];
+        [self stopPayloadAudioAnimation:self.clickCellNum];
         if (self.clickCellNum == i) {
             [[PlayerManager sharedManager] stopPlaying];
             return;
@@ -1908,7 +1907,8 @@ PlayingDelegate>
 //下载失败
 - (void)fileDownLoader:(AudioDownLoader *)downloader failedWithError:(NSError *)error{
     [hud hide:YES];
-    [self showMessageWithContent:@"语音下载失败" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+    UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"语音下载失败" message:nil delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+    [alertView show];
     NSLog(@"下载失败");
 }
 

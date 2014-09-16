@@ -54,8 +54,7 @@ AudioQueueLevelMeterState *levelMeterStates;
 }
 
 - (void)startRecording {
-    
-    
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     if ( ! mAQRecorder) {
         mAQRecorder = new AQRecorder();
         OSStatus error = AudioSessionInitialize(NULL, NULL, interruptionListener, (__bridge void *)self);
@@ -82,19 +81,8 @@ AudioQueueLevelMeterState *levelMeterStates;
             error = AudioSessionSetActive(true); 
             if (error) printf("AudioSessionSetActive (true) failed");
         }
-        
     }
-    
     filename = [NSString stringWithString:[Encapsulator defaultFileName]];
-    NSLog(@"filename:%@",filename);
-    
-//    if (self.encapsulator) {
-//        self.encapsulator.delegete = nil;
-//        [self.encapsulator release];
-//    }
-//    self.encapsulator = [[[Encapsulator alloc] initWithFileName:filename] autorelease];
-//    self.encapsulator.delegete = self;
-    
     if ( ! self.encapsulator) {
         self.encapsulator = [[Encapsulator alloc] initWithFileName:filename];
         self.encapsulator.delegete = self;
@@ -102,7 +90,6 @@ AudioQueueLevelMeterState *levelMeterStates;
     else {
         [self.encapsulator resetWithFileName:filename];
     }
-    
     if ( ! mAQRecorder->IsRunning()) {
         NSLog(@"audio session category : %@", [[AVAudioSession sharedInstance] category]);
         Boolean recordingWillBegin = mAQRecorder->StartRecord(encapsulator);
