@@ -62,8 +62,6 @@
 {
     UIView *gameIconView=[[UIView alloc]initWithFrame:CGRectMake(x, y, width, height)];
 //    gameIconView.backgroundColor = [UIColor grayColor];
-    NSLog(@"ffff-------%@",gameIconView);
-
     for (int i=0 ; i<gameIds.count;i++) {
         if (i<3) {
             NSString * gameid=[gameIds objectAtIndex:i];
