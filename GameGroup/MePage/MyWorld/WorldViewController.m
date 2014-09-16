@@ -145,12 +145,7 @@ typedef enum : NSUInteger {
     
     [self.view addSubview:hud];
     
-    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
-    [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
-    shareButton.backgroundColor = [UIColor clearColor];
-    [shareButton addTarget:self action:@selector(publishInfo:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:shareButton];
+    
     
 //    [self getInfoWithNet];
     [self netWork];
@@ -196,7 +191,7 @@ typedef enum : NSUInteger {
         [hud hide:YES];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
         [alert show];
-        [self.navigationController popViewControllerAnimated:YES];
+       
     }];
 }
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
@@ -333,6 +328,13 @@ typedef enum : NSUInteger {
         [m_footer endRefreshing];
         [m_header endRefreshing];
         [m_loginActivity stopAnimating];
+              // 网络成功  才创建发新动态的button
+              UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+              [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
+              [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
+              shareButton.backgroundColor = [UIColor clearColor];
+              [shareButton addTarget:self action:@selector(publishInfo:) forControlEvents:UIControlEventTouchUpInside];
+              [self.view addSubview:shareButton];
      }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
