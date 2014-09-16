@@ -18,7 +18,6 @@
         self.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
         _searchResultView = [NSMutableArray array];
         if (!_mTableView) {
-            
             _mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width,frame.size.height) style:UITableViewStylePlain];
             _mTableView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
             _mTableView.delegate = self;
@@ -27,11 +26,18 @@
             [GameCommon setExtraCellLineHidden:_mTableView];
             [self addSubview:_mTableView];
             _m_searchBar = [[MySearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-            [_m_searchBar setPlaceholder:@"关键字搜索服务器"];
+            [_m_searchBar setPlaceholder:@"关键字搜索"];
             _m_searchBar.delegate = self;
-             _m_searchBar.showsCancelButton=NO;
+             _m_searchBar.showsCancelButton=YES;
             [_m_searchBar sizeToFit];
             _mTableView.tableHeaderView = _m_searchBar;
+            
+            _baseView = [[UIView alloc] initWithFrame:CGRectMake(0, 50, frame.size.width,frame.size.height)];
+            _baseView.backgroundColor = [UIColor clearColor];
+            _baseView.hidden = YES;
+            [self addSubview:_baseView];
+            UITapGestureRecognizer *bgTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(bgTappedAction:)];
+            [_baseView addGestureRecognizer:bgTap];
             
         }
     }
@@ -126,6 +132,7 @@
 #pragma mark ----取消按钮
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar{
     [_m_searchBar setShowsCancelButton:NO animated:YES];
+    _baseView.hidden = YES;
     [self.delegate hideSearchResultView];
 }
 
@@ -137,11 +144,13 @@
 #pragma mark ----失去焦点
 - (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar
 {
+    _baseView.hidden = YES;
     return YES;
 }
 #pragma mark ----获得焦点
 - (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
 {
+    _baseView.hidden = NO;
     [_m_searchBar setShowsCancelButton:YES animated:YES];
     return YES;
 }
