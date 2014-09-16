@@ -17,6 +17,7 @@
 #import "NearByViewController.h"
 #import "LocationManager.h"
 #import "WorldCell.h"
+#import "SendNewsViewController.h"
 typedef enum : NSUInteger {
     CommentInputTypeKeyboard,
     CommentInputTypeEmoji,
@@ -143,6 +144,12 @@ typedef enum : NSUInteger {
     [hud show:YES];
     [self.view addSubview:hud];
     
+    UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
+    [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
+    shareButton.backgroundColor = [UIColor clearColor];
+    [shareButton addTarget:self action:@selector(publishInfo:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:shareButton];
     
 //    [self getInfoWithNet];
     [self netWork];
@@ -273,9 +280,9 @@ typedef enum : NSUInteger {
     [paramDic setObject:[NSString stringWithFormat:@"%f",latitude] forKey:@"latitude"];
     //判断是否是上拉加载更多
     if (isRefresh==YES) {
-    NSString *str = [NSString stringWithFormat:@"%d",refreshCount*20+20];
+    NSString *str = [NSString stringWithFormat:@"%d",refreshCount*20];
     [paramDic setObject:str forKey:@"firstResult"];
-        
+        isRefresh = NO;
     }else{
     [paramDic setObject:@"0" forKey:@"firstResult"];
     }
@@ -1758,7 +1765,14 @@ typedef enum : NSUInteger {
     [self.navigationController pushViewController:detailVC animated:YES];
     
 }
-
+-(void)publishInfo:(UIButton *)sender
+{
+    SendNewsViewController* sendNews = [[SendNewsViewController alloc] init];
+    sendNews.delegate = self;
+    sendNews.isComeFromMe = YES;
+    [self.navigationController pushViewController:sendNews animated:YES];
+    
+}
 //根据标题的长度更改UIActivity的位置
 - (void)getmsgIdwithCircle:(NewNearByCell *)myCell withindexPath:(NSInteger)row
 {

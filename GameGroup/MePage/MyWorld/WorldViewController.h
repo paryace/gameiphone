@@ -11,6 +11,7 @@
 #import "HPGrowingTextView.h"
 #import "EmojiView.h"
 #import "WorldCell.h"
+#import "SendNewsViewController.h"
 @interface WorldViewController : BaseViewController
 
 
@@ -22,7 +23,8 @@ NewNearByCellDelegate,
 WorldCellDelegate,
 UIActionSheetDelegate,
 HPGrowingTextViewDelegate,
-EmojiViewDelegate
+EmojiViewDelegate,
+TableViewDatasourceDidChange
 >
 @property(nonatomic,strong)HPGrowingTextView *textView;
 @property(nonatomic,copy)NSString *gameid;
