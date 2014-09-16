@@ -559,32 +559,6 @@ static GameCommon *my_gameCommon = NULL;
    return [gameids componentsSeparatedByString:@","];
 }
 
-//+(NSString *)isNewOrOldWithImage:(NSString *)imgStr
-//{
-//    unichar c;
-//    for (int i=0; i<imgStr.length; i++) {
-//        c=[imgStr characterAtIndex:i];
-//        if (!isdigit(c)) {
-//            return NewBaseImageUrl;
-//        }
-//    }
-//    return BaseImageUrl;
-//}
-
-//+(NSString *)isNewOrOldWithImage:(NSString *)imgStr width:(int)width hieght:(int)hieght a:(NSString*)a
-//{
-//    unichar c;
-//    for (int i=0; i<imgStr.length; i++) {
-//        c=[imgStr characterAtIndex:i];
-//        if (!isdigit(c)) {
-//            return [NSString stringWithFormat:@"%@%@?w=%d&h=%d",NewBaseImageUrl,imgStr,width,hieght];
-//        }
-//    }
-//    return [NSString stringWithFormat:@"%@%@/%@",BaseImageUrl,imgStr,a];
-//}
-
-
-
 #pragma mark MyNews - tabBar小红点
 -(void)displayTabbarNotification
 {
@@ -635,8 +609,6 @@ static GameCommon *my_gameCommon = NULL;
     [[NSUserDefaults standardUserDefaults] setValue:@"" forKey:PhoneNumKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"active_wx"];
-//    [SFHFKeychainUtils deleteItemForUsername:ACCOUNT andServiceName:LOCALACCOUNT error:nil];
-   // [SFHFKeychainUtils deleteItemForUsername:PASSWORD andServiceName:LOCALACCOUNT error:nil];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMyToken];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:kMYUSERID];
     AppDelegate* app = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -720,8 +692,7 @@ static GameCommon *my_gameCommon = NULL;
                 }
                 [GameCommon loginOut];
             }
-            else
-            {
+            else{
                 NSArray *arr = KISDictionaryHaveKey(responseObject, @"characters");
                 if (!arr||![arr isKindOfClass:[NSArray class]]) {
                     [[TempData sharedInstance]isBindingRolesWithBool:NO];
@@ -732,9 +703,7 @@ static GameCommon *my_gameCommon = NULL;
                         [[TempData sharedInstance]isBindingRolesWithBool:NO];
                     }
                 }
-            }
-            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"tokenValid")]boolValue]) {
-                NSLog(@"111--OPen接口的用户信息");
+            }if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"tokenValid")]boolValue]) {
                 [[UserManager singleton]saveUserInfo:responseObject];
             }
             [self openSuccessWithInfo:responseObject From:@"firstOpen"];
@@ -777,6 +746,7 @@ static GameCommon *my_gameCommon = NULL;
         }else{
             [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"IOSURL"];
         }
+        [[UserManager singleton] cacheSayhelloList:KISDictionaryHaveKey(dict, @"sayhellolist")];
     }
     NSString *path  =[RootDocPath stringByAppendingString:@"/openData.plist"];
     NSMutableDictionary* openData = [NSMutableDictionary dictionaryWithContentsOfFile:path] ? [NSMutableDictionary dictionaryWithContentsOfFile:path] : [NSMutableDictionary dictionaryWithCapacity:1];

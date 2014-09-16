@@ -266,6 +266,8 @@
 //
 - (void)didGameNameBt:(id)sender
 {
+    UITextField *tf = (UITextField *)[self.view viewWithTag:100002];
+    [tf resignFirstResponder];
     [self.gameTableView showSelf];
 }
 #pragma mark ------返回到注册

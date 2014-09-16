@@ -13,4 +13,5 @@
 @property (nonatomic,retain) NSIndexPath * indexPath;
 @property (nonatomic,retain) UILabel * nameL;
 @property (nonatomic,retain) UILabel * photoNoL;
+@property (assign, nonatomic) BOOL isSearch;
 @end

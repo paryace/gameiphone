@@ -14,7 +14,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         self.contentView.backgroundColor = kColorWithRGB(246, 246, 246, 1.0);
         self.nameL = [[UILabel alloc]initWithFrame:CGRectMake(10, 10, 200, 20)];
@@ -42,23 +41,8 @@
 }
 - (void)inviteFriend
 {
-    if (self.delegate&& [_delegate respondsToSelector:@selector(DodeAddressCellTouchButtonWithIndexPath:)]) {
-        [_delegate DodeAddressCellTouchButtonWithIndexPath:self.indexPath];
+    if (self.delegate&& [_delegate respondsToSelector:@selector(OutDodeAddressCellTouchButtonWithIndexPath:IsSearch:)]) {
+        [_delegate OutDodeAddressCellTouchButtonWithIndexPath:self.indexPath IsSearch:self.isSearch];
     }
 }
-- (void)awakeFromNib
-{
-    // Initialization code
-}
--(void)layoutSubviews
-{
-    [super layoutSubviews];
-}
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
-{
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
-}
-
 @end

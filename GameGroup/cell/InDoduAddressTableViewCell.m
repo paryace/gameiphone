@@ -14,7 +14,6 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         self.contentView.backgroundColor = kColorWithRGB(246, 246, 246, 1.0);
         self.headerImage = [[EGOImageView alloc]initWithFrame:CGRectMake(10, 10, 40, 40)];
