@@ -400,7 +400,7 @@ PlayingDelegate>
     
     
     hud = [[MBProgressHUD alloc] initWithView:self.view];
-    hud.labelText = @"正在处理图片...";
+    hud.labelText = @"正在处理...";
     [self.view addSubview:hud];
 }
 
@@ -1887,6 +1887,7 @@ PlayingDelegate>
             [DataStoreManager changeAudioTypeWithMsgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"messageuuid")] table:self.type];
             [self startPlayAudio:ps CellIndex:i];
         }else{
+             hud.labelText = @"正在下载语音...";
             [hud show:YES];
             [AudioDownLoader fileDownloaderWithURLString:[self getUrlPath:KISDictionaryHaveKey(dict, @"messageid")] MessageId:KISDictionaryHaveKey(dict, @"messageid") delegate:self];
         }
@@ -1896,7 +1897,6 @@ PlayingDelegate>
 
 //下载完成
 - (void)fileDownLoader:(AudioDownLoader *)downloader downLoadSuccessWithImage:(NSData *)data{
-    hud.labelText = @"正在下载语音...";
     [hud hide:YES];
     [self startPlayAudio:[self downedFilePath:downloader.messageId] CellIndex:self.clickCellNum];
     NSLog(@"下载成功");
