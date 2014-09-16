@@ -1887,7 +1887,7 @@ PlayingDelegate>
             [DataStoreManager changeAudioTypeWithMsgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"messageuuid")] table:self.type];
             [self startPlayAudio:ps CellIndex:i];
         }else{
-             hud.labelText = @"正在下载语音...";
+             hud.labelText = @"请稍后...";
             [hud show:YES];
             [AudioDownLoader fileDownloaderWithURLString:[self getUrlPath:KISDictionaryHaveKey(dict, @"messageid")] MessageId:KISDictionaryHaveKey(dict, @"messageid") delegate:self];
         }
@@ -2712,7 +2712,7 @@ PlayingDelegate>
 //从相册中选取图片
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
     hud = [[MBProgressHUD alloc] initWithView:self.view];
-    hud.labelText = @"正在处理图片...";
+    hud.labelText = @"请稍后...";
     [picker.view.superview addSubview:hud];
     
     [hud show:YES];

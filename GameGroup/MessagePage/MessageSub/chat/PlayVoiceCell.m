@@ -111,6 +111,10 @@
 {
     NSLog(@"上传成功");
     NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];
+    NSString *ps = [self getVoideFilePath:response];
+    NSData* fileData = [NSData dataWithContentsOfFile:theFilePath];
+    [[AudioManager singleton]isHaveThisFolderWithFilePath:[NSString stringWithFormat:@"%@/voice",RootDocPath]];
+    [fileData writeToFile:ps atomically:YES];
     if (self.uploaddelegate) {
         [self.uploaddelegate uploadFinish:cellIndex];//上传完成
     }
@@ -138,5 +142,7 @@
 -(NSString*)getUrlPath:(NSString*)messageId{
     return [NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:messageId]];
 }
-
+-(NSString*)getVoideFilePath:(NSString*)messageId{
+    return [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:messageId]]];
+}
 @end
