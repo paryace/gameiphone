@@ -68,6 +68,7 @@ typedef enum : NSUInteger {
     //是否是上拉加载更多
     BOOL isRefresh;
     NSInteger refreshCount;
+    UIActivityIndicatorView * m_loginActivity;
 }
 @property (nonatomic, assign) CommentInputType commentInputType;
 @property (nonatomic, strong) EmojiView *theEmojiView;
@@ -141,7 +142,7 @@ typedef enum : NSUInteger {
     
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"加载中...";
-    [hud show:YES];
+    
     [self.view addSubview:hud];
     
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
@@ -175,10 +176,17 @@ typedef enum : NSUInteger {
     citydongtaiStr = @"附近的动态";
     // Do any additional setup after loading the view.
     
+    m_loginActivity = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    m_loginActivity.frame = CGRectMake(110, KISHighVersion_7?27:7, 20, 20);
+    m_loginActivity.center = CGPointMake(110, KISHighVersion_7?42:22);
+    m_loginActivity.color = [UIColor whiteColor];
+    m_loginActivity.activityIndicatorViewStyle =UIActivityIndicatorViewStyleWhite;
+    [self.view addSubview:m_loginActivity];
+     [m_loginActivity startAnimating];
 }
 - (void)netWork
 {
-    [hud show:YES];
+    [m_loginActivity startAnimating];
     //获取经纬度
     [[LocationManager sharedInstance]startCheckLocationWithSuccess:^(double lat, double lon) {
         longitude = lon;
@@ -188,6 +196,7 @@ typedef enum : NSUInteger {
         [hud hide:YES];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
         [alert show];
+        [self.navigationController popViewControllerAnimated:YES];
     }];
 }
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
@@ -272,7 +281,7 @@ typedef enum : NSUInteger {
 
 -(void)getInfoWithNet
 {
-    [hud show:YES];
+    
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
 
@@ -286,17 +295,19 @@ typedef enum : NSUInteger {
     }else{
     [paramDic setObject:@"0" forKey:@"firstResult"];
     }
+    [paramDic setObject:self.gameid forKey:@"gameid"];
     [paramDic setObject:@"20" forKey:@"maxSize"];
     [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [dict setObject:paramDic forKey:@"params"];
     [dict setObject:@"308" forKey:@"method"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    
-    
+        
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"reponsObject =%@",responseObject);
-
+          if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
             if (m_currPageCount ==0) {//此情况用于下拉刷新，和第一次加载页面
+                //清空refreshcount
+                refreshCount = 0;
                 [m_dataArray removeAllObjects];
                 NSMutableArray *arr  = [NSMutableArray array];
                 NSArray *arrays = [NSArray arrayWithArray:responseObject];
@@ -321,7 +332,8 @@ typedef enum : NSUInteger {
     
         [m_footer endRefreshing];
         [m_header endRefreshing];
-        [hud hide:YES];
+        [m_loginActivity stopAnimating];
+     }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
@@ -333,8 +345,8 @@ typedef enum : NSUInteger {
         }
         [m_footer endRefreshing];
         [m_header endRefreshing];
+        [m_loginActivity stopAnimating];
         
-        [hud hide:YES];
     }];
     
 }
@@ -431,7 +443,7 @@ typedef enum : NSUInteger {
         
         //动态的高度
         float height1 = [KISDictionaryHaveKey(dict, @"titleLabelHieght") floatValue];
-        cell.titleLabel.frame = CGRectMake(60, 30, 250, height1);
+        cell.titleLabel.frame = CGRectMake(65, 30, 250, height1);
         m_currmagY += height1 + 5;
         
         
@@ -439,11 +451,11 @@ typedef enum : NSUInteger {
         if ([KISDictionaryHaveKey(dict, @"img") isEqualToString:@""]||[KISDictionaryHaveKey(dict, @"img") isEqualToString:@" "]) {
             cell.photoCollectionView.hidden =YES;
             
-            cell.timeLabel.frame = CGRectMake(245,10, 70, 30);
+            cell.timeLabel.frame = CGRectMake(245,5, 70, 30);
             cell.openBtn.frame = CGRectMake(270,m_currmagY+5, 50, 40);
             cell.jubaoBtn.frame = CGRectMake(150, m_currmagY+10, 60, 30);
             cell.areaLabel.frame = CGRectMake(73, m_currmagY+15, 207, 25);
-            cell.areaIcon.frame = CGRectMake(60, m_currmagY+20, 13, 13);
+            cell.areaIcon.frame = CGRectMake(60, m_currmagY+21, 9, 11);
         }
         //有图动态
         else{
@@ -465,11 +477,11 @@ typedef enum : NSUInteger {
             cell.layout.minimumLineSpacing = paddingY;
             
             [cell.photoCollectionView reloadData];
-            cell.timeLabel.frame = CGRectMake(245,10, 70, 30);
+            cell.timeLabel.frame = CGRectMake(245,5, 70, 30);
             cell.openBtn.frame = CGRectMake(270,m_currmagY-5, 50, 40);
             cell.jubaoBtn.frame = CGRectMake(150, m_currmagY, 60, 30);
             cell.areaLabel.frame = CGRectMake(73, m_currmagY+4, 203, 25);
-            cell.areaIcon.frame = CGRectMake(60, m_currmagY+10, 13, 13);
+            cell.areaIcon.frame = CGRectMake(60, m_currmagY+11, 9, 11);
         }
         
         m_currmagY=cell.jubaoBtn.frame.origin.y + cell.jubaoBtn.frame.size.height;
@@ -486,7 +498,7 @@ typedef enum : NSUInteger {
         float titleLabelHeight;
         //文章高度
         titleLabelHeight = [KISDictionaryHaveKey(dict, @"titleLabelHieght") floatValue];
-        cell.titleLabel.frame = CGRectMake(60, 30, 250, titleLabelHeight);
+        cell.titleLabel.frame = CGRectMake(65, 30, 250, titleLabelHeight);
         cell.shareView.frame = CGRectMake(60, titleLabelHeight+35, 250, 50);
         //titleLabelHeight +=5;
         m_currmagY += titleLabelHeight+50 ;
@@ -516,11 +528,11 @@ typedef enum : NSUInteger {
             cell.shareInfoLabel.numberOfLines = 2;
         }
         
-        cell.timeLabel.frame = CGRectMake(245,10, 70, 30);
+        cell.timeLabel.frame = CGRectMake(245,5, 70, 30);
         cell.openBtn.frame = CGRectMake(270,m_currmagY+5, 50, 40);
         cell.jubaoBtn.frame = CGRectMake(150, m_currmagY+10, 60, 30);
         cell.areaLabel.frame = CGRectMake(73, m_currmagY+14, 207, 25);
-        cell.areaIcon.frame = CGRectMake(60, m_currmagY+20, 13, 13);
+        cell.areaIcon.frame = CGRectMake(60, m_currmagY+21, 9, 11);
         m_currmagY  = cell.jubaoBtn.frame.origin.y + cell.jubaoBtn.frame.size.height;
     }
     
@@ -1790,6 +1802,12 @@ typedef enum : NSUInteger {
 {
     
 }
-
+// 发布新动态后的代理回调
+-(void)dynamicListAddOneDynamic:(NSDictionary*)dynamic
+{
+    
+    m_currPageCount = 0;
+    [self netWork];
+}
 @end
 

@@ -267,7 +267,7 @@
 //
 - (void)didGameNameBt:(id)sender
 {
-    UITextField *tf = (UITextField *)[self.view viewWithTag:2];
+    UITextField *tf = (UITextField *)[self.view viewWithTag:100002];
     [tf resignFirstResponder];
     [self.gameTableView showSelf];
 }
@@ -504,7 +504,6 @@
         cell.contentTF.inputView =nil;
         cell.smallImg.hidden = NO;
         cell.contentTF.placeholder = [NSString stringWithFormat:@"请输入您的%@",KISDictionaryHaveKey(dic, @"name")];
-        cell.contentTF.tag = indexPath.row;
         cell.smallImg.image = KUIImage(@"r-1_10");
          [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeImage:) name:UITextFieldTextDidChangeNotification object:nil];
         [cell.contentTF addTarget:self action:@selector(changeImage:) forControlEvents:UIControlEventValueChanged];

@@ -835,6 +835,11 @@
 
 -(void)enterCirclePage:(id)sender
 {
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@""]||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@" "]||!manDic) {
+        [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
+        return;
+    }
+    
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     CircleHeadViewController *circleVC  = [[CircleHeadViewController alloc]init];
     circleVC.imageStr = nil;
@@ -845,11 +850,15 @@
 
 -(void)enterGroupList:(id)sender
 {
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@""]||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@" "]||!manDic) {
+        [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
+        return;
+    }
+    
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-//    MyGroupViewController * gruupV = [[MyGroupViewController alloc] init];
     WorldViewController *worldVC = [[WorldViewController alloc]init];
-    InterestingPerpleViewController *inVC = [[InterestingPerpleViewController alloc]init];
-        [self.navigationController pushViewController:worldVC animated:YES];
+    worldVC.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")];
+    [self.navigationController pushViewController:worldVC animated:YES];
     
 }
 
