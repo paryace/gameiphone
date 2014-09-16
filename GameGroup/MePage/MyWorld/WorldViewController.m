@@ -146,21 +146,22 @@ typedef enum : NSUInteger {
     [self.view addSubview:hud];
     
     
+//        //从本地取数据
+    NSFileManager *fileManager =[NSFileManager defaultManager];
     
-//    [self getInfoWithNet];
+    NSString *path1  =[RootDocPath stringByAppendingString:@"/MY_myWorld"];
+    BOOL isTrue1 = [fileManager fileExistsAtPath:path1];
+    NSDictionary *fileAttr1 = [fileManager attributesOfItemAtPath:path1 error:NULL];
+    if (isTrue1 && [[fileAttr1 objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
+        m_dataArray= [NSMutableArray arrayWithContentsOfFile:path1];
+    }
+
     [self netWork];
     [self addheadView];
     [self addFootView];
     
-    //从本地取数据
-//    NSFileManager *fileManager =[NSFileManager defaultManager];
-//    
-//    NSString *path1  =[RootDocPath stringByAppendingString:@"/HC_youquInfoList"];
-//    BOOL isTrue1 = [fileManager fileExistsAtPath:path1];
-//    NSDictionary *fileAttr1 = [fileManager attributesOfItemAtPath:path1 error:NULL];
-//    if (isTrue1 && [[fileAttr1 objectForKey:NSFileSize] unsignedLongLongValue] != 0) {
-//        m_dataArray= [NSMutableArray arrayWithContentsOfFile:path1];
-//    }
+
+
     [self.view addSubview:self.theEmojiView];
     self.theEmojiView.hidden = YES;
     
@@ -178,21 +179,6 @@ typedef enum : NSUInteger {
     m_loginActivity.activityIndicatorViewStyle =UIActivityIndicatorViewStyleWhite;
     [self.view addSubview:m_loginActivity];
      [m_loginActivity startAnimating];
-}
-- (void)netWork
-{
-    [m_loginActivity startAnimating];
-    //获取经纬度
-    [[LocationManager sharedInstance]startCheckLocationWithSuccess:^(double lat, double lon) {
-        longitude = lon;
-        latitude = lat;
-        [self getInfoWithNet];
-    } Failure:^{
-        [hud hide:YES];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-        [alert show];
-       
-    }];
 }
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
     if (openMenuBtn.menuImageView.hidden==NO) {
@@ -272,6 +258,21 @@ typedef enum : NSUInteger {
 
 #pragma mark ---
 #pragma mark ---- 网络请求
+- (void)netWork
+{
+    [m_loginActivity startAnimating];
+    //获取经纬度
+    [[LocationManager sharedInstance]startCheckLocationWithSuccess:^(double lat, double lon) {
+        longitude = lon;
+        latitude = lat;
+        [self getInfoWithNet];
+    } Failure:^{
+        [hud hide:YES];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+        [alert show];
+        
+    }];
+}
 
 
 -(void)getInfoWithNet
@@ -308,10 +309,13 @@ typedef enum : NSUInteger {
                 NSArray *arrays = [NSArray arrayWithArray:responseObject];
                 for (int i =0; i<arrays.count; i++) {
                     [arr addObject:[self contentAnalyzer:arrays[i] withReAnalyzer:NO]];
-                    NSDictionary *dic = [responseObject objectAtIndex:i];
-                    [areaArray addObject:KISDictionaryHaveKey(dic, @"pushArea")];
                 }
+                
                 [m_dataArray addObjectsFromArray:arr];
+                NSString *filePath = [RootDocPath stringByAppendingString:@"/MY_myWorld"];
+                [m_dataArray writeToFile:filePath atomically:YES];
+                
+                
             }else{
                 NSMutableArray *arr  = [NSMutableArray array];
                 NSArray *arrays = [NSArray arrayWithArray:responseObject];
@@ -378,7 +382,7 @@ typedef enum : NSUInteger {
     cell.tag = indexPath.row;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     NSMutableDictionary *dict = [m_dataArray objectAtIndex:indexPath.row];
-    cell.areaLabel.text = [areaArray objectAtIndex:indexPath.row];
+    cell.areaLabel.text = [dict objectForKey:@"pushArea"];
     //删除按钮 - 自己的文章
     if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]]) {
         [cell.jubaoBtn setTitle:@"删除" forState:UIControlStateNormal];
@@ -445,7 +449,7 @@ typedef enum : NSUInteger {
         
         //动态的高度
         float height1 = [KISDictionaryHaveKey(dict, @"titleLabelHieght") floatValue];
-        cell.titleLabel.frame = CGRectMake(65, 30, 250, height1);
+        cell.titleLabel.frame = CGRectMake(60, 33, 250, height1);
         m_currmagY += height1 + 5;
         
         

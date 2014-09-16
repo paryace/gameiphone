@@ -46,8 +46,8 @@
         [self.contentView addSubview:self.titleLabel];
         
         self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(242, 10, 70, 30)];
-        self.timeLabel.font = [UIFont systemFontOfSize:12];
-        self.timeLabel.textColor =[UIColor grayColor];
+        self.timeLabel.font = [UIFont systemFontOfSize:11];
+        self.timeLabel.textColor = UIColorFromRGBA(0x999999, 1);
         self.timeLabel.textAlignment = NSTextAlignmentCenter;
         self.timeLabel.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.timeLabel];
@@ -142,15 +142,16 @@
         
         
         self.menuImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(105, 60, 180, 38)];
-        self.menuImageView.image = KUIImage(@"bgImg");
+//        self.menuImageView.image = KUIImage(@"bgImg");
+        self.menuImageView.backgroundColor = [UIColor clearColor];
         self.menuImageView.userInteractionEnabled = YES;
         self.menuImageView.hidden = YES;
         [self addSubview:self.menuImageView];
         
         
-        self.zanBtn=[[ UIButton alloc]initWithFrame:CGRectMake(2, 2, 87, 36)];
+        self.zanBtn=[[ UIButton alloc]initWithFrame:CGRectMake(2, 2, 89, 36)];
         [self.zanBtn setBackgroundImage:KUIImage(@"zan1_10") forState:UIControlStateNormal];
-        [self.zanBtn setBackgroundImage:KUIImage(@"zan_circle_click") forState:UIControlStateHighlighted];
+        [self.zanBtn setBackgroundImage:KUIImage(@"zan2_10") forState:UIControlStateHighlighted];
         [self.zanBtn addTarget:self action:@selector(zan:) forControlEvents:UIControlEventTouchUpInside];
         [self.menuImageView addSubview:self.zanBtn];
         
@@ -172,7 +173,7 @@
         //区域label
         self.areaLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, 10, 10)];
         self.areaLabel.font = [UIFont systemFontOfSize:11];
-        self.areaLabel.textColor = [UIColor grayColor];
+        self.areaLabel.textColor = UIColorFromRGBA(0x999999, 1);
         self.areaLabel.textAlignment = NSTextAlignmentLeft;
         self.areaLabel.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.areaLabel];

@@ -16,15 +16,16 @@
     if (self) {
         
         
-        UIImageView * bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 40, 320, 355)];
+        UIImageView * bgImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 10, 320, 355)];
         bgImageView.image = KUIImage(@"select_character_bg");
         bgImageView.userInteractionEnabled = YES;
-        [self addSubview:bgImageView];
+      [self addSubview:bgImageView];
         
-        UIView * topView = [[UIView alloc] initWithFrame:CGRectMake(5, 49, 320-25-10, 0.5)];
-        topView.backgroundColor = [UIColor grayColor];
-        self.titleView = [[UILabel alloc]initWithFrame:CGRectMake(12.5, 12.5, 320-25, 50)];
-        self.titleView.backgroundColor = [UIColor whiteColor];
+        UIView * topView = [[UIView alloc] initWithFrame:CGRectMake(5, 59, 320-25-10, 0.5)];
+//        topView.backgroundColor = [UIColor yellowColor];
+        topView.backgroundColor = UIColorFromRGBA(0xc8c7cc, 1);
+        self.titleView = [[UILabel alloc]initWithFrame:CGRectMake(12.5, 12.5, 320-25, 80)];
+        self.titleView.backgroundColor = [UIColor clearColor];
         self.titleView.layer.masksToBounds = YES;
         self.titleView.layer.cornerRadius = 2.0;
         self.titleView.textAlignment = NSTextAlignmentCenter;
@@ -39,6 +40,7 @@
         self.roleTableView.layer.cornerRadius = 2.0;
         self.roleTableView.layer.borderWidth = 0;
         self.roleTableView.layer.borderColor = [[UIColor whiteColor] CGColor];
+        self.roleTableView.separatorStyle =UITableViewCellSeparatorStyleNone;
         self.roleTableView.rowHeight = 70;
         self.roleTableView.backgroundColor =[UIColor whiteColor];
         self.roleTableView.delegate = self;

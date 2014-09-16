@@ -117,7 +117,7 @@
         [footView addSubview:lineImg];
     }
 
-    UIButton* addButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 20, 300, 40)];
+    UIButton* addButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 10, 300, 40)];
     [addButton setBackgroundImage:KUIImage(@"blue_button_normal") forState:UIControlStateNormal];
     [addButton setBackgroundImage:KUIImage(@"blue_button_click") forState:UIControlStateHighlighted];
     [addButton setTitle:@"添加新角色" forState:UIControlStateNormal];

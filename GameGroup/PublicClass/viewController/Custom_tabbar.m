@@ -32,9 +32,9 @@ static Custom_tabbar *s_tabbar = NULL;
 
 - (void)init_tab
 {
-	backgroud_image = [[NSArray alloc]initWithObjects:@"message_normal.png",@"friend_normal.png",@"Item_normal.png",@"find_normal.png",@"wo_normal.png",nil];
-	select_image = [[NSArray alloc]initWithObjects:@"message_click.png",@"friend_click.png",@"Item_click.png",@"find_click.png",@"wo_click.png",nil];
-
+	backgroud_image = [[NSArray alloc]initWithObjects:@"xiaoxi_01",@"lianxiren_01",@"zudui_01",@"faxian2",@"wo_01",nil];
+//	select_image = [[NSArray alloc]initWithObjects:@"message_click.png",@"friend_click.png",@"Item_click.png",@"find_click.png",@"wo_click.png",nil];
+    select_image = [[NSArray alloc]initWithObjects:@"xiaoxi_02",@"lianxiren_02",@"zudui_02",@"faxian1",@"wo_02",nil];
 //	backgroud_image = [[NSArray alloc]initWithObjects:@"message_normal.png",@"friend_normal.png",/*@"friend_normal.png",*/@"find_normal.png",@"wo_normal.png",nil];
 //	select_image = [[NSArray alloc]initWithObjects:@"message_click.png",@"friend_click.png",/*@"friend_click.png",*/@"find_click.png",@"wo_click.png",nil];
     

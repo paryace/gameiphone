@@ -47,6 +47,7 @@
         
         
         
+        
         self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 100, 44)];
         self.titleLabel.textColor = kColorWithRGB(102, 102, 102, 1.0);
         self.titleLabel.font = [UIFont boldSystemFontOfSize:15.0];
