@@ -67,7 +67,7 @@
     //如果有，我们直接用
     if ([self isFileExist:filePath]) {
         _receivedData = [NSData dataWithContentsOfURL:[NSURL URLWithString:filePath]];
-        if([_delegate respondsToSelector:@selector(imageDownLoader:downLoadSuccessWithImage:)]){
+        if([_delegate respondsToSelector:@selector(fileDownLoader:downLoadSuccessWithImage:)]){
             [_delegate fileDownLoader:self downLoadSuccessWithImage:_receivedData];
         }
     }else{    //如果没有，我们就去下载
@@ -90,7 +90,7 @@
 {
     [_receivedData appendData:data];
     CGFloat progress = 0;
-    if([_delegate respondsToSelector:@selector(imageDownLoader:progress:)]){
+    if([_delegate respondsToSelector:@selector(fileDownLoader:progress:)]){
         [_delegate fileDownLoader:self progress:progress];
     }
 }
@@ -101,14 +101,14 @@
     NSString *ps = [self getVoideFilePath:_messageId];
     [[AudioManager singleton]isHaveThisFolderWithFilePath:[NSString stringWithFormat:@"%@/voice",RootDocPath]];
     [_receivedData writeToFile:ps atomically:YES];
-    if([_delegate respondsToSelector:@selector(imageDownLoader:downLoadSuccessWithImage:)]){
+    if([_delegate respondsToSelector:@selector(fileDownLoader:downLoadSuccessWithImage:)]){
         [_delegate fileDownLoader:self downLoadSuccessWithImage:_receivedData];
     }
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    if([_delegate respondsToSelector:@selector(imageDownLoader:failedWithError:)]){
+    if([_delegate respondsToSelector:@selector(fileDownLoader:failedWithError:)]){
         [_delegate fileDownLoader:self failedWithError:error];
     }
 }

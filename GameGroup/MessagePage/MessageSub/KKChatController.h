@@ -68,7 +68,8 @@ SendAudioMsgDeleGate,
 ApplyDetailDelegate,
 SendFileMessageDelegate,
 UIGestureRecognizerDelegate,
-CustomInputDelegate>
+CustomInputDelegate,
+AudioDownLoaderDelegate>
 
 {
     NSString * userName;

@@ -55,14 +55,14 @@ static PlayerManager *mPlayerManager = nil;
     if (self = [super init]) {
         
         //初始化播放器的时候如下设置
-        UInt32 sessionCategory = kAudioSessionCategory_MediaPlayback;
+        UInt32 sessionCategory = kAudioSessionCategory_PlayAndRecord;
         AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(sessionCategory), &sessionCategory);
         UInt32 audioRouteOverride = kAudioSessionOverrideAudioRoute_Speaker;
         AudioSessionSetProperty(kAudioSessionProperty_OverrideAudioRoute, sizeof(audioRouteOverride), &audioRouteOverride);
         
         AVAudioSession *audioSession = [AVAudioSession sharedInstance];
         //默认情况下扬声器播放
-        [audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
+        [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
         [audioSession setActive:YES error:nil];
     }
     return self;

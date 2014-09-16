@@ -109,14 +109,7 @@ PlayingDelegate>
     /*
      录音
      */
-    
-    RecordAudio *recordAudio;
-    NSData *curAudio;
-    BOOL isRecording;
     ShowRecordView *showRecordView;
-    BOOL saveAudioSuccess;
-    NSMutableArray *gifArray1;
-    NSMutableArray *gifArray2;
     BOOL isPlaying;
     UIButton * titleBtn;//右上角button
     CustomInputView *custview;//录音框架
@@ -202,6 +195,7 @@ PlayingDelegate>
         }];
     }
 }
+
 //设置Title
 -(void)refreTitleText
 {
@@ -287,21 +281,12 @@ PlayingDelegate>
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendSystemMessage:) name:kSendSystemMessage object:nil];
 
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(showRecordAudioDB:) name:RECORDAUDIOBD object:nil];
-    
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(saveAudioSuccessed:) name:KSAVEAUDIOSUCCESS object:nil];
-    
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(teamInfoUploadNotification:) name:teamInfoUpload object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//收到确认或者取消就位确认状态
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];//发起就位确认状态
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//
     
-    
-    
-    [self addObserver:self forKeyPath:@"isRecording" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
-    [self addObserver:self forKeyPath:@"isPlaying" options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
-
     
     [self initMyInfo];
     postDict = [NSMutableDictionary dictionary];
@@ -317,11 +302,6 @@ PlayingDelegate>
     {
         offHight = 20;
     }
-    
-    saveAudioSuccess = NO;
-    recordAudio = [[RecordAudio alloc]init];
-    recordAudio.delegate = self;
-    curAudio = [[NSData alloc]init];
     
     uDefault = [NSUserDefaults standardUserDefaults];
     currentID = [uDefault objectForKey:@"account"];
@@ -360,9 +340,7 @@ PlayingDelegate>
     copyItem = [[UIMenuItem alloc] initWithTitle:@"复制"action:@selector(copyMsg)];
     delItem = [[UIMenuItem alloc] initWithTitle:@"删除"action:@selector(deleteMsg)];
     menu = [UIMenuController sharedMenuController];
-    
-   
-    
+
     
     if (self.isTeam) {
        NSMutableDictionary *  teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameId] RoomId:[GameCommon getNewStringWithId:self.roomId]];
@@ -1559,7 +1537,6 @@ PlayingDelegate>
             NSMutableDictionary * simpleUserDic = [[UserManager singleton] getUser:sender];
             NSString * userImage = KISDictionaryHaveKey(simpleUserDic, @"img");
             NSString * userNickName = KISDictionaryHaveKey(simpleUserDic, @"nickname");
-            
             NSString *audioType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"audioType")];
             if ([audioType isEqualToString:@"1"]) {
                 cell.audioRedImg.hidden = NO;
@@ -1576,15 +1553,16 @@ PlayingDelegate>
                 cell.senderNickName.text = userNickName;
             }
             
+            
             cell.voiceImageView.image = KUIImage(@"ReceiverVoiceNodePlaying003");
             cell.voiceImageView.frame = CGRectMake(padding+7+45,padding*2-5+offHight,20,20);
             cell.audioTimeSizeLb.frame = CGRectMake(padding+7+45+25, padding*2-5+offHight, 30, 20);
             [cell.bgImageView setFrame:CGRectMake(padding-10+45, padding*2-15+offHight,size.width+10,size.height+5)];
             [cell.audioRedImg setFrame: CGRectMake(padding-10+45+size.width+17, padding*2-22+offHight, 10, 10)];
-           UIImage * bgImage = [[UIImage imageNamed:@"bubble_01.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
+            UIImage * bgImage = [[UIImage imageNamed:@"bubble_01.png"]stretchableImageWithLeftCapWidth:15 topCapHeight:22];
             [cell.bgImageView setBackgroundImage:bgImage forState:UIControlStateNormal];
             cell.statusLabel.hidden = YES;
-
+            cell.failImage.hidden = YES;
         }
         [cell.bgImageView addTarget:self action:@selector(playAudio:) forControlEvents:UIControlEventTouchUpInside];
         cell.bgImageView.tag = indexPath.row+1;
@@ -1892,41 +1870,91 @@ PlayingDelegate>
     NSMutableDictionary *dic = [messages objectAtIndex:i];
     NSDictionary *dict = [[dic objectForKey:@"payload"]JSONValue];
     if (isPlaying) {
+        [self startPayloadAudioAnimation:self.clickCellNum];
         if (self.clickCellNum == i) {
             [[PlayerManager sharedManager] stopPlaying];
             return;
         }
-        isPlaying = NO;
-        NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(self.clickCellNum) inSection:0];
-        PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
-        [cell stopPlay];
     }
-    [PlayerManager sharedManager].delegate = nil;
-    isPlaying = YES;
     self.clickCellNum = i;
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"sender")]isEqualToString:@"0"]&&[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"sender")]isEqualToString:@"you"]) {
-        [[PlayerManager sharedManager] playAudioWithFileName:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")] delegate:self];
+        [self startPlayAudio:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")] CellIndex:i];
     }else{
-        NSString *filePath =[NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]];
-        [dic setObject:@"2" forKey:@"audioType"];
-        [DataStoreManager changeAudioTypeWithMsgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"messageuuid")] table:self.type];
-        NSData *data =[NSData dataWithContentsOfURL:[NSURL URLWithString:filePath]];
-        NSString *ps = [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")]]];
-        /*
-        判断文件是否存在 如果不存在就保存
-        */
+        NSString *ps = [self downedFilePath:KISDictionaryHaveKey(dict, @"messageid")];
         [[AudioManager singleton]isHaveThisFolderWithFilePath:[NSString stringWithFormat:@"%@/voice",RootDocPath]];
-        if (![self isFileExist:ps]) {
-            [data writeToFile:ps atomically:YES];
+        if ([self isFileExist:ps]) {
+            [dic setObject:@"2" forKey:@"audioType"];
+            [DataStoreManager changeAudioTypeWithMsgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"messageuuid")] table:self.type];
+            [self startPlayAudio:ps CellIndex:i];
+        }else{
+            [hud show:YES];
+            [AudioDownLoader fileDownloaderWithURLString:[self getUrlPath:KISDictionaryHaveKey(dict, @"messageid")] MessageId:KISDictionaryHaveKey(dict, @"messageid") delegate:self];
         }
-        [[PlayerManager sharedManager] playAudioWithFileName:ps delegate:self];
     }
-    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
+}
+
+
+//下载完成
+- (void)fileDownLoader:(AudioDownLoader *)downloader downLoadSuccessWithImage:(NSData *)data{
+    hud.labelText = @"正在下载语音...";
+    [hud hide:YES];
+    [self startPlayAudio:[self downedFilePath:downloader.messageId] CellIndex:self.clickCellNum];
+    NSLog(@"下载成功");
+}
+//下载进度
+- (void)fileDownLoader:(AudioDownLoader *)downloader progress:(CGFloat)progress{
+    NSLog(@"下载进度");
+}
+//下载失败
+- (void)fileDownLoader:(AudioDownLoader *)downloader failedWithError:(NSError *)error{
+    [hud hide:YES];
+    [self showMessageWithContent:@"语音下载失败" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+    NSLog(@"下载失败");
+}
+
+-(NSString*)downedFilePath:(NSString*)messageId{
+    return  [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:messageId]]];
+}
+
+-(NSString*)getUrlPath:(NSString*)messageId{
+    return [NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:messageId]];
+}
+//开始播放
+-(void)startPlayAudio:(NSString*)filePath CellIndex:(NSInteger)cellindex{
+    [PlayerManager sharedManager].delegate = nil;
+    [[PlayerManager sharedManager] playAudioWithFileName:filePath delegate:self];
+    [self startPayloadAudioAnimation:cellindex];
+    
+}
+//开始播放动画
+-(void)startPayloadAudioAnimation:(NSInteger)cellIndex{
+    isPlaying = YES;
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(cellIndex) inSection:0];
     PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
     cell.cellCount = indexPath.row;
     cell.audioRedImg.hidden = YES;
     [cell startPaly];
 }
+
+
+//停止播放动画
+-(void)stopPayloadAudioAnimation:(NSInteger)cellIndex{
+    isPlaying = NO;
+    NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(cellIndex) inSection:0];
+    PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
+    [cell stopPlay];
+}
+
+#pragma mark ----停止播放
+- (void)playingStoped {
+    for (PlayVoiceCell *cell in [self.tView visibleCells]  ) {
+        if ([cell isKindOfClass:[PlayVoiceCell class]]) {
+            [cell.voiceImageView stopAnimating];
+        }
+    }
+    isPlaying = NO;
+}
+
 
 #pragma mark ---判断文件是否存在于沙盒
 - (BOOL)isFileExist:(NSString *)fileName
@@ -1947,15 +1975,7 @@ PlayingDelegate>
     }
 }
 
-#pragma mark ----停止播放
-- (void)playingStoped {
-    for (PlayVoiceCell *cell in [self.tView visibleCells]  ) {
-        if ([cell isKindOfClass:[PlayVoiceCell class]]) {
-            [cell.voiceImageView stopAnimating];
-        }
-    }
-    isPlaying = NO;
-}
+
 
 //设置返回按钮上面的消息数量
 -(void)setBackButtonNoreadMsg

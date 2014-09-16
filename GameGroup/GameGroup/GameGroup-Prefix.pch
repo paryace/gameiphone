@@ -114,7 +114,6 @@
 #define TEAMNOTIFITYMsg  @"teamnotifitymsg"//组队消息
 
 #define RECORDAUDIOBD @"recordAudioBoDong"  
-#define KSAVEAUDIOSUCCESS @"saveAudioSuccess" //本地保存声音成功
 
 #define OpenImage @"openImage"//开机图
 
