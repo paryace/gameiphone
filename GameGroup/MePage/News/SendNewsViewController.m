@@ -182,15 +182,13 @@
 
 - (void)saveMyNews:(id)sender
 {
-    if (_dynamicTV.text.length<=0||[GameCommon isEmtity:[GameCommon getNewStringWithId:_dynamicTV.text]])
-    {
+    [hud show:YES];
+    if (_dynamicTV.text.length<=0||[GameCommon isEmtity:[GameCommon getNewStringWithId:_dynamicTV.text]]){
         UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:@"你还没有想好说些什么!" delegate:nil cancelButtonTitle:@"知道啦" otherButtonTitles: nil];
         [alert show];
         return;
     }
-    [hud show:YES];
     [self.dynamicTV resignFirstResponder];
-    
     //上传图片
     if (self.pictureArray.count>0) {
         [self.view bringSubviewToFront:hud];
@@ -202,12 +200,10 @@
         }
         hud.labelText = @"上传图片中...";
         [hud show:YES];
-        
         if (uploadImagePathArray.count>0) {
             [self uploadPicture: [uploadImagePathArray objectAtIndex:0]];
         }
-    }else
-    {
+    }else{
         [self publishWithImageString:@""];
     }
 }
@@ -231,7 +227,9 @@
 - (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
 {
     NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];//图片id
-    [reponseStrArray setObject:response forKey:[uploadImagePathArray objectAtIndex:imageImdex]];
+    if (uploadImagePathArray.count > imageImdex) {
+        [reponseStrArray setObject:response forKey:[uploadImagePathArray objectAtIndex:imageImdex]];
+    }
     if (reponseStrArray.count==uploadImagePathArray.count) {
         [hud hide:YES];
         self.imageId = [[NSMutableString alloc]init];
@@ -417,14 +415,6 @@
 }
 - (void)image: (UIImage *) image didFinishSavingWithError: (NSError *) error contextInfo: (void *) contextInfo
 {
-    //    NSString *msg = nil ;
-    //    if(error != NULL){
-    //        msg = @"保存图片失败,请允许本应用访问您的相册";
-    //    }else{
-    //        msg = @"保存图片成功" ;
-    //    }
-    //    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:msg delegate:nil cancelButtonTitle:@"确定"otherButtonTitles:nil];
-    //    [alert show];
 }
 //将图片保存到本地，返回保存的路径
 -(NSString*)writeImageToFile:(UIImage*)thumbimg ImageName:(NSString*)imageName

@@ -1032,8 +1032,7 @@ PlayingDelegate>
         NSString * dImageId=[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"thumb")];
         if ([GameCommon isEmtity:dImageId] ||[dImageId isEqualToString:@"null"]) {
             cell.thumbImgV.imageURL = nil;
-        }else
-        {
+        }else{
             cell.thumbImgV.imageURL = [ImageService getImageUrl3:dImageId Width:70];
         }
         if (indexPath.row==0) {
@@ -1494,10 +1493,7 @@ PlayingDelegate>
         }
         return cell;
     }
-    /* 
-     声音 CELL
-    */
-    
+    //语音消息
     else if (kkChatMsgType ==kkchatMsgAudio)
     {
         NSString * payloadStr = KISDictionaryHaveKey(dict, @"payload");
@@ -1573,8 +1569,6 @@ PlayingDelegate>
         }
         return cell;
     }
-    
-    
     //以上是历史消息
     else if (kkChatMsgType == KKChatMsgHistory){
         static NSString *identifier = @"historyMsgCell";
@@ -1586,10 +1580,8 @@ PlayingDelegate>
         cell.msgLable.text =  @"以上是历史消息";
         return cell;
     }
-    
-    //普通消息／。
-    else
-    {
+    //普通消息
+    else{
         static NSString *identifier = @"normalMsgCell";
         KKMessageCell *cell = (KKMessageCell *)[tableView dequeueReusableCellWithIdentifier:identifier];
         if (cell == nil) {
