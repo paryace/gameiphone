@@ -290,7 +290,7 @@
     cell.sexImg.frame = CGRectMake(55 + nameSize.width, 5, 20, 20);
     NSArray * gameids=[GameCommon getGameids:KISDictionaryHaveKey(tempDict, @"gameids")];
     [cell setGameIconUIView:gameids];
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+
     return cell;
 }
 //头像默认图片
