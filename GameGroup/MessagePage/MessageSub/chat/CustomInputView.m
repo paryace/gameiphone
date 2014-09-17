@@ -110,7 +110,6 @@
 -(void)afterharfs
 {
     [self.mydelegate RecordSuccessWithView:self];
-
 }
 -(void)changeBool
 {

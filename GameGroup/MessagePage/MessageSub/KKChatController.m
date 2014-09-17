@@ -3741,7 +3741,6 @@ PlayingDelegate>
     if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"audio"]) {
         [[PlayerManager sharedManager]stopPlaying];
     }
-    
     if([self .type isEqualToString:@"normal"]){
         [DataStoreManager deleteMsgInCommentWithUUid:uuid];
     }else if ([self.type isEqualToString:@"group"])
@@ -3750,12 +3749,9 @@ PlayingDelegate>
     }
     [self deleteFinalMsg]; //删除controll里缓存的message相关对象
     [self.finalImage removeObjectForKey:uuid];  //删除图片缓存
-
     if (messages.count>0) {
         [DataStoreManager refreshThumbMsgsAfterDeleteCommonMsg:[messages lastObject]ForUser:userId ifDel:NO];
-    }
-    else
-    {
+    }else{
         [DataStoreManager refreshThumbMsgsAfterDeleteCommonMsg:[messages lastObject]ForUser:userId ifDel:YES];
     }
     [self.tView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPathTo]withRowAnimation:UITableViewRowAnimationRight];
@@ -4153,7 +4149,7 @@ PlayingDelegate>
 }
 
 #pragma mark----各种声音的
-#pragma mark - Recording & Playing Delegate
+#pragma mark - 录音完毕
 - (void)recordingFinishedWithFileName:(NSString *)filePath time:(NSTimeInterval)interval {
     dispatch_async(dispatch_get_main_queue(), ^{
         if ((long long)interval<1) {//录音小于
@@ -4168,9 +4164,10 @@ PlayingDelegate>
         }
         NSString *uuid = [self getuuidWithNS:filePath];
         [self sendAudioMsgD:filePath time:interval UUID:uuid Body:@"[语音]"];
-    });
 
+    });
 }
+
 //防止频繁点击
 -(void)duduud
 {
@@ -4200,16 +4197,14 @@ PlayingDelegate>
 }
 #pragma mark ----录音动画
 - (void)levelMeterChanged:(float)levelMeter {
-    showRecordView.hidden  = NO;
     [showRecordView changeBDimgWithimg:levelMeter];
 }
-
-
 
 #pragma mark ----CustomInputViewDelegate
 #pragma mark ----手指按下开始录音
 -(void)beginRecordWithView:(UIView *)view
 {
+     showRecordView.hidden  = NO;
     [[PlayerManager sharedManager]stopPlaying];
     [RecorderManager sharedManager].delegate = self;
     [[RecorderManager sharedManager] startRecording];
@@ -4277,6 +4272,7 @@ PlayingDelegate>
     [self duduud];
     [[PlayerManager sharedManager]stopPlaying];
     [[RecorderManager sharedManager]cancelRecording];
+
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)notification

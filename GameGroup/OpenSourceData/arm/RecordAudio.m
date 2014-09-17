@@ -122,6 +122,7 @@
 }
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
+    
     [self sendStatus:1];
     [[NSNotificationCenter defaultCenter]postNotificationName:STOPPLAYAUDIO object:nil];
 }
