@@ -18,7 +18,6 @@
 @implementation PlayerManager
 
 @synthesize decapsulator;
-@synthesize avAudioPlayer;
 
 static PlayerManager *mPlayerManager = nil;
 
@@ -59,7 +58,10 @@ static PlayerManager *mPlayerManager = nil;
         return;
     }
     if ([filename rangeOfString:@".spx"].location != NSNotFound) {
-        [self stopPlaying];
+        if (self.decapsulator) {
+            [self.decapsulator stopPlaying];
+            self.decapsulator = nil;
+        }
         self.delegate = nil;
         self.delegate = newDelegate;
         self.decapsulator = [[Decapsulator alloc] initWithFileName:filename];
@@ -73,27 +75,11 @@ static PlayerManager *mPlayerManager = nil;
     }
 }
 
--(void)audioPlayeeDidBeginPlay{
-    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
-    [audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
-    [audioSession setActive:YES error:nil];
-}
-//初始化
-- (void)audioPlayerDidFinishPlaying{
-    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
-    [audioSession setActive:NO error:nil];
-    audioSession = nil;
-    
-}
 //停止播放
 - (void)stopPlaying {
     if (self.decapsulator) {
         [self.decapsulator stopPlaying];
         self.decapsulator = nil;
-    }
-    if (self.avAudioPlayer) {
-        [self.avAudioPlayer stop];
-        self.avAudioPlayer = nil;
     }
     //关闭距离监听
     [self stopProximityMonitering];
@@ -101,17 +87,31 @@ static PlayerManager *mPlayerManager = nil;
     [self audioPlayerDidFinishPlaying];
     NSLog(@"-----stopPlay-----");
 }
-
 //音乐播放完成
 - (void)decapsulatingAndPlayingOver {
+    NSLog(@"-----playFinish-----");
     [self stopPlaying];
+}
+-(void)audioPlayeeDidBeginPlay{
+    [[AVAudioSession sharedInstance] setActive:YES error:nil];
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+    NSLog(@"----audioPlayeeDidBeginPlay----");
+}
+//初始化
+- (void)audioPlayerDidFinishPlaying{
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    [audioSession setActive:NO error:nil];
+    audioSession = nil;
+    NSLog(@"----audioPlayerDidFinishPlaying----");
 }
 //播放模式改变
 - (void)sensorStateChange:(NSNotification *)notification {
     //如果此时手机靠近面部放在耳朵旁，那么声音将通过听筒输出，并将屏幕变暗
     if ([[UIDevice currentDevice] proximityState] == YES) {
+         NSLog(@"----听筒模式----");
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];//听筒模式
     }else {
+        NSLog(@"----扬声器模式----");
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];//扬声器模式
     }
 }
