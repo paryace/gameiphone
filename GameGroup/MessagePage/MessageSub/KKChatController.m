@@ -1898,7 +1898,6 @@ PlayingDelegate>
     }
 }
 
-
 //下载完成
 - (void)fileDownLoader:(AudioDownLoader *)downloader downLoadSuccessWithImage:(NSData *)data{
     [hud hide:YES];

@@ -60,15 +60,23 @@ static PlayerManager *mPlayerManager = nil;
     }
     if ([filename rangeOfString:@".spx"].location != NSNotFound) {
         [self stopPlaying];
+        self.delegate = nil;
         self.delegate = newDelegate;
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
         self.decapsulator = [[Decapsulator alloc] initWithFileName:filename];
         self.decapsulator.delegate = self;
+        [self audioPlayeeDidBeginPlay];
         [self.decapsulator play];
+        NSLog(@"-----startPlay----");
         [self startProximityMonitering];
     }else {
         [self.delegate playingStoped];
     }
+}
+
+-(void)audioPlayeeDidBeginPlay{
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    [audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
+    [audioSession setActive:YES error:nil];
 }
 //初始化
 - (void)audioPlayerDidFinishPlaying{
@@ -91,6 +99,7 @@ static PlayerManager *mPlayerManager = nil;
     [self stopProximityMonitering];
     [self.delegate playingStoped];
     [self audioPlayerDidFinishPlaying];
+    NSLog(@"-----stopPlay-----");
 }
 
 //音乐播放完成
