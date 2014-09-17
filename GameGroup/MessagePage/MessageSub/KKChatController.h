@@ -23,7 +23,6 @@
 #import "KKImgCell.h"
 #import "QiniuUploadDelegate.h"
 #import "DropDownChooseDelegate.h"
-#import "TeamApplyController.h"
 #import "NewTeamMenuView.h"
 #import "LocationViewController.h"
 
