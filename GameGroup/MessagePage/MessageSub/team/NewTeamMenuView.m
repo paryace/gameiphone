@@ -892,30 +892,25 @@
     }
     return @"1";
 }
-
+#pragma mark
 - (void)applicationWillResignActive:(NSNotification *)notification
 {
+     NSLog(@"从应用退到桌面或者锁屏");
     if (self.isShow) {
-        if (self.teamUsershipType) {
-            NSLog(@"从应用退到桌面");
-            [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
-        }
+         [self stopTime];
     }
 }
-
+#pragma mark
 - (void)applicationDidBecomeActive:(NSNotification *)notification
 {
+    NSLog(@"解锁或者从桌面回到应用");
     if (self.isShow) {
-        if (self.teamUsershipType) {
-            NSLog(@"从桌面回到应用");
-            [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
-        }
+        [self restartTime];
     }
 }
 //计时
 - (void)timingTime:(long long )time{
     NSLog(@"计时时间---->>>>>>%lld",time);
-
     [self sendBtnEnable];
     self.timeLable.text = [NSString stringWithFormat:@"(%lld)",time];
     [self sendBtnUnEnable];
