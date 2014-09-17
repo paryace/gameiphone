@@ -16,6 +16,7 @@
 #import "BillboardViewController.h"
 #import "NewSearchGroupController.h"
 #import "MyGroupsTableViewCell.h"
+
 @interface MyGroupViewController ()
 {
     UICollectionViewFlowLayout *m_layout;
@@ -35,6 +36,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 
 - (void)viewWillAppear:(BOOL)animated
 {
+
     [super viewWillAppear:animated];
     [self initMsgCount];
     NSMutableArray * bills = [DataStoreManager queryDSGroupApplyMsgByMsgType:@"groupBillboard"];
@@ -190,6 +192,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
             [DataStoreManager deleteAllDSGroupList];
             [self setGroupList:responseObject];
             for (NSMutableDictionary * groupInfo in responseObject) {
+                
                 [[GroupManager singleton] clearGroupCache:KISDictionaryHaveKey(groupInfo, @"groupId")];
                 [DataStoreManager saveDSGroupList:groupInfo];
             }
@@ -238,10 +241,17 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     cell.titleLabel.text = KISDictionaryHaveKey(cellDic, @"groupName");
     NSString * gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(cellDic, @"gameid")];
     NSString * imageId = [GameCommon putoutgameIconWithGameId:gameId];
-    cell.gameImageView.imageURL = [ImageService getImageStr:imageId Width:100];
+    cell.gameImageView.imageURL = [ImageService getImageUrl4:imageId];
+//    NSURL *url = [ImageService getImageStr2: imageId];
+//    EGOImageView * EGOimage = [[EGOImageView alloc]init];
+//    EGOimage.imageURL = url;
+//    cell.gameImageView.imageURL = [ImageService getImageStr:imageId Width:100];
+//    cell.gameImageView.image = EGOimage.image;
     cell.memberCountLable.text = [NSString stringWithFormat:@"%@/%@",KISDictionaryHaveKey(cellDic, @"currentMemberNum"),KISDictionaryHaveKey(cellDic, @"maxMemberNum")];
     cell.describeLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(cellDic, @"info")];
     cell.leveLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(cellDic, @"level")];
+    //取消cell d的点中效果
+    [cell setSelectionStyle:UITableViewCellSelectionStyleGray];
     return cell;
 
 }
@@ -251,6 +261,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
     NSDictionary *dic = [myGroupArray objectAtIndex:indexPath.row];
     GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];
     gr.groupId =KISDictionaryHaveKey(dic, @"groupId");

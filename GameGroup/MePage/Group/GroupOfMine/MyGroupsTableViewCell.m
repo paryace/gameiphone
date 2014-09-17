@@ -25,26 +25,29 @@
         [self.titleLabel setBackgroundColor:[UIColor clearColor]];
         [self.contentView addSubview:self.titleLabel];
 
-        self.gameImageView = [[EGOImageView alloc] initWithFrame:CGRectMake(80, 30, 15, 15)];
-        [self.contentView addSubview:self.headImageView];
+        self.gameImageView = [[EGOImageView alloc] initWithFrame:CGRectMake(80, 32, 15, 15)];
+//        self.gameImageView.backgroundColor = [UIColor redColor];
+        [self.contentView addSubview:self.gameImageView];
         
         
         
-        self.memberCountLable = [[UILabel alloc] initWithFrame:CGRectMake(100, 32, 320-80, 20)];
+        self.memberCountLable = [[UILabel alloc] initWithFrame:CGRectMake(100, 29, 320-80, 20)];
         [self.memberCountLable setTextAlignment:NSTextAlignmentLeft];
         [self.memberCountLable setFont:[UIFont systemFontOfSize:12.0]];
         [self.memberCountLable setBackgroundColor:[UIColor clearColor]];
+        self.memberCountLable.textColor = UIColorFromRGBA(0x808080, 1);
         [self.contentView addSubview:self.memberCountLable];
         
         self.describeLable = [[UILabel alloc] initWithFrame:CGRectMake(80, 50, 320-80-5, 20)];
         [self.describeLable setTextAlignment:NSTextAlignmentLeft];
+        self.describeLable.textColor = UIColorFromRGBA(0x808080, 1);
         [self.describeLable setFont:[UIFont systemFontOfSize:12.0]];
         [self.describeLable setBackgroundColor:[UIColor clearColor]];
         [self.contentView addSubview:self.describeLable];
         
         
         
-        self.leveLable= [[UILabel alloc] initWithFrame:CGRectMake(320-30, 6, 25, 15)];
+        self.leveLable= [[UILabel alloc] initWithFrame:CGRectMake(282, 8, 33, 15)];
         [self.leveLable setTextAlignment:NSTextAlignmentCenter];
         self.leveLable.backgroundColor = kColorWithRGB(119, 137, 203, 1);
         self.leveLable.textColor = [UIColor whiteColor];

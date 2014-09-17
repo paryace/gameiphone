@@ -216,7 +216,7 @@
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 60;
+    return 56;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -227,7 +227,7 @@
         if (!cell) {
             cell = [[FriendFirstCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCellTop];
         }
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+//        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         if (indexPath.row ==0) {
             cell.headImageView.image = KUIImage(@"search_role");
             cell.titleLabel.text = @"查找游戏角色";
@@ -247,7 +247,7 @@
     if (!cell) {
         cell = [[NewPersonalTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:stringCell3];
     }
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+//    cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
     NSDictionary * tempDict;
     if (tableView ==searchController.searchResultsTableView) {
@@ -286,10 +286,11 @@
     cell.distLabel.text = (titleName==nil||[titleName isEqualToString:@""]) ? @"暂无头衔" : titleName;
     cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"rarenum") integerValue]];
     CGSize nameSize = [cell.nameLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
-    cell.nameLabel.frame = CGRectMake(65, 5, nameSize.width + 5, 20);
-    cell.sexImg.frame = CGRectMake(65 + nameSize.width, 5, 20, 20);
+    cell.nameLabel.frame = CGRectMake(55, 5, nameSize.width + 5, 20);
+    cell.sexImg.frame = CGRectMake(55 + nameSize.width, 5, 20, 20);
     NSArray * gameids=[GameCommon getGameids:KISDictionaryHaveKey(tempDict, @"gameids")];
     [cell setGameIconUIView:gameids];
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     return cell;
 }
 //头像默认图片
@@ -357,15 +358,21 @@
 {
     if (tableView ==m_myTableView) {
         UIView *view = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 20)];
+//        view.backgroundColor = [UIColor yellowColor];
         view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
         NSString * keyName =[keyArr objectAtIndex:section];
-        UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(5, 0, 20, 20)];
+        UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(5, 3, 20, 20)];
         lb.textColor = UIColorFromRGBA(0x999999, 1);
         lb.backgroundColor = [UIColor clearColor];
         lb.textAlignment = NSTextAlignmentCenter;
         lb.text =keyName;
         lb.font = [UIFont boldSystemFontOfSize:12];
         [view addSubview:lb];
+        
+        //添加一条线
+        UILabel *lineLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 24, kScreenWidth, 1)];
+        lineLabel.backgroundColor = [UIColor whiteColor];
+        [view addSubview:lineLabel];
         return view;
 
     }
@@ -389,7 +396,7 @@
         if (section==0) {
             return 0;
         }else{
-            return 20;
+            return 25;
         }
     }
 }

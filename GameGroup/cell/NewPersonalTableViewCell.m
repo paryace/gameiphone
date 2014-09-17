@@ -14,26 +14,26 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.bgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
-        
-        self.headImageV = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 7.5, 45, 45)];
+        self.bgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 1, self.frame.size.width, self.frame.size.height)];
+//        self.bgView.backgroundColor = [UIColor yellowColor];
+        self.headImageV = [[EGOImageView alloc] initWithFrame:CGRectMake(10, 9, 36, 36)];
         self.headImageV.backgroundColor = [UIColor whiteColor];
         self.headImageV.layer.cornerRadius = 5;
         self.headImageV.layer.masksToBounds=YES;
         [self.bgView addSubview:self.headImageV];
         
-        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(65, 7, 90, 20)];
+        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(45, 15, 90, 20)];
         [self.nameLabel setTextAlignment:NSTextAlignmentLeft];
         [self.nameLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self.nameLabel setBackgroundColor:[UIColor clearColor]];
-        [self.contentView addSubview:self.nameLabel];
+        [self.bgView addSubview:self.nameLabel];
         
         
-        self.sexImg = [[UIImageView alloc] initWithFrame:CGRectMake(170, 7, 20, 20)];
+        self.sexImg = [[UIImageView alloc] initWithFrame:CGRectMake(150, 15, 20, 20)];
         self.sexImg.backgroundColor = [UIColor clearColor];
         [self.bgView addSubview:self.sexImg];
         
-        self.distLabel = [[UILabel alloc] initWithFrame:CGRectMake(65, 31, 200, 20)];
+        self.distLabel = [[UILabel alloc] initWithFrame:CGRectMake(55, 27, 200, 20)];
         [self.distLabel setTextColor:[UIColor blackColor]];
         [self.distLabel setFont:[UIFont systemFontOfSize:13]];
         [self.distLabel setBackgroundColor:[UIColor clearColor]];

@@ -15,13 +15,13 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-        self.headImageView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 6, 45, 45)];
+        self.headImageView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, 36, 36)];
         self.headImageView.backgroundColor = [UIColor whiteColor];
         self.headImageView.layer.cornerRadius = 5;
         self.headImageView.layer.masksToBounds=YES;
         [self.contentView addSubview:self.headImageView];
         
-        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 0, 150, 60)];
+        self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 0, 150, 60)];
         [self.titleLabel setTextAlignment:NSTextAlignmentLeft];
         [self.titleLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self.titleLabel setBackgroundColor:[UIColor clearColor]];
