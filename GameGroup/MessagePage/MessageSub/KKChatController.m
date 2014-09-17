@@ -164,6 +164,7 @@ PlayingDelegate>
     //初始化就位确认状态
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kJoinTeamMessage object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
+    [self.newTeamMenuView restartTime];
     [self refreTitleText];
     [self showErrorDialog];
     if ([self.type isEqualToString:@"group"]) {
@@ -181,6 +182,7 @@ PlayingDelegate>
         [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
         //ack反馈消息通知
         [[NSNotificationCenter defaultCenter] removeObserver:self name:kJoinTeamMessage object:nil];
+        [self.newTeamMenuView stopTime];
         [[RecorderManager sharedManager]cancelRecording];//退出页面，停止录音
     }
     

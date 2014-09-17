@@ -837,13 +837,23 @@
     [self setBtnState];
     self.isShow = YES;
     if (self.teamUsershipType) {
-         [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
     }
 }
 //隐藏
 -(void)hideView{
     self.isShow = NO;
     if (self.teamUsershipType) {//停止计时
+    }
+}
+
+-(void)restartTime{
+    if (self.teamUsershipType) {
+        [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
+    }
+}
+
+-(void)stopTime{
+    if (self.teamUsershipType) {
         [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
     }
 }
@@ -888,7 +898,6 @@
     if (self.isShow) {
         if (self.teamUsershipType) {
             NSLog(@"从应用退到桌面");
-//             [self sendBtnUnEnable];
             [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.groipId];
         }
     }
@@ -899,7 +908,6 @@
     if (self.isShow) {
         if (self.teamUsershipType) {
             NSLog(@"从桌面回到应用");
-//            [self sendBtnEnable];
             [[InplaceTimer singleton] reStartTimer:self.gameId RoomId:self.roomId GroupId:self.groipId timeDeleGate:self];
         }
     }
