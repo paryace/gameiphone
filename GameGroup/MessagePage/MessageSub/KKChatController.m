@@ -1508,7 +1508,6 @@ PlayingDelegate>
         if (!cell) {
             cell = [[PlayVoiceCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
         }
-        
         cell.mydelegate = self;
         cell.uploaddelegate = self;
         [cell setMessageDictionary:dict];
@@ -1552,8 +1551,6 @@ PlayingDelegate>
                 cell.senderNickName.hidden=NO;
                 cell.senderNickName.text = userNickName;
             }
-            
-            
             cell.voiceImageView.image = KUIImage(@"ReceiverVoiceNodePlaying003");
             cell.voiceImageView.frame = CGRectMake(padding+7+45,padding*2-5+offHight,20,20);
             cell.audioTimeSizeLb.frame = CGRectMake(padding+7+45+25, padding*2-5+offHight, 30, 20);
@@ -1566,6 +1563,14 @@ PlayingDelegate>
         }
         [cell.bgImageView addTarget:self action:@selector(playAudio:) forControlEvents:UIControlEventTouchUpInside];
         cell.bgImageView.tag = indexPath.row+1;
+        if (isPlaying) {
+            NSInteger playindex = [self getMsgRowWithId:[PlayerManager sharedManager].messageuuid];
+            if (playindex == indexPath.row) {
+                cell.cellCount = indexPath.row;
+                cell.audioRedImg.hidden = YES;
+                [cell startPaly];
+            }
+        }
         return cell;
     }
     
@@ -1877,18 +1882,18 @@ PlayingDelegate>
     }
     self.clickCellNum = i;
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"sender")]isEqualToString:@"0"]&&[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"sender")]isEqualToString:@"you"]) {
-        [self startPlayAudio:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")] CellIndex:i];
+        [self startPlayAudio:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dict, @"messageid")] CellIndex:i MessageUuid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"messageuuid")]];
     }else{
         NSString *ps = [self downedFilePath:KISDictionaryHaveKey(dict, @"messageid")];
         [[AudioManager singleton]isHaveThisFolderWithFilePath:[NSString stringWithFormat:@"%@/voice",RootDocPath]];
         if ([self isFileExist:ps]) {
             [dic setObject:@"2" forKey:@"audioType"];
             [DataStoreManager changeAudioTypeWithMsgId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"messageuuid")] table:self.type];
-            [self startPlayAudio:ps CellIndex:i];
+            [self startPlayAudio:ps CellIndex:i MessageUuid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"messageuuid")]];
         }else{
              hud.labelText = @"请稍后...";
             [hud show:YES];
-            [AudioDownLoader fileDownloaderWithURLString:[self getUrlPath:KISDictionaryHaveKey(dict, @"messageid")] MessageId:KISDictionaryHaveKey(dict, @"messageid") delegate:self];
+            [AudioDownLoader fileDownloaderWithURLString:[self getUrlPath:KISDictionaryHaveKey(dict, @"messageid")] MessageId:KISDictionaryHaveKey(dict, @"messageid") MessageUuid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"messageuuid")] delegate:self];
         }
     }
 }
@@ -1897,7 +1902,7 @@ PlayingDelegate>
 //下载完成
 - (void)fileDownLoader:(AudioDownLoader *)downloader downLoadSuccessWithImage:(NSData *)data{
     [hud hide:YES];
-    [self startPlayAudio:[self downedFilePath:downloader.messageId] CellIndex:self.clickCellNum];
+    [self startPlayAudio:[self downedFilePath:downloader.messageId] CellIndex:self.clickCellNum MessageUuid:downloader.messageuuid];
     NSLog(@"下载成功");
 }
 //下载进度
@@ -1920,9 +1925,11 @@ PlayingDelegate>
     return [NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:messageId]];
 }
 //开始播放
--(void)startPlayAudio:(NSString*)filePath CellIndex:(NSInteger)cellindex{
+-(void)startPlayAudio:(NSString*)filePath CellIndex:(NSInteger)cellindex MessageUuid:(NSString*)messageuuid{
     [PlayerManager sharedManager].delegate = nil;
     [[PlayerManager sharedManager] playAudioWithFileName:filePath delegate:self];
+    [PlayerManager sharedManager].playIndex = cellindex;
+    [PlayerManager sharedManager].messageuuid = messageuuid;
     [self startPayloadAudioAnimation:cellindex];
     
 }
@@ -3737,10 +3744,7 @@ PlayingDelegate>
     NSString* uuid = KISDictionaryHaveKey(messages[readyIndex], @"messageuuid");
     NSString* userId = KISDictionaryHaveKey(messages[readyIndex], @"sender");
     NSDictionary *dic =[KISDictionaryHaveKey(messages[readyIndex], @"payload")JSONValue];
-    
-    if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"audio"]) {
-        [[PlayerManager sharedManager]stopPlaying];
-    }
+
     if([self .type isEqualToString:@"normal"]){
         [DataStoreManager deleteMsgInCommentWithUUid:uuid];
     }else if ([self.type isEqualToString:@"group"])
@@ -3756,6 +3760,18 @@ PlayingDelegate>
     }
     [self.tView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPathTo]withRowAnimation:UITableViewRowAnimationRight];
     [self.tView reloadData];
+    
+    if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"audio"]) {
+        NSInteger index = [self getMsgRowWithId:uuid];
+        if ([PlayerManager sharedManager].playIndex == index) {
+            [[PlayerManager sharedManager]stopPlaying];
+        }else{
+            if (isPlaying) {
+                NSInteger playindex = [self getMsgRowWithId:[PlayerManager sharedManager].messageuuid];
+                [self startPayloadAudioAnimation:playindex];
+            }
+        }
+    }
     
 }
 #pragma mark 历史聊天记录展示

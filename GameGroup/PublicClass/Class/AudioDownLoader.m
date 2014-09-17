@@ -28,12 +28,12 @@
     [super dealloc];
 }
 
-- (instancetype)initWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId delegate:(id<AudioDownLoaderDelegate>)delegate
+- (instancetype)initWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId MessageUuid:(NSString*)messageuuid delegate:(id<AudioDownLoaderDelegate>)delegate
 {
-    return [self initWithURLString:urlStr MessageId:messageId delegate:delegate tag:0];
+    return [self initWithURLString:urlStr MessageId:messageId MessageUuid:messageId delegate:delegate tag:0];
 }
 
-- (instancetype)initWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId delegate:(id<AudioDownLoaderDelegate>)delegate tag:(NSUInteger)tag
+- (instancetype)initWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId MessageUuid:(NSString*)messageuuid delegate:(id<AudioDownLoaderDelegate>)delegate tag:(NSUInteger)tag
 {
     self = [super init];
     if (self) {
@@ -41,20 +41,21 @@
         [self setDelegate:delegate];
         [self setTag:tag];
         [self setMessageId:messageId];
+        [self setMessageuuid:messageuuid];
     }
     return self;
 }
 
-+ (instancetype)fileDownloaderWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId delegate:(id<AudioDownLoaderDelegate>)delegate tag:(NSUInteger)tag
++ (instancetype)fileDownloaderWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId MessageUuid:(NSString*)messageuuid delegate:(id<AudioDownLoaderDelegate>)delegate tag:(NSUInteger)tag
 {
-    AudioDownLoader *downloader = [[AudioDownLoader alloc] initWithURLString:urlStr MessageId:messageId delegate:delegate tag:tag];
+    AudioDownLoader *downloader = [[AudioDownLoader alloc] initWithURLString:urlStr MessageId:messageId MessageUuid:messageId delegate:delegate tag:tag];
     [downloader startDownload];
     return [downloader autorelease];
 }
 
-+ (instancetype)fileDownloaderWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId delegate:(id<AudioDownLoaderDelegate>)delegate
++ (instancetype)fileDownloaderWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId MessageUuid:(NSString*)messageuuid delegate:(id<AudioDownLoaderDelegate>)delegate
 {
-    return [self fileDownloaderWithURLString:urlStr MessageId:messageId delegate:delegate tag:0];
+    return [self fileDownloaderWithURLString:urlStr MessageId:messageId MessageUuid:messageId delegate:delegate tag:0];
 }
 
 - (void)startDownload

@@ -136,7 +136,7 @@
 #pragma mark --- 下载语音消息并且保存到沙盒
 -(void)downLoadAudioFromNet
 {
-    [AudioDownLoader fileDownloaderWithURLString:[self getUrlPath:KISDictionaryHaveKey(self.payloadDict, @"messageid")] MessageId:KISDictionaryHaveKey(self.payloadDict, @"messageid") delegate:nil];
+    [AudioDownLoader fileDownloaderWithURLString:[self getUrlPath:KISDictionaryHaveKey(self.payloadDict, @"messageid")] MessageId:KISDictionaryHaveKey(self.payloadDict, @"messageid") MessageUuid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.message, @"messageuuid")] delegate:nil];
 }
 
 -(NSString*)getUrlPath:(NSString*)messageId{
