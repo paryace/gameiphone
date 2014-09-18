@@ -144,8 +144,8 @@
         self.openBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         self.openBtn.frame = CGRectMake(270, 60, 50, 30);
 
-        [self.openBtn setImage:KUIImage(@"zan_pl_click") forState:UIControlStateNormal];
-        [self.openBtn setImage:KUIImage(@"zan_pl_normall") forState:UIControlStateHighlighted];
+        [self.openBtn setImage:KUIImage(@"zan_pl_normall") forState:UIControlStateNormal];
+        [self.openBtn setImage:KUIImage(@"zan_pl_click") forState:UIControlStateHighlighted];
         [self.openBtn addTarget:self action:@selector(openBtnList:) forControlEvents:UIControlEventTouchUpInside];
         self.openBtn.tag =self.tag;
         [self.contentView addSubview:self.openBtn];

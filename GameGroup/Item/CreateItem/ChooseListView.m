@@ -114,6 +114,7 @@
 -(void)bgTappedAction:(UITapGestureRecognizer *)tap
 {
     [self hideExtendedChooseView];
+    
 }
 #pragma mark -- UITableView Delegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

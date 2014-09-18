@@ -44,6 +44,7 @@ typedef enum : NSUInteger {
     
     NSMutableArray *commentArray;
     NewNearByCell *openMenuBtn;
+    WorldCell *openMenuBtn2;
     UIView *toolView;
     UIView* tool;
     UIView *inPutView;
@@ -181,8 +182,8 @@ typedef enum : NSUInteger {
      [m_loginActivity startAnimating];
 }
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
-    if (openMenuBtn.menuImageView.hidden==NO) {
-        openMenuBtn.menuImageView.hidden =YES;
+    if (openMenuBtn2.menuImageView.hidden==NO) {
+        openMenuBtn2.menuImageView.hidden =YES;
     }
     if([self.textView isFirstResponder]){
         [self.textView resignFirstResponder];
@@ -1071,22 +1072,22 @@ typedef enum : NSUInteger {
 }
 
 #pragma mark ---cell delegate  openMenuCell
-- (void)openMenuCell:(NewNearByCell*)myCell
+- (void)openMenuCell:(WorldCell*)myCell
 {
-    if(openMenuBtn) //如果有打开的cell
+    if(openMenuBtn2) //如果有打开的cell
     {
         //关闭它
-        NewNearByCell* cell = openMenuBtn;
+        WorldCell* cell = openMenuBtn2;
         cell.menuImageView.hidden = YES;
-        if (openMenuBtn.tag == myCell.tag) {    //如果打开的是自己
-            openMenuBtn=nil;
+        if (openMenuBtn2.tag == myCell.tag) {    //如果打开的是自己
+            openMenuBtn2=nil;
             return;
         }
     }
     [myCell.contentView bringSubviewToFront:myCell.menuImageView];
     [myCell.contentView  becomeFirstResponder];
     myCell.menuImageView.hidden = NO;
-    openMenuBtn=myCell;}
+    openMenuBtn2=myCell;}
 #pragma mark ---cell delegate  commentAndZan
 //评论button方法
 -(void)pinglunWithCircle:(NewNearByCell *)myCell
@@ -1815,5 +1816,23 @@ typedef enum : NSUInteger {
     m_currPageCount = 0;
     [self netWork];
 }
+//页面滑动  收回openBtn
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView{
+//    if(scrollView==m_myTableView){
+//        if (openMenuBtn2.menuImageView.hidden==NO) {
+//            openMenuBtn2.menuImageView.hidden =YES;
+//        }
+//    }
+    
+}
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if(scrollView==m_myTableView){
+        if (openMenuBtn2.menuImageView.hidden==NO) {
+            openMenuBtn2.menuImageView.hidden =YES;
+        }
+    }
+}
+
 @end
 //audioBtn

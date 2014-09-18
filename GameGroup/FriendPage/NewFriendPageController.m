@@ -50,7 +50,15 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+   
+    //判断是从那个页面的返回
+    if (searchResultView.hidden == NO) {
+        [[Custom_tabbar showTabBar] hideTabBar:YES];
+    }else{
     [[Custom_tabbar showTabBar] hideTabBar:NO];
+    }
+    
+    
     if (![[TempData sharedInstance] isHaveLogin]) {
         [[Custom_tabbar showTabBar] when_tabbar_is_selected:0];
         return;
@@ -61,7 +69,10 @@
         [self getFriendListFromNet];
     }
 }
-
+- (void)viewDidAppear:(BOOL)animated
+{
+     [super viewDidAppear:YES];
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -123,14 +134,15 @@
     m_searchBar.showsCancelButton=NO;
     [m_searchBar sizeToFit];
     [m_searchBar addSubview:searchV];
+//    [self.view addSubview:m_searchBar];
     m_myTableView.tableHeaderView = m_searchBar;
     
-    searchResultView = [[SearchResultView alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 320, self.view.bounds.size.height-(KISHighVersion_7 ? 20 : 0)-50)];
+    searchResultView = [[SearchResultView alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 320, self.view.bounds.size.height-(KISHighVersion_7 ? 20 : 0))];
     searchResultView.hidden = YES;
     searchResultView.delegate = self;
     [self.view addSubview:searchResultView];
     
-    
+   
     [self getFriendDateFromDataSore];
     [self addheadView];
 }
@@ -370,9 +382,9 @@
         [view addSubview:lb];
         
         //添加一条线
-        UILabel *lineLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 24, kScreenWidth, 1)];
-        lineLabel.backgroundColor = [UIColor whiteColor];
-        [view addSubview:lineLabel];
+//        UILabel *lineLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, 24, kScreenWidth, 1)];
+//        lineLabel.backgroundColor = [UIColor whiteColor];
+//        [view addSubview:lineLabel];
         return view;
 
     }
@@ -591,5 +603,8 @@
 {
     [super didReceiveMemoryWarning];
 }
-
+- (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar
+{
+   
+}
 @end
