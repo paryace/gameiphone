@@ -9,8 +9,10 @@
 #import "BaseViewController.h"
 #import "SendNewsViewController.h"
 #import "CharacterDetailsViewController.h"
+#import "KxMenu.h"
 
 @interface H5CharacterDetailsViewController : BaseViewController<UIAlertViewDelegate,UIWebViewDelegate,UIActionSheetDelegate,TableViewDatasourceDidChange>
+@property(nonatomic,assign)CustomViewType myViewType;
 @property(nonatomic,strong)NSString* gameId;
 @property(nonatomic,strong)NSString* characterName;
 @property(nonatomic,strong)NSString* characterId;

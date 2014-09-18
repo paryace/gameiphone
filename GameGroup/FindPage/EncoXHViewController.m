@@ -755,6 +755,7 @@
     }
     H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
     VC.characterId = charaterId;
+    VC.myViewType = CHARA_INFO_MYSELF;
     VC.gameId = KISDictionaryHaveKey(mainDic, @"gameid");
     VC.characterName = KISDictionaryHaveKey(mainDic, @"name");
     [self.navigationController pushViewController:VC animated:YES];

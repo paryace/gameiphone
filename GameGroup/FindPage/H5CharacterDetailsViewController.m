@@ -67,7 +67,7 @@
     CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
     VC.characterId = self.characterId;
     VC.gameId = self.gameId;
-    VC.myViewType = CHARA_INFO_MYSELF;
+    VC.myViewType = self.myViewType;
     [[NSNotificationCenter defaultCenter]postNotificationName:@"contentOfjuese" object:nil];
     [self.navigationController pushViewController:VC animated:YES];
 }
@@ -84,19 +84,42 @@
 -(void)shareBtnClick:(UIButton *)sender
 {
     if ([[GameCommon getNewStringWithId:self.gameId] isEqualToString:@"1"]) {
-        UIActionSheet* actionSheet = [[UIActionSheet alloc]
-                                      initWithTitle:@"操作"
-                                      delegate:self
-                                      cancelButtonTitle:@"取消"
-                                      destructiveButtonTitle:Nil
-                                      otherButtonTitles:@"分享",@"角色排名",nil];
-        actionSheet.actionSheetStyle = UIActionSheetStyleDefault;
-        actionSheet.tag = 1000000;
-        [actionSheet showInView:self.view];
+        [self showActionMenu];
     }else{
         [self MenuAction];
     }
 }
+
+
+-(void)showActionMenu
+{
+    NSArray * menuarry = @[@"分享",@"排名"];
+    NSArray *iconarry = @[@"team_position_icon",@"team_memberlist_icon"];
+
+    NSMutableArray *menuItems = [NSMutableArray array];
+    for (int i = 0; i<menuarry.count; i++) {
+        KxMenuItem *menuItem = [KxMenuItem menuItem:menuarry[i] image:KUIImage(iconarry[i]) target:self action:@selector(pushMenuItem:)];
+        menuItem.tag =i;
+        menuItem.alignment = NSTextAlignmentCenter;
+        [menuItems addObject:menuItem];
+    }
+    KxMenuItem *first = [KxMenuItem menuItem:@"操作" image:nil target:nil action:NULL];
+    first.foreColor = [UIColor colorWithRed:47/255.0f green:112/255.0f blue:225/255.0f alpha:1.0];
+    first.alignment = NSTextAlignmentCenter;
+    [KxMenu showMenuInView:self.view fromRect:CGRectMake(320-5-50, startX-40, 50, 25) menuItems:menuItems];
+}
+#pragma mark -- 筛选
+- (void) pushMenuItem:(KxMenuItem*)sender
+{
+    NSInteger index = sender.tag;
+    if (index == 0) {
+        [self MenuAction];
+    }else if(index == 1){
+        [self initToRankPagr];
+    }
+}
+
+
 -(void)MenuAction{
     UIActionSheet* actionSheet = [[UIActionSheet alloc]
                                   initWithTitle:@"分享到"
@@ -111,16 +134,6 @@
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (actionSheet.tag == 1000000) {
-        if (buttonIndex ==0) {
-            [self MenuAction];
-        }
-        else if (buttonIndex ==1)
-        {
-            [self initToRankPagr];
-        }
-        return;
-    }
     UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));
     [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();

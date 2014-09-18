@@ -667,6 +667,7 @@
     H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
     VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"characterId")];
     VC.gameId =  [GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"gameid")];
+    VC.myViewType = CHARA_INFO_MYSELF;
     VC.characterName = KISDictionaryHaveKey(charaDic, @"characterName");
     [self.navigationController pushViewController:VC animated:YES];
 }
@@ -757,6 +758,7 @@
     VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"characterId")];
     VC.gameId =  [GameCommon getNewStringWithId:KISDictionaryHaveKey(charaDic, @"gameid")];
     VC.characterName = KISDictionaryHaveKey(charaDic, @"characterName");
+    VC.myViewType = CHARA_INFO_MYSELF;
     [self.navigationController pushViewController:VC animated:YES];
 }
 #pragma mark -- 头像点击
@@ -1665,6 +1667,7 @@
         h5Chara.characterName =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"characterName")];
         h5Chara.characterId =[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(msgDic, @"teamUser"), @"characterId")] ;
         [self.navigationController pushViewController:h5Chara animated:YES];
+        h5Chara.myViewType = CHARA_INFO_MYSELF;
     }else if (kkChatMsgType == kkChatMsgJoinGroup){
         NSDictionary * msgDic = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
         TestViewController * detailV = [[TestViewController alloc] init];
