@@ -708,6 +708,7 @@ typedef enum : NSUInteger {
 }
 - (void)bigImgWithCircle:(NewNearByCell*)myCell WithIndexPath:(NSInteger)row
 {
+    [self.textView resignFirstResponder];
     NSLog(@"点击查看大图");
     NSDictionary *dict = [m_dataArray objectAtIndex:myCell.tag];
     NSArray *array1 = [NSArray  array];
