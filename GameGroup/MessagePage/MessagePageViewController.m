@@ -317,7 +317,7 @@
 
 -(void)backButtonClick:(id)sender{
     [[Custom_tabbar showTabBar] hideTabBar:YES];
-    TemporaryFriendController *detailVC = [[TemporaryFriendController alloc]init];
+    TeamAssistantController *detailVC = [[TeamAssistantController alloc]init];
     [self.navigationController pushViewController:detailVC animated:YES];
 }
 #pragma mark -清空

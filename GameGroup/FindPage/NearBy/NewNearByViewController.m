@@ -265,7 +265,7 @@ typedef enum : NSUInteger {
 }
 -(void)buildcommentView
 {
-    inPutView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, 320, 50)];
+    inPutView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, 320, 44)];
     [self.view addSubview:inPutView];
     
     UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
@@ -273,10 +273,9 @@ typedef enum : NSUInteger {
     tapGr.delegate = self;
     [self.view addGestureRecognizer:tapGr];
 
-    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 240, 35)];
+    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 240, 29)];
     self.textView.isScrollable = NO;
     self.textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
-    
 	self.textView.minNumberOfLines = 1;
 	self.textView.maxNumberOfLines = 6;
 	self.textView.returnKeyType = UIReturnKeyDone; //just as an example
@@ -285,19 +284,18 @@ typedef enum : NSUInteger {
     self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
     self.textView.backgroundColor = [UIColor clearColor];
     
+    self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    
     UIImage *rawEntryBackground = [UIImage imageNamed:@"chat_input.png"];
     UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
     UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
-    entryImageView.frame = CGRectMake(10, 7, 240, 35);
+    entryImageView.frame = CGRectMake(10, 7, 320-30-25, 29);
     entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    
     UIImage *rawBackground = [UIImage imageNamed:@"inputbg.png"];
     UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
     UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
-    imageView.frame = CGRectMake(0, 0, inPutView.frame.size.width, inPutView.frame.size.height);
+    imageView.frame = CGRectMake(0,0,inPutView.frame.size.width,inPutView.frame.size.height);
     imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    
-    self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
     // view hierachy
     [inPutView addSubview:imageView];
@@ -308,8 +306,7 @@ typedef enum : NSUInteger {
     [senderBnt setImage:KUIImage(@"emoji") forState:UIControlStateNormal];
     [senderBnt setImage:KUIImage(@"keyboard.png") forState:UIControlStateSelected];
     [senderBnt addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchDown];
-    senderBnt.frame = CGRectMake(260, 0, 50, 50);
-    [senderBnt setImageEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
+    senderBnt.frame = CGRectMake(320-25-10, 9.5, 25, 25);
     [inPutView bringSubviewToFront:senderBnt];
     
     [inPutView addSubview:senderBnt];
