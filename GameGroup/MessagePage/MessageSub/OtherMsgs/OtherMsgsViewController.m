@@ -33,8 +33,8 @@
     
     UIButton *deleteButton=[UIButton buttonWithType:UIButtonTypeCustom];
     deleteButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
-    [deleteButton setBackgroundImage:KUIImage(@"delete_normal") forState:UIControlStateNormal];
-    [deleteButton setBackgroundImage:KUIImage(@"delete_click") forState:UIControlStateHighlighted];
+    [deleteButton setBackgroundImage:KUIImage(@"deleteButton") forState:UIControlStateNormal];
+    [deleteButton setBackgroundImage:KUIImage(@"deleteButton2") forState:UIControlStateHighlighted];
     [self.view addSubview:deleteButton];
     [deleteButton addTarget:self action:@selector(deleteButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     

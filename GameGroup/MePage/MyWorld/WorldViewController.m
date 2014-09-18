@@ -334,8 +334,8 @@ typedef enum : NSUInteger {
         [m_loginActivity stopAnimating];
               // 网络成功  才创建发新动态的button
               UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-              [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
-              [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
+              [shareButton setBackgroundImage:KUIImage(@"xinqing") forState:UIControlStateNormal];
+              [shareButton setBackgroundImage:KUIImage(@"xinqing2") forState:UIControlStateHighlighted];
               shareButton.backgroundColor = [UIColor clearColor];
               [shareButton addTarget:self action:@selector(publishInfo:) forControlEvents:UIControlEventTouchUpInside];
               [self.view addSubview:shareButton];
@@ -459,7 +459,7 @@ typedef enum : NSUInteger {
             
             cell.timeLabel.frame = CGRectMake(245,5, 70, 30);
             cell.openBtn.frame = CGRectMake(270,m_currmagY+5, 50, 40);
-            cell.jubaoBtn.frame = CGRectMake(150, m_currmagY+10, 60, 30);
+            cell.jubaoBtn.frame = CGRectMake(220, m_currmagY, 60, 30);
             cell.areaLabel.frame = CGRectMake(73, m_currmagY+15, 207, 25);
             cell.areaIcon.frame = CGRectMake(60, m_currmagY+21, 9, 11);
         }
@@ -485,7 +485,7 @@ typedef enum : NSUInteger {
             [cell.photoCollectionView reloadData];
             cell.timeLabel.frame = CGRectMake(245,5, 70, 30);
             cell.openBtn.frame = CGRectMake(270,m_currmagY-5, 50, 40);
-            cell.jubaoBtn.frame = CGRectMake(150, m_currmagY, 60, 30);
+            cell.jubaoBtn.frame = CGRectMake(220, m_currmagY, 60, 30);
             cell.areaLabel.frame = CGRectMake(73, m_currmagY+4, 203, 25);
             cell.areaIcon.frame = CGRectMake(60, m_currmagY+11, 9, 11);
         }
@@ -536,7 +536,7 @@ typedef enum : NSUInteger {
         
         cell.timeLabel.frame = CGRectMake(245,5, 70, 30);
         cell.openBtn.frame = CGRectMake(270,m_currmagY+5, 50, 40);
-        cell.jubaoBtn.frame = CGRectMake(150, m_currmagY+10, 60, 30);
+        cell.jubaoBtn.frame = CGRectMake(220, m_currmagY, 60, 30);
         cell.areaLabel.frame = CGRectMake(73, m_currmagY+14, 207, 25);
         cell.areaIcon.frame = CGRectMake(60, m_currmagY+21, 9, 11);
         m_currmagY  = cell.jubaoBtn.frame.origin.y + cell.jubaoBtn.frame.size.height;
@@ -1816,4 +1816,4 @@ typedef enum : NSUInteger {
     [self netWork];
 }
 @end
-
+//audioBtn

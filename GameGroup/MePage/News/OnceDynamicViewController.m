@@ -96,8 +96,8 @@
     
     m_shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
     m_shareButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
-    [m_shareButton setBackgroundImage:KUIImage(@"share_normal") forState:UIControlStateNormal];
-    [m_shareButton setBackgroundImage:KUIImage(@"share_click") forState:UIControlStateHighlighted];
+    [m_shareButton setBackgroundImage:KUIImage(@"shareButton") forState:UIControlStateNormal];
+    [m_shareButton setBackgroundImage:KUIImage(@"shareButton2") forState:UIControlStateHighlighted];
     [self.view addSubview:m_shareButton];
     [m_shareButton addTarget:self action:@selector(shareButtonClick:) forControlEvents:UIControlEventTouchUpInside];
      m_shareButton.hidden = YES;

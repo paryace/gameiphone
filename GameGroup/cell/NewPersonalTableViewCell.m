@@ -54,7 +54,7 @@
     int gamecount = gameIds.count>3?3:gameIds.count;
     
     CGFloat w=(gamecount*23);
-    UIView *gV=[self getGameIconUIView:gameIds X:320-30-w Y:20 Width:w Height:20];
+    UIView *gV=[self getGameIconUIView:gameIds X:320-30-w Y:16 Width:w Height:20];
     gV.tag=122222;
     [self.bgView addSubview:gV];
 }

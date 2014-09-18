@@ -179,16 +179,16 @@
     allMsgArray = [NSMutableArray array];
     
     UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
-    [backButton setBackgroundImage:[UIImage imageNamed:@"user_info_normal.png"] forState:UIControlStateNormal];
-    [backButton setBackgroundImage:[UIImage imageNamed:@"user_info_click.png"] forState:UIControlStateHighlighted];
+    [backButton setBackgroundImage:[UIImage imageNamed:@"personInfo"] forState:UIControlStateNormal];
+    [backButton setBackgroundImage:[UIImage imageNamed:@"personInfo2"] forState:UIControlStateHighlighted];
     backButton.backgroundColor = [UIColor clearColor];
     [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:backButton];
+//    [self.view addSubview:backButton];
     
     UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
     delButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
-    [delButton setBackgroundImage:KUIImage(@"delete_normal") forState:UIControlStateNormal];
-    [delButton setBackgroundImage:KUIImage(@"delete_click") forState:UIControlStateHighlighted];
+    [delButton setBackgroundImage:KUIImage(@"deleteButton") forState:UIControlStateNormal];
+    [delButton setBackgroundImage:KUIImage(@"deleteButton2") forState:UIControlStateHighlighted];
     [self.view addSubview:delButton];
     [delButton addTarget:self action:@selector(cleanBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     

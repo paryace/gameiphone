@@ -85,9 +85,9 @@
     m_titleLabel.font = [UIFont boldSystemFontOfSize:20];
     [topImageView addSubview:m_titleLabel];
     UIButton *addFriendBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [addFriendBtn setBackgroundImage:KUIImage(@"friends_add_normal") forState:UIControlStateNormal];
-    [addFriendBtn setBackgroundImage:KUIImage(@"friends_add_click") forState:UIControlStateHighlighted];
-    [addFriendBtn setBackgroundImage:KUIImage(@"friends_add_click") forState:UIControlStateSelected];
+    [addFriendBtn setBackgroundImage:KUIImage(@"addPerson") forState:UIControlStateNormal];
+    [addFriendBtn setBackgroundImage:KUIImage(@"addPerson2") forState:UIControlStateHighlighted];
+    [addFriendBtn setBackgroundImage:KUIImage(@"addPerson2") forState:UIControlStateSelected];
     addFriendBtn.backgroundColor = [UIColor clearColor];
     [addFriendBtn addTarget:self action:@selector(addFriends:) forControlEvents:UIControlEventTouchUpInside];
     [topImageView addSubview:addFriendBtn];
@@ -442,6 +442,8 @@
     [keys sortUsingSelector:@selector(compare:)];
     [keyArr removeAllObjects];
     [resultArray removeAllObjects];
+    //清除总数组数据
+    [m_allSearchArray removeAllObjects];
     [keyArr addObject:@"^"];
     [keyArr addObjectsFromArray:keys];
     resultArray = result;
@@ -528,6 +530,7 @@
     header.activityView.center = header.arrowImage.center;
     header.scrollView = m_myTableView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        
         [self getFriendListFromNet];
         
     };

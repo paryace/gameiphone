@@ -446,8 +446,8 @@ PlayingDelegate>
     [self.view addSubview:self.topImageView];
     //返回按钮
     UIButton* backButton = [[UIButton alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 65, 44)];
-    [backButton setBackgroundImage:KUIImage(@"btn_back") forState:UIControlStateNormal];
-    [backButton setBackgroundImage:KUIImage(@"btn_back_onclick") forState:UIControlStateHighlighted];
+    [backButton setBackgroundImage:KUIImage(@"backButton") forState:UIControlStateNormal];
+    [backButton setBackgroundImage:KUIImage(@"backButton2") forState:UIControlStateHighlighted];
     backButton.backgroundColor = [UIColor clearColor];
     [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.topImageView addSubview:backButton];
@@ -487,8 +487,8 @@ PlayingDelegate>
     if (self.isTeam) {
         [profileButton setBackgroundImage:[UIImage imageNamed:@"team_menu_icon_close"] forState:UIControlStateNormal];
     }else{
-        [profileButton setBackgroundImage:[UIImage imageNamed:@"user_info_normal.png"] forState:UIControlStateNormal];
-        [profileButton setBackgroundImage:[UIImage imageNamed:@"user_info_click.png"] forState:UIControlStateHighlighted];
+        [profileButton setBackgroundImage:[UIImage imageNamed:@"personInfo"] forState:UIControlStateNormal];
+        [profileButton setBackgroundImage:[UIImage imageNamed:@"personInfo2"] forState:UIControlStateHighlighted];
     }
     [profileButton.titleLabel setFont:[UIFont boldSystemFontOfSize:15]];
     [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];

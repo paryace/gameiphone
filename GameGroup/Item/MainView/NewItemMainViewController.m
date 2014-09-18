@@ -98,14 +98,15 @@
 
     //排序
     sortingBtn = [[UIButton alloc] initWithFrame:CGRectMake(5, KISHighVersion_7?18:0, 65, 44)];
-    [sortingBtn setBackgroundImage:KUIImage(@"team_sorting") forState:UIControlStateNormal];
+    [sortingBtn setBackgroundImage:KUIImage(@"teamSorting") forState:UIControlStateNormal];
     sortingBtn.backgroundColor = [UIColor clearColor];
     [sortingBtn addTarget:self action:@selector(sortingList:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:sortingBtn];
     
     //创建
     createBtn = [[UIButton alloc] initWithFrame:CGRectMake(320-65, KISHighVersion_7?17:0, 65, 44)];
-    [createBtn setBackgroundImage:KUIImage(@"team_create") forState:UIControlStateNormal];
+    [createBtn setBackgroundImage:KUIImage(@"team_createA") forState:UIControlStateNormal];
+    [createBtn setBackgroundImage:KUIImage(@"team_createB") forState:UIControlStateHighlighted];
     createBtn.backgroundColor = [UIColor clearColor];
     [createBtn addTarget:self action:@selector(create:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:createBtn];

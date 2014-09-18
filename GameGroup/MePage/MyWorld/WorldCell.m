@@ -58,7 +58,7 @@
         [self.jubaoBtn setTitleColor: UIColorFromRGBA(0x455ca8, 1)forState:UIControlStateNormal];
         self.jubaoBtn.titleLabel.font = [UIFont systemFontOfSize:12];
         [self.jubaoBtn addTarget:self action:@selector(jubaoThisInfo:) forControlEvents:UIControlEventTouchUpInside];
-        self.jubaoBtn.hidden = YES;
+//        self.jubaoBtn.hidden = YES;
         [self.contentView addSubview:self.jubaoBtn];
         
         

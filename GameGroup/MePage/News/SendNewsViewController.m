@@ -56,8 +56,8 @@
     
     UIButton *addButton=[UIButton buttonWithType:UIButtonTypeCustom];
     addButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
-    [addButton setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
-    [addButton setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
+    [addButton setBackgroundImage:KUIImage(@"okButton") forState:UIControlStateNormal];
+    [addButton setBackgroundImage:KUIImage(@"okButton2") forState:UIControlStateHighlighted];
     [self.view addSubview:addButton];
     [addButton addTarget:self action:@selector(saveMyNews:) forControlEvents:UIControlEventTouchUpInside];
     [self setMainView];

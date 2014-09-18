@@ -29,8 +29,8 @@
     [self setTopViewWithTitle:@"群分类" withBackButton:YES];
     
     UIButton *okbutton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [okbutton setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
-    [okbutton setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
+    [okbutton setBackgroundImage:KUIImage(@"okButton") forState:UIControlStateNormal];
+    [okbutton setBackgroundImage:KUIImage(@"okButton2") forState:UIControlStateHighlighted];
     okbutton.backgroundColor = [UIColor clearColor];
     [okbutton addTarget:self action:@selector(successClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:okbutton];

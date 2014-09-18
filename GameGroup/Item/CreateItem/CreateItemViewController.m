@@ -47,8 +47,8 @@
     arrayType = [NSArray array];
     
     UIButton *createBtn = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [createBtn setBackgroundImage:KUIImage(@"ok_normal") forState:UIControlStateNormal];
-    [createBtn setBackgroundImage:KUIImage(@"ok_click") forState:UIControlStateHighlighted];
+    [createBtn setBackgroundImage:KUIImage(@"okButton") forState:UIControlStateNormal];
+    [createBtn setBackgroundImage:KUIImage(@"okButton2") forState:UIControlStateHighlighted];
     createBtn.backgroundColor = [UIColor clearColor];
     [createBtn addTarget:self action:@selector(createItem:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:createBtn];

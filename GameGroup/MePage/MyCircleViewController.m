@@ -57,8 +57,8 @@
     
     [self setTopViewWithTitle:@"个人动态" withBackButton:YES];
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [shareButton setBackgroundImage:KUIImage(@"published_circle_normal") forState:UIControlStateNormal];
-    [shareButton setBackgroundImage:KUIImage(@"published_circle_click") forState:UIControlStateHighlighted];
+    [shareButton setBackgroundImage:KUIImage(@"xinqing") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"xinqing2") forState:UIControlStateHighlighted];
     [shareButton addTarget:self action:@selector(publishInfo:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
     
