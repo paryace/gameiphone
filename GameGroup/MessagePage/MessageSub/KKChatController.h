@@ -102,6 +102,12 @@ typedef enum : NSUInteger {
     kkChatMsgJoinGroup
 } KKChatMsgType;
 
+typedef enum : NSUInteger {
+    GroupChat,
+    TeamChat,
+    PersonChat
+} ChatType;
+
 @class AppDelegate, XMPPHelper;
 
 
