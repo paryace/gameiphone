@@ -11,6 +11,8 @@
 #import "AppDelegate.h"
 #import "NewRegisterViewController.h"
 #import "TemporaryFriendController.h"
+#import "TeamAssistantController.h"
+
 @interface MessagePageViewController : BaseViewController<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,UISearchBarDelegate,UISearchDisplayDelegate,NewRegisterViewControllerDelegate>
 
 @property (assign,nonatomic) AppDelegate * appDel;
