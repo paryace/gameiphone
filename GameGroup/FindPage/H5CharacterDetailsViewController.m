@@ -59,17 +59,45 @@
     [self.view addSubview:hud];
     hud.labelText = @"加载中...";
 }
+
+
+
+-(void)initToRankPagr{
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
+    VC.characterId = self.characterId;
+    VC.gameId = self.gameId;
+    VC.myViewType = CHARA_INFO_MYSELF;
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"contentOfjuese" object:nil];
+    [self.navigationController pushViewController:VC animated:YES];
+}
+
 - (void)backButtonClick:(id)sender
 {
     if (m_myWebView.canGoBack) {
         [m_myWebView goBack];
     }else{
-        [self.navigationController popViewControllerAnimated:YES];   
+        [self.navigationController popViewControllerAnimated:YES];
     }
 }
 #pragma mark ---分享button方法
 -(void)shareBtnClick:(UIButton *)sender
 {
+    if ([[GameCommon getNewStringWithId:self.gameId] isEqualToString:@"1"]) {
+        UIActionSheet* actionSheet = [[UIActionSheet alloc]
+                                      initWithTitle:@"操作"
+                                      delegate:self
+                                      cancelButtonTitle:@"取消"
+                                      destructiveButtonTitle:Nil
+                                      otherButtonTitles:@"分享",@"角色排名",nil];
+        actionSheet.actionSheetStyle = UIActionSheetStyleDefault;
+        actionSheet.tag = 1000000;
+        [actionSheet showInView:self.view];
+    }else{
+        [self MenuAction];
+    }
+}
+-(void)MenuAction{
     UIActionSheet* actionSheet = [[UIActionSheet alloc]
                                   initWithTitle:@"分享到"
                                   delegate:self
@@ -77,12 +105,22 @@
                                   destructiveButtonTitle:Nil
                                   otherButtonTitles:@"我的动态",@"新浪微博",@"微信好友",@"微信朋友圈",nil];
     actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
-    
+    actionSheet.tag = 1000001;
     [actionSheet showInView:self.view];
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    if (actionSheet.tag == 1000000) {
+        if (buttonIndex ==0) {
+            [self MenuAction];
+        }
+        else if (buttonIndex ==1)
+        {
+            [self initToRankPagr];
+        }
+        return;
+    }
     UIGraphicsBeginImageContext(CGSizeMake(kScreenWidth, kScreenHeigth));
     [self.view.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
