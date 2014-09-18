@@ -8,85 +8,9 @@
 
 
 #import "KKChatController.h"
-#import "MLNavigationController.h"
-#import "AppDelegate.h"
-#import "XMPPHelper.h"
-#import "JSON.h"
-#import "KKNewsCell.h"
-#import "OnceDynamicViewController.h"
-#import "ActivateViewController.h"
-#import "TestViewController.h"
-#import "MJRefresh.h"
-#import "PhotoViewController.h"
-#import "UpLoadFileService.h"
-#import "MessageService.h"
-#import "GroupInformationViewController.h"
-#import "KKSystemMsgCell.h"
-#import "KKHistoryMsgCell.h"
-#import "GroupCricleViewController.h"
-#import "ItemManager.h"
-#import "ItemInfoViewController.h"
-#import "KKTeamInviteCell.h"
-#import "H5CharacterDetailsViewController.h"
-#import "KKSimpleMsgCell.h"
-#import "InplaceTimer.h"
-#import "NewTeamMenuView.h"
-#import "InvitationMembersViewController.h"
-#import "MessagePageViewController.h"
-#import "NewFriendPageController.h"
-#import "NewItemMainViewController.h"
-#import "NewFriendPageController.h"
-#import "FindViewController.h"
-#import "MePageViewController.h"
-
-#import "AudioManager.h"
-#import "ShowRecordView.h"
-#import "amrFileCodec.h"
-
-#import "RecorderManager.h"
-#import "PlayerManager.h"
 
 
-#ifdef NotUseSimulator
-#endif
-
-#define kChatImageSizeWidth @"200"
-#define kChatImageSizeHigh @"200"
-#define DEGREES_TO_RADIANS(angle) ((angle)/180.0 *M_PI)
-
-#define padding 20
-#define spaceEnd 100
-#define maxWight 200
-#define LocalMessage @"localMessage"
-#define NameKeys @"namekeys"
-#define topViewHight 52
-
-typedef enum : NSUInteger {
-    KKChatInputTypeNone,
-    KKChatInputTypeKeyboard,
-    KKChatInputTypeEmoji,
-    KKChatInputTypeAdd
-} KKChatInputType;
-
-typedef enum : NSUInteger {
-    KKChatMsgTypeText,
-    KKChatMsgTypeLink,
-    KKChatMsgTypeImage,
-    KKChatMsgTypeSystem,
-    KKChatMsgHistory,
-    KKChatMsgTeamInvite,
-    KKChatMsgSimple,
-    kkchatMsgAudio,
-    kkchatMsgJoinTeam,
-    kkChatMsgJoinGroup
-} KKChatMsgType;
-
-
-@interface KKChatController ()<UIAlertViewDelegate,
-UIImagePickerControllerDelegate,
-UINavigationControllerDelegate,
-RecordingDelegate,
-PlayingDelegate>
+@interface KKChatController ()
 {
     NSMutableArray *messages;   //信息
     UIMenuItem *copyItem;
@@ -97,7 +21,6 @@ PlayingDelegate>
     NSInteger offHight;//群消息需要多加上的高度
     NSInteger historyMsg;
     NSInteger screenHeigth;
-    
     NSInteger offsetTopHight;
     BOOL endOfTable;
     BOOL oTherPage;
@@ -105,40 +28,52 @@ PlayingDelegate>
     BOOL isMenuShow;
     BOOL isApplyShow;
     NSMutableDictionary * selectType;
-    
-    /*
-     录音
-     */
     ShowRecordView *showRecordView;
     BOOL isPlaying;
     UIButton * titleBtn;//右上角button
     CustomInputView *custview;//录音框架
+    NSString * userName;
+    NSUserDefaults * uDefault;
+    NSMutableDictionary * peopleDict;
+    UILongPressGestureRecognizer *btnLongTap;
+    UIButton * tempBtn; //被点击的按钮
+    UIView * popLittleView;
+    UIView * btnBG;
+    int readyIndex;                 //设置当前待操作cell的INDEX
+    NSIndexPath * indexPathTo;      //设置当前待操作cell的indexPathTo
+    NSString * tempStr;
+    UIView * clearView;
+    BOOL canAdd;
+    NSString * currentID;
+    UIImageView * inputbg;
+    UIButton * senBtn;
+    int previousTime;
+    int touchTimePre;
+    int touchTimeFinal;
+    NSMutableDictionary * userInfoDict;
+    NSMutableDictionary * postDict;
+    NSString * myHeadImg;
+    NSDictionary * tempDict;
+    BOOL ifAudio;
+    BOOL ifEmoji;
+    UIButton * picBtn;
+    UIButton * audioplayButton;
+    UIScrollView *m_EmojiScrollView;
+    UIPageControl *m_Emojipc;
+    UIView * emojiBGV;
+    NSMutableDictionary *recordSetting;
+    AVAudioPlayer * audioPlayer;
+    NSString * rootRecordPath;
+    NSMutableArray * animationOne;
+    NSMutableArray * animationTwo;
+    UIMenuController * menu;
 }
 
 
-@property (nonatomic, assign) KKChatInputType kkchatInputType;
-@property (nonatomic, strong) UILabel *unReadL;
-@property (nonatomic, strong) UIButton *kkChatAddButton;
-@property (nonatomic, strong) UIView *inPutView;
-@property (nonatomic, strong) UIView *kkChatAddView;
-@property (nonatomic, strong) EmojiView *theEmojiView;
-@property (nonatomic, strong) NSMutableArray *messages;
-@property (nonatomic, strong) NSArray *typeData_list;
-@property (assign, nonatomic)  NSInteger groupCricleMsgCount;// 群动态的未读消息
-@property (nonatomic,strong) NewTeamMenuView * newTeamMenuView;
-@property (nonatomic,strong) NewTeamApplyListView * newTeamApplyListView;
-@property (nonatomic,strong) UIButton * topItemView;
-@property (nonatomic,strong) UIImageView * leftImage;
-@property (nonatomic,strong) UIImageView * rightImage;
-@property (nonatomic, copy) NSString * filename;// 声音路径
-@property (nonatomic,assign)NSInteger clickCellNum;
+
 @end
 
 @implementation KKChatController
-
-@synthesize tView;
-@synthesize chatWithUser;
-
 
 
 - (void)loadView
@@ -464,8 +399,13 @@ PlayingDelegate>
     //个人资料按钮
     profileButton=[UIButton buttonWithType:UIButtonTypeCustom];
     profileButton.frame=CGRectMake(320-65, KISHighVersion_7 ? 20 : 0, 65, 44);
-    if (self.isTeam) {
-        [profileButton setBackgroundImage:[UIImage imageNamed:@"team_menu_icon_close"] forState:UIControlStateNormal];
+    if ([self.type isEqualToString:@"group"]) {
+        if (self.isTeam) {
+            [profileButton setBackgroundImage:[UIImage imageNamed:@"team_menu_icon_close"] forState:UIControlStateNormal];
+        }else{
+            [profileButton setBackgroundImage:[UIImage imageNamed:@"groupInfo"] forState:UIControlStateNormal];
+            [profileButton setBackgroundImage:[UIImage imageNamed:@"groupInfo2"] forState:UIControlStateHighlighted];
+        }
     }else{
         [profileButton setBackgroundImage:[UIImage imageNamed:@"personInfo"] forState:UIControlStateNormal];
         [profileButton setBackgroundImage:[UIImage imageNamed:@"personInfo2"] forState:UIControlStateHighlighted];
@@ -474,8 +414,6 @@ PlayingDelegate>
     [profileButton addTarget:self action:@selector(userInfoClick) forControlEvents:UIControlEventTouchUpInside];
     [self.topImageView addSubview:profileButton];
     [self.topImageView addSubview:self.unReadL]; //未读数量
-    
-   
 }
 
 
@@ -649,7 +587,7 @@ PlayingDelegate>
         
         self.newTeamMenuView.alpha = 0;
         
-        tView.frame = CGRectMake(0,startX,320,self.view.frame.size.height-startX-55);
+        self.tView.frame = CGRectMake(0,startX,320,self.view.frame.size.height-startX-55);
         self.topItemView.frame = CGRectMake(0, startX, 320, reTop.size.height);
     }completion:^(BOOL finished) {
         self.newTeamMenuView.hidden = YES;
@@ -2112,14 +2050,14 @@ PlayingDelegate>
 
 
 - (UITableView *)tView{
-    if(!tView) {
-        tView = [[UITableView alloc] initWithFrame:CGRectMake(0,startX+offsetTopHight,320,self.view.frame.size.height-startX-offsetTopHight-55)style:UITableViewStylePlain];
-        [tView setBackgroundColor:[UIColor clearColor]];
-        tView.delegate = self;
-        tView.dataSource = self;
-        tView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    if(!_tView) {
+        _tView = [[UITableView alloc] initWithFrame:CGRectMake(0,startX+offsetTopHight,320,self.view.frame.size.height-startX-offsetTopHight-55)style:UITableViewStylePlain];
+        [_tView setBackgroundColor:[UIColor clearColor]];
+        _tView.delegate = self;
+        _tView.dataSource = self;
+        _tView.separatorStyle = UITableViewCellSeparatorStyleNone;
     }
-    return tView;
+    return _tView;
 }
 
 - (HPGrowingTextView *)textView{
@@ -2663,17 +2601,9 @@ PlayingDelegate>
 
         case 0: //相册
         {
-//            if (imagePicker==nil) {
-//                imagePicker=[[UIImagePickerController alloc]init];
-//                imagePicker.delegate=self;
-//                imagePicker.allowsEditing = NO;
-//            }
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
                 oTherPage = YES;
-//                imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
-//                [self presentViewController:imagePicker animated:YES completion:^{
-//                }];
-                
+
                 CTAssetsPickerController *picker = [[CTAssetsPickerController alloc] init];
                 picker.maximumNumberOfSelection = 9;
                 picker.assetsFilter = [ALAssetsFilter allAssets];
@@ -2732,8 +2662,8 @@ PlayingDelegate>
 - (void)assetsPickerController:(CTAssetsPickerController *)picker didFinishPickingAssets:(NSArray *)assets
 {
     for (ALAsset * asset in assets) {
-        UIImage * image = [UIImage imageWithCGImage:asset.thumbnail];
-        [self chooseImage:image];
+        UIImage *fullImage = [UIImage imageWithCGImage:[asset.defaultRepresentation fullScreenImage]scale:[asset.defaultRepresentation scale] orientation:(UIImageOrientation)[asset.defaultRepresentation orientation]];
+        [self chooseImage:fullImage];
     }
 }
 
@@ -3642,7 +3572,7 @@ PlayingDelegate>
     NSString *imageUrl = KISDictionaryHaveKey(payloads, @"msg");
     if ([[GameCommon getNewStringWithId:messageState] isEqualToString:@"8"]) {//如果之前没上传成功,读取本地图片，再次上传
         [self refreMessageStatus2:messageDict Status:@"10"];
-        [tView reloadData];
+        [self.tView reloadData];
     }else{//如果已经成功 ，把message再发一遍
         if (imageUrl.length==0)
         {
@@ -3658,7 +3588,7 @@ PlayingDelegate>
     NSString *messageState = KISDictionaryHaveKey(messageDict, @"status");
     if ([[GameCommon getNewStringWithId:messageState] isEqualToString:@"8"]) {//如果之前没上传成功,读取本地图片，再次上传
         [self refreMessageStatus2:messageDict Status:@"10"];
-        [tView reloadData];
+        [self.tView reloadData];
     }else{//如果已经成功 ，把message再发一遍
         [messageDict setObject:@"2" forKey:@"status"];
         [self reSendAudioMsg:messageDict];

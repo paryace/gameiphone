@@ -372,9 +372,8 @@
 - (void)assetsPickerController:(CTAssetsPickerController *)picker didFinishPickingAssets:(NSArray *)assets
 {
     for (ALAsset * asset in assets) {
-        UIImage * image = [UIImage imageWithCGImage:asset.thumbnail];
-         NSLog(@"-----%@-----",image);
-         [self chooseImage:image];
+          UIImage *fullImage = [UIImage imageWithCGImage:[asset.defaultRepresentation fullScreenImage]scale:[asset.defaultRepresentation scale] orientation:(UIImageOrientation)[asset.defaultRepresentation orientation]];
+         [self chooseImage:fullImage];
     }
 }
 
