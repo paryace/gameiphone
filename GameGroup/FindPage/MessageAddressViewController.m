@@ -570,9 +570,7 @@
 }
 
 
-
--(void)DodeAddressCell:(NSIndexPath *)indexPath IsSearch:(BOOL)isSearch
-{
+-(void)OutDodeAddressCellTouchButtonWithIndexPath:(NSIndexPath *)indexPath IsSearch:(BOOL)isSearch{
     if ([MFMessageComposeViewController canSendText]) {
         MFMessageComposeViewController *picker = [[MFMessageComposeViewController alloc] init];
         picker.messageComposeDelegate = self;
@@ -581,7 +579,6 @@
         }else{
             picker.recipients = [NSArray arrayWithObject:[self.outAddressArray[indexPath.row] objectForKey:@"mobileid"]];
         }
-        
         picker.body=[NSString stringWithFormat:@"游戏里找不到我的时候, 来陌游找我. 下载地址:www.momotalk.com"];
         [self presentViewController:picker animated:YES completion:^{
             
@@ -590,7 +587,10 @@
         UIAlertView *alertV = [[UIAlertView alloc]initWithTitle:nil message:@"您的设备不支持短信功能" delegate:nil cancelButtonTitle:@"知道啦" otherButtonTitles: nil];
         [alertV show];
     }
+
 }
+
+
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
     [self dismissViewControllerAnimated:YES completion:^{
         switch (result) {

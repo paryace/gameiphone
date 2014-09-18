@@ -18,12 +18,12 @@
 
 @interface PlayerManager : NSObject <DecapsulatingDelegate, AVAudioPlayerDelegate> {
     Decapsulator *decapsulator;
-    AVAudioPlayer *avAudioPlayer;
     
 }
 @property (nonatomic, strong) Decapsulator *decapsulator;
-@property (nonatomic, strong) AVAudioPlayer *avAudioPlayer;
 @property (nonatomic, weak)  id<PlayingDelegate> delegate;
+@property (assign, nonatomic)  NSInteger playIndex;
+@property(nonatomic, retain)   NSString * messageuuid;
 
 + (PlayerManager *)sharedManager;
 

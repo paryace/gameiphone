@@ -36,7 +36,7 @@
         self.senderAndTimeLabel.textColor = [UIColor lightGrayColor];
         [self.contentView addSubview:self.senderAndTimeLabel];
         
-        //中央文字Label - 用来显示聊天时间[self.headImgV setFrame:CGRectMake(10, padding*2-15, 40, 40)];
+        //中央文字Label
         self.senderNickName = [[UILabel alloc] initWithFrame:CGRectMake(10+40+10, padding*2-16, 100, 20)];
         self.senderNickName.backgroundColor = [UIColor clearColor];
         self.senderNickName.font = [UIFont systemFontOfSize:11.0];

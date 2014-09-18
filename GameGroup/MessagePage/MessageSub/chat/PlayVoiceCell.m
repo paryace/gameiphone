@@ -111,6 +111,10 @@
 {
     NSLog(@"上传成功");
     NSString *response = [GameCommon getNewStringWithId:KISDictionaryHaveKey(ret, @"key")];
+    NSString *ps = [self getVoideFilePath:response];
+    NSData* fileData = [NSData dataWithContentsOfFile:theFilePath];
+    [[AudioManager singleton]isHaveThisFolderWithFilePath:[NSString stringWithFormat:@"%@/voice",RootDocPath]];
+    [fileData writeToFile:ps atomically:YES];
     if (self.uploaddelegate) {
         [self.uploaddelegate uploadFinish:cellIndex FileKey:response Type:@"audio"];//上传完成
     }
@@ -129,11 +133,13 @@
 #pragma mark --- 下载语音消息并且保存到沙盒
 -(void)downLoadAudioFromNet
 {
-    [AudioDownLoader fileDownloaderWithURLString:[self getUrlPath:KISDictionaryHaveKey(self.payloadDict, @"messageid")] MessageId:KISDictionaryHaveKey(self.payloadDict, @"messageid") delegate:nil];
+    [AudioDownLoader fileDownloaderWithURLString:[self getUrlPath:KISDictionaryHaveKey(self.payloadDict, @"messageid")] MessageId:KISDictionaryHaveKey(self.payloadDict, @"messageid") MessageUuid:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.message, @"messageuuid")] delegate:nil];
 }
 
 -(NSString*)getUrlPath:(NSString*)messageId{
     return [NSString stringWithFormat:@"%@%@",QiniuBaseImageUrl,[GameCommon getNewStringWithId:messageId]];
 }
-
+-(NSString*)getVoideFilePath:(NSString*)messageId{
+    return [NSString stringWithFormat:@"%@/voice/%@",RootDocPath,[[AudioManager singleton]changeStringWithString:[GameCommon getNewStringWithId:messageId]]];
+}
 @end

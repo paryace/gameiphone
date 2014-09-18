@@ -164,15 +164,19 @@ static UserManager *userManager = NULL;
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"154" forKey:@"method"];
     [postDict setObject:paramDict forKey:@"params"];
-    
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
-    
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [[NSUserDefaults standardUserDefaults]setObject:responseObject forKey:@"sayHello_wx_info_id"];
+        if (responseObject && [responseObject isKindOfClass:[NSArray class]]) {
+            [self cacheSayhelloList:responseObject];
+        }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"deviceToken fail");
         
     }];
+}
+
+-(void)cacheSayhelloList:(NSArray*)sayhelloArray{
+    [[NSUserDefaults standardUserDefaults]setObject:sayhelloArray forKey:@"sayHello_wx_info_id"];
 }
 
 -(void)getBlackListFromNet

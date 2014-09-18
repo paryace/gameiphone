@@ -48,6 +48,8 @@
 -(void)changInplaceState:(NSDictionary*)memberUserInfo;
 -(void)sendChangInplaceState;
 -(void)resetChangInplaceState;
+-(void)restartTime;
+-(void)stopTime;
 @end
 
 @protocol DetailDelegate <NSObject>

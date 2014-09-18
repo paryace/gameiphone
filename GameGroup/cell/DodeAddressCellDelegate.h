@@ -10,5 +10,5 @@
 
 @protocol DodeAddressCellDelegate <NSObject>
 @optional
--(void)DodeAddressCell:(NSIndexPath *)indexPath IsSearch:(BOOL)isSearch;
+-(void)OutDodeAddressCellTouchButtonWithIndexPath:(NSIndexPath *)indexPath IsSearch:(BOOL)isSearch;
 @end

@@ -23,7 +23,6 @@
 #import "KKImgCell.h"
 #import "QiniuUploadDelegate.h"
 #import "DropDownChooseDelegate.h"
-#import "TeamApplyController.h"
 #import "NewTeamMenuView.h"
 #import "LocationViewController.h"
 
@@ -70,7 +69,8 @@ ApplyDetailDelegate,
 SendFileMessageDelegate,
 UIGestureRecognizerDelegate,
 CustomInputDelegate,
-CTAssetsPickerControllerDelegate>
+CTAssetsPickerControllerDelegate,
+AudioDownLoaderDelegate>
 
 {
     NSString * userName;
@@ -95,18 +95,13 @@ CTAssetsPickerControllerDelegate>
     NSMutableDictionary * postDict;
     NSString * myHeadImg;
     NSDictionary * tempDict;
-    
     BOOL ifAudio;
     BOOL ifEmoji;
-    
     UIButton * picBtn;
-    
     UIButton * audioplayButton;
-    
     UIScrollView *m_EmojiScrollView;
     UIPageControl *m_Emojipc;
     UIView * emojiBGV;
-    
     NSMutableDictionary *recordSetting;
     AVAudioPlayer * audioPlayer;
     NSString * rootRecordPath;
@@ -132,20 +127,20 @@ CTAssetsPickerControllerDelegate>
 @property (nonatomic, strong) MsgNotifityView * dotPosition;
 @property (strong, nonatomic)  NSString* myHeadImg; //我的头像
 @property (strong, nonatomic)  NSString* myNickName; //我的昵称
-@property(nonatomic, retain) NSString *chatUserImg; //聊天对象的头像
+@property (nonatomic, retain) NSString *chatUserImg; //聊天对象的头像
 @property (strong, nonatomic)  UITableView *tView;  //消息cell组成的TableVIew
 @property (strong, nonatomic)  NSMutableArray *finalMessageArray;//带样式的String 通过normalMsgToFinalMsg方式,将普通文本转化为带样式的文本
 @property (strong, nonatomic)  NSMutableArray *finalMessageTime; //消息的时间
 @property (strong, nonatomic)  NSMutableDictionary *finalImage; //消息的图片
 @property (strong, nonatomic)  NSMutableArray *HeightArray;
 @property (strong, nonatomic)  UITextField *messageTextField;
-@property(nonatomic, retain) NSString *chatWithUser;
-@property(nonatomic, retain) NSString *nickName;
-@property(nonatomic, retain)   NSString *type;//聊天类型normal：跟某个用户聊天 group：群聊
+@property (nonatomic, retain) NSString *chatWithUser;
+@property (nonatomic, retain) NSString *nickName;
+@property (nonatomic, retain)   NSString *type;//聊天类型normal：跟某个用户聊天 group：群聊
 @property (assign, nonatomic)  NSInteger unreadMsgCount;//未读的消息数
 @property (assign, nonatomic)  BOOL isTeam;//是否是组队消息
-@property(nonatomic, retain)   NSString *gameId;
-@property(nonatomic, retain)   NSString *roomId;
+@property (nonatomic, retain)   NSString *gameId;
+@property (nonatomic, retain)   NSString *roomId;
 @property (nonatomic, copy)  NSString* available;//本群状态   0:正常，1:不可用（解散了） 2:已经被踢出
 @property (nonatomic, copy)  NSString* groupUsershipType;//跟这个群得关系 0:群主 1:管理员 2:群成员 3:陌生人
 @property (strong,nonatomic) AppDelegate * appDel;

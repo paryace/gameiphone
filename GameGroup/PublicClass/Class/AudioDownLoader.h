@@ -26,6 +26,8 @@
 
 //MessageId
 @property (nonatomic, copy)NSString *messageId;
+//messageuuid
+@property (nonatomic, copy)NSString *messageuuid;
 
 //监控下载的代理
 @property (nonatomic, assign)id <AudioDownLoaderDelegate>delegate;
@@ -37,13 +39,13 @@
 @property (nonatomic, assign)NSUInteger tag;
 
 //指定初始化方法
-- (instancetype)initWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId delegate:(id<AudioDownLoaderDelegate>)delegate;
+- (instancetype)initWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId MessageUuid:(NSString*)messageuuid delegate:(id<AudioDownLoaderDelegate>)delegate;
 //指定初始化方法
-- (instancetype)initWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId delegate:(id<AudioDownLoaderDelegate>)delegate tag:(NSUInteger)tag;
+- (instancetype)initWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId MessageUuid:(NSString*)messageuuid delegate:(id<AudioDownLoaderDelegate>)delegate tag:(NSUInteger)tag;
 //工厂方法一
-+ (instancetype)fileDownloaderWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId delegate:(id<AudioDownLoaderDelegate>)delegate tag:(NSUInteger)tag;
++ (instancetype)fileDownloaderWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId MessageUuid:(NSString*)messageuuid delegate:(id<AudioDownLoaderDelegate>)delegate tag:(NSUInteger)tag;
 //工厂方法二
-+ (instancetype)fileDownloaderWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId delegate:(id<AudioDownLoaderDelegate>)delegate;
++ (instancetype)fileDownloaderWithURLString:(NSString *)urlStr MessageId:(NSString*)messageId MessageUuid:(NSString*)messageuuid delegate:(id<AudioDownLoaderDelegate>)delegate;
 
 
 
