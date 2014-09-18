@@ -244,7 +244,7 @@
             cell.headImageView.image = KUIImage(@"search_role");
             cell.titleLabel.text = @"查找游戏角色";
         }else if(indexPath.row ==1){
-            cell.headImageView.image = KUIImage(@"my_team");
+            cell.headImageView.image = KUIImage(@"my_team_friend");
             cell.titleLabel.text = @"我的组织";
         }else{
             cell.headImageView.image = KUIImage(@"iphone_address");
