@@ -215,8 +215,20 @@
     }
 }
 -(void)addPushBtnAction:(UIButton*)sender{
+    if (!_selectRoleDict) {
+        [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
+        return;
+    }
+    if (!_selectTypeDict) {
+        [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
+        return;
+    }
+    if (!_selectTagDict) {
+        [self showAlertViewWithTitle:@"提示" message:@"请选择标签" buttonTitle:@"OK"];
+        return;
+    }
     NSLog(@"----add push msg----");
-    [self getPreferences:KISDictionaryHaveKey(_selectRoleDict, @"gameid") CharacterId:KISDictionaryHaveKey(_selectRoleDict, @"id") Description:KISDictionaryHaveKey(_selectTagDict, @"value") TypeId:KISDictionaryHaveKey(_selectTypeDict, @"constId") ForGirls:_selectGender Powerable:_selectPowerable];
+    [self addPreferences:KISDictionaryHaveKey(_selectRoleDict, @"gameid") CharacterId:KISDictionaryHaveKey(_selectRoleDict, @"id") Description:KISDictionaryHaveKey(_selectTagDict, @"value") TypeId:KISDictionaryHaveKey(_selectTypeDict, @"constId") ForGirls:_selectGender Powerable:_selectPowerable];
 }
 -(void)infomationAccording:(UISwitch*)sender
 {
@@ -243,15 +255,18 @@
     }else if (indexPath.section == 1){
         if (indexPath.row == 0) {
             if (!_selectRoleDict) {
+                [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
                 return;
             }
             [_typeView showSelf];
             [self getTypes:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"gameid")]];
         }else if (indexPath.row == 1){
             if (!_selectRoleDict) {
+                [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
                 return;
             }
             if (!_selectTypeDict) {
+                [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
                 return;
             }
             [_tagView showSelf];
@@ -338,7 +353,7 @@
 }
 
 #pragma mark ---
--(void)getPreferences:(NSString*)gameid CharacterId:(NSString*)characterId Description:(NSString*)description TypeId:(NSString*)typeId ForGirls:(NSString*)forGirls Powerable:(NSString*)powerable
+-(void)addPreferences:(NSString*)gameid CharacterId:(NSString*)characterId Description:(NSString*)description TypeId:(NSString*)typeId ForGirls:(NSString*)forGirls Powerable:(NSString*)powerable
 {
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:gameid] forKey:@"gameid"];
