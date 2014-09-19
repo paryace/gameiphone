@@ -101,7 +101,7 @@
         [self.photoCollectionView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
         
         UITapGestureRecognizer *tapMIss = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(taptap)];
-//        [self.contentView addGestureRecognizer:tapMIss];
+//        [self.photoCollectionView addGestureRecognizer:tapMIss];
         
         self.photoCollectionView.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.photoCollectionView];

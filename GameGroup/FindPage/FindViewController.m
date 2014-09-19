@@ -281,7 +281,7 @@
     groupMsgTitleLable.textAlignment = NSTextAlignmentLeft;
     groupMsgTitleLable.textColor = UIColorFromRGBA(0x9e9e9e, 1);
     groupMsgTitleLable.font = [UIFont systemFontOfSize:11];
-    groupMsgTitleLable.text = @"今日n条动态";
+    groupMsgTitleLable.text = @"今日动态";
     [groupView addSubview:groupMsgTitleLable];
     
     UIImageView * lineImage = [[UIImageView alloc] initWithFrame:CGRectMake(165, 10, 1, 40)];
@@ -330,7 +330,8 @@
     m_notibgGbImageView = [[UIImageView alloc] initWithFrame:CGRectMake(40, 5, 15, 15)];
     [m_notibgGbImageView setImage:[UIImage imageNamed:@"redpot.png"]];
     m_notibgGbImageView.hidden = YES;
-    [bottomView addSubview:m_notibgGbImageView];
+    //我的世界去红点
+//    [bottomView addSubview:m_notibgGbImageView];
     
     headImgView = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
     [headImgView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(enterCirclePage:)]];
@@ -835,10 +836,10 @@
 
 -(void)enterCirclePage:(id)sender
 {
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@""]||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@" "]||!manDic) {
-        [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
-        return;
-    }
+//    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@""]||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@" "]||!manDic) {
+//        [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
+//        return;
+//    }
     
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     CircleHeadViewController *circleVC  = [[CircleHeadViewController alloc]init];

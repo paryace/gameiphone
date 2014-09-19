@@ -460,7 +460,7 @@ typedef enum : NSUInteger {
             cell.timeLabel.frame = CGRectMake(245,5, 70, 30);
             cell.openBtn.frame = CGRectMake(270,m_currmagY+5, 50, 40);
             
-            cell.jubaoBtn.frame = CGRectMake(220, m_currmagY, 60, 30);
+            cell.jubaoBtn.frame = CGRectMake(220, m_currmagY+10, 60, 30);
             cell.ETBtn.frame = CGRectMake(150,m_currmagY+10, 60, 30);
             cell.areaLabel.frame = CGRectMake(73, m_currmagY+15, 207, 25);
             cell.areaIcon.frame = CGRectMake(60, m_currmagY+21, 9, 11);
