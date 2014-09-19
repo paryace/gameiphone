@@ -28,6 +28,7 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"添加推送" withBackButton:YES];
     self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+    
     _m_TableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, self.view.bounds.size.width, self.view.bounds.size.height - startX) style:UITableViewStylePlain];
     _m_TableView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     _m_TableView.delegate = self;
@@ -59,11 +60,32 @@
     
     _selectGender = @"2";
     _selectPowerable = @"1";
-    
+    if ([_type isEqualToString:@"update"]) {
+        _selectRoleDict = [NSMutableDictionary dictionary];
+        [self initUpdateInfo];
+    }
+    [_m_TableView reloadData];
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     hud.labelText = @"请稍等...";
 }
+
+-(void)initUpdateInfo{
+    [_selectRoleDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(_updatePreferInfoDic, @"createTeamUser"), @"gameid")] forKey:@"gameid"];
+    [_selectRoleDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(_updatePreferInfoDic, @"createTeamUser"), @"realm")] forKey:@"simpleRealm"];
+    [_selectRoleDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(_updatePreferInfoDic, @"createTeamUser"), @"characterName")] forKey:@"name"];
+    [_selectRoleDict setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(_updatePreferInfoDic, @"createTeamUser"), @"characterId")] forKey:@"id"];
+    _selectTypeDict = KISDictionaryHaveKey(_updatePreferInfoDic, @"type");
+    NSMutableArray * tagArray = KISDictionaryHaveKey(_updatePreferInfoDic, @"tags");
+    if (tagArray&& tagArray.count>0) {
+         _selectTagDict = [tagArray objectAtIndex:0];
+    }
+    _selectGender = [GameCommon getNewStringWithId:KISDictionaryHaveKey(_updatePreferInfoDic, @"forGirls")];
+    _selectPowerable = [GameCommon getNewStringWithId:KISDictionaryHaveKey(_updatePreferInfoDic, @"powerable")];
+    
+    [_m_TableView reloadData];
+}
+
 -(void)selectCharacter:(NSMutableDictionary *)characterDic{
     _selectRoleDict = characterDic;
     [_m_TableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
@@ -151,7 +173,7 @@
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             cell.tlb.text = @"选择分类";
             
-            if (_selectTypeDict) {
+            if (_selectTypeDict && [_selectTypeDict isKindOfClass:[NSDictionary class]]) {
                 cell.characterLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectTypeDict, @"value")];
             }else{
                  cell.characterLable.text = @"请选择分类";
@@ -231,8 +253,12 @@
         [self showAlertViewWithTitle:@"提示" message:@"请选择标签" buttonTitle:@"OK"];
         return;
     }
+    if ([_type isEqualToString:@"update"]) {
+        [self updatePreferences:KISDictionaryHaveKey(_selectRoleDict, @"gameid") CharacterId:KISDictionaryHaveKey(_selectRoleDict, @"id") Description:KISDictionaryHaveKey(_selectTagDict, @"value") TypeId:KISDictionaryHaveKey(_selectTypeDict, @"constId") ForGirls:_selectGender Powerable:_selectPowerable PreferenceId:KISDictionaryHaveKey(_updatePreferInfoDic, @"preferenceId")];
+    }else if ([_type isEqualToString:@"create"]){
+        [self addPreferences:KISDictionaryHaveKey(_selectRoleDict, @"gameid") CharacterId:KISDictionaryHaveKey(_selectRoleDict, @"id") Description:KISDictionaryHaveKey(_selectTagDict, @"value") TypeId:KISDictionaryHaveKey(_selectTypeDict, @"constId") ForGirls:_selectGender Powerable:_selectPowerable];
+    }
     NSLog(@"----add push msg----");
-    [self addPreferences:KISDictionaryHaveKey(_selectRoleDict, @"gameid") CharacterId:KISDictionaryHaveKey(_selectRoleDict, @"id") Description:KISDictionaryHaveKey(_selectTagDict, @"value") TypeId:KISDictionaryHaveKey(_selectTypeDict, @"constId") ForGirls:_selectGender Powerable:_selectPowerable];
 }
 -(void)infomationAccording:(UISwitch*)sender
 {
@@ -258,18 +284,18 @@
         [_characterView showSelf];
     }else if (indexPath.section == 1){
         if (indexPath.row == 0) {
-            if (!_selectRoleDict) {
+            if (!_selectRoleDict||![_selectRoleDict isKindOfClass:[NSDictionary class]]) {
                 [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
                 return;
             }
             [_typeView showSelf];
             [self getTypes:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"gameid")]];
         }else if (indexPath.row == 1){
-            if (!_selectRoleDict) {
+            if (!_selectRoleDict||![_selectRoleDict isKindOfClass:[NSDictionary class]]) {
                 [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
                 return;
             }
-            if (!_selectTypeDict) {
+            if (!_selectTypeDict||![_selectTypeDict isKindOfClass:[NSDictionary class]]) {
                 [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
                 return;
             }
@@ -378,6 +404,38 @@
         [[NSNotificationCenter defaultCenter]postNotificationName:kAddPreference object:nil userInfo:responseObject];
         [[PreferencesMsgManager singleton] savePreferences:responseObject];
         [self showMessageWindowWithContent:@"添加成功" imageType:0];
+        [self.navigationController popViewControllerAnimated:YES];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
+        [self showErrorAlert:error];
+    }];
+}
+
+
+
+#pragma mark ---
+-(void)updatePreferences:(NSString*)gameid CharacterId:(NSString*)characterId Description:(NSString*)description TypeId:(NSString*)typeId ForGirls:(NSString*)forGirls Powerable:(NSString*)powerable PreferenceId:(NSString*)preferenceId
+{
+    [hud show:YES];
+    NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
+    [paramDict setObject:[GameCommon getNewStringWithId:gameid] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:characterId] forKey:@"characterId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:preferenceId] forKey:@"preferenceId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:description] forKey:@"description"];
+    [paramDict setObject:[GameCommon getNewStringWithId:typeId] forKey:@"typeId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:forGirls] forKey:@"forGirls"];
+    [paramDict setObject:[GameCommon getNewStringWithId:powerable] forKey:@"powerable"];
+    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"283" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        NSLog(@"------%@------",responseObject);
+        [[NSNotificationCenter defaultCenter]postNotificationName:kUpdatePreference object:nil userInfo:responseObject];
+        [[PreferencesMsgManager singleton] savePreferences:responseObject];
+        [self showMessageWindowWithContent:@"偏好更新成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];

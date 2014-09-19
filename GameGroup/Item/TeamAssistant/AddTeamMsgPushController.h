@@ -5,7 +5,6 @@
 //  Created by Apple on 14-9-18.
 //  Copyright (c) 2014年 Swallow. All rights reserved.
 //
-
 #import "BaseViewController.h"
 #import "CharacterView.h"
 #import "SelectCharacterCell.h"
@@ -20,9 +19,11 @@
 @property(nonatomic,strong) CharacterView * characterView;
 @property(nonatomic,strong) TypeView * typeView;
 @property(nonatomic,strong) TagView * tagView;
+@property(nonatomic,copy) NSString * type;
 @property(nonatomic,strong) NSMutableDictionary * selectRoleDict;
 @property(nonatomic,strong) NSMutableDictionary * selectTypeDict;
 @property(nonatomic,strong) NSMutableDictionary * selectTagDict;
 @property(nonatomic,copy) NSString * selectGender;
 @property(nonatomic,copy) NSString * selectPowerable;
+@property(nonatomic,strong) NSMutableDictionary * updatePreferInfoDic;
 @end

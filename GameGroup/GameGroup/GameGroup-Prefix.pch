@@ -183,6 +183,7 @@
 #define kSendSystemMessage @"sendSystemMessage"//发送系统消息//
 #define kNewPreferMsg    @"newPreferMsg"
 #define kAddPreference    @"addPreference"
+#define kUpdatePreference    @"updatePreference"
 
 
 
