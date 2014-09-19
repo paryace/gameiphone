@@ -45,6 +45,8 @@
 //区域lebel
 @property(nonatomic,strong)UILabel *areaLabel;
 @property(nonatomic,strong)UIImageView *areaIcon;
+//标准label，参照的是举报按钮的frame
+@property(nonatomic,strong)UIButton *ETBtn;
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr;
 + (CGSize)getTitleHeigthWithStr:(NSString*)contStr;
 
@@ -89,6 +91,7 @@
 
 -(void)tapZanNickNameWithCell:(WorldCell *)myCell;
 
+-(void)TapMiss;//点击collectionview收回键盘
 
 //传送显示的 评论，赞菜单的Cell
 - (void)openMenuCell:(WorldCell*)myCell;

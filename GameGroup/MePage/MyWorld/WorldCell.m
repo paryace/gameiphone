@@ -61,6 +61,11 @@
 //        self.jubaoBtn.hidden = YES;
         [self.contentView addSubview:self.jubaoBtn];
         
+        self.ETBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        self.ETBtn.frame = CGRectMake(0, 0, 60, 30);
+        self.ETBtn.hidden = YES;
+        [self.contentView addSubview:self.ETBtn];
+
         
         
         
@@ -94,6 +99,10 @@
         self.photoCollectionView.delegate = self;
         self.photoCollectionView.dataSource = self;
         [self.photoCollectionView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
+        
+        UITapGestureRecognizer *tapMIss = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(taptap)];
+//        [self.contentView addGestureRecognizer:tapMIss];
+        
         self.photoCollectionView.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.photoCollectionView];
         
@@ -185,7 +194,12 @@
     }
     return self;
 }
-
+- (void)taptap
+{
+    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(TapMiss)]) {
+        [self.myCellDelegate  TapMiss];
+    }
+}
 
 
 #pragma mark ---collectionviewdelegate datasourse

@@ -459,7 +459,9 @@ typedef enum : NSUInteger {
             
             cell.timeLabel.frame = CGRectMake(245,5, 70, 30);
             cell.openBtn.frame = CGRectMake(270,m_currmagY+5, 50, 40);
+            
             cell.jubaoBtn.frame = CGRectMake(220, m_currmagY, 60, 30);
+            cell.ETBtn.frame = CGRectMake(150,m_currmagY+10, 60, 30);
             cell.areaLabel.frame = CGRectMake(73, m_currmagY+15, 207, 25);
             cell.areaIcon.frame = CGRectMake(60, m_currmagY+21, 9, 11);
         }
@@ -486,11 +488,13 @@ typedef enum : NSUInteger {
             cell.timeLabel.frame = CGRectMake(245,5, 70, 30);
             cell.openBtn.frame = CGRectMake(270,m_currmagY-5, 50, 40);
             cell.jubaoBtn.frame = CGRectMake(220, m_currmagY, 60, 30);
+            cell.ETBtn.frame = CGRectMake(150, m_currmagY, 60, 30);
+
             cell.areaLabel.frame = CGRectMake(73, m_currmagY+4, 203, 25);
             cell.areaIcon.frame = CGRectMake(60, m_currmagY+11, 9, 11);
         }
         
-        m_currmagY=cell.jubaoBtn.frame.origin.y + cell.jubaoBtn.frame.size.height;
+        m_currmagY=cell.ETBtn.frame.origin.y + cell.ETBtn.frame.size.height;
     }
     //后台文章 - URLlink有内容的
     else
@@ -537,9 +541,10 @@ typedef enum : NSUInteger {
         cell.timeLabel.frame = CGRectMake(245,5, 70, 30);
         cell.openBtn.frame = CGRectMake(270,m_currmagY+5, 50, 40);
         cell.jubaoBtn.frame = CGRectMake(220, m_currmagY, 60, 30);
+        cell.ETBtn.frame = CGRectMake(150, m_currmagY+10, 60, 30);
         cell.areaLabel.frame = CGRectMake(73, m_currmagY+14, 207, 25);
         cell.areaIcon.frame = CGRectMake(60, m_currmagY+21, 9, 11);
-        m_currmagY  = cell.jubaoBtn.frame.origin.y + cell.jubaoBtn.frame.size.height;
+        m_currmagY  = cell.ETBtn.frame.origin.y + cell.ETBtn.frame.size.height;
     }
     
     // 赞，取最后一个用户的昵称显示
@@ -708,7 +713,7 @@ typedef enum : NSUInteger {
 }
 - (void)bigImgWithCircle:(NewNearByCell*)myCell WithIndexPath:(NSInteger)row
 {
-    [self.textView resignFirstResponder];
+    
     NSLog(@"点击查看大图");
     NSDictionary *dict = [m_dataArray objectAtIndex:myCell.tag];
     NSArray *array1 = [NSArray  array];
@@ -905,7 +910,10 @@ typedef enum : NSUInteger {
     
     return contentDict;
 }
-
+-(void)TapMiss
+{
+    [self.textView resignFirstResponder];
+}
 
 -(void)changeShiptypeWithCell:(NewNearByCell *)myCell
 {
