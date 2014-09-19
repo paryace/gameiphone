@@ -59,6 +59,10 @@
     
     _selectGender = @"2";
     _selectPowerable = @"1";
+    
+    hud = [[MBProgressHUD alloc] initWithView:self.view];
+    [self.view addSubview:hud];
+    hud.labelText = @"请稍等...";
 }
 -(void)selectCharacter:(NSMutableDictionary *)characterDic{
     _selectRoleDict = characterDic;
@@ -355,6 +359,7 @@
 #pragma mark ---
 -(void)addPreferences:(NSString*)gameid CharacterId:(NSString*)characterId Description:(NSString*)description TypeId:(NSString*)typeId ForGirls:(NSString*)forGirls Powerable:(NSString*)powerable
 {
+    [hud show:YES];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     [paramDict setObject:[GameCommon getNewStringWithId:gameid] forKey:@"gameid"];
     [paramDict setObject:[GameCommon getNewStringWithId:characterId] forKey:@"characterId"];
@@ -368,8 +373,12 @@
     [postDict setObject:@"282" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
         NSLog(@"------%@------",responseObject);
+         [self showMessageWindowWithContent:@"添加成功" imageType:0];
+        [self.navigationController popViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
         [self showErrorAlert:error];
     }];
 }
