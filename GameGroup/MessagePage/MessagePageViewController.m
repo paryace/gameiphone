@@ -183,7 +183,7 @@
     [backButton setBackgroundImage:[UIImage imageNamed:@"personInfo2"] forState:UIControlStateHighlighted];
     backButton.backgroundColor = [UIColor clearColor];
     [backButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:backButton];
+    [self.view addSubview:backButton];
     
     UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
     delButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);

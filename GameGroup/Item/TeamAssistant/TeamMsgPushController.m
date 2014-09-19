@@ -301,12 +301,13 @@
             [_characterKey addObject:c];
         }
     }
-    [_characterKey insertObject:@"1" atIndex:0];
-    [_characterKey insertObject:@"2" atIndex:_characterKey.count];
+    
     for (NSDictionary *dic in array)
     {
         [[_characterDic objectForKey:[NSString stringWithFormat:@"%@%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterId")]]] addObject:dic];
     }
+    [_characterKey insertObject:@"1" atIndex:0];
+    [_characterKey insertObject:@"2" atIndex:_characterKey.count];
     [[_characterDic objectForKey:@"1"] addObject:[[NSMutableDictionary alloc] init]];
     [[_characterDic objectForKey:@"2"] addObject:[[NSMutableDictionary alloc] init]];
     NSLog(@"--%@--",_characterDic);
@@ -318,9 +319,16 @@
     if ([_characterKey containsObject:key]) {
          [[_characterDic objectForKey:key] addObject:preferInfo];
     }else{
+        
         [_characterDic setValue:[[NSMutableArray alloc] init] forKey:key];
+        
         [[_characterDic objectForKey:key] addObject:preferInfo];
+        [[_characterDic objectForKey:@"1"] addObject:[[NSMutableDictionary alloc] init]];
+        [[_characterDic objectForKey:@"2"] addObject:[[NSMutableDictionary alloc] init]];
+        
         [_characterKey addObject:key];
+        [_characterKey insertObject:@"1" atIndex:0];
+        [_characterKey insertObject:@"2" atIndex:_characterKey.count];
     }
      [_m_TableView reloadData];
 }
