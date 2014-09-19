@@ -5296,40 +5296,12 @@
 
 
 
-//保存偏好信息
-+(void)savePreferenceInfo:(NSArray*)preferenceInfos Successcompletion:(MRSaveCompletionHandler)successcompletion
+//保存偏好列表
++(void)savePreferenceArray:(NSArray*)preferenceInfos Successcompletion:(MRSaveCompletionHandler)successcompletion
 {
-
     [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
         for (NSMutableDictionary * preferenceInfo in preferenceInfos) {
-            NSString * desc = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"desc")];
-            NSString * isOpen = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"isOpen")];
-            NSString * keyword = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"keyword")];
-            NSString * matchCount = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"matchCount")];
-            NSString * preferenceId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"preferenceId")];
-            NSString * teamUserId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"teamUserId")];
-            NSString * typeId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"typeId")];
-            NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"userid")];
-            NSMutableDictionary * createTeamUserInfo = KISDictionaryHaveKey(preferenceInfo, @"createTeamUser");
-            NSString * gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"gameid")];
-            NSString * characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterId")];
-            [self saveCreateTeamUserInfo:createTeamUserInfo Successcompletion:^(BOOL success, NSError *error) {
-                
-            }];
-            NSPredicate * predicates = [NSPredicate predicateWithFormat:@"gameId==[c]%@ and preferenceId==[c]%@",gameId, preferenceId];
-            DSPreferenceInfo * commonMsg = [DSPreferenceInfo MR_findFirstWithPredicate:predicates inContext:localContext];
-            if (!commonMsg)
-                commonMsg = [DSPreferenceInfo MR_createInContext:localContext];
-            commonMsg.desc = desc;
-            commonMsg.isOpen = isOpen;
-            commonMsg.keyword = keyword;
-            commonMsg.matchCount = matchCount;
-            commonMsg.preferenceId = preferenceId;
-            commonMsg.teamUserId = teamUserId;
-            commonMsg.typeId = typeId;
-            commonMsg.userid = userid;
-            commonMsg.gameId = gameId;
-            commonMsg.characterId = characterId;
+            [self savePreferenceInfo:preferenceInfo Loca:localContext];
         }
     }
     completion:^(BOOL success, NSError *error) {
@@ -5338,6 +5310,52 @@
         }
     }];
 }
+
+//保存偏好信息
++(void)savePreferenceInfo:(NSMutableDictionary*)preferenceInfo Successcompletion:(MRSaveCompletionHandler)successcompletion{
+    [MagicalRecord saveUsingCurrentThreadContextWithBlock:^(NSManagedObjectContext *localContext) {
+        [self savePreferenceInfo:preferenceInfo Loca:localContext];
+    }
+    completion:^(BOOL success, NSError *error) {
+        if (successcompletion) {
+            successcompletion(success ,error);
+        }
+    }];
+
+}
+//保存偏好信息
++(void)savePreferenceInfo:(NSMutableDictionary*)preferenceInfo Loca:(NSManagedObjectContext*)localContext{
+        NSString * desc = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"desc")];
+        NSString * isOpen = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"isOpen")];
+        NSString * keyword = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"keyword")];
+        NSString * matchCount = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"matchCount")];
+        NSString * preferenceId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"preferenceId")];
+        NSString * teamUserId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"teamUserId")];
+        NSString * typeId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"typeId")];
+        NSString * userid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceInfo, @"userid")];
+        NSMutableDictionary * createTeamUserInfo = KISDictionaryHaveKey(preferenceInfo, @"createTeamUser");
+        NSString * gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"gameid")];
+        NSString * characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterId")];
+        [self saveCreateTeamUserInfo:createTeamUserInfo Successcompletion:^(BOOL success, NSError *error) {
+        }];
+        NSPredicate * predicates = [NSPredicate predicateWithFormat:@"gameId==[c]%@ and preferenceId==[c]%@",gameId, preferenceId];
+        DSPreferenceInfo * commonMsg = [DSPreferenceInfo MR_findFirstWithPredicate:predicates inContext:localContext];
+        if (!commonMsg)
+            commonMsg = [DSPreferenceInfo MR_createInContext:localContext];
+        commonMsg.desc = desc;
+        commonMsg.isOpen = isOpen;
+        commonMsg.keyword = keyword;
+        commonMsg.matchCount = matchCount;
+        commonMsg.preferenceId = preferenceId;
+        commonMsg.teamUserId = teamUserId;
+        commonMsg.typeId = typeId;
+        commonMsg.userid = userid;
+        commonMsg.gameId = gameId;
+        commonMsg.characterId = characterId;
+}
+
+
+
 //保存组队创建者的信息
 +(void)saveCreateTeamUserInfo:(NSMutableDictionary*)createTeamUserInfo Successcompletion:(MRSaveCompletionHandler)successcompletion{
     NSString * characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(createTeamUserInfo, @"characterId")];

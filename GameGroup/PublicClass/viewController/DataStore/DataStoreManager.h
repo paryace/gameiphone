@@ -397,8 +397,10 @@
 //更新组队人数
 +(void)updateMemBerCount:(NSString*)gameId RoomId:(NSString*)roomId MemberCount:(NSString*)memberCount Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
+//保存偏好列表
++(void)savePreferenceArray:(NSArray*)preferenceInfo Successcompletion:(MRSaveCompletionHandler)successcompletion;
 //保存偏好信息
-+(void)savePreferenceInfo:(NSArray*)preferenceInfo Successcompletion:(MRSaveCompletionHandler)successcompletion;
++(void)savePreferenceInfo:(NSMutableDictionary*)preferenceInfo Successcompletion:(MRSaveCompletionHandler)successcompletion;
 
 //保存组队创建者的信息
 +(void)saveCreateTeamUserInfo:(NSMutableDictionary*)createTeamUserInfo Successcompletion:(MRSaveCompletionHandler)successcompletion;
