@@ -102,7 +102,7 @@
 
     
     NSArray *array = [NSArray arrayWithObjects:@{@"tagName":@"热门",@"tagId":@"hot"}, @{@"tagName": @"附近组织",@"tagId":@"nearby"},nil];
-    [menuTableView addMenuTagList:array];
+    [menuTableView addMenuTagList:array Reload:YES];
     [self getRealmList];
     NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1",@"gameid", nil];
     [self getCardWithNetWithDic:dic];
@@ -124,7 +124,7 @@
             }
         }
     }
-    [menuTableView addMenuTagList:tempArray];
+    [menuTableView addMenuTagList:tempArray Reload:NO];
 }
 
 #pragma mark --- itemClick
@@ -167,7 +167,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         if (responseObject && [responseObject isKindOfClass:[NSArray class]]) {
-             [menuTableView addMenuTagList:responseObject];
+             [menuTableView addMenuTagList:responseObject Reload:NO];
         }
        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
