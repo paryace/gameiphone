@@ -97,10 +97,10 @@ typedef enum : NSUInteger {
     [self addFootView];
 
     
-    inPutView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height-50, 320, 50)];
+    inPutView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height-44, 320, 44)];
     [self.view addSubview:inPutView];
     
-    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 240, 35)];
+    self.textView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(10, 7, 240, 29)];
     self.textView.isScrollable = NO;
     self.textView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
     
@@ -111,37 +111,32 @@ typedef enum : NSUInteger {
 	self.textView.delegate = self;
     self.textView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
     self.textView.backgroundColor = [UIColor clearColor];
-    
+    self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
     commentDic = [NSMutableDictionary dictionary];
+
     
     UIImage *rawEntryBackground = [UIImage imageNamed:@"chat_input.png"];
     UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
     UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
-    entryImageView.frame = CGRectMake(10, 7, 240, 35);
+    entryImageView.frame = CGRectMake(10, 7, 320-30-25, 29);
     entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    
     UIImage *rawBackground = [UIImage imageNamed:@"inputbg.png"];
     UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
     UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
-    imageView.frame = CGRectMake(0, 0, inPutView.frame.size.width, inPutView.frame.size.height);
+    imageView.frame = CGRectMake(0,0,inPutView.frame.size.width,inPutView.frame.size.height);
     imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-    
-    self.textView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
     // view hierachy
     [inPutView addSubview:imageView];
     [inPutView addSubview:entryImageView];
     [inPutView addSubview:self.textView];
     
-    
-    
     inputButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [inputButton setImage:KUIImage(@"emoji") forState:UIControlStateNormal];
     [inputButton setImage:KUIImage(@"keyboard.png") forState:UIControlStateSelected];
-    [inputButton addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchUpInside];
-    inputButton.frame = CGRectMake(260, 0, 53, 50);
-    [inputButton setImageEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
+    [inputButton addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchDown];
+    inputButton.frame = CGRectMake(320-25-10, 9.5, 25, 25);
     [inPutView bringSubviewToFront:inputButton];
     [inPutView addSubview:inputButton];
     
