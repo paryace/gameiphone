@@ -222,89 +222,7 @@
  
     
 }
-- (void)changeButtonImage:(id)sender
-{
-     if ([[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"REGISTERNEEDMSG"]] isEqualToString:@"1"]) {
-    UITextField *field = (UITextField *)sender;
-//    count = field.text.length;
-    //count 要在.h中申明一个 NSInteger类型变量 可以不用初始化，即使初始化也不能在这个方法里初始化 否则会有问题，每次textField中内容改变时，都会走这个方法，所以如果在这里初始化是达不到效果的
-    if (count > field.text.length) {
-        //删除
-        if (count == 5 || count == 10) {
-            NSMutableString *str = [NSMutableString stringWithFormat:@"%@",field.text];
-            field.text = [str substringToIndex:count -2];
-        }
-    }
-    else if (count < field.text.length){
-        //增加
-        if (count == 3 || count == 8) {
-            NSMutableString *str = [NSMutableString stringWithFormat:@"%@",field.text];
-            [str insertString:@" " atIndex:count];
-            field.text = str;
-        }
-    }
-    
-    //通过count的值和当前的textField内容的长度比较，如果count大那么证明是删除，反之增加
-    count = field.text.length;
-    
-    //下面是手机号码位数控制处理，如果多余13位 ＝ 11位号码＋2个空格 响应相应事件，自己可以随便写
-    if(count < 13){
 
-         [self.step1Button setImage:KUIImage(@"1_031") forState:UIControlStateNormal];
-    }
-    else if(count == 13){
- 
-        [self.step1Button setImage:KUIImage(@"a_png_03") forState:UIControlStateNormal];
-        [self.step1Button setImage:KUIImage(@"a_png_06") forState:UIControlStateHighlighted];
-    }
-    else{
-        field.text = [field.text substringToIndex:13];
-      
-        [self.step1Button setImage:KUIImage(@"a_png_03") forState:UIControlStateNormal];
-        [self.step1Button setImage:KUIImage(@"a_png_06") forState:UIControlStateHighlighted];
-    }
-     }else{
-         UITextField *field = (UITextField *)sender;
-         //    count = field.text.length;
-         //count 要在.h中申明一个 NSInteger类型变量 可以不用初始化，即使初始化也不能在这个方法里初始化 否则会有问题，每次textField中内容改变时，都会走这个方法，所以如果在这里初始化是达不到效果的
-         if (count > field.text.length) {
-             //删除
-             if (count == 5 || count == 10) {
-                 NSMutableString *str = [NSMutableString stringWithFormat:@"%@",field.text];
-                 field.text = [str substringToIndex:count -2];
-             }
-         }
-         else if (count < field.text.length){
-             //增加
-             if (count == 3 || count == 8) {
-                 NSMutableString *str = [NSMutableString stringWithFormat:@"%@",field.text];
-                 [str insertString:@" " atIndex:count];
-                 field.text = str;
-             }
-         }
-         
-         //通过count的值和当前的textField内容的长度比较，如果count大那么证明是删除，反之增加
-         count = field.text.length;
-         
-         //下面是手机号码位数控制处理，如果多余13位 ＝ 11位号码＋2个空格 响应相应事件，自己可以随便写
-         if(count < 13){
-             self.step1Button.enabled = NO;
-             [self.step1Button setImage:KUIImage(@"1_04") forState:UIControlStateNormal];
-         }
-         else if(count == 13){
-             self.step1Button.enabled = YES;
-             [self.step1Button setImage:KUIImage(@"_png_032_03") forState:UIControlStateNormal];
-             [self.step1Button setImage:KUIImage(@"_png_032_06") forState:UIControlStateHighlighted];
-         }
-         else{
-             field.text = [field.text substringToIndex:13];
-             self.step1Button.enabled = YES;
-             [self.step1Button setImage:KUIImage(@"_png_032_03") forState:UIControlStateNormal];
-             [self.step1Button setImage:KUIImage(@"_png_032_06") forState:UIControlStateHighlighted];
-         }
-     }
-    
-}
 
 -(void)enterToHelpPage:(id)sender
 {
@@ -984,24 +902,115 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+- (void)changeButtonImage:(id)sender
+{
+    if ([[NSString stringWithFormat:@"%@",[[NSUserDefaults standardUserDefaults] objectForKey:@"REGISTERNEEDMSG"]] isEqualToString:@"1"]) {
+        UITextField *field = (UITextField *)sender;
+        //    count = field.text.length;
+        //count 要在.h中申明一个 NSInteger类型变量 可以不用初始化，即使初始化也不能在这个方法里初始化 否则会有问题，每次textField中内容改变时，都会走这个方法，所以如果在这里初始化是达不到效果的
+        if (count > field.text.length) {
+            //删除
+            if (count == 5 || count == 10) {
+                NSMutableString *str = [NSMutableString stringWithFormat:@"%@",field.text];
+                field.text = [str substringToIndex:count -2];
+            }
+        }
+        else if (count < field.text.length){
+            //增加
+            if (count == 3 || count == 8) {
+                NSMutableString *str = [NSMutableString stringWithFormat:@"%@",field.text];
+                [str insertString:@" " atIndex:count];
+                field.text = str;
+            }
+        }
+        
+        //通过count的值和当前的textField内容的长度比较，如果count大那么证明是删除，反之增加
+        count = field.text.length;
+        
+        //下面是手机号码位数控制处理，如果多余13位 ＝ 11位号码＋2个空格 响应相应事件，自己可以随便写
+        if(count < 13){
+            
+            [self.step1Button setImage:KUIImage(@"1_031") forState:UIControlStateNormal];
+        }
+        else if(count == 13){
+            
+            [self.step1Button setImage:KUIImage(@"a_png_03") forState:UIControlStateNormal];
+            [self.step1Button setImage:KUIImage(@"a_png_06") forState:UIControlStateHighlighted];
+        }
+        else{
+            field.text = [field.text substringToIndex:13];
+            
+            [self.step1Button setImage:KUIImage(@"a_png_03") forState:UIControlStateNormal];
+            [self.step1Button setImage:KUIImage(@"a_png_06") forState:UIControlStateHighlighted];
+        }
+    }else{
+        UITextField *field = (UITextField *)sender;
+        //    count = field.text.length;
+        //count 要在.h中申明一个 NSInteger类型变量 可以不用初始化，即使初始化也不能在这个方法里初始化 否则会有问题，每次textField中内容改变时，都会走这个方法，所以如果在这里初始化是达不到效果的
+        if (count > field.text.length) {
+            //删除
+            if (count == 5 || count == 10) {
+                NSMutableString *str = [NSMutableString stringWithFormat:@"%@",field.text];
+                field.text = [str substringToIndex:count -2];
+            }
+        }
+        else if (count < field.text.length){
+            //增加
+            if (count == 3 || count == 8) {
+                NSMutableString *str = [NSMutableString stringWithFormat:@"%@",field.text];
+                [str insertString:@" " atIndex:count];
+                field.text = str;
+            }
+        }
+        
+        //通过count的值和当前的textField内容的长度比较，如果count大那么证明是删除，反之增加
+        count = field.text.length;
+        
+        //下面是手机号码位数控制处理，如果多余13位 ＝ 11位号码＋2个空格 响应相应事件，自己可以随便写
+        if(count < 13){
+            self.step1Button.enabled = NO;
+            [self.step1Button setImage:KUIImage(@"1_04") forState:UIControlStateNormal];
+        }
+        else if(count == 13){
+            self.step1Button.enabled = YES;
+            [self.step1Button setImage:KUIImage(@"_png_032_03") forState:UIControlStateNormal];
+            [self.step1Button setImage:KUIImage(@"_png_032_06") forState:UIControlStateHighlighted];
+        }
+        else{
+            field.text = [field.text substringToIndex:13];
+            self.step1Button.enabled = YES;
+            [self.step1Button setImage:KUIImage(@"_png_032_03") forState:UIControlStateNormal];
+            [self.step1Button setImage:KUIImage(@"_png_032_06") forState:UIControlStateHighlighted];
+        }
+    }
+    
+}
 #pragma mark textField and touch delegate
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     if (m_phoneNumText == textField) {
-       if (m_phoneNumText == textField){
+       
             if (range.length == 1)//如果是输入字符，range的length会为0,删除字符为1
             {//判断如果是删除字符，就直接返回yes
-                return YES;
+                                return YES;
             }
             NSCharacterSet *cs;
             cs = [[NSCharacterSet characterSetWithCharactersInString:NUMBERS] invertedSet];
-            
+//        if (textField.text.length == 11) {
+//            NSMutableString *str = [NSMutableString stringWithString:textField.text];
+//            [str insertString:@" " atIndex:3];
+//            [str insertString:@" " atIndex:7];
+//            m_phoneNumText.text = str;
+//        }
+
             NSString *filtered = [[string componentsSeparatedByCharactersInSet:cs] componentsJoinedByString:@""];
             
             BOOL canChange = [string isEqualToString:filtered];
+        
+        
             
             return canChange;
-        }
+        
         
         
         
@@ -1025,6 +1034,8 @@
     }
    return YES;
 }
+
+
 #pragma mark alertView
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {

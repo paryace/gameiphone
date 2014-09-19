@@ -60,7 +60,7 @@
         [self.jubaoBtn addTarget:self action:@selector(jubaoThisInfo:) forControlEvents:UIControlEventTouchUpInside];
 //        self.jubaoBtn.hidden = YES;
         [self.contentView addSubview:self.jubaoBtn];
-        
+        //坐标button
         self.ETBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         self.ETBtn.frame = CGRectMake(0, 0, 60, 30);
         self.ETBtn.hidden = YES;

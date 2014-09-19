@@ -87,7 +87,10 @@ typedef enum : NSUInteger {
     }
     return self;
 }
-
+- (void)dealloc
+{
+   
+}
 - (void)viewWillDisappear:(BOOL)animated
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:Nil];
@@ -238,10 +241,10 @@ typedef enum : NSUInteger {
     [inPutView addSubview:self.textView];
     
     senderBnt = [UIButton buttonWithType:UIButtonTypeCustom];
-    [senderBnt setImage:KUIImage(@"emoji") forState:UIControlStateNormal];
-    [senderBnt setImage:KUIImage(@"keyboard.png") forState:UIControlStateSelected];
+    [senderBnt setImage:KUIImage(@"chatIcon") forState:UIControlStateNormal];
+    [senderBnt setImage:KUIImage(@"keyBoardd") forState:UIControlStateSelected];
     [senderBnt addTarget:self action:@selector(emojiBtnClicked:) forControlEvents:UIControlEventTouchDown];
-    senderBnt.frame = CGRectMake(320-25-10, 9.5, 25, 25);
+    senderBnt.frame = CGRectMake(320-44, 2, 40, 40);
     [inPutView bringSubviewToFront:senderBnt];
     
     [inPutView addSubview:senderBnt];
@@ -268,8 +271,9 @@ typedef enum : NSUInteger {
         [self getInfoWithNet];
     } Failure:^{
         [hud hide:YES];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-        [alert show];
+//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+//        alert.tag = 1989;
+//        [alert show];
         
     }];
 }

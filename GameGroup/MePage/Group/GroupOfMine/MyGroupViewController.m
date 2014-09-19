@@ -201,6 +201,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
                 [DataStoreManager saveDSGroupList:groupInfo];
             }
         }
+        [m_myTableView reloadData];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         NSLog(@"faile");
     }];
@@ -208,11 +209,12 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 
 -(void)setGroupList:(NSMutableArray*)responseObject
 {
-    [myGroupArray removeAllObjects];
-    myGroupArray = [responseObject mutableCopy];
-    [myGroupArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+//    [myGroupArray removeAllObjects];
+//    myGroupArray = [responseObject mutableCopy];
+   NSArray *arr = [responseObject sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
          return (NSComparisonResult)NSOrderedAscending;
     }];
+    myGroupArray = [NSMutableArray arrayWithArray:arr];
 //    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"addphoto",@"backgroundImg", nil];
 //    [myGroupArray addObject:dic];
     if (myGroupArray.count<4) {
