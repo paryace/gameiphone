@@ -13,5 +13,7 @@
 
 @interface TeamMsgPushController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
 @property(nonatomic,strong) UITableView*  m_TableView;
-
+@property(nonatomic,strong) NSMutableArray * characterKey;
+@property(nonatomic,strong) NSMutableDictionary * characterDic
+;
 @end

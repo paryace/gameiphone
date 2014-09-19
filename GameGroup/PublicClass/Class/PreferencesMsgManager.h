@@ -32,4 +32,8 @@
 -(void)setPreferenceState:(NSString*)gameId PreferenceId:(NSString*)preferenceId State:(NSInteger)state;
 
 -(void)removePreferenceState:(NSString*)gameId PreferenceId:(NSString*)preferenceId;
+
+-(void)savePreferences:(NSMutableDictionary*)preferencesInfo;
+
+-(void)getPreferencesWithLoca;
 @end

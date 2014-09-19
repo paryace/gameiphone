@@ -43,7 +43,7 @@
     isChoose = YES;
     UIButton *chooseAllBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     chooseAllBtn.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
-    [chooseAllBtn setImage:KUIImage(@"choose_no") forState:UIControlStateNormal];
+    [chooseAllBtn setImage:KUIImage(@"choose_no_normal") forState:UIControlStateNormal];
     [self.view addSubview:chooseAllBtn];
     [chooseAllBtn addTarget:self action:@selector(didClickChooseAll:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -76,7 +76,7 @@
     if (isChoose) {
         isChoose =NO;
 //        [sender setTitle:@"全选" forState:UIControlStateNormal];
-        [sender setImage:KUIImage(@"choose_all") forState:UIControlStateNormal];
+        [sender setImage:KUIImage(@"choose_all_normal") forState:UIControlStateNormal];
         
         
         for (NSMutableDictionary *dic in m_dataArray) {
@@ -95,7 +95,7 @@
 
     }else{
         isChoose =YES;
-        [sender setImage:KUIImage(@"choose_no") forState:UIControlStateNormal];
+        [sender setImage:KUIImage(@"choose_no_normal") forState:UIControlStateNormal];
         for (NSMutableDictionary *dic in m_dataArray) {
             [dic setObject:@"0" forKey:@"state"];
         }
