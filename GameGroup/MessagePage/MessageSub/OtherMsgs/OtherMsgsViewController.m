@@ -187,6 +187,7 @@
         VC.characterId = dic[@"characterid"];
         VC.gameId = dic[@"gameid"];
         VC.characterName = charaName;
+        VC.myViewType = CHARA_INFO_MYSELF;
         [self.navigationController pushViewController:VC animated:YES];
         return;
     }

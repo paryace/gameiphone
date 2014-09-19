@@ -134,10 +134,9 @@
     m_searchBar.showsCancelButton=NO;
     [m_searchBar sizeToFit];
     [m_searchBar addSubview:searchV];
-//    [self.view addSubview:m_searchBar];
     m_myTableView.tableHeaderView = m_searchBar;
     
-    searchResultView = [[SearchResultView alloc] initWithFrame:CGRectMake(0, KISHighVersion_7 ? 20 : 0, 320, self.view.bounds.size.height-(KISHighVersion_7 ? 20 : 0))];
+    searchResultView = [[SearchResultView alloc] initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-(KISHighVersion_7 ? 20 : 0))];
     searchResultView.hidden = YES;
     searchResultView.delegate = self;
     [self.view addSubview:searchResultView];
@@ -244,7 +243,7 @@
             cell.headImageView.image = KUIImage(@"search_role");
             cell.titleLabel.text = @"查找游戏角色";
         }else if(indexPath.row ==1){
-            cell.headImageView.image = KUIImage(@"my_team");
+            cell.headImageView.image = KUIImage(@"my_team_friend");
             cell.titleLabel.text = @"我的组织";
         }else{
             cell.headImageView.image = KUIImage(@"iphone_address");
@@ -562,11 +561,10 @@
 
 -(void)showSearchResultView{
     [UIView animateWithDuration:0.3 animations:^{
+        searchResultView.hidden = NO;
         topImageView.frame = CGRectMake(0, -(KISHighVersion_7 ? 64 : 44), 320, KISHighVersion_7 ? 64 : 44);
         m_myTableView.frame = CGRectMake(0, 20, 320, self.view.bounds.size.height-20-50);
-        searchResultView.frame = CGRectMake(0, 20, 320, self.view.bounds.size.height-20-50);
-    }completion:^(BOOL finished) {
-        searchResultView.hidden = NO;
+        searchResultView.frame = CGRectMake(0, 0, 320, self.view.bounds.size.height-20-50);
     }];
 }
 -(void)hideSearchResultView{

@@ -588,6 +588,12 @@
     }
     H5CharacterDetailsViewController* VC = [[H5CharacterDetailsViewController alloc] init];
     VC.characterId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"teamUser"), @"characterId")];
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"userid")] isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
+        VC.myViewType = CHARA_INFO_MYSELF;
+    }else{
+        VC.myViewType = CHARA_INFO_PERSON;
+    }
+    
     VC.gameId = [GameCommon getNewStringWithId: KISDictionaryHaveKey(dic, @"gameid")];
     [self.navigationController pushViewController:VC animated:YES];
 }

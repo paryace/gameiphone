@@ -18,20 +18,19 @@
         self.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
         _searchResultView = [NSMutableArray array];
         if (!_mTableView) {
-            _mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 44, frame.size.width,frame.size.height-44) style:UITableViewStylePlain];
+            _mTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 64, frame.size.width,frame.size.height-44) style:UITableViewStylePlain];
             _mTableView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
             _mTableView.delegate = self;
             _mTableView.showsVerticalScrollIndicator = NO;
             _mTableView.dataSource = self;
             [GameCommon setExtraCellLineHidden:_mTableView];
             [self addSubview:_mTableView];
-            _m_searchBar = [[MySearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+            _m_searchBar = [[MySearchBar alloc]initWithFrame:CGRectMake(0, 20, 320, 44)];
             [_m_searchBar setPlaceholder:@"关键字搜索"];
             _m_searchBar.delegate = self;
              _m_searchBar.showsCancelButton=YES;
             [_m_searchBar sizeToFit];
             [self addSubview:_m_searchBar];
-//            _mTableView.tableHeaderView = _m_searchBar;
             
             _baseView = [[UIView alloc] initWithFrame:CGRectMake(0, 50, frame.size.width,frame.size.height)];
             _baseView.backgroundColor = [UIColor clearColor];
@@ -44,17 +43,7 @@
     }
     return self;
 }
-//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-//{
-//    UIView * backView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, kScreenWidth, 50)];
-//    backView.backgroundColor =[UIColor redColor];
-//    [backView addSubview:_m_searchBar];
-//    return backView;
-//}
-//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-//{
-//    return 50;
-//}
+
 -(void)bgTappedAction:(UITapGestureRecognizer *)tap
 {
     if (_searchResultView.count > 0) {

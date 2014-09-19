@@ -33,8 +33,14 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"角色详情" withBackButton:NO];
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [shareButton setBackgroundImage:KUIImage(@"shareButton") forState:UIControlStateNormal];
-    [shareButton setBackgroundImage:KUIImage(@"shareButton2") forState:UIControlStateHighlighted];
+    if ([[GameCommon getNewStringWithId:self.gameId] isEqualToString:@"1"]) {
+        [shareButton setBackgroundImage:KUIImage(@"shareButton") forState:UIControlStateNormal];
+        [shareButton setBackgroundImage:KUIImage(@"shareButton2") forState:UIControlStateHighlighted];
+    }else{
+        [shareButton setBackgroundImage:KUIImage(@"shareButton") forState:UIControlStateNormal];
+        [shareButton setBackgroundImage:KUIImage(@"shareButton2") forState:UIControlStateHighlighted];
+    }
+    
     shareButton.backgroundColor = [UIColor clearColor];
     [shareButton addTarget:self action:@selector(shareBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
@@ -59,17 +65,68 @@
     [self.view addSubview:hud];
     hud.labelText = @"加载中...";
 }
+
+
+
+-(void)initToRankPagr{
+    [[Custom_tabbar showTabBar] hideTabBar:YES];
+    CharacterDetailsViewController* VC = [[CharacterDetailsViewController alloc] init];
+    VC.characterId = self.characterId;
+    VC.gameId = self.gameId;
+    VC.myViewType = self.myViewType;
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"contentOfjuese" object:nil];
+    [self.navigationController pushViewController:VC animated:YES];
+}
+
 - (void)backButtonClick:(id)sender
 {
     if (m_myWebView.canGoBack) {
         [m_myWebView goBack];
     }else{
-        [self.navigationController popViewControllerAnimated:YES];   
+        [self.navigationController popViewControllerAnimated:YES];
     }
 }
 #pragma mark ---分享button方法
 -(void)shareBtnClick:(UIButton *)sender
 {
+    if ([[GameCommon getNewStringWithId:self.gameId] isEqualToString:@"1"]) {
+        [self showActionMenu];
+    }else{
+        [self MenuAction];
+    }
+}
+
+
+-(void)showActionMenu
+{
+    NSArray * menuarry = @[@"分享",@"排名"];
+    NSArray *iconarry = @[@"team_position_icon",@"team_memberlist_icon"];
+
+    NSMutableArray *menuItems = [NSMutableArray array];
+    for (int i = 0; i<menuarry.count; i++) {
+        KxMenuItem *menuItem = [KxMenuItem menuItem:menuarry[i] image:KUIImage(iconarry[i]) target:self action:@selector(pushMenuItem:)];
+        menuItem.tag =i;
+        menuItem.alignment = NSTextAlignmentCenter;
+        [menuItems addObject:menuItem];
+    }
+    KxMenuItem *first = [KxMenuItem menuItem:@"操作" image:nil target:nil action:NULL];
+    first.foreColor = [UIColor colorWithRed:47/255.0f green:112/255.0f blue:225/255.0f alpha:1.0];
+    first.alignment = NSTextAlignmentCenter;
+    [KxMenu showMenuInView:self.view fromRect:CGRectMake(320-5-50, startX-40, 50, 25) menuItems:menuItems];
+}
+#pragma mark -- 筛选
+- (void) pushMenuItem:(KxMenuItem*)sender
+{
+    NSInteger index = sender.tag;
+    if (index == 0) {
+        [self MenuAction];
+    }else if(index == 1){
+        [self initToRankPagr];
+    }
+}
+
+
+-(void)MenuAction{
     UIActionSheet* actionSheet = [[UIActionSheet alloc]
                                   initWithTitle:@"分享到"
                                   delegate:self
@@ -77,7 +134,7 @@
                                   destructiveButtonTitle:Nil
                                   otherButtonTitles:@"我的动态",@"新浪微博",@"微信好友",@"微信朋友圈",nil];
     actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
-    
+    actionSheet.tag = 1000001;
     [actionSheet showInView:self.view];
 }
 
