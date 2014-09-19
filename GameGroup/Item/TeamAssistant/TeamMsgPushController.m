@@ -27,6 +27,7 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"组队推送" withBackButton:YES];
     self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3,1);
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addPreferenceInfo:) name:kAddPreference object:nil];
     
     _characterKey = [NSMutableArray array];
     _characterDic = [NSMutableDictionary dictionary];
@@ -39,6 +40,10 @@
     [self.view addSubview:_m_TableView];
     
     [self getPreferencesWithNet];
+}
+#pragma mark ----
+-(void)addPreferenceInfo:(NSNotification*)notification{
+    [self addNewPreference:notification.userInfo];
 }
 
 #pragma mark ----tableview delegate  datasourse
@@ -248,6 +253,13 @@
     [[PreferencesMsgManager singleton] deletePreferences:gameId PreferenceId:preferenceId Completion:^(BOOL success, NSError *error) {
         [[_characterDic objectForKey:[GameCommon getNewStringWithId:[_characterKey objectAtIndex:indexPath.section]]] removeObjectAtIndex:indexPath.row];
         [_m_TableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section]] withRowAnimation:UITableViewRowAnimationRight];
+
+        
+        if ([[_characterDic objectForKey:[GameCommon getNewStringWithId:[_characterKey objectAtIndex:indexPath.section]]] count]<=0) {
+            [_characterDic removeObjectForKey:[GameCommon getNewStringWithId:[_characterKey objectAtIndex:indexPath.section]]];
+            [_characterKey removeObject:[_characterKey objectAtIndex:indexPath.section]];
+            [_m_TableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationBottom];
+        }
     }];
 }
 
@@ -289,16 +301,28 @@
             [_characterKey addObject:c];
         }
     }
-    
+    [_characterKey insertObject:@"1" atIndex:0];
+    [_characterKey insertObject:@"2" atIndex:_characterKey.count];
     for (NSDictionary *dic in array)
     {
         [[_characterDic objectForKey:[NSString stringWithFormat:@"%@%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterId")]]] addObject:dic];
     }
-    [_characterKey insertObject:@"1" atIndex:0];
-    [_characterKey insertObject:@"2" atIndex:_characterKey.count];
     [[_characterDic objectForKey:@"1"] addObject:[[NSMutableDictionary alloc] init]];
     [[_characterDic objectForKey:@"2"] addObject:[[NSMutableDictionary alloc] init]];
     NSLog(@"--%@--",_characterDic);
+}
+
+
+-(void)addNewPreference:(NSMutableDictionary*)preferInfo{
+     NSString *key = [NSString stringWithFormat:@"%@%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(preferInfo, @"createTeamUser"), @"gameid")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(preferInfo, @"createTeamUser"), @"characterId")]];
+    if ([_characterKey containsObject:key]) {
+         [[_characterDic objectForKey:key] addObject:preferInfo];
+    }else{
+        [_characterDic setValue:[[NSMutableArray alloc] init] forKey:key];
+        [[_characterDic objectForKey:key] addObject:preferInfo];
+        [_characterKey addObject:key];
+    }
+     [_m_TableView reloadData];
 }
 
 -(void)showErrorAlert:(id)error

@@ -375,7 +375,9 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
         NSLog(@"------%@------",responseObject);
-         [self showMessageWindowWithContent:@"添加成功" imageType:0];
+        [[NSNotificationCenter defaultCenter]postNotificationName:kAddPreference object:nil userInfo:responseObject];
+        [[PreferencesMsgManager singleton] savePreferences:responseObject];
+        [self showMessageWindowWithContent:@"添加成功" imageType:0];
         [self.navigationController popViewControllerAnimated:YES];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];

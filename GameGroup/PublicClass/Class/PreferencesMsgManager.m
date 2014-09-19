@@ -33,7 +33,7 @@ static PreferencesMsgManager *preferencesMsgManager = NULL;
             if (resuccess) {
                 resuccess(responseObject);
             }
-            [DataStoreManager savePreferenceInfo:responseObject Successcompletion:^(BOOL success, NSError *error) {
+            [DataStoreManager savePreferenceArray:responseObject Successcompletion:^(BOOL success, NSError *error) {
             }];
         }
         
@@ -41,6 +41,16 @@ static PreferencesMsgManager *preferencesMsgManager = NULL;
         if (refailure) {
             refailure(error);
         }
+    }];
+}
+
+-(void)getPreferencesWithLoca{
+    NSMutableArray *preferenceArray = [DataStoreManager queryPreferenceInfos];
+    NSLog(@"%@",preferenceArray);
+}
+
+-(void)savePreferences:(NSMutableDictionary*)preferencesInfo{
+    [DataStoreManager savePreferenceInfo:preferencesInfo Successcompletion:^(BOOL success, NSError *error) {
     }];
 }
 
@@ -65,10 +75,6 @@ static PreferencesMsgManager *preferencesMsgManager = NULL;
         }
     }];
 }
-
-
-
-
 -(NSInteger)getNoreadMsgCount:(NSMutableArray*)msgs
 {
     int allUnread = 0;
