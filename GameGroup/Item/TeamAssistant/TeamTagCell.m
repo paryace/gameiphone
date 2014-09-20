@@ -21,7 +21,8 @@
     }
     return self;
 }
--(void)setTagDate:(NSMutableArray*)typeArray{
+
+-(void)setTagDate:(NSMutableArray*)typeArray ifCreate:(BOOL)ifCreate{
     _tagArray=typeArray;
     if (_tagArray.count>0) {
         NSInteger tagsRowCount = (_tagArray.count-1)/3+1;//标签行数
@@ -29,11 +30,14 @@
     }else{
         _tagList.frame = CGRectMake(10, 10, 300,0);
     }
-    [self addTagAction];
+    if (!ifCreate) {
+        [self addTagAction];
+    }
     [_tagList setTags:typeArray average:YES rowCount:3];
 }
 -(void)addTagAction{
-    for (NSMutableDictionary * ac in _tagArray) {
+    NSArray * copyarray = [_tagArray mutableCopy];
+    for (NSMutableDictionary * ac in copyarray) {
         [ac setObject:@"0" forKey:@"action"];
     }
 }
@@ -43,13 +47,17 @@
         [sender setBackgroundImage:KUIImage(@"tagBtn_normal") forState:UIControlStateNormal];
         [sender setBackgroundImage:KUIImage(@"tagBtn_click") forState:UIControlStateHighlighted];
         [tagDic setObject:@"0" forKey:@"action"];
+        if (self.tagDelegate) {
+            [self.tagDelegate tagType:tagDic isRemove:YES];
+        }
     }else{
         [sender setBackgroundImage:KUIImage(@"tagBtn_click") forState:UIControlStateNormal];
         [sender setBackgroundImage:KUIImage(@"tagBtn_normal") forState:UIControlStateHighlighted];
         [tagDic setObject:@"1" forKey:@"action"];
+        if (self.tagDelegate) {
+            [self.tagDelegate tagType:tagDic isRemove:NO];
+        }
     }
-    if (self.tagDelegate) {
-        [self.tagDelegate tagType:tagDic];
-    }
+   
 }
 @end

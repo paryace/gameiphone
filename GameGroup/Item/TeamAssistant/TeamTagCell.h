@@ -13,10 +13,12 @@
 @interface TeamTagCell : UITableViewCell<UICollectionViewDataSource,UICollectionViewDelegate,TagOnCLicklDelegate,DWTagDelegate>
 @property(nonatomic,strong)NSMutableArray * tagArray;
 @property(nonatomic,strong)DWTagList *tagList;
--(void)setTagDate:(NSMutableArray*)tagArray;
+-(void)setTagDate:(NSMutableArray*)typeArray ifCreate:(BOOL)ifCreate;
+-(void)hideSelf;
+-(void)showSelf;
 @property(nonatomic,assign)id<TagDelegate>tagDelegate;
 @end
 @protocol TagDelegate <NSObject>
--(void)tagType:(NSMutableDictionary *)tagDic;
+-(void)tagType:(NSMutableDictionary *)tagDic isRemove:(BOOL)isRemove;
 
 @end

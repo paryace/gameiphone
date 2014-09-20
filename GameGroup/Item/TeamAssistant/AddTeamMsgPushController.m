@@ -28,7 +28,7 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"添加推送" withBackButton:YES];
     self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
-    
+    _selectTagArray = [NSMutableArray array];
     _m_TableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, self.view.bounds.size.width, self.view.bounds.size.height - startX) style:UITableViewStylePlain];
     _m_TableView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     _m_TableView.delegate = self;
@@ -77,7 +77,8 @@
     _selectTypeDict = KISDictionaryHaveKey(_updatePreferInfoDic, @"type");
     NSMutableArray * tagArray = KISDictionaryHaveKey(_updatePreferInfoDic, @"tags");
     if (tagArray&& tagArray.count>0) {
-         _selectTagDict = [tagArray objectAtIndex:0];
+        [_selectTagArray removeAllObjects];
+        [_selectTagArray addObjectsFromArray:tagArray];
     }
     _selectGender = [GameCommon getNewStringWithId:KISDictionaryHaveKey(_updatePreferInfoDic, @"forGirls")];
     _selectPowerable = [GameCommon getNewStringWithId:KISDictionaryHaveKey(_updatePreferInfoDic, @"powerable")];
@@ -92,12 +93,17 @@
 }
 -(void)selectType:(NSMutableDictionary *)typeDic{
     _selectTypeDict = typeDic;
+    [_selectTagArray removeAllObjects];
     [self getTag:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectTypeDict, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"id")]];
     [_m_TableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:1]] withRowAnimation:UITableViewRowAnimationNone];
     NSLog(@"-----选择分类-----%@",typeDic);
 }
--(void)tagType:(NSMutableDictionary *)tagDic{
-    _selectTagDict = tagDic;
+-(void)tagType:(NSMutableDictionary *)tagDic isRemove:(BOOL)isRemove{
+    if (isRemove) {
+        [_selectTagArray addObject:tagDic];
+    }else{
+        [_selectTagArray removeObject:tagDic];
+    }
     [_m_TableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:1 inSection:1]] withRowAnimation:UITableViewRowAnimationNone];
     NSLog(@"-----选择标签-----%@",tagDic);
 }
@@ -116,6 +122,7 @@
 {
     [[ItemManager singleton] getTeamLableRoom:gameid TypeId:typeId CharacterId:characterId reSuccess:^(id responseObject) {
          _tagArray = responseObject;
+        _ifCreate = NO;
         if (_ifOpen) {
             [_m_TableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:2 inSection:1]] withRowAnimation:UITableViewRowAnimationNone];
         }
@@ -193,7 +200,7 @@
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             cell.tlb.text = @"包含关键字";
             if (_selectTypeDict) {
-                cell.characterLable.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectTagDict, @"value")];
+                cell.characterLable.text = [self getTagString];
             }else{
                 cell.characterLable.text = @"请选择标签";
             }
@@ -208,7 +215,7 @@
             }
             [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
             cell.tagDelegate = self;
-            [cell setTagDate:_tagArray];
+            [cell setTagDate:_tagArray ifCreate:_ifCreate];
             return cell;
         }
     }else if (indexPath.section == 2){
@@ -255,6 +262,16 @@
         return cell;
     }
 }
+
+-(NSString*)getTagString{
+    NSString* headImgStr = @"";
+    for (NSMutableDictionary * tagDic in _selectTagArray) {
+        NSString * temp1 = [GameCommon getNewStringWithId:KISDictionaryHaveKey(tagDic, @"value")];
+        headImgStr = [headImgStr stringByAppendingFormat:@"%@ ",temp1];
+    }
+     return headImgStr;
+}
+
 -(void)addPushBtnAction:(UIButton*)sender{
     if (!_selectRoleDict) {
         [self showAlertViewWithTitle:@"提示" message:@"请选择角色" buttonTitle:@"OK"];
@@ -264,14 +281,14 @@
         [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
         return;
     }
-    if (!_selectTagDict) {
+    if (!_selectTagArray||_selectTagArray.count == 0) {
         [self showAlertViewWithTitle:@"提示" message:@"请选择标签" buttonTitle:@"OK"];
         return;
     }
     if ([_type isEqualToString:@"update"]) {
-        [self updatePreferences:KISDictionaryHaveKey(_selectRoleDict, @"gameid") CharacterId:KISDictionaryHaveKey(_selectRoleDict, @"id") Description:KISDictionaryHaveKey(_selectTagDict, @"value") TypeId:KISDictionaryHaveKey(_selectTypeDict, @"constId") ForGirls:_selectGender Powerable:_selectPowerable PreferenceId:KISDictionaryHaveKey(_updatePreferInfoDic, @"preferenceId")];
+        [self updatePreferences:KISDictionaryHaveKey(_selectRoleDict, @"gameid") CharacterId:KISDictionaryHaveKey(_selectRoleDict, @"id") Description:[self getTagString] TypeId:KISDictionaryHaveKey(_selectTypeDict, @"constId") ForGirls:_selectGender Powerable:_selectPowerable PreferenceId:KISDictionaryHaveKey(_updatePreferInfoDic, @"preferenceId")];
     }else if ([_type isEqualToString:@"create"]){
-        [self addPreferences:KISDictionaryHaveKey(_selectRoleDict, @"gameid") CharacterId:KISDictionaryHaveKey(_selectRoleDict, @"id") Description:KISDictionaryHaveKey(_selectTagDict, @"value") TypeId:KISDictionaryHaveKey(_selectTypeDict, @"constId") ForGirls:_selectGender Powerable:_selectPowerable];
+        [self addPreferences:KISDictionaryHaveKey(_selectRoleDict, @"gameid") CharacterId:KISDictionaryHaveKey(_selectRoleDict, @"id") Description:[self getTagString] TypeId:KISDictionaryHaveKey(_selectTypeDict, @"constId") ForGirls:_selectGender Powerable:_selectPowerable];
     }
     NSLog(@"----add push msg----");
 }
@@ -328,12 +345,14 @@
             NSIndexPath * path = [NSIndexPath indexPathForItem:(indexPath.row+1) inSection:indexPath.section];
             if (_ifOpen) {
                 _ifOpen = NO;
-                _ifCreate = YES;
                 [_m_TableView beginUpdates];
                 [_m_TableView deleteRowsAtIndexPaths:@[path]  withRowAnimation:UITableViewRowAnimationMiddle];
                 [_m_TableView endUpdates];
             }else{
                 _ifOpen = YES;
+                if (!_ifCreate) {
+                    _ifCreate = YES;
+                }
                 [_m_TableView beginUpdates];
                 [_m_TableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationMiddle];
                 [_m_TableView endUpdates];
