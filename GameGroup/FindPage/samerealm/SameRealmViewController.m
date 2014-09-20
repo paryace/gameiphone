@@ -35,6 +35,7 @@
     MJRefreshFooterView *m_footer;
     BOOL isGetNetSuccess;
     UIAlertView *alertView1;
+    UIActivityIndicatorView *m_loginActivity;
 }
 
 @end
@@ -47,17 +48,25 @@
     
     [self setTopViewWithTitle:@"" withBackButton:YES];
     isGetNetSuccess = YES;
-    m_loadImageView = [[UIImageView alloc]initWithFrame:CGRectMake(70, KISHighVersion_7 ? 32 : 12, 20, 20)];
-    NSMutableArray *imageArray = [NSMutableArray array];
-    for (int i = 0; i<12; i++) {
-        NSString *str =[NSString stringWithFormat:@"%d_03",i+1];
-        [imageArray addObject:[UIImage imageNamed:str]];
-    }
+//    m_loadImageView = [[UIImageView alloc]initWithFrame:CGRectMake(70, KISHighVersion_7 ? 32 : 12, 20, 20)];
+//    NSMutableArray *imageArray = [NSMutableArray array];
+//    for (int i = 0; i<12; i++) {
+//        NSString *str =[NSString stringWithFormat:@"%d_03",i+1];
+//        [imageArray addObject:[UIImage imageNamed:str]];
+//    }
+//    
+//    m_loadImageView.animationImages = imageArray;
+//    m_loadImageView.animationDuration = 1;
+//    [m_loadImageView startAnimating];
+//    [self.view addSubview:m_loadImageView];
+    m_loginActivity = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    [self.view addSubview:m_loginActivity];
+    m_loginActivity.frame = CGRectMake(100, KISHighVersion_7?27:7, 20, 20);
+    m_loginActivity.center = CGPointMake(100, KISHighVersion_7?42:22);
+    m_loginActivity.color = [UIColor whiteColor];
+//    [self changeActivityPositionWithTitle:m_selectRealmButton.titleLabel.text];
+    m_loginActivity.activityIndicatorViewStyle =UIActivityIndicatorViewStyleWhite;
     
-    m_loadImageView.animationImages = imageArray;
-    m_loadImageView.animationDuration = 1;
-    [m_loadImageView startAnimating];
-    [self.view addSubview:m_loadImageView];
 
     m_tabelData = [[NSMutableArray alloc] init];
     m_realmsArray = [[NSMutableArray alloc] init];
@@ -117,7 +126,7 @@
     [self addFooter];
 
     [self getRealmsDataByNet];//所有服务器名
-    
+    [m_loginActivity startAnimating];
 }
 
 - (void)getRealmsDataByNet
@@ -146,7 +155,7 @@
                 alertView1.tag = 10001;
                 [alertView1 show];
                 [m_loadImageView stopAnimating];
-
+                [m_loginActivity stopAnimating];
                 return ;
             }
             
@@ -181,13 +190,14 @@
             }
         }else{
             [m_loadImageView stopAnimating];
-
+            [m_loginActivity stopAnimating];
             alertView1 = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您还没有绑定角色" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"去绑定", nil];
             alertView1.tag = 10001;
             [alertView1 show];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [m_loadImageView stopAnimating];
+        [m_loginActivity stopAnimating];
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -234,7 +244,7 @@
 - (void)getSameRealmDataByNet
 {
     isGetNetSuccess = NO;
-
+    [m_loginActivity startAnimating];
     [m_loadImageView startAnimating];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
@@ -268,6 +278,7 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         isGetNetSuccess =YES;
         [m_loadImageView stopAnimating];
+        [m_loginActivity stopAnimating];
         if ((m_currentPage ==0 && ![responseObject isKindOfClass:[NSDictionary class]]) || (m_currentPage != 0 && ![responseObject isKindOfClass:[NSArray class]])) {
             [m_header endRefreshing];
             [m_footer endRefreshing];
@@ -299,6 +310,7 @@
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [m_loadImageView stopAnimating];
+        [m_loginActivity stopAnimating];
         if ([error isKindOfClass:[NSDictionary class]]) {
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
@@ -571,5 +583,18 @@
 {
     [super didReceiveMemoryWarning];
 }
-
+//根据标题的长度更改UIActivity的位置
+-(void)changeActivityPositionWithTitle:(NSString *)title
+{
+    CGSize size = [title sizeWithFont:m_selectRealmButton.titleLabel.font constrainedToSize:CGSizeMake(220, 30)];
+    //文字的左起位置
+    float title_left_x = 160 - size.width/2;
+    if (title_left_x<50) {  //不会超过左边界
+        title_left_x = 50;
+    }
+    //UIActivity的位置
+    m_loginActivity.frame = CGRectMake(title_left_x-20, KISHighVersion_7?27:7, 20, 20);
+    m_loginActivity.center = CGPointMake(title_left_x-20, KISHighVersion_7?42:22);
+    
+}
 @end

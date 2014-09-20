@@ -110,7 +110,9 @@ typedef enum : NSUInteger {
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"我的世界" withBackButton:YES];
+    
+   
+    
     m_currPageCount = 0;
     m_dataArray = [NSMutableArray array];
     wxSDArray = [NSMutableArray array];
@@ -126,14 +128,15 @@ typedef enum : NSUInteger {
     
     
     app = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, -30, 320, self.view.bounds.size.height)];
     m_myTableView.delegate = self;
     m_myTableView.dataSource = self;
     [self.view addSubview:m_myTableView];
-    
-    UIImageView *topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 187)];
+
+    UIImageView *topImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 320, 270)];
     topImageView.image = KUIImage(@"topImg_youqu.jpg");
-    [self.view addSubview:topImageView];
+    topImageView.backgroundColor = [UIColor blackColor];
+    m_myTableView.tableHeaderView = topImageView;
     
     UILabel *lb = [[UILabel alloc]initWithFrame:CGRectMake(0, 157, 320, 30)];
     lb.backgroundColor = [UIColor colorWithRed:0/255.0f green:0/255.0f blue:0/255.0f alpha:0.5];
@@ -142,8 +145,8 @@ typedef enum : NSUInteger {
     lb.textAlignment = NSTextAlignmentCenter;
     lb.text = @"我的世界我做主";
     [topImageView addSubview:lb];
-    m_myTableView.tableHeaderView = topImageView;
-    
+//    m_myTableView.tableHeaderView = topImageView;
+    [self setTopViewWithTitle:@"我的世界" withBackButton:YES];
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"加载中...";
     
@@ -177,12 +180,14 @@ typedef enum : NSUInteger {
     // Do any additional setup after loading the view.
     
     m_loginActivity = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    m_loginActivity.frame = CGRectMake(110, KISHighVersion_7?27:7, 20, 20);
-    m_loginActivity.center = CGPointMake(110, KISHighVersion_7?42:22);
+    m_loginActivity.frame = CGRectMake(100, KISHighVersion_7?27:7, 20, 20);
+    m_loginActivity.center = CGPointMake(100, KISHighVersion_7?42:22);
     m_loginActivity.color = [UIColor whiteColor];
     m_loginActivity.activityIndicatorViewStyle =UIActivityIndicatorViewStyleWhite;
     [self.view addSubview:m_loginActivity];
      [m_loginActivity startAnimating];
+    
+
 }
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
     if (openMenuBtn2.menuImageView.hidden==NO) {
@@ -269,12 +274,15 @@ typedef enum : NSUInteger {
         longitude = lon;
         latitude = lat;
         [self getInfoWithNet];
+        
     } Failure:^{
+        [m_loginActivity stopAnimating];
         [hud hide:YES];
 //        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"定位失败，请确认设置->隐私->定位服务中陌游的按钮为打开状态" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
 //        alert.tag = 1989;
 //        [alert show];
-        
+//        [m_header endRefreshing];
+//        [m_footer endRefreshing];
     }];
 }
 
@@ -318,7 +326,7 @@ typedef enum : NSUInteger {
                 [m_dataArray addObjectsFromArray:arr];
                 NSString *filePath = [RootDocPath stringByAppendingString:@"/MY_myWorld"];
                 [m_dataArray writeToFile:filePath atomically:YES];
-                
+                [m_header endRefreshing];
                 
             }else{
                 NSMutableArray *arr  = [NSMutableArray array];
@@ -413,11 +421,11 @@ typedef enum : NSUInteger {
     NSString *isZan=KISDictionaryHaveKey(dict, @"isZan");
     if (isZan !=nil ){
         if([isZan intValue]==0){
-            [button setBackgroundImage:[UIImage imageNamed:@"zan1_10"] forState:UIControlStateNormal];
-            [button setBackgroundImage:[UIImage imageNamed:@"zan2_10"] forState:UIControlStateHighlighted];
+            [button setBackgroundImage:[UIImage imageNamed:@"zan_circle_normal"] forState:UIControlStateNormal];
+            [button setBackgroundImage:[UIImage imageNamed:@"zan_circle_click"] forState:UIControlStateHighlighted];
         }else{
-            [button setBackgroundImage:[UIImage imageNamed:@"quxiao-1_03"] forState:UIControlStateNormal];
-            [button setBackgroundImage:[UIImage imageNamed:@"quxiao-1_06"] forState:UIControlStateHighlighted];
+            [button setBackgroundImage:[UIImage imageNamed:@"cancle_zan_normal"] forState:UIControlStateNormal];
+            [button setBackgroundImage:[UIImage imageNamed:@"cancle_zan_click"] forState:UIControlStateHighlighted];
         }
     }
     
@@ -1229,6 +1237,7 @@ typedef enum : NSUInteger {
     
     if (self.textView.text.length<1) {
         [self showMessageWithContent:@"评论不能回复空内容" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
+        
         return;
     }
     if([self.textView isFirstResponder]){

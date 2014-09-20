@@ -133,8 +133,7 @@
         self.openBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         self.openBtn.frame = CGRectMake(270, 60, 50, 30);
 
-        [self.openBtn setImage:KUIImage(@"zan_pl_normall") forState:UIControlStateNormal];
-        [self.openBtn setImage:KUIImage(@"zan_pl_click") forState:UIControlStateHighlighted];
+        [self.openBtn setImage:KUIImage(@"add_click") forState:UIControlStateNormal];
         [self.openBtn addTarget:self action:@selector(openBtnList:) forControlEvents:UIControlEventTouchUpInside];
         self.openBtn.tag =self.tag;
         [self.contentView addSubview:self.openBtn];
@@ -142,20 +141,21 @@
         
         self.menuImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(105, 60, 180, 38)];
         self.menuImageView.backgroundColor = [UIColor clearColor];
+        self.menuImageView.image = KUIImage(@"bgImg");
         self.menuImageView.userInteractionEnabled = YES;
         self.menuImageView.hidden = YES;
         [self addSubview:self.menuImageView];
 
         
         self.zanBtn=[[ UIButton alloc]initWithFrame:CGRectMake(2, 2, 89, 36)];
-        [self.zanBtn setBackgroundImage:KUIImage(@"zan1_10") forState:UIControlStateNormal];
-        [self.zanBtn setBackgroundImage:KUIImage(@"zan2_10") forState:UIControlStateHighlighted];
+        [self.zanBtn setBackgroundImage:KUIImage(@"zan_circle_normal") forState:UIControlStateNormal];
+        [self.zanBtn setBackgroundImage:KUIImage(@"zan_circle_click") forState:UIControlStateHighlighted];
         [self.zanBtn addTarget:self action:@selector(zan:) forControlEvents:UIControlEventTouchUpInside];
         [self.menuImageView addSubview:self.zanBtn];
         
         self.commentBtn=[[ UIButton alloc]initWithFrame:CGRectMake(91, 2, 87, 36)];
-        [self.commentBtn setBackgroundImage:KUIImage(@"pinglun1_03") forState:UIControlStateNormal];
-        [self.commentBtn setBackgroundImage:KUIImage(@"pinglun1_06") forState:UIControlStateHighlighted];
+        [self.commentBtn setBackgroundImage:KUIImage(@"pinglun_circle_normal") forState:UIControlStateNormal];
+        [self.commentBtn setBackgroundImage:KUIImage(@"pinglun_circle_click") forState:UIControlStateHighlighted];
         [self.commentBtn addTarget:self action:@selector(pinglun:) forControlEvents:UIControlEventTouchUpInside];
         [self.menuImageView addSubview:self.commentBtn];
         
