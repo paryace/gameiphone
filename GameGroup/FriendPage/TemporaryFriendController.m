@@ -102,11 +102,11 @@
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     NSDictionary * tempDict =[dataArray objectAtIndex:indexPath.row];
     if (tempDict&&[tempDict isKindOfClass:[NSDictionary class]]) {
-        NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
+        NSString * headplaceholderImage= [self headPlaceholderImage:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")]];
         cell.headImageV.placeholderImage = [UIImage imageNamed:headplaceholderImage];
         NSString * imageids=KISDictionaryHaveKey(tempDict, @"img");
         cell.headImageV.imageURL=[ImageService getImageStr:imageids Width:80];
-        NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
+        NSString *genderimage=[self genderImage:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")]];
         cell.sexImg.image =KUIImage(genderimage);
         NSString * nickName=[tempDict objectForKey:@"type"];
         if (nickName) {
@@ -136,7 +136,7 @@
     if (!gender) {
         return @"gender_boy";
     }
-    if ([gender intValue]==0)
+    if ([gender isEqualToString:@"0"])
     {
         return @"gender_boy";
     }else
@@ -165,7 +165,7 @@
 {
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:gender forKey:@"gender"];
+    [paramDict setObject:[GameCommon getNewStringWithId:gender] forKey:@"gender"];
     [paramDict setObject:[GameCommon getNewStringWithId:self.gameid] forKey:@"gameid"];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
