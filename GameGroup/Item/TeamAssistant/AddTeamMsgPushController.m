@@ -112,11 +112,11 @@
     }];
 }
 #pragma MARK ---联网获取标签
--(void)getTag:(NSString*)gameid TypeId:(NSString*)typeId CharacterId:(NSString*)characterId
+-(void)getTag:(NSString*)gameid TypeId:(NSString*)typeId CharacterId:(NSString*)characterId reSuccess:(void (^)(id responseObject))resuccess
 {
     [[ItemManager singleton] getTeamLableRoom:gameid TypeId:typeId CharacterId:characterId reSuccess:^(id responseObject) {
-        if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
-            [_tagView setDate:responseObject];
+        if (resuccess) {
+            resuccess(responseObject);
         }
     } reError:^(id error) {
         [self showErrorAlert:error];
@@ -133,6 +133,9 @@
     if (section == 0) {
         return 1;
     }else if (section == 1){
+        if (_ifOpen) {
+            return 3;
+        }
         return 2;
     }else if (section == 2){
         return 2;
@@ -194,6 +197,17 @@
                 cell.characterLable.text = @"请选择标签";
             }
             [cell reloadCell];
+            return cell;
+        }
+        else if (indexPath.row == 2){
+            static NSString *cellinde = @"section_row2";
+            TeamTagCell *cell = [tableView dequeueReusableCellWithIdentifier:cellinde];
+            if (cell ==nil) {
+                cell = [[TeamTagCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
+            }
+            [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+            cell.tagDelegate = self;
+            [cell setTagDate:_tagArray];
             return cell;
         }
     }else if (indexPath.section == 2){
@@ -273,6 +287,16 @@
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.section == 1) {
+        if (indexPath.row == 2) {
+            if (_tagArray&&_tagArray.count>0) {
+                NSInteger tagsRowCount = (_tagArray.count-1)/3+1;//标签行数
+                return  tagsRowCount*30+tagsRowCount*5+15;
+            }else{
+                return 0;
+            }
+        }
+    }
     return 45;
 }
 
@@ -299,8 +323,24 @@
                 [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
                 return;
             }
-            [_tagView showSelf];
-            [self getTag:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectTypeDict, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"id")]];
+//            [_tagView showSelf];
+            [self getTag:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectTypeDict, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"id")] reSuccess:^(id responseObject) {
+                if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
+                    _tagArray = responseObject;
+                    NSIndexPath * path = [NSIndexPath indexPathForItem:(indexPath.row+1) inSection:indexPath.section];
+                    if (_ifOpen) {
+                        _ifOpen = NO;
+                        [_m_TableView beginUpdates];
+                        [_m_TableView deleteRowsAtIndexPaths:@[path]  withRowAnimation:UITableViewRowAnimationMiddle];
+                        [_m_TableView endUpdates];
+                    }else{
+                        _ifOpen = YES;
+                        [_m_TableView beginUpdates];
+                        [_m_TableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationMiddle];
+                        [_m_TableView endUpdates];
+                    }
+                }
+            }];
         }
     }else if (indexPath.section == 2){
         if (indexPath.row == 0) {

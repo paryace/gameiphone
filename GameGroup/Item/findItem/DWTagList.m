@@ -97,12 +97,12 @@
         } else {
             [label setBackgroundColor:lblBackgroundColor];
         }
-        [label setBackgroundImage:KUIImage(@"card_click") forState:UIControlStateNormal];
-        [label setBackgroundImage:KUIImage(@"card_purple") forState:UIControlStateHighlighted];
+        [label setBackgroundImage:KUIImage(@"tagBtn_normal") forState:UIControlStateNormal];
+        [label setBackgroundImage:KUIImage(@"tagBtn_click") forState:UIControlStateHighlighted];
         label.tag = i;
         [label addTarget:self action:@selector(lableClick:) forControlEvents:UIControlEventTouchUpInside];
         
-        [label setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [label setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [label setTitle:text forState: UIControlStateNormal];
         label.titleLabel.textAlignment = NSTextAlignmentCenter;
         label.titleLabel.shadowColor = TEXT_SHADOW_COLOR;

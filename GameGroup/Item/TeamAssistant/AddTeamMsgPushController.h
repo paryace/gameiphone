@@ -13,8 +13,10 @@
 #import "TypeView.h"
 #import "DWTagList.h"
 #import "TagView.h"
+#import "TeamTagCell.h"
 
 @interface AddTeamMsgPushController : BaseViewController<UITableViewDataSource, UITableViewDelegate,UIActionSheetDelegate,CharacterDelegate,SwitchDelegate,TypeDelegate,TagDelegate>
+@property (assign, nonatomic)  BOOL ifOpen;
 @property(nonatomic,strong) UITableView*  m_TableView;
 @property(nonatomic,strong) CharacterView * characterView;
 @property(nonatomic,strong) TypeView * typeView;
@@ -26,4 +28,6 @@
 @property(nonatomic,copy) NSString * selectGender;
 @property(nonatomic,copy) NSString * selectPowerable;
 @property(nonatomic,strong) NSMutableDictionary * updatePreferInfoDic;
+
+@property(nonatomic,strong) NSMutableArray * tagArray;
 @end
