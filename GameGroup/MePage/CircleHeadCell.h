@@ -17,6 +17,7 @@
 @property(nonatomic,strong)EGOImageButton *headImgBtn;
 @property(nonatomic,strong)UILabel *nickNameLabel;
 @property(nonatomic,strong)UILabel *titleLabel; //动态内容
+@property(nonatomic,strong)UIButton *clickBtn; //动态内容
 @property(nonatomic,strong)UILabel *contentLabel;   //文章
 @property(nonatomic,strong)UILabel *timeLabel;
 @property(nonatomic,strong)UILabel *lastLabel;//XXX发表了 、分享了XXX
@@ -86,13 +87,12 @@
 
 -(void)tapZanNickNameWithCell:(CircleHeadCell *)myCell;
 
-
 //传送显示的 评论，赞菜单的Cell
 - (void)openMenuCell:(CircleHeadCell*)myCell;
 
 -(void)delCellWithCell:(CircleHeadCell*)myCell;
 
-
+-(void)onLongClickContext:(CircleHeadCell*)myCell;
 
 @end
 

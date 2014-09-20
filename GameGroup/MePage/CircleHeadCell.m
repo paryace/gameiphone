@@ -44,6 +44,14 @@
         self.titleLabel.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.titleLabel];
         
+        self.clickBtn = [[UIButton alloc]initWithFrame:CGRectMake(180, 60, 200, 100)];
+        self.clickBtn.backgroundColor = [UIColor redColor];
+        [self.contentView addSubview:self.clickBtn];
+        
+        UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressContent:)];
+        [self.clickBtn addGestureRecognizer:longPress];
+        
+        
         self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 60, 130, 30)];
         self.timeLabel.font = [UIFont systemFontOfSize:12];
         self.timeLabel.textColor =[UIColor grayColor];
@@ -77,11 +85,6 @@
         self.layout = [[UICollectionViewFlowLayout alloc]init];
         self.layout.minimumInteritemSpacing = 1;
         self.layout.minimumLineSpacing = 1;
-        //self.layout.sectionInset = UIEdgeInsetsMake(1, 1, 1, 1);
-
-        // 3.设置整个collectionView的内边距
-       
-       // [self.contentView addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(comeBackMenuView:)]];
         self.layout.itemSize = CGSizeMake(80, 80);
         
         self.customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectZero collectionViewLayout:self.layout];
@@ -92,20 +95,6 @@
         self.customPhotoCollectionView.backgroundColor = [UIColor clearColor];
         [self addSubview:self.customPhotoCollectionView];
         [self.customPhotoCollectionView reloadData];
-
-        
-        
-//        __weak UICollectionView *photoCollectionView = self.customPhotoCollectionView;
-//        
-//        photoCollectionView.scrollEnabled = NO;
-//        photoCollectionView.delegate = self;
-//        photoCollectionView.dataSource = self;
-//        [photoCollectionView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
-//        photoCollectionView.backgroundColor = [UIColor clearColor];
-//        [self addSubview:photoCollectionView];
-
-        
-        
         self.zanView = [[UIImageView alloc]initWithFrame:CGRectMake(60, 100, 250, 30)];
         self.zanView.image = KUIImage(@"zanAndCommentBg");
         self.zanView.userInteractionEnabled = YES;
@@ -152,7 +141,6 @@
         
         
         self.menuImageView =[[ UIImageView alloc]initWithFrame:CGRectMake(105, 60, 180, 38)];
-//        self.menuImageView.image = KUIImage(@"bgImg");
         self.menuImageView.backgroundColor = [UIColor clearColor];
         self.menuImageView.userInteractionEnabled = YES;
         self.menuImageView.hidden = YES;
@@ -196,7 +184,13 @@
     }
 }
 
-
+#pragma mark 长按
+-(void)longPressContent:(UITapGestureRecognizer*)sender{
+    NSLog(@"长按下");
+    if(self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(onLongClickContext:)]) {
+        [self.myCellDelegate  onLongClickContext:self];
+    }
+}
 
 -(void)getImgWithArray:(NSArray *)array
 {
@@ -224,16 +218,6 @@
 {
     ImgCollCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"ImageCell" forIndexPath:indexPath];
     NSString *url = [self.collArray objectAtIndex:indexPath.row];
-    
-    
-    
-    
-//    NSString *address =[NSString stringWithFormat:@"%@%@%@",BaseImageUrl, url,@"/160/160"];
-//    NSURL *urls;
-//    urls = [NSURL URLWithString:address];
-//    cell.imageView.imageURL =urls;
-    
-    
      cell.imageView.imageURL =[ImageService getImageUrl3:url Width:160];
     return cell;
 }
