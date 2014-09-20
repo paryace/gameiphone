@@ -29,6 +29,7 @@
     [self setTopViewWithTitle:@"添加推送" withBackButton:YES];
     self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     _selectTagArray = [NSMutableArray array];
+    _tagArray = [NSMutableArray array];
     _m_TableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, self.view.bounds.size.width, self.view.bounds.size.height - startX) style:UITableViewStylePlain];
     _m_TableView.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
     _m_TableView.delegate = self;
@@ -96,13 +97,15 @@
     [_selectTagArray removeAllObjects];
     [self getTag:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectTypeDict, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"id")]];
     [_m_TableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:1]] withRowAnimation:UITableViewRowAnimationNone];
+    [_m_TableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:1 inSection:1]] withRowAnimation:UITableViewRowAnimationNone];
     NSLog(@"-----选择分类-----%@",typeDic);
 }
 -(void)tagType:(NSMutableDictionary *)tagDic isRemove:(BOOL)isRemove{
     if (isRemove) {
-        [_selectTagArray addObject:tagDic];
-    }else{
+        
         [_selectTagArray removeObject:tagDic];
+    }else{
+        [_selectTagArray addObject:tagDic];
     }
     [_m_TableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:1 inSection:1]] withRowAnimation:UITableViewRowAnimationNone];
     NSLog(@"-----选择标签-----%@",tagDic);
@@ -121,7 +124,10 @@
 -(void)getTag:(NSString*)gameid TypeId:(NSString*)typeId CharacterId:(NSString*)characterId
 {
     [[ItemManager singleton] getTeamLableRoom:gameid TypeId:typeId CharacterId:characterId reSuccess:^(id responseObject) {
-         _tagArray = responseObject;
+        NSMutableArray * arr = [NSMutableArray new];
+        [arr addObjectsFromArray:responseObject];
+        [_tagArray removeAllObjects];
+        [_tagArray addObjectsFromArray:arr];
         _ifCreate = NO;
         if (_ifOpen) {
             [_m_TableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:2 inSection:1]] withRowAnimation:UITableViewRowAnimationNone];

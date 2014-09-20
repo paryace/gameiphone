@@ -23,7 +23,7 @@
 }
 
 -(void)setTagDate:(NSMutableArray*)typeArray ifCreate:(BOOL)ifCreate{
-    _tagArray=typeArray;
+    _tagArray = typeArray;
     if (_tagArray.count>0) {
         NSInteger tagsRowCount = (_tagArray.count-1)/3+1;//标签行数
         _tagList.frame = CGRectMake(10, 10, 300,tagsRowCount*30+tagsRowCount*5+15);
