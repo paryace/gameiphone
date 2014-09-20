@@ -67,6 +67,7 @@
     for (int i = 0;i<textArray.count;i++) {
         ;
         NSString * text = KISDictionaryHaveKey([textArray objectAtIndex:i], @"value");
+        NSString * action = KISDictionaryHaveKey([textArray objectAtIndex:i], @"action");
         CGSize textSize = [text sizeWithFont:[UIFont systemFontOfSize:FONT_SIZE] constrainedToSize:CGSizeMake(self.frame.size.width, 1500) lineBreakMode:NSLineBreakByCharWrapping];
         if (self.isAverage) {
             textSize.width = (self.frame.size.width-(HORIZONTAL_PADDING*self.rowNum-1))/self.rowNum;
@@ -97,12 +98,17 @@
         } else {
             [label setBackgroundColor:lblBackgroundColor];
         }
-        [label setBackgroundImage:KUIImage(@"card_click") forState:UIControlStateNormal];
-        [label setBackgroundImage:KUIImage(@"card_purple") forState:UIControlStateHighlighted];
+        if ([action isEqualToString:@"1"]) {
+            [label setBackgroundImage:KUIImage(@"tagBtn_click") forState:UIControlStateNormal];
+            [label setBackgroundImage:KUIImage(@"tagBtn_normal") forState:UIControlStateHighlighted];
+        }else{
+            [label setBackgroundImage:KUIImage(@"tagBtn_normal") forState:UIControlStateNormal];
+            [label setBackgroundImage:KUIImage(@"tagBtn_click") forState:UIControlStateHighlighted];
+        }
         label.tag = i;
         [label addTarget:self action:@selector(lableClick:) forControlEvents:UIControlEventTouchUpInside];
         
-        [label setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [label setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [label setTitle:text forState: UIControlStateNormal];
         label.titleLabel.textAlignment = NSTextAlignmentCenter;
         label.titleLabel.shadowColor = TEXT_SHADOW_COLOR;

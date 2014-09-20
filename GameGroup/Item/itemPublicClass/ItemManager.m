@@ -190,6 +190,7 @@ static ItemManager *itemManager = NULL;
         NSLog(@"getTeamLable--%@",responseObject);
         if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
             [[NSUserDefaults standardUserDefaults] setObject:responseObject forKey:[NSString stringWithFormat:@"%@_%@%@%@",@"RoomTeamLable",gameId,typeId,characterId]];
+            [[NSUserDefaults standardUserDefaults] synchronize];
             if (resuccess) {
                 resuccess(responseObject);
             }

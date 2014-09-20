@@ -44,13 +44,13 @@
     }
 }
 
--(void)addMenuTagList:(NSMutableArray*)array{
+-(void)addMenuTagList:(NSMutableArray*)array Reload:(BOOL)reload{
     [_menuDataList addObjectsFromArray:array];
     
     if (_menuDataList && _menuDataList.count>0) {
         NSIndexPath *firstPath = [NSIndexPath indexPathForRow:0 inSection:0];
         [_mTableView selectRowAtIndexPath:firstPath animated:YES scrollPosition:UITableViewScrollPositionNone];
-        if (self.delegate) {
+        if (self.delegate&&reload) {
             [self.delegate itemClick:self DateDic:[_menuDataList objectAtIndex:0]];
         }
         _nowIndexs = 0;

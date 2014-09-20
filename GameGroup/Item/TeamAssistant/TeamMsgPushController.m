@@ -28,6 +28,7 @@
     [self setTopViewWithTitle:@"组队推送" withBackButton:YES];
     self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3,1);
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addPreferenceInfo:) name:kAddPreference object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(upadtePreferenceInfo:) name:kUpdatePreference object:nil];
     
     _characterKey = [NSMutableArray array];
     _characterDic = [NSMutableDictionary dictionary];
@@ -39,11 +40,19 @@
     [GameCommon setExtraCellLineHidden:_m_TableView];
     [self.view addSubview:_m_TableView];
     
+    hud = [[MBProgressHUD alloc] initWithView:self.view];
+    [self.view addSubview:hud];
+    hud.labelText = @"请稍等...";
+    
     [self getPreferencesWithNet];
 }
 #pragma mark ----
 -(void)addPreferenceInfo:(NSNotification*)notification{
     [self addNewPreference:notification.userInfo];
+}
+#pragma mark ----
+-(void)upadtePreferenceInfo:(NSNotification*)notification{
+    [self updatePreference:notification.userInfo];
 }
 
 #pragma mark ----tableview delegate  datasourse
@@ -114,7 +123,12 @@
     NSArray * groupArray =  [_characterDic objectForKey:[GameCommon getNewStringWithId:[_characterKey objectAtIndex:indexPath.section]]];
     if (groupArray && groupArray.count>0) {
         NSMutableDictionary * dic = [groupArray objectAtIndex:indexPath.row];
-        cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"value")];
+        NSMutableDictionary * typeDic = KISDictionaryHaveKey(dic, @"type");
+        if (typeDic && [typeDic isKindOfClass:[NSDictionary class]]) {
+             cell.titleLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(typeDic, @"value")];
+        }else{
+            cell.titleLabel.text = @"";
+        }
         cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"keyword")];
     }else{
         cell.titleLabel.text = @"";
@@ -147,9 +161,20 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section == 0) {
-       
-    }else if (indexPath.section == _characterKey.count-1){
+        return;
+    }
+    if (indexPath.section == _characterKey.count-1){
         AddTeamMsgPushController *detailVC = [[AddTeamMsgPushController alloc]init];
+        detailVC.type = @"create";
+        [self.navigationController pushViewController:detailVC animated:YES];
+        return;
+    }
+    NSArray * groupArray =  [_characterDic objectForKey:[GameCommon getNewStringWithId:[_characterKey objectAtIndex:indexPath.section]]];
+    if (groupArray && groupArray.count>0) {
+        NSMutableDictionary * dic = [groupArray objectAtIndex:0];
+        AddTeamMsgPushController *detailVC = [[AddTeamMsgPushController alloc]init];
+        detailVC.type = @"update";
+        detailVC.updatePreferInfoDic = dic;
         [self.navigationController pushViewController:detailVC animated:YES];
     }
     NSLog(@"---onClickItem---");
@@ -228,8 +253,10 @@
 
 -(void)getPreferencesWithNet
 {
+    [hud show:YES];
     NSString *userid = [GameCommon getNewStringWithId:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     [[PreferencesMsgManager singleton] getPreferencesWithNet:userid reSuccess:^(id responseObject) {
+        [hud hide:YES];
         [self ssasasa:responseObject];
         [_m_TableView reloadData];
     } reError:^(id error) {
@@ -301,12 +328,13 @@
             [_characterKey addObject:c];
         }
     }
-    [_characterKey insertObject:@"1" atIndex:0];
-    [_characterKey insertObject:@"2" atIndex:_characterKey.count];
+    
     for (NSDictionary *dic in array)
     {
         [[_characterDic objectForKey:[NSString stringWithFormat:@"%@%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterId")]]] addObject:dic];
     }
+    [_characterKey insertObject:@"1" atIndex:0];
+    [_characterKey insertObject:@"2" atIndex:_characterKey.count];
     [[_characterDic objectForKey:@"1"] addObject:[[NSMutableDictionary alloc] init]];
     [[_characterDic objectForKey:@"2"] addObject:[[NSMutableDictionary alloc] init]];
     NSLog(@"--%@--",_characterDic);
@@ -318,11 +346,30 @@
     if ([_characterKey containsObject:key]) {
          [[_characterDic objectForKey:key] addObject:preferInfo];
     }else{
+        
         [_characterDic setValue:[[NSMutableArray alloc] init] forKey:key];
+        
         [[_characterDic objectForKey:key] addObject:preferInfo];
+        [[_characterDic objectForKey:@"1"] addObject:[[NSMutableDictionary alloc] init]];
+        [[_characterDic objectForKey:@"2"] addObject:[[NSMutableDictionary alloc] init]];
+        
         [_characterKey addObject:key];
+        [_characterKey insertObject:@"1" atIndex:0];
+        [_characterKey insertObject:@"2" atIndex:_characterKey.count];
     }
      [_m_TableView reloadData];
+}
+-(void)updatePreference:(NSMutableDictionary*)preferInfo{
+    NSString *key = [NSString stringWithFormat:@"%@%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(preferInfo, @"createTeamUser"), @"gameid")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(preferInfo, @"createTeamUser"), @"characterId")]];
+    
+    NSArray * updateArray = [[_characterDic objectForKey:key] mutableCopy];
+    for (int i = 0; i<updateArray.count; i++) {
+        NSMutableDictionary * dic = [updateArray objectAtIndex:i];
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(preferInfo, @"preferenceId")] isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")]]) {
+            [[_characterDic objectForKey:key] replaceObjectAtIndex:i withObject:preferInfo];
+        }
+    }
+    [_m_TableView reloadData];
 }
 
 -(void)showErrorAlert:(id)error

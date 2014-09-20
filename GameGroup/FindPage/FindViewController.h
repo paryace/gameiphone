@@ -8,6 +8,7 @@
 
 #import "BaseViewController.h"
 #import "TvView.h"
+#import "TemporaryFriendController.h"
 
 @interface FindViewController : BaseViewController<UIActionSheetDelegate,UINavigationControllerDelegate,UIImagePickerControllerDelegate,TvViewDelegate>
 @property (nonatomic, retain) NSTimer* cellTimer;
