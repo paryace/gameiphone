@@ -679,7 +679,7 @@
         headImage.layer.cornerRadius = 5.0;
         headImage.layer.masksToBounds = YES;
         [groupView addSubview:headImage];
-        UILabel * groupName = [[UILabel alloc] initWithFrame:CGRectMake(55, 15, 270, 20)];
+        UILabel * groupName = [[UILabel alloc] initWithFrame:CGRectMake(55, 15, 230, 20)];
         groupName.textColor = [UIColor blackColor];
         groupName.backgroundColor = [UIColor clearColor];
         groupName.font=[UIFont boldSystemFontOfSize:14.0];
@@ -1324,6 +1324,7 @@
             }else{
                 [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
             }
+             [self showMessageWindowWithContent:@"添加成功" imageType:0];
             [self.navigationController popViewControllerAnimated:YES];
         }];
         

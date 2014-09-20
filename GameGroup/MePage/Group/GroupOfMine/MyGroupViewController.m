@@ -76,7 +76,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [shareButton setTitle:@"创建" forState:UIControlStateNormal];
     shareButton.titleLabel.font = [UIFont systemFontOfSize: 18.0];
     [shareButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [shareButton setTitleColor:[UIColor redColor] forState:UIControlStateHighlighted];
+    [shareButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     shareButton.backgroundColor = [UIColor clearColor];
     [shareButton addTarget:self action:@selector(didClickCreateGroup:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
@@ -209,7 +209,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 
 -(void)setGroupList:(NSMutableArray*)responseObject
 {
-//    [myGroupArray removeAllObjects];
+    [myGroupArray removeAllObjects];
 //    myGroupArray = [responseObject mutableCopy];
    NSArray *arr = [responseObject sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
          return (NSComparisonResult)NSOrderedAscending;

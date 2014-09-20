@@ -1000,11 +1000,11 @@ typedef enum : NSUInteger {
     NSString *isZan=KISDictionaryHaveKey(dict, @"isZan");
     if (isZan !=nil ){
         if([isZan intValue]==0){
-            [button setBackgroundImage:[UIImage imageNamed:@"zan1_10"] forState:UIControlStateNormal];
-            [button setBackgroundImage:[UIImage imageNamed:@"zan2_10"] forState:UIControlStateHighlighted];
+            [button setBackgroundImage:[UIImage imageNamed:@"zan_circle_normal"] forState:UIControlStateNormal];
+            [button setBackgroundImage:[UIImage imageNamed:@"zan_circle_click"] forState:UIControlStateHighlighted];
         }else{
-            [button setBackgroundImage:[UIImage imageNamed:@"quxiao-1_03"] forState:UIControlStateNormal];
-            [button setBackgroundImage:[UIImage imageNamed:@"quxiao-1_06"] forState:UIControlStateHighlighted];
+            [button setBackgroundImage:[UIImage imageNamed:@"cancle_zan_normal"] forState:UIControlStateNormal];
+            [button setBackgroundImage:[UIImage imageNamed:@"cancle_zan_click"] forState:UIControlStateHighlighted];
         }
     }
     

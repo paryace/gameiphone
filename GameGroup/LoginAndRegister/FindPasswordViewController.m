@@ -448,11 +448,11 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:body  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
  
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"修改成功" message:nil delegate:self cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
-        alertView.tag = 199992;
-        [alertView show];
-        
-       // [self.navigationController popViewControllerAnimated:YES];
+//        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"修改成功" message:nil delegate:self cancelButtonTitle:nil otherButtonTitles:@"确定", nil];
+//        alertView.tag = 199992;
+//        [alertView show];
+        [self showMessageWindowWithContent:@"修改成功" imageType:0];
+        [self.navigationController popViewControllerAnimated:YES];
 
     } failure:^(AFHTTPRequestOperation *operation,  id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {

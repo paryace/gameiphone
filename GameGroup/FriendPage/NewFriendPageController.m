@@ -42,6 +42,7 @@
     UISearchDisplayController * searchController;
     NSMutableArray * m_searchArray;
     NSMutableArray * m_allSearchArray;
+    UIActivityIndicatorView *m_loginActivity;
 }
 @end
 
@@ -141,6 +142,7 @@
     searchResultView.delegate = self;
     [self.view addSubview:searchResultView];
     
+
    
     [self getFriendDateFromDataSore];
     [self addheadView];
@@ -414,6 +416,8 @@
 #pragma mark 请求数据
 - (void)getFriendListFromNet
 {
+    
+    
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"212" forKey:@"method"];
@@ -429,6 +433,7 @@
                     if ([responseObject isKindOfClass:[NSDictionary class]]) {
                         [self dealResponse:responseObject];
                         [m_header endRefreshing];
+                        
                     }
                 }
                 failure:^(AFHTTPRequestOperation *operation, id error) {
@@ -439,6 +444,7 @@
                             [alert show];
                         }
                     }
+                    
                     [m_header endRefreshing];
                 }];
 }
@@ -487,6 +493,7 @@
 //查询用户列表
 -(void) getFriendDateFromDataSore
 {
+    
     NSMutableDictionary *userinfo=[DataStoreManager  newQuerySections:@"1" ShipType2:@"2"];
     NSMutableDictionary* result = [userinfo objectForKey:@"userList"];
     NSMutableArray* keys = [userinfo objectForKey:@"nameKey"];
@@ -503,6 +510,7 @@
     fansNum = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithFormat:@"%@%@",FansCount,[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]];
     [m_myTableView reloadData];
     [self setFansNum];
+    
 }
 
 //刷新title
@@ -534,6 +542,7 @@
 
 -(void)addheadView
 {
+    
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
     CGRect headerRect = header.arrowImage.frame;
     headerRect.size = CGSizeMake(30, 30);
@@ -579,16 +588,36 @@
 }
 
 -(void)reloadSearchList:(NSString*)searchText{
+//    [self getFriendDateFromDataSore];
+//    [self getFriendListFromNet];
     NSMutableArray *arr = [NSMutableArray array];
+    NSMutableArray *aliasArr = [NSMutableArray array]; //别称数组（备注姓名）
     for (int i = 0; i<m_allSearchArray.count; i++) {
         NSDictionary *dic = m_allSearchArray[i];
         [arr addObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"nickname")]];
+        [aliasArr addObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"alias")]];
     }
     NSPredicate *predicateString = [NSPredicate predicateWithFormat:@"SELF contains[cd] %@", searchText];
     NSMutableArray  *filteredArray = [NSMutableArray arrayWithArray:[arr filteredArrayUsingPredicate:predicateString]];
+    //取别名的数组
+    NSMutableArray  *aliasFilteredArray = [NSMutableArray arrayWithArray:[aliasArr filteredArrayUsingPredicate:predicateString]];
+ 
+    
+    //第一次从 备注姓名的数组取出符合条件的数据添加到搜索列表
     for (NSDictionary *tempdic in m_allSearchArray) {
+        for (NSString *aliaStr in aliasFilteredArray) {
+            if ([[tempdic objectForKey:@"alias"]isEqualToString:aliaStr]&&![m_searchArray containsObject:tempdic]) {
+                
+                     [m_searchArray addObject:tempdic];
+                
+            }
+        }
+        
+    // 第二次从 昵称的数组取出符合条件的数据添加到搜索列表
         for (NSString  *predicateStr in filteredArray) {
+            
             if ([[tempdic objectForKey:@"nickname"]isEqualToString:predicateStr]&&![m_searchArray containsObject:tempdic]) {
+                
                 [m_searchArray addObject:tempdic];
             }
         }

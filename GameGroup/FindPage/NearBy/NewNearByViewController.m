@@ -2219,6 +2219,15 @@ typedef enum : NSUInteger {
 {
     
 }
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if(scrollView==m_myTableView){
+        if (openMenuBtn.menuImageView.hidden==NO) {
+            openMenuBtn.menuImageView.hidden =YES;
+        }
+    }
+    
+}
 /*
 #pragma mark - Navigation
 

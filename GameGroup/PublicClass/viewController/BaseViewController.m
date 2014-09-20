@@ -164,7 +164,7 @@
     [self.view addSubview:showLabel];
 
     [[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideView) object:nil];//取消该方法的调用
-    [self performSelector:@selector(hideView) withObject:nil afterDelay:3.0f];
+    [self performSelector:@selector(hideView) withObject:nil afterDelay:1.5f];
 }
 
 - (void)hideView
