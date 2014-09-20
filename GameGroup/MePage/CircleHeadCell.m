@@ -45,7 +45,7 @@
         [self.contentView addSubview:self.titleLabel];
         
         self.clickBtn = [[UIButton alloc]initWithFrame:CGRectMake(180, 60, 200, 100)];
-        self.clickBtn.backgroundColor = [UIColor redColor];
+        self.clickBtn.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.clickBtn];
         
         UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressContent:)];
