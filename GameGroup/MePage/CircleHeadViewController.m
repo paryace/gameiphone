@@ -606,13 +606,11 @@ typedef enum : NSUInteger {
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [m_loginActivity stopAnimating];
-        
         self.view.backgroundColor = UIColorFromRGBA(0x262930, 1);
         if (KISHighVersion_7) {
             m_myTableView.backgroundColor = UIColorFromRGBA(0x262930, 1);
         }
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            
             NSString *userid = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
             if (![[NSUserDefaults standardUserDefaults]objectForKey:[NSString stringWithFormat:@"topImageHead_wx_%@",userid]]) {
                 topImageView.imageURL = [ImageService getImageStr:[GameCommon getNewStringWithId:KISDictionaryHaveKey(responseObject, @"coverImg")] Width:320];
@@ -640,9 +638,6 @@ typedef enum : NSUInteger {
                 m_myTableView.tableHeaderView = view;
                 ishavehuancun =NO;
             }
-
-            
-            
             if ([KISDictionaryHaveKey(responseObject, @"aboutFriendSwitch")intValue]==1) {
                 friendZanBtn.selected = YES;
             }else{
@@ -689,15 +684,8 @@ typedef enum : NSUInteger {
         [m_header endRefreshing];
         [m_footer endRefreshing];
         [m_loginActivity stopAnimating];
-
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
         [hud hide:YES];
+        [self showErrorMsgDialog:error];
     }];
 }
 
@@ -713,7 +701,10 @@ typedef enum : NSUInteger {
 #pragma mark --朋友在赞触发方法与网络请求
 -(void)friendZan:(UIButton *)sender
 {
-  //  sender.selected  =!sender.selected;
+    [self friendZanMethods];
+}
+
+-(void)friendZanMethods{
     m_currPageCount =0;
     hud.labelText =@"加载中...";
     [hud show:YES];
@@ -730,27 +721,16 @@ typedef enum : NSUInteger {
     [dict setObject:paramDic forKey:@"params"];
     [dict setObject:@"199" forKey:@"method"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
         m_currPageCount =0;
         [self getInfoFromNet];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
-        else
-        {
-            UIAlertView* alertView1 = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请求数据失败，请检查网络！" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-            [alertView1 show];
-        }
         [hud hide:YES];
+        [self showErrorMsgDialog:error];
     }];
+
 }
+
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView{
     if(scrollView==m_myTableView){
         if (openMenuBtn.menuImageView.hidden==NO) {
@@ -923,11 +903,8 @@ typedef enum : NSUInteger {
     cell.myCellDelegate = self;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     int m_currmagY =0;
-    
     cell.tag = indexPath.row+100;
-    
     indexPaths = [NSIndexPath indexPathForRow:cell.tag-100 inSection:0];
-    
     NSString * headImages=KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img");
     
     if ([GameCommon isEmtity:headImages]) {
@@ -1119,8 +1096,6 @@ typedef enum : NSUInteger {
     }else{
         sharethumbImage = @"";
     }
-    
-    
     UIMenuItem *copyitem = [[UIMenuItem alloc] initWithTitle:@"复制"action:@selector(copyAction:)];
     UIMenuItem *forwarding = [[UIMenuItem alloc] initWithTitle:@"转发"action:@selector(forwardingAction:)];
     UIMenuController *menu = [UIMenuController sharedMenuController];
@@ -1137,8 +1112,7 @@ typedef enum : NSUInteger {
 //转发
 - (void)forwardingAction:(id)sender {
     
-    UIActionSheet* actionSheet = [[UIActionSheet alloc]initWithTitle:@"分享到" delegate:self cancelButtonTitle:@"取消"destructiveButtonTitle:Nil
-                                                   otherButtonTitles:@"好友",@"新浪微博",@"QQ",@"微信朋友圈",nil];
+    UIActionSheet* actionSheet = [[UIActionSheet alloc]initWithTitle:@"分享到" delegate:self cancelButtonTitle:@"取消"destructiveButtonTitle:nil otherButtonTitles:@"好友",@"新浪微博",@"QQ",@"微信朋友圈",nil];
     actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
     actionSheet.tag = 20000000;
     [actionSheet showInView:self.view];
@@ -1153,7 +1127,6 @@ typedef enum : NSUInteger {
     NSMutableDictionary *dict =[m_dataArray objectAtIndex:indexPath.row];
     dict = [self contentAnalyzer:dict withReAnalyzer:NO];
     float currnetY = [KISDictionaryHaveKey(dict, @"cellHieght") floatValue];
-        
     //以动态id为键存放每个cell的高度到集合里
     NSNumber *number = [NSNumber numberWithFloat:currnetY];
     [cellhightarray setObject:number forKey:KISDictionaryHaveKey(dict, @"id")];
@@ -1166,7 +1139,6 @@ typedef enum : NSUInteger {
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 #pragma mark --enter MyCircleViewController page 进入个人朋友圈界面
@@ -1182,7 +1154,6 @@ typedef enum : NSUInteger {
         nickName=KISDictionaryHaveKey(userDic, @"nickname");
     }
     VC.nickName =nickName;
-   // VC.imageStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img")];
     [self.navigationController pushViewController:VC animated:YES];
 }
 
@@ -1191,7 +1162,6 @@ typedef enum : NSUInteger {
 -(void)enterInfoPage:(UIButton *)sender
 {
     NSDictionary *dict = [m_dataArray objectAtIndex:sender.tag];
-    
     OnceDynamicViewController *detailVC = [[OnceDynamicViewController alloc]init];
     detailVC.messageid = KISDictionaryHaveKey(dict, @"id");
     
@@ -1224,10 +1194,9 @@ typedef enum : NSUInteger {
 }
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (actionSheet.tag ==9999999) {
+    if (actionSheet.tag ==9999999) {//拍照
         UIImagePickerController * imagePicker;
         if (buttonIndex==1)
-            //这里捕捉“毁灭键”,其实该键的index是0，从上到下从0开始，称之为毁灭是因为是红的
         {
             if (imagePicker==nil) {
                 imagePicker=[[UIImagePickerController alloc]init];
@@ -1239,13 +1208,11 @@ typedef enum : NSUInteger {
                 [self presentViewController:imagePicker animated:YES completion:^{
                     
                 }];
-            }
-            else {
+            }else {
                 UIAlertView *cameraAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相机" delegate:self cancelButtonTitle:@"好的" otherButtonTitles:nil];
                 [cameraAlert show];
             }
-        }
-        else if (buttonIndex==0) {
+        }else if (buttonIndex==0) {
             if (imagePicker==nil) {
                 imagePicker=[[UIImagePickerController alloc]init];
                 imagePicker.delegate=self;
@@ -1253,83 +1220,94 @@ typedef enum : NSUInteger {
             }
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
                 imagePicker.sourceType=UIImagePickerControllerSourceTypePhotoLibrary;
-                //                [self presentModalViewController:imagePicker animated:YES];
                 [self presentViewController:imagePicker animated:YES completion:^{
                     
                 }];
-            }
-            else {
+            }else {
                 UIAlertView *libraryAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相册" delegate:self cancelButtonTitle:@"了解" otherButtonTitles:nil];
                 [libraryAlert show];
             }
         }
 
-    }else if(actionSheet.tag ==888888){
+    }else if(actionSheet.tag ==888888){//删除评论
         if (buttonIndex==0) {
-            
-            [self delcomment];
+            [self delcommentMsg];
         }else{
             return;
         }
-    }else if (actionSheet.tag == 20000000){
-        {
-            NSString * shareUrl = [self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(copyDic, @"id")]];
-            if (buttonIndex ==0) {
-                if ([KISDictionaryHaveKey([DataStoreManager queryMyInfo], @"superstar") doubleValue]) {
-                    UIActionSheet* sheet = [[UIActionSheet alloc] initWithTitle:@"分享类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"发送给好友",@"广播给粉丝及好友", nil];
-                    sheet.tag = 90;
-                    [sheet showInView:self.view];
-                }else{
-                    selectContactPage *VC = [[selectContactPage alloc] init];
-                    VC.contactDelegate = self;
-                    shareType = 0;
-                    [self.navigationController pushViewController:VC animated:YES];
-                }
-            }
-            else if (buttonIndex ==1)
-            {//分享到微博
-                NSString * title = KISDictionaryHaveKey(copyDic, @"title");
-                if ([GameCommon isEmtity:title]) {
-                    title = KISDictionaryHaveKey(copyDic, @"msg");
-                }else{
-                    title = [NSString stringWithFormat:@"《%@》",title];
-                }
-                if (title.length>100) {
-                    title = [title substringToIndex:100];
-                }
-                [[ShareToOther singleton]shareTosinass:[self getShareImageToSima] Title:title Description:copyDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(copyDic, @"id")]]];
-            }
-            else if(buttonIndex ==2)
-            {//分享到QQ
-                [[ShareToOther singleton]changeScene:WXSceneSession];
-                NSString * title = KISDictionaryHaveKey(copyDic, @"title");
-                if ([GameCommon isEmtity:title]) {
-                    title = [NSString stringWithFormat:@"分享自%@的动态",KISDictionaryHaveKey(KISDictionaryHaveKey(copyDic,@"user"),@"nickname")];
-                }
-                if (title.length>100) {
-                    title = [title substringToIndex:100];
-                }
-                if ([GameCommon isEmtity:KISDictionaryHaveKey(copyDic, @"img")]) {
-                    NSData * data = [self getNSDataFromURL:@"icon"];
-                    [[ShareToOther singleton] onShareToQQ:title Description:copyDic[@"msg"] Url:shareUrl previewImageData:data IsZone:NO];
-                }else{
-                    [[ShareToOther singleton] onShareToQQ:title Description:copyDic[@"msg"] Url:shareUrl previewImageURL:[ImageService getImageString:KISDictionaryHaveKey(copyDic, @"img")] IsZone:NO];
-                }
-            }else if(buttonIndex ==3)
-            {//分享到微信
-                NSString * title = KISDictionaryHaveKey(copyDic, @"title");
-                if ([GameCommon isEmtity:title]) {
-                    title = copyDic[@"msg"];
-                }
-                if (title.length>100) {
-                    title = [title substringToIndex:100];
-                }
-                [[ShareToOther singleton] changeScene:WXSceneTimeline];
-                [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:title Description:copyDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(copyDic, @"id")]]];
+    }else if (actionSheet.tag == 20000000){//转发动态
+        NSString * shareUrl = [self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(copyDic, @"id")]];
+        if (buttonIndex ==0) {
+            if ([KISDictionaryHaveKey([DataStoreManager queryMyInfo], @"superstar") doubleValue]) {
+                UIActionSheet* sheet = [[UIActionSheet alloc] initWithTitle:@"分享类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"发送给好友",@"广播给粉丝及好友", nil];
+                sheet.tag = 90;
+                [sheet showInView:self.view];
+            }else{
+                selectContactPage *VC = [[selectContactPage alloc] init];
+                VC.contactDelegate = self;
+                shareType = 0;
+                [self.navigationController pushViewController:VC animated:YES];
             }
         }
-    }else if (actionSheet.tag == 90){
-        
+        else if (buttonIndex ==1)
+        {//分享到微博
+            NSString * title = KISDictionaryHaveKey(copyDic, @"title");
+            if ([GameCommon isEmtity:title]) {
+                title = KISDictionaryHaveKey(copyDic, @"msg");
+            }else{
+                title = [NSString stringWithFormat:@"《%@》",title];
+            }
+            if (title.length>100) {
+                title = [title substringToIndex:100];
+            }
+            [[ShareToOther singleton]shareTosinass:[self getShareImageToSima] Title:title Description:copyDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(copyDic, @"id")]]];
+        }
+        else if(buttonIndex ==2)
+        {//分享到QQ
+            [[ShareToOther singleton]changeScene:WXSceneSession];
+            NSString * title = KISDictionaryHaveKey(copyDic, @"title");
+            if ([GameCommon isEmtity:title]) {
+                title = [NSString stringWithFormat:@"分享自%@的动态",KISDictionaryHaveKey(KISDictionaryHaveKey(copyDic,@"user"),@"nickname")];
+            }
+            if (title.length>100) {
+                title = [title substringToIndex:100];
+            }
+            if ([GameCommon isEmtity:KISDictionaryHaveKey(copyDic, @"img")]) {
+                NSData * data = [self getNSDataFromURL:@"icon"];
+                [[ShareToOther singleton] onShareToQQ:title Description:copyDic[@"msg"] Url:shareUrl previewImageData:data IsZone:NO];
+            }else{
+                [[ShareToOther singleton] onShareToQQ:title Description:copyDic[@"msg"] Url:shareUrl previewImageURL:[ImageService getImageString:KISDictionaryHaveKey(copyDic, @"img")] IsZone:NO];
+            }
+        }else if(buttonIndex ==3)
+        {//分享到微信
+            NSString * title = KISDictionaryHaveKey(copyDic, @"title");
+            if ([GameCommon isEmtity:title]) {
+                title = copyDic[@"msg"];
+            }
+            if (title.length>100) {
+                title = [title substringToIndex:100];
+            }
+            [[ShareToOther singleton] changeScene:WXSceneTimeline];
+            [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:title Description:copyDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(copyDic, @"id")]]];
+        }
+    }else if (actionSheet.tag == 90){//广播粉丝
+        switch (buttonIndex) {
+            case 0:
+            {
+                shareType = 0;
+                selectContactPage *VC = [[selectContactPage alloc] init];
+                VC.contactDelegate = self;
+                VC.contentDic = copyDic;
+                [self.navigationController pushViewController:VC animated:YES];
+            }  break;
+            case 1:
+            {
+                shareType = 1;
+                [self setShareView];
+            }break;
+            default:
+                break;
+        }
     }
 }
 -(NSString*)getShareUrl:(NSString*)msgid
@@ -2149,18 +2127,14 @@ typedef enum : NSUInteger {
 }
 
 //删除评论
--(void)delcomment
+-(void)delcommentMsg
 {
-    
     NSMutableDictionary *dic = [m_dataArray objectAtIndex:[[delcommentDic objectForKey:@"mycell"]intValue]];
     NSMutableArray *arr = [dic objectForKey:@"commentList"];
     NSString *msgId = KISDictionaryHaveKey([arr objectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]], @"id");
     [NSCharacterSet decimalDigitCharacterSet];
-
-   
     hud.labelText = @"删除中...";
     [hud show:YES];
-   
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [paramDic setObject:msgId forKey:@"commentId"];
@@ -2168,48 +2142,23 @@ typedef enum : NSUInteger {
     [dict setObject:paramDic forKey:@"params"];
     [dict setObject:@"195" forKey:@"method"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    
-    
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
-        
         [dic setObject:@([KISDictionaryHaveKey(dic, @"commentListHieght")floatValue]-[KISDictionaryHaveKey([arr objectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]], @"commentCellHieght")floatValue]) forKey:@"commentListHieght"];
-        
         [dic setObject:@([KISDictionaryHaveKey(dic, @"cellHieght")floatValue]-[KISDictionaryHaveKey([arr objectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]], @"commentCellHieght")floatValue]) forKey:@"cellHieght"];
-        
         [cellhightarray removeObjectForKey:KISDictionaryHaveKey(dic, @"id")];
         [self showMessageWindowWithContent:@"删除成功" imageType:0];
         [arr removeObjectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]];
         [m_myTableView reloadData];
-        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
         [hud hide:YES];
+        [self showErrorMsgDialog:error];
     }];
 }
 //上传评论
 -(void)postCommentWithMsgId:(NSString *)msgid destUserid:(NSString *)destUserid destCommentId:(NSString *)destCommentId comment:(NSString *)comment uuid:(NSString *)uuid
 {
-    NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
-    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-    [paramDic setObject:msgid forKey:@"messageId"];
-    if (isComeBackComment ==YES) {
-    [paramDic setObject:destUserid?destUserid:@"" forKey:@"destUserid"];
-    [paramDic setObject:destCommentId?destCommentId:@"" forKey:@"destCommentId"];
-    }
-    [paramDic setObject:comment forKey:@"comment"];
-    [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [dict setObject:paramDic forKey:@"params"];
-    [dict setObject:@"186" forKey:@"method"];
-    [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-   
-        //如果没有网，将数据保存到数据库。。。。
+    //如果没有网，将数据保存到数据库
     if (app.reach.currentReachabilityStatus ==NotReachable) {
         NSMutableDictionary *dict = [NSMutableDictionary dictionary];
         [dict setObject:msgid forKey:@"msgId"];
@@ -2217,49 +2166,71 @@ typedef enum : NSUInteger {
         [dict setObject:destCommentId?destCommentId:@"" forKey:@"destCommentId"];
         [dict setObject:comment forKey:@"comments"];
         [dict setObject:uuid forKey:@"uuid"];
-        
         dispatch_queue_t queue = dispatch_queue_create("com.living.game.liveLineZan", NULL);
         dispatch_async(queue, ^{
             [DataStoreManager saveCommentsWithDic:dict];
         });
-        
-       
         return;
     }
     else{
-        [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-            if(![responseObject isKindOfClass:[NSDictionary class]]){
-                return ;
-            }
-            for (int i = 0; i <m_dataArray.count; i++) {
-                NSDictionary *dic = [m_dataArray objectAtIndex:i];
-                if ([KISDictionaryHaveKey(dic, @"id")intValue]==[msgid intValue]) {
-                    NSArray *array = [dic objectForKey:@"commentList"];
-                    for (int i = 0; i < array.count; i++) {
-                        NSMutableDictionary *commDic = (NSMutableDictionary *)[array objectAtIndex:i];
-                        if ([[commDic allKeys]containsObject:@"uuid"]&&[[NSString stringWithFormat:@"%@",KISDictionaryHaveKey(commDic, @"uuid")]isEqualToString:uuid]) {
-                            [commDic setObject:KISDictionaryHaveKey(responseObject, @"id") forKey:@"id"];
-                        }
-                    }
-                }
-            }
-            [m_myTableView reloadData];
-        } failure:^(AFHTTPRequestOperation *operation, id error) {
-            if ([error isKindOfClass:[NSDictionary class]]) {
-                if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-                {
-                    UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                    [alert show];
-                }
-            }
-        }];
+        [self submitComments:msgid destUserid:destUserid destCommentId:destCommentId comment:comment uuid:uuid];
     }
-    
     [self.textView resignFirstResponder];
     self.textView.text = nil;
     self.textView.placeholder= nil;
     
 }
+
+//提交评论信息
+-(void)submitComments:(NSString *)msgid destUserid:(NSString *)destUserid destCommentId:(NSString *)destCommentId comment:(NSString *)comment uuid:(NSString *)uuid {
+    NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [paramDic setObject:msgid forKey:@"messageId"];
+    if (isComeBackComment ==YES) {
+        [paramDic setObject:destUserid?destUserid:@"" forKey:@"destUserid"];
+        [paramDic setObject:destCommentId?destCommentId:@"" forKey:@"destCommentId"];
+    }
+    [paramDic setObject:comment forKey:@"comment"];
+    [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [dict setObject:paramDic forKey:@"params"];
+    [dict setObject:@"186" forKey:@"method"];
+    [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if(![responseObject isKindOfClass:[NSDictionary class]]){
+            return ;
+        }
+        [self addCommentsToArray:msgid uuid:uuid CommentsDic:responseObject];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [self showErrorMsgDialog:error];
+    }];
+
+}
+//添加一条评论信息到评论列表
+-(void)addCommentsToArray:(NSString *)msgid uuid:(NSString *)uuid CommentsDic:(NSMutableDictionary*)responseObject{
+    for (int i = 0; i <m_dataArray.count; i++) {
+        NSDictionary *dic = [m_dataArray objectAtIndex:i];
+        if ([KISDictionaryHaveKey(dic, @"id")intValue]==[msgid intValue]) {
+            NSArray *array = [dic objectForKey:@"commentList"];
+            for (NSMutableDictionary * commDic  in array) {
+                if ([[commDic allKeys]containsObject:@"uuid"]&&[[GameCommon getNewStringWithId:KISDictionaryHaveKey(commDic, @"uuid")]isEqualToString:uuid]) {
+                    [commDic setObject:KISDictionaryHaveKey(responseObject, @"id") forKey:@"id"];
+                }
+            }
+        }
+    }
+    [m_myTableView reloadData];
+}
+
+-(void)showErrorMsgDialog:(id)error{
+    if ([error isKindOfClass:[NSDictionary class]]) {
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+        {
+            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+        }
+    }
+}
+
 //#pragma mark --上传顶部图片
 -(void)uploadbgImg:(NSString*)uploadImagePath
 {
@@ -2268,20 +2239,11 @@ typedef enum : NSUInteger {
     [up simpleUpload:uploadImagePath UpDeleGate:self];
 
 }
-
-
 // 上传进度
 - (void)uploadProgressUpdated:(NSString *)theFilePath percent:(float)percent
 {
-//    hud.labelText = [NSString stringWithFormat:@"正在上传 %.2f％",percent];
     
 }
-/**
- {
- hash = Fg1pj8Y3tNOB905kaCeaAUBrEC94;
- key = 340480FC3CD34A26A45A1D8C386D0104;
- }
- **/
 //上传成功代理回调
 - (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
 {
@@ -2295,11 +2257,7 @@ typedef enum : NSUInteger {
 - (void)uploadFailed:(NSString *)theFilePath error:(NSError *)error
 {
     [hud hide:YES];
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
-                                                    message:@"发送图片失败请重新发送"
-                                                   delegate:nil
-                                          cancelButtonTitle:@"知道啦"
-                                          otherButtonTitles:nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"发送图片失败请重新发送" delegate:nil cancelButtonTitle:@"知道啦"otherButtonTitles:nil];
     [alert show];
 }
 
@@ -2309,7 +2267,6 @@ typedef enum : NSUInteger {
 -(void)uploadsuccessImg:(NSString *)img
 {
     NSString *userid = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
-    
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
     [paramDic setObject:img forKey:@"coverImg"];
@@ -2346,27 +2303,15 @@ typedef enum : NSUInteger {
 
 
 - (void)keyboardWillShow:(NSNotification *)notification {
-    /*
-     Reduce the size of the text view so that it's not obscured by the keyboard.
-     Animate the resize so that it's in sync with the appearance of the keyboard.
-     */
     self.theEmojiView.hidden = YES;
     self.commentInputType = CommentInputTypeKeyboard;
     senderBnt.selected = NO;
     NSDictionary *userInfo = [notification userInfo];
-    
-    // Get the origin of the keyboard when it's displayed.
     NSValue* aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
-    
-    // Get the top of the keyboard as the y coordinate of its origin in self's view's coordinate system. The bottom of the text view's frame should align with the top of the keyboard's final position.
     CGRect keyboardRect = [aValue CGRectValue];
-    
-    // Get the duration of the animation.
     NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
     NSTimeInterval animationDuration;
     [animationDurationValue getValue:&animationDuration];
-    
-    // Animate the resize of the text view's frame in sync with the keyboard's appearance.
     [self autoMovekeyBoard:keyboardRect.size.height];
     height = keyboardRect.size.height;
 }
@@ -2375,11 +2320,6 @@ typedef enum : NSUInteger {
 - (void)keyboardWillHide:(NSNotification *)notification {
     
     NSDictionary* userInfo = [notification userInfo];
-    
-    /*
-     Restore the size of the text view (fill self's view).
-     Animate the resize so that it's in sync with the disappearance of the keyboard.
-     */
     NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
     NSTimeInterval animationDuration;
     [animationDurationValue getValue:&animationDuration];
@@ -2387,16 +2327,8 @@ typedef enum : NSUInteger {
     [self autoMovekeyBoard:-inPutView.bounds.size.height];
 }
 -(void) autoMovekeyBoard: (float) h{
-    
-    //    [UIView beginAnimations:nil context:nil];
-    //    [UIView setAnimationDuration:0.2];
-	//inPutView.frame = CGRectMake(0.0f, (float)(self.view.frame.size.height-h-inPutView.frame.size.height), 320.0f, inPutView.frame.size.height);
-    
     CGRect containerFrame = inPutView.frame;
     containerFrame.origin.y = self.view.bounds.size.height - (h + containerFrame.size.height);
-	// animations settings
-    
-	// set views with new info
 	inPutView.frame = containerFrame;
 }
 #pragma mark 输入
