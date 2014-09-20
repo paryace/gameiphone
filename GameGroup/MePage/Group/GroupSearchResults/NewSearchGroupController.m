@@ -258,6 +258,9 @@
                 }
                 [m_groupArray addObjectsFromArray:groupList];
                 currentPageCount +=20;
+                if (currentPageCount == 0) {
+                     [m_GroupTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+                }
                 [m_GroupTableView reloadData];
             }else{
                 if (currentPageCount ==0) {

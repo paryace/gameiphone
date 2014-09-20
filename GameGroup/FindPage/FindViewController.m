@@ -595,7 +595,7 @@
     otherBtn.hidden = YES;
     [otherBtn addTarget:self action:@selector(dragMoving:withEvent: )forControlEvents: UIControlEventTouchDragInside];
     [otherBtn addTarget:self action:@selector(enterOtherPage:withEvent:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:otherBtn];
+    [self.view addSubview:otherBtn];
 
     
     

@@ -101,44 +101,27 @@
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     NSDictionary * tempDict =[dataArray objectAtIndex:indexPath.row];
-    
-    
-//    NSString *str = [tempDict objectForKey:@"shiptype"];
-//    if ([str isEqualToString:@"1"]||[str isEqualToString:@"2"]) {
-//        
-//    }else{
-//        NSString *strr= [tempDict objectForKey:@"nickname"];
-//        NSString * userid  = KISDictionaryHaveKey(tempDict, @"userid");
-//        NSString *tit = [NSString stringWithFormat:@"昵称为%@ userid=%@出现了",strr,userid];
-//        [self showAlertViewWithTitle:@"提示" message:tit buttonTitle:@"确定"];
-//    }
-    
-    NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
-    cell.headImageV.placeholderImage = [UIImage imageNamed:headplaceholderImage];
-    NSString * imageids=KISDictionaryHaveKey(tempDict, @"img");
-    cell.headImageV.imageURL=[ImageService getImageStr:imageids Width:80];
-    NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
-    cell.sexImg.image =KUIImage(genderimage);
-    
-    NSString * nickName=[tempDict objectForKey:@"type"];
-//    if ([GameCommon isEmtity:nickName]) {
-//        nickName=[tempDict objectForKey:@"nickname"];
-//    }
-    cell.nameLabel.text = nickName;
-//
-//    NSString *titleName=KISDictionaryHaveKey(tempDict, @"titleName");
-//    cell.distLabel.text = (titleName==nil||[titleName isEqualToString:@""]) ? @"暂无头衔" : titleName;
-//    cell.distLabel.textColor = [GameCommon getAchievementColorWithLevel:[KISDictionaryHaveKey(tempDict, @"rarenum") integerValue]];
-//    CGSize nameSize = [cell.nameLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14.0] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
-//    cell.nameLabel.frame = CGRectMake(80, 5, nameSize.width + 5, 20);
-//    cell.sexImg.frame = CGRectMake(80 + nameSize.width, 5, 20, 20);
-//    NSArray * gameids=[GameCommon getGameids:KISDictionaryHaveKey(tempDict, @"gameids")];
-//    [cell setGameIconUIView:gameids];
+    if (tempDict&&[tempDict isKindOfClass:[NSDictionary class]]) {
+        NSString * headplaceholderImage= [self headPlaceholderImage:KISDictionaryHaveKey(tempDict, @"gender")];
+        cell.headImageV.placeholderImage = [UIImage imageNamed:headplaceholderImage];
+        NSString * imageids=KISDictionaryHaveKey(tempDict, @"img");
+        cell.headImageV.imageURL=[ImageService getImageStr:imageids Width:80];
+        NSString *genderimage=[self genderImage:KISDictionaryHaveKey(tempDict, @"gender")];
+        cell.sexImg.image =KUIImage(genderimage);
+        NSString * nickName=[tempDict objectForKey:@"type"];
+        if (nickName) {
+            cell.nameLabel.text = nickName;
+        }
+        
+    }
     return cell;
 }
 //头像默认图片
 -(NSString*)headPlaceholderImage:(NSString*)gender
 {
+    if (!gender) {
+        return @"people_man.png";
+    }
     if ([[GameCommon getNewStringWithId:gender] isEqualToString:@"0"]) {//男♀♂
         return @"people_man.png";
     }
@@ -150,6 +133,9 @@
 //性别图标
 -(NSString*)genderImage:(NSString*)gender
 {
+    if (!gender) {
+        return @"gender_boy";
+    }
     if ([gender intValue]==0)
     {
         return @"gender_boy";
