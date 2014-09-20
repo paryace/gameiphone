@@ -14,7 +14,6 @@
 @interface TemporaryFriendController (){
     NSMutableArray * dataArray;
     UITableView*  m_myTableView;
-    MenuTableView * menuTableView;
 }
 
 @end
@@ -37,17 +36,13 @@
     
     UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
     delButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
-    [delButton setBackgroundImage:KUIImage(@"delete_normal") forState:UIControlStateNormal];
-    [delButton setBackgroundImage:KUIImage(@"delete_click") forState:UIControlStateHighlighted];
+    [delButton setBackgroundImage:KUIImage(@"deleteButton") forState:UIControlStateNormal];
+    [delButton setBackgroundImage:KUIImage(@"deleteButton2") forState:UIControlStateHighlighted];
     [self.view addSubview:delButton];
     [delButton addTarget:self action:@selector(cleanBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+
     
-    NSArray * menuArray = @[@"1",@"2",@"3",@"4",@"1",@"2",@"3",@"4",@"1",@"2",@"3",@"4"];
-    menuTableView = [[MenuTableView alloc] initWithFrame:CGRectMake(0, startX, 100, kScreenHeigth)];
-    [self.view addSubview:menuTableView];
-    [menuTableView setMenuDataList:menuArray];
-    
-    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(100, startX, 320-100, self.view.bounds.size.height-startX)];
+    m_myTableView = [[UITableView alloc]initWithFrame:CGRectMake(0, startX, 320, self.view.bounds.size.height-startX)];
     m_myTableView.dataSource = self;
     m_myTableView.delegate = self;
     m_myTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
@@ -185,6 +180,7 @@
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
     [paramDict setObject:gender forKey:@"gender"];
+    [paramDict setObject:[GameCommon getNewStringWithId:self.gameid] forKey:@"gameid"];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"295" forKey:@"method"];

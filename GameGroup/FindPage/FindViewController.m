@@ -29,6 +29,7 @@
     UIButton *moGirlBtn;
     UIButton *encoBtn;
     UIButton *groupBtn;
+    UIButton *otherBtn;
     
     UIView *bottomView;
     UIImageView *m_notibgInfoImageView; //与我相关红点
@@ -588,6 +589,17 @@
     //    添加点击手势
     [groupBtn addTarget:self action:@selector(enterOtherPage:withEvent:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:groupBtn];
+
+    
+    otherBtn = [self buildBttonWithFrame:CGRectMake(0, 0, 60, 60) backGroundColor:[UIColor clearColor] bgImg:@"512X512" center:CGPointMake(160, KISHighVersion_7?79:59)];
+    otherBtn.hidden = YES;
+    [otherBtn addTarget:self action:@selector(dragMoving:withEvent: )forControlEvents: UIControlEventTouchDragInside];
+    [otherBtn addTarget:self action:@selector(enterOtherPage:withEvent:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:otherBtn];
+
+    
+    
+    
     
     
     //红点 - 公告
@@ -658,6 +670,12 @@
         gruupV.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")];
         [self.navigationController pushViewController:gruupV animated:YES];
     }
+    if (sender == otherBtn) {
+        [[Custom_tabbar showTabBar] hideTabBar:YES];
+        TemporaryFriendController * gruupV = [[TemporaryFriendController alloc] init];
+        gruupV.gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")];
+        [self.navigationController pushViewController:gruupV animated:YES];
+    }
 }
 //保存坐标
 -(void)saveBtnCenter:(UIButton *)sender withEvent:(UIEvent *)ev{
@@ -678,6 +696,10 @@
     else if (sender == groupBtn)
     {
         [[NSUserDefaults standardUserDefaults]setObject:centerArray forKey:@"groBtn_center_wx"];
+    }
+    else if (sender == otherBtn)
+    {
+        [[NSUserDefaults standardUserDefaults]setObject:centerArray forKey:@"otherBtn_center_wx"];
     }
     else{
         [[NSUserDefaults standardUserDefaults]setObject:centerArray forKey:@"moGirlBtn_center_wx"];
@@ -705,6 +727,7 @@
         [self performSelector:@selector(showEnco:) withObject:nil afterDelay:0.3];
         [self performSelector:@selector(showMoGirl:) withObject:nil afterDelay:0.45];
         [self performSelector:@selector(showGroup:) withObject:nil afterDelay:0.6];
+        [self performSelector:@selector(showOther:) withObject:nil afterDelay:0.75];
 
     }else{
         sameRealmBtn.hidden = YES;
@@ -712,6 +735,7 @@
         moGirlBtn.hidden = YES;
         encoBtn.hidden = YES;
         groupBtn.hidden = YES;
+        otherBtn.hidden = YES;
         
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:1];
@@ -720,6 +744,7 @@
         moGirlBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
         encoBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
         groupBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
+        otherBtn.center = CGPointMake(160, KISHighVersion_7?79:59);
         [UIView commitAnimations];
     }
 }
@@ -808,8 +833,6 @@
         moGirlBtn.center = CGPointMake(240, 150);
     }
     [UIView commitAnimations];
-;
-
 }
 //显示许愿池
 -(void)showEnco:(id)sender
@@ -834,13 +857,31 @@
     [UIView commitAnimations];
 }
 
+
+//
+-(void)showOther:(id)sender
+{
+    otherBtn.hidden = NO;
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:0.4];
+    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"otherBtn_center_wx"]) {
+        NSArray *centerArray =[[NSUserDefaults standardUserDefaults]objectForKey:@"otherBtn_center_wx"];
+        float i = [centerArray[1]floatValue];
+        if (i>curren_hieght-110) {
+            otherBtn.center = CGPointMake([centerArray[0]floatValue],curren_hieght-110);
+        }else if (i<(KISHighVersion_7?79:59)){
+            otherBtn.center = CGPointMake([centerArray[0]floatValue],KISHighVersion_7?79:59);
+        }else{
+            otherBtn.center = CGPointMake([centerArray[0]floatValue], [centerArray[1]floatValue]);
+        }
+    }else{
+        otherBtn.center = CGPointMake(160, 150);
+    }
+    [UIView commitAnimations];
+}
+
 -(void)enterCirclePage:(id)sender
 {
-//    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@""]||[[GameCommon getNewStringWithId:KISDictionaryHaveKey(manDic, @"id")]isEqualToString:@" "]||!manDic) {
-//        [self showAlertViewWithTitle:@"提示" message:@"请先选择游戏" buttonTitle:@"确定"];
-//        return;
-//    }
-    
     [[Custom_tabbar showTabBar] hideTabBar:YES];
     CircleHeadViewController *circleVC  = [[CircleHeadViewController alloc]init];
     circleVC.imageStr = nil;

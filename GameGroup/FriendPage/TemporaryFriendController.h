@@ -9,5 +9,6 @@
 #import "BaseViewController.h"
 
 @interface TemporaryFriendController : BaseViewController<UITableViewDataSource, UITableViewDelegate,UIActionSheetDelegate>
+@property(nonatomic,copy)NSString *gameid;
 
 @end
