@@ -57,7 +57,6 @@
     
    NSMutableArray * m_RoleArray = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     [_characterView setDate:m_RoleArray];
-    
     _selectGender = @"2";
     _selectPowerable = @"1";
     if ([_type isEqualToString:@"update"]) {
@@ -82,7 +81,7 @@
     }
     _selectGender = [GameCommon getNewStringWithId:KISDictionaryHaveKey(_updatePreferInfoDic, @"forGirls")];
     _selectPowerable = [GameCommon getNewStringWithId:KISDictionaryHaveKey(_updatePreferInfoDic, @"powerable")];
-    
+    [self getTag:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectTypeDict, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"id")]];
     [_m_TableView reloadData];
 }
 
@@ -93,6 +92,7 @@
 }
 -(void)selectType:(NSMutableDictionary *)typeDic{
     _selectTypeDict = typeDic;
+    [self getTag:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectTypeDict, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"id")]];
     [_m_TableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:0 inSection:1]] withRowAnimation:UITableViewRowAnimationNone];
     NSLog(@"-----选择分类-----%@",typeDic);
 }
@@ -112,11 +112,12 @@
     }];
 }
 #pragma MARK ---联网获取标签
--(void)getTag:(NSString*)gameid TypeId:(NSString*)typeId CharacterId:(NSString*)characterId reSuccess:(void (^)(id responseObject))resuccess
+-(void)getTag:(NSString*)gameid TypeId:(NSString*)typeId CharacterId:(NSString*)characterId
 {
     [[ItemManager singleton] getTeamLableRoom:gameid TypeId:typeId CharacterId:characterId reSuccess:^(id responseObject) {
-        if (resuccess) {
-            resuccess(responseObject);
+         _tagArray = responseObject;
+        if (_ifOpen) {
+            [_m_TableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:2 inSection:1]] withRowAnimation:UITableViewRowAnimationNone];
         }
     } reError:^(id error) {
         [self showErrorAlert:error];
@@ -323,24 +324,21 @@
                 [self showAlertViewWithTitle:@"提示" message:@"请选择分类" buttonTitle:@"OK"];
                 return;
             }
-//            [_tagView showSelf];
-            [self getTag:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"gameid")] TypeId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectTypeDict, @"constId")] CharacterId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(_selectRoleDict, @"id")] reSuccess:^(id responseObject) {
-                if (responseObject&&[responseObject isKindOfClass:[NSArray class]]) {
-                    _tagArray = responseObject;
-                    NSIndexPath * path = [NSIndexPath indexPathForItem:(indexPath.row+1) inSection:indexPath.section];
-                    if (_ifOpen) {
-                        _ifOpen = NO;
-                        [_m_TableView beginUpdates];
-                        [_m_TableView deleteRowsAtIndexPaths:@[path]  withRowAnimation:UITableViewRowAnimationMiddle];
-                        [_m_TableView endUpdates];
-                    }else{
-                        _ifOpen = YES;
-                        [_m_TableView beginUpdates];
-                        [_m_TableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationMiddle];
-                        [_m_TableView endUpdates];
-                    }
-                }
-            }];
+//          [_tagView showSelf];
+            NSIndexPath * path = [NSIndexPath indexPathForItem:(indexPath.row+1) inSection:indexPath.section];
+            if (_ifOpen) {
+                _ifOpen = NO;
+                _ifCreate = YES;
+                [_m_TableView beginUpdates];
+                [_m_TableView deleteRowsAtIndexPaths:@[path]  withRowAnimation:UITableViewRowAnimationMiddle];
+                [_m_TableView endUpdates];
+            }else{
+                _ifOpen = YES;
+                [_m_TableView beginUpdates];
+                [_m_TableView insertRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationMiddle];
+                [_m_TableView endUpdates];
+            }
+
         }
     }else if (indexPath.section == 2){
         if (indexPath.row == 0) {

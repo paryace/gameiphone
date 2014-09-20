@@ -29,10 +29,25 @@
     }else{
         _tagList.frame = CGRectMake(10, 10, 300,0);
     }
+    [self addTagAction];
     [_tagList setTags:typeArray average:YES rowCount:3];
+}
+-(void)addTagAction{
+    for (NSMutableDictionary * ac in _tagArray) {
+        [ac setObject:@"0" forKey:@"action"];
+    }
 }
 -(void)tagClick:(UIButton*)sender{
     NSMutableDictionary * tagDic = [_tagArray objectAtIndex:sender.tag];
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tagDic, @"action")] isEqualToString:@"1"]) {
+        [sender setBackgroundImage:KUIImage(@"tagBtn_normal") forState:UIControlStateNormal];
+        [sender setBackgroundImage:KUIImage(@"tagBtn_click") forState:UIControlStateHighlighted];
+        [tagDic setObject:@"0" forKey:@"action"];
+    }else{
+        [sender setBackgroundImage:KUIImage(@"tagBtn_click") forState:UIControlStateNormal];
+        [sender setBackgroundImage:KUIImage(@"tagBtn_normal") forState:UIControlStateHighlighted];
+        [tagDic setObject:@"1" forKey:@"action"];
+    }
     if (self.tagDelegate) {
         [self.tagDelegate tagType:tagDic];
     }

@@ -17,6 +17,7 @@
 
 @interface AddTeamMsgPushController : BaseViewController<UITableViewDataSource, UITableViewDelegate,UIActionSheetDelegate,CharacterDelegate,SwitchDelegate,TypeDelegate,TagDelegate>
 @property (assign, nonatomic)  BOOL ifOpen;
+@property (assign, nonatomic)  BOOL ifCreate;
 @property(nonatomic,strong) UITableView*  m_TableView;
 @property(nonatomic,strong) CharacterView * characterView;
 @property(nonatomic,strong) TypeView * typeView;
