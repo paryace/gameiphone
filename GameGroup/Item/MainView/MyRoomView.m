@@ -415,6 +415,7 @@
             if (self.myDelegate) {
                 [self.myDelegate dissTeam:self dic:dic];
             }
+//            [NSNotificationCenter defaultCenter]
         }
     }else{
         if (buttonIndex==1) {//退出队伍

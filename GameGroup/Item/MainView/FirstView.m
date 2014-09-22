@@ -18,7 +18,7 @@
 #import "KKChatController.h"
 @implementation FirstView
 {
-    UITableView *m_myTabelView;
+//    UITableView *m_myTabelView;
     UITextField *roleTextf;
     MySearchBar * mSearchBar;
     UIView *tagView;
@@ -60,12 +60,12 @@
         self.dropDownView.mSuperView = self;
         [self addSubview:self.dropDownView];
         
-        m_myTabelView = [[UITableView alloc]initWithFrame:CGRectMake(0, 40, frame.size.width, frame.size.height-40) style:UITableViewStylePlain];
-        m_myTabelView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
-        m_myTabelView.delegate = self;
-        m_myTabelView.dataSource  = self;
-        [GameCommon setExtraCellLineHidden:m_myTabelView];
-        [self addSubview:m_myTabelView];
+        self.m_myTabelView = [[UITableView alloc]initWithFrame:CGRectMake(0, 40, frame.size.width, frame.size.height-40) style:UITableViewStylePlain];
+        self.m_myTabelView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+        self.m_myTabelView.delegate = self;
+        self.m_myTabelView.dataSource  = self;
+        [GameCommon setExtraCellLineHidden:self.m_myTabelView];
+        [self addSubview:self.m_myTabelView];
         
         _customLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(0, 0, 200, 40) font:[UIFont systemFontOfSize:14] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentCenter];
         _customLabel.hidden = YES;
@@ -99,7 +99,7 @@
 //        [screenBtn.layer setMasksToBounds:YES];
 //        [screenBtn.layer setCornerRadius:3];
 //        [tableheadView addSubview:screenBtn];
-        m_myTabelView.tableHeaderView = tableheadView;
+        self.m_myTabelView.tableHeaderView = tableheadView;
         //标签布局
         tagView = [[UIView alloc] initWithFrame:CGRectMake(0, 40+44, 320, kScreenHeigth-40)];
         tagView.hidden = YES;
@@ -256,9 +256,12 @@
     selectDescription = @"";
     [self setTitleInfo];
     [m_dataArray removeAllObjects];
-    [m_myTabelView reloadData];
+    [self.m_myTabelView reloadData];
 }
-
+- (void)resetData2{
+//    [m_dataArray removeAllObjects];
+    [self.m_myTabelView reloadData];
+}
 
 -(void)removeCharacterDetail:(NSString*)characterId{
     [self removeCharacterFromMenuList:characterId];
@@ -562,7 +565,7 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [m_myTabelView deselectRowAtIndexPath:indexPath animated:YES];
+    [self.m_myTabelView deselectRowAtIndexPath:indexPath animated:YES];
     
     NSDictionary *dic = [m_dataArray objectAtIndex:indexPath.row];
     
@@ -684,7 +687,7 @@
 {
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.3];
-    m_myTabelView.frame = CGRectMake(0, offHight, 320, self.frame.size.height-offWidth2);
+    self.m_myTabelView.frame = CGRectMake(0, offHight, 320, self.frame.size.height-offWidth2);
     
     tagView.frame = CGRectMake(0, offHight+44, 320, kScreenHeigth-offHight);
     mSearchBar.frame = CGRectMake(0, 0, 320-offWidth, 44);
@@ -727,7 +730,7 @@
                 [m_dataArray removeAllObjects];
             }
             [m_dataArray addObjectsFromArray:responseObject];
-            [m_myTabelView reloadData];
+            [self.m_myTabelView reloadData];
             
             if (m_dataArray.count>0) {
                 _customLabel.hidden = YES;
@@ -741,7 +744,7 @@
         [m_header endRefreshing];
         [hud hide:YES];
         [m_dataArray removeAllObjects];
-        [m_myTabelView reloadData];
+        [self.m_myTabelView reloadData];
         [self showErrorAlertView:error];
     }];
 }
@@ -766,7 +769,7 @@
     headerRect.size = CGSizeMake(30, 30);
     footer.arrowImage.frame = headerRect;
     footer.activityView.center = footer.arrowImage.center;
-    footer.scrollView = m_myTabelView;
+    footer.scrollView = self.m_myTabelView;
     footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         if (!self.selectCharacter) {
             UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择角色" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
@@ -795,7 +798,7 @@
     headerRect.size = CGSizeMake(30, 30);
     header.arrowImage.frame = headerRect;
     header.activityView.center = header.arrowImage.center;
-    header.scrollView = m_myTabelView;
+    header.scrollView = self.m_myTabelView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         if (!self.selectCharacter) {
             UIAlertView *alr = [[UIAlertView alloc]initWithTitle:@"提示" message:@"请选择角色" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
@@ -822,7 +825,7 @@
             [dic setObject:@"1" forKey:@"myRank"];
         }
     }
-    [m_myTabelView reloadData];
+    [self.m_myTabelView reloadData];
 }
 
 @end

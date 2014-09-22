@@ -71,7 +71,7 @@
     layout.minimumLineSpacing =10;
     layout.scrollDirection = UICollectionViewScrollDirectionVertical;
     layout.itemSize = CGSizeMake(88, 30);
-    customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10.0f, startX+110, 300, kScreenHeigth - 110-startX) collectionViewLayout:layout];
+    customPhotoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(10.0f, startX+110, 300, kScreenHeigth - 110-startX) collectionViewLayout:layout];		
     customPhotoCollectionView.delegate = self;
     customPhotoCollectionView.scrollEnabled = YES;
     customPhotoCollectionView.showsHorizontalScrollIndicator = NO;
@@ -104,6 +104,7 @@
     //    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:firstTextView.text];
     //    m_ziNumLabel.text =[NSString stringWithFormat:@"%d%@%d",ziNum,@"/",m_maxZiShu];
     m_ziNumLabel.textColor = [UIColor blackColor];
+
     m_ziNumLabel.text = [NSString stringWithFormat:@"%d/%d",firstTextView.text.length,m_maxZiShu];
     m_ziNumLabel.textAlignment = NSTextAlignmentLeft;
     [self.view addSubview:m_ziNumLabel];

@@ -243,6 +243,7 @@
 
 - (void)getSameRealmDataByNet
 {
+    [m_header endRefreshing];
     isGetNetSuccess = NO;
     [m_loginActivity startAnimating];
     [m_loadImageView startAnimating];

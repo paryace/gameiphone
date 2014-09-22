@@ -449,9 +449,11 @@
         m_ziNumLabel.textColor = [UIColor blackColor];
     }
     m_ziNumLabel.text =[NSString stringWithFormat:@"%d%@%d",ziNum,@"/",m_maxZiShu];
+    m_ziNumLabel.backgroundColor = [UIColor redColor];
     CGSize nameSize = [m_ziNumLabel.text sizeWithFont:[UIFont boldSystemFontOfSize:14] constrainedToSize:CGSizeMake(100, 20) lineBreakMode:NSLineBreakByWordWrapping];
     m_ziNumLabel.frame=CGRectMake(320-nameSize.width-10-10, 215, nameSize.width, 20);
     m_ziNumLabel.backgroundColor=[UIColor clearColor];
+//    m_ziNumLabel.backgroundColor = [UIColor redColor];
 }
 
 

@@ -50,7 +50,7 @@
         img.image = KUIImage(@"msg_line");
         [self.attView addSubview:img];
         
-        headImg = [[UIImageView alloc]initWithFrame:CGRectMake(10, 7, 11, 11)];
+        headImg = [[UIImageView alloc]initWithFrame:CGRectMake(10, 8, 11, 9)];
         [self.attView addSubview:headImg];
         
         titleLabel = [GameCommon buildLabelinitWithFrame:CGRectMake(30, 5, 150, 15) font:[UIFont systemFontOfSize:10] textColor:[UIColor grayColor] backgroundColor:[UIColor clearColor] textAlignment:NSTextAlignmentLeft];

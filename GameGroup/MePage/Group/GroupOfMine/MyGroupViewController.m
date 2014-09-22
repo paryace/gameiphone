@@ -16,7 +16,6 @@
 #import "BillboardViewController.h"
 #import "NewSearchGroupController.h"
 #import "MyGroupsTableViewCell.h"
-
 @interface MyGroupViewController ()
 {
     UICollectionViewFlowLayout *m_layout;
@@ -47,7 +46,11 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     }
     [groupCollectionView reloadData];
 }
-
+- (void)dealloc
+{
+    //删除通知
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"refelsh_myGroupTableView" object:nil];
+}
 //初始化公告未读消息数量
 -(void)initMsgCount
 {
@@ -67,7 +70,9 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshNet:) name:@"RefreshMyGroupList" object:nil];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(receivedBillboardMsg:) name:Billboard_msg object:nil];
-
+    // 我的组织
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(refreshTableView:) name:@"refelsh_myGroupTableView" object:nil];
+    
     myGroupArray = [NSMutableArray array];
     
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
@@ -133,7 +138,11 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     [self loadCacheGroupList];
     [self getGroupListFromNet];
 }
+- (void)refreshTableView:(id)sender
+{
+    [self getGroupListFromNet];
 
+}
 #pragma mark 收到公告消息
 -(void)receivedBillboardMsg:(NSNotification*)sender
 {
@@ -267,6 +276,7 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+   
     [m_myTableView deselectRowAtIndexPath:indexPath animated:YES];
     NSDictionary *dic = [myGroupArray objectAtIndex:indexPath.row];
     GroupInformationViewController *gr = [[GroupInformationViewController alloc]init];

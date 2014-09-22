@@ -20,6 +20,7 @@
 {
     DWTagList *tagList;
 }
+@property(nonatomic,strong)UITableView *m_myTabelView;;
 @property(nonatomic,strong)DropDownListView *dropDownView;
 @property(nonatomic,strong)UITableView *myTableView;
 @property(nonatomic,strong)UIButton *searchRoomBtn;
@@ -48,7 +49,7 @@
 -(BOOL)ifShowSelectCharacterMenu;
 -(void)setCharacterData:(NSMutableArray*)dataList;
 -(void)removeCharacterDetail:(NSString*)characterId;
-
+-(void)resetData2;
 @end
 
 @protocol firstViewDelegate <NSObject>

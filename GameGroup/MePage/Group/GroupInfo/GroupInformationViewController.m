@@ -157,6 +157,7 @@
             gr.realmStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(m_mainDict, @"gamerealm")];
             gr.CharacterInfo = KISDictionaryHaveKey(m_mainDict, @"bindCharacterInfo");
             gr.shiptypeCount = self.shiptypeCount;
+            
             [self.navigationController pushViewController:gr animated:YES];
         }
         

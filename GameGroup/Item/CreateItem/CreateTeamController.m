@@ -236,14 +236,20 @@
     
     NSString *str = m_miaoshuTV.text;
     NSInteger ziNumOld = [[GameCommon shareGameCommon] unicodeLengthOfString:str];
-    NSInteger ziNumNew = [[GameCommon shareGameCommon] unicodeLengthOfString:[NSString stringWithFormat:@"%@%@",@"  ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_tagArray objectAtIndex:sender.tag], @"value")]]];
-    if (ziNumOld+ziNumNew>m_maxZiShu) {
+    NSInteger zzNumOld = str.length;
+    NSInteger ziNumNew = [[GameCommon shareGameCommon] unicodeLengthOfString:[NSString stringWithFormat:@"%@%@",@" ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_tagArray objectAtIndex:sender.tag], @"value")]]];
+    NSInteger zzNumNew = [NSString stringWithFormat:@"%@%@",@" ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_tagArray objectAtIndex:sender.tag], @"value")]].length;
+//    if (ziNumOld+ziNumNew>m_maxZiShu) {
+//        return;
+//    }
+    if (zzNumOld+zzNumNew>m_maxZiShu) {
         return;
     }
+
     if (str.length<1) {
         m_miaoshuTV.text =[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_tagArray objectAtIndex:sender.tag], @"value")];
     }else{
-        m_miaoshuTV.text =[NSString stringWithFormat:@"%@%@%@",str,@"  ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_tagArray objectAtIndex:sender.tag], @"value")]];
+        m_miaoshuTV.text =[NSString stringWithFormat:@"%@%@%@",str,@" ",[GameCommon getNewStringWithId:KISDictionaryHaveKey([m_tagArray objectAtIndex:sender.tag], @"value")]];
     }
     placeholderL.text = @"";
     [self refreshZiLabelText];
@@ -262,7 +268,8 @@
         placeholderL.text = @"请输入或点击下列组队描述";
     }
     NSString *new = [textView.text stringByReplacingCharactersInRange:range withString:text];
-    NSInteger res = m_maxZiShu-[[GameCommon shareGameCommon] unicodeLengthOfString:new];
+//    NSInteger res = m_maxZiShu-[[GameCommon shareGameCommon] unicodeLengthOfString:new];
+    NSInteger res = m_maxZiShu - new.length;
     if(res >= 0){
         return YES;
     }
@@ -273,7 +280,8 @@
 
 - (void)refreshZiLabelText
 {
-    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
+//    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
+    NSInteger ziNum = m_maxZiShu - m_miaoshuTV.text.length;
     if (ziNum<=0) {
         m_ziNumLabel.textColor = [UIColor redColor];
     }else{
@@ -289,8 +297,8 @@
 #pragma mark --创建
 -(void)createItem:(id)sender
 {
-    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
-
+//    NSInteger ziNum = m_maxZiShu - [[GameCommon shareGameCommon] unicodeLengthOfString:m_miaoshuTV.text];
+    NSInteger ziNum = m_maxZiShu - m_miaoshuTV.text.length;
     if (ziNum<0) {
         [self showAlertViewWithTitle:@"提示" message:@"您的描述超出了字数限制,请重新编辑" buttonTitle:@"确定"];
         return;

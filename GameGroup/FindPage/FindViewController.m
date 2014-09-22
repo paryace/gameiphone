@@ -606,7 +606,7 @@
     gbMsgCountImageView = [[UIImageView alloc] initWithFrame:CGRectMake(45, 5, 18, 18)];
     [gbMsgCountImageView setImage:[UIImage imageNamed:@"redCB.png"]];
     gbMsgCountImageView.hidden = YES;
-    [groupBtn addSubview:gbMsgCountImageView];
+//    [groupBtn addSubview:gbMsgCountImageView];
     
     //未读公告消息
     gbMsgCountLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 18, 18)];

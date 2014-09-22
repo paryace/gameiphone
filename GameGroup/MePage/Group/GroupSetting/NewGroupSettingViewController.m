@@ -15,6 +15,7 @@
 #import "EGOImageView.h"
 #import "SoundSetCell.h"
 #import "NewInvitationViewController.h"
+#import "MyGroupViewController.h"
 typedef enum : NSUInteger {
     TypeNormal,
     TypeAdministrator
@@ -40,6 +41,9 @@ typedef enum : NSUInteger {
 {
     [super viewDidLoad];
     [self setTopViewWithTitle:@"群组设置" withBackButton:YES];
+    
+    
+    
     
      m_roleArray  = [DataStoreManager queryCharacters:[[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID]];
     
@@ -491,7 +495,12 @@ typedef enum : NSUInteger {
     }
     else if (alertView.tag == 789)
     {
-        [self.navigationController popToRootViewControllerAnimated:YES];
+//        [self.navigationController popToRootViewControllerAnimated:YES];
+ [[NSNotificationCenter defaultCenter]postNotificationName:@"refelsh_myGroupTableView" object:nil userInfo:nil];
+        
+        [self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:1] animated:YES];
+
+    
     }
     else if (alertView.tag ==1002)
     {
