@@ -22,7 +22,7 @@
         self.headImageV.layer.masksToBounds=YES;
         [self.bgView addSubview:self.headImageV];
         
-        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(45, 15, 90, 20)];
+        self.nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(50, 15, 90, 20)];
         [self.nameLabel setTextAlignment:NSTextAlignmentLeft];
         [self.nameLabel setFont:[UIFont boldSystemFontOfSize:14.0]];
         [self.nameLabel setBackgroundColor:[UIColor clearColor]];
@@ -61,7 +61,6 @@
 -(UIView*)getGameIconUIView:(NSArray*)gameIds X:(CGFloat)x Y:(CGFloat)y Width:(CGFloat)width Height:(CGFloat)height
 {
     UIView *gameIconView=[[UIView alloc]initWithFrame:CGRectMake(x, y, width, height)];
-//    gameIconView.backgroundColor = [UIColor grayColor];
     for (int i=0 ; i<gameIds.count;i++) {
         if (i<3) {
             NSString * gameid=[gameIds objectAtIndex:i];
