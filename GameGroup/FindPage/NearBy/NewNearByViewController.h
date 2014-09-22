@@ -11,6 +11,11 @@
 #import "CityViewController.h"
 #import "HPGrowingTextView.h"
 #import "EmojiView.h"
+#import "ShareToOther.h"
+#import "selectContactPage.h"
+#import "ShareDynamicView.h"
+#import "ShareDynamicMsgService.h"
+
 @interface NewNearByViewController : BaseViewController
 <UICollectionViewDataSource,
 UICollectionViewDelegate,
@@ -21,7 +26,9 @@ NewNearByCellDelegate,
 CityDelegate,
 UIActionSheetDelegate,
 HPGrowingTextViewDelegate,
-EmojiViewDelegate
+EmojiViewDelegate,
+getContact,
+ShareDynamicDelegate
 >
 @property(nonatomic,strong)HPGrowingTextView *textView;
 @property(nonatomic,copy)NSString *gameid;

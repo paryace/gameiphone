@@ -215,7 +215,7 @@
 
         case 2:
         {
-            loyOutalert = [[UIAlertView alloc]initWithTitle:nil message:@"您确认要退出登陆吗?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+            loyOutalert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"您确认要退出登陆吗?" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
             loyOutalert.tag = 112;
             [loyOutalert show];
         } break;

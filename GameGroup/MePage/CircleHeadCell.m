@@ -38,19 +38,19 @@
         self.nickNameLabel.font = [UIFont systemFontOfSize:12];
         [self.contentView addSubview:self.nickNameLabel];
         
+        self.clickBtn = [[UIButton alloc]initWithFrame:CGRectMake(180, 60, 200, 100)];
+        self.clickBtn.backgroundColor = [UIColor clearColor];
+        [self.clickBtn setBackgroundImage:KUIImage(@"") forState:UIControlStateNormal];
+        [self.clickBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateHighlighted];
+        [self.contentView addSubview:self.clickBtn];
+        UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressContent:)];
+        [self.clickBtn addGestureRecognizer:longPress];
+        
         self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
         self.titleLabel.font = [UIFont systemFontOfSize:13];
         self.titleLabel.numberOfLines=0;
         self.titleLabel.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.titleLabel];
-        
-        self.clickBtn = [[UIButton alloc]initWithFrame:CGRectMake(180, 60, 200, 100)];
-        self.clickBtn.backgroundColor = [UIColor clearColor];
-        [self.contentView addSubview:self.clickBtn];
-        
-        UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressContent:)];
-        [self.clickBtn addGestureRecognizer:longPress];
-        
         
         self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 60, 130, 30)];
         self.timeLabel.font = [UIFont systemFontOfSize:12];

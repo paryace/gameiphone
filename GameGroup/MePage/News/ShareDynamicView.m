@@ -25,7 +25,7 @@
         self.m_shareView.layer.cornerRadius = 3;
         self.m_shareView.layer.masksToBounds = YES;
         self.m_shareView.alpha = 1.0;
-        [self.m_shareViewBg addSubview:self.m_shareView];
+        [self addSubview:self.m_shareView];
         
         _titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 260,100)];
         _titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -68,30 +68,29 @@
     return self;
 }
 
--(void)setTextToView:(NSMutableDictionary*)msgDic type:(NSInteger)type{
+-(void)setTextToView:(NSString*)msgTitle MsgContext:(NSString*)msgContext ShareToUserNickName:(NSString*)shareToUserNickName ShareImage:(NSString*)shareImage type:(NSInteger)type{
     CGSize titleSize = CGSizeZero;
-    if ([GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"title")].length > 0) {
-        titleSize = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"title")] sizeWithFont:[UIFont boldSystemFontOfSize:15.0] constrainedToSize:CGSizeMake(260, 40)];
+    if ([GameCommon getNewStringWithId:msgTitle].length > 0) {
+        titleSize = [[GameCommon getNewStringWithId:msgTitle] sizeWithFont:[UIFont boldSystemFontOfSize:15.0] constrainedToSize:CGSizeMake(260, 40)];
     }
-    _titleLabel.text = KISDictionaryHaveKey(msgDic, @"title");
-    
-    if ([GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"thumb")].length > 0 && ![[GameCommon getNewStringWithId:KISDictionaryHaveKey(msgDic, @"thumb")] isEqualToString:@"null"]) {
+    _titleLabel.text = msgTitle;
+    _titleLabel.frame = CGRectMake(10, 10, 260, titleSize.height);
+    if ([GameCommon getNewStringWithId:shareImage].length > 0 && ![[GameCommon getNewStringWithId:shareImage] isEqualToString:@"null"]) {
         _thumb.frame = CGRectMake(10, (titleSize.height > 0 ? titleSize.height : 10) + 15, 50, 50);
-  
-        NSString * imageId=KISDictionaryHaveKey(msgDic, @"thumb");
-        _thumb.imageURL = [ImageService getImageUrl3:imageId Width:50];
-        CGSize contentSize = [KISDictionaryHaveKey(msgDic, @"msg") sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(200, 50)];
+        _thumb.imageURL = [ImageService getImageUrl3:shareImage Width:50];
         
-        _contentLabel.text = KISDictionaryHaveKey(msgDic, @"msg");
+        CGSize contentSize = [msgContext sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(200, 50)];
         _contentLabel.frame = CGRectMake(70, (titleSize.height > 0 ? titleSize.height : 10) + 15, 170, contentSize.height);
-    }else{
-        CGSize contentSize = [KISDictionaryHaveKey(msgDic, @"msg") sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(260, 50)];
-        _contentLabel.text = KISDictionaryHaveKey(msgDic, @"msg");
+        _contentLabel.text = msgContext;
+    } else{
+        CGSize contentSize = [msgContext sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(260, 50)];
         _contentLabel.frame = CGRectMake(10, (titleSize.height > 0 ? titleSize.height : 10) + 15, 260, contentSize.height);
+        _contentLabel.text = msgContext;
     }
+    
     if (type == 0) {
-        _sharePeopleLabel.text = [NSString stringWithFormat:@"分享给：%@", KISDictionaryHaveKey(msgDic, @"nickname")];
-         _sharePeopleLabel.frame = CGRectMake(15, 95, 250, 30);
+        _sharePeopleLabel.frame = CGRectMake(15, 95, 250, 30);
+        _sharePeopleLabel.text = [NSString stringWithFormat:@"分享给：%@",shareToUserNickName];
     }else{
         _sharePeopleLabel.frame = CGRectMake(15, 95, 250, 30);
         _sharePeopleLabel.text = @"分享给：好友及粉丝";
@@ -114,7 +113,13 @@
 - (void)okShareClick:(id)sender
 {
     if (true) {//好友
+        if (self.shareDelegate) {
+            [self.shareDelegate shareToFriend];
+        }
     }else{//粉丝
+        if (self.shareDelegate) {
+            [self.shareDelegate broadcastToFans];
+        }
     }
    [self hideSelf];
 }
