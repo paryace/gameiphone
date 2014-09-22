@@ -42,8 +42,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    
     //建立一个Scorllview, 用来放置每张图片的scorllview, 以支持左右滑动
     self.sc = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, 320, self.view.frame.size.height)];
     _sc.backgroundColor = [UIColor blackColor];
@@ -59,8 +57,6 @@
     UITapGestureRecognizer* tapOne = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapOne:)];
     tapOne.numberOfTapsRequired = 1;
     [_sc addGestureRecognizer:tapOne];
-    
-    
     for (int i = 0;i < self.imgIDArray.count;i++) {
         
         //为每张图片imageV建立单独的Scorllview

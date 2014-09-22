@@ -318,9 +318,7 @@
     [[ItemManager singleton] dissoTeam:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomId")] GameId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] reSuccess:^(id responseObject) {
         [hud hide: YES];
         [self showMessageWindowWithContent:@"解散成功" imageType:0];
-//        [firstView resetData2];
         [firstView initSearchConditions];
-//        [firstView.m_myTabelView reloadData];
     } reError:^(id error) {
         [hud hide:YES];
         [self showAlertDialog:error];
