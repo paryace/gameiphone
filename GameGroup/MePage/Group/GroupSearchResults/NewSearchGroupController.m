@@ -104,7 +104,7 @@
     NSArray *array = [NSArray arrayWithObjects:@{@"tagName":@"热门",@"tagId":@"hot"}, @{@"tagName": @"附近组织",@"tagId":@"nearby"},nil];
     [menuTableView addMenuTagList:array Reload:YES];
     [self getRealmList];
-    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1",@"gameid", nil];
+    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithObjectsAndKeys:[GameCommon getNewStringWithId:self.gameid],@"gameid", nil];
     [self getCardWithNetWithDic:dic];
 }
 -(void)viewTapped:(UITapGestureRecognizer*)sender
@@ -258,6 +258,9 @@
                 }
                 [m_groupArray addObjectsFromArray:groupList];
                 currentPageCount +=20;
+                if (currentPageCount == 0) {
+                     [m_GroupTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+                }
                 [m_GroupTableView reloadData];
             }else{
                 if (currentPageCount ==0) {

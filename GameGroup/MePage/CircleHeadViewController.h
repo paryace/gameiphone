@@ -11,6 +11,8 @@
 #import "HPGrowingTextView.h"
 #import "SendNewsViewController.h"
 #import "EmojiView.h"
+#import "ShareToOther.h"
+#import "selectContactPage.h"
 
 
 @interface CircleHeadViewController : BaseViewController
@@ -31,7 +33,8 @@ UIAlertViewDelegate,
 UIScrollViewDelegate,
 TableViewDatasourceDidChange
 ,EmojiViewDelegate,
-QiniuUploadDelegate
+QiniuUploadDelegate,
+getContact
 >
 @property(nonatomic,copy)NSString *imageStr;    //Cover图片
 @property(nonatomic,copy)NSString *nickNmaeStr; //昵称

@@ -19,9 +19,7 @@
 @interface OnceDynamicViewController ()
 {
     UIButton *m_shareButton;
-    
-//    UIView* inPutView;
-//    UIButton* inputButton;
+
     UILabel* commentLabel;
     NSInteger  allPL;//总评论数
     
@@ -48,14 +46,15 @@
     UIImageView *imageView1;
     NSString *m_msg;
     
-   NSString * m_userid;
+    ShareDynamicView * shareDynamicView;
+    
+    NSString * m_userid;
     AppDelegate *app;
     
     NSInteger m_zannum;
 }
 @property(nonatomic, strong)NSDictionary* dataDic;
 @property(nonatomic, strong)NSArray*      headImgArray;
-//@property (strong,nonatomic) HPGrowingTextView *textView;
 @property (nonatomic, strong)NSDictionary* shareUserDic;
 @end
 
@@ -68,22 +67,6 @@
         
     }
     return self;
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:Nil];
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:Nil];
-
-    [super viewWillDisappear:animated];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 }
 
 - (void)viewDidLoad
@@ -101,96 +84,15 @@
     [self.view addSubview:m_shareButton];
     [m_shareButton addTarget:self action:@selector(shareButtonClick:) forControlEvents:UIControlEventTouchUpInside];
      m_shareButton.hidden = YES;
+    
 
+    
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:hud];
     app = (AppDelegate*)[[UIApplication sharedApplication]delegate];
     [self getDataByNet];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:)name:kMessageAck object:nil];
 }
-
-
-//- (void)setUpViewBeforeLoading
-//{
-//    bg1 = [[UIImageView alloc] initWithFrame:CGRectMake(0, + startX, kScreenWidth, 60)];
-//    bg1.image = KUIImage(@"detail_top_bg");
-//    [self.view addSubview:bg1];
-//    
-//    headBtn1 = [[EGOImageButton alloc] initWithFrame:CGRectMake(10, 10 + startX, 40, 40)];
-//    headBtn1.placeholderImage = [UIImage imageNamed:@"moren_people.png"];
-//    headBtn1.imageURL = [NSURL URLWithString:self.imgStr];
-//    headBtn1.layer.cornerRadius = 5;
-//    headBtn1.layer.masksToBounds=YES;
-//    [self.view addSubview:headBtn1];
-//    
-//    nickLabel1 = [CommonControlOrView setLabelWithFrame:CGRectMake(60, 8+ startX, 180, 20) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:15.0] text:self.nickNameStr textAlignment:NSTextAlignmentLeft];
-//    [self.view addSubview:nickLabel1];
-//    
-//    NSDictionary* titleDic = KISDictionaryHaveKey(self.dataDic, @"titleObj");
-//    if ([titleDic isKindOfClass:[NSDictionary class]]) {
-//        titleLabel1 = [CommonControlOrView setLabelWithFrame:CGRectMake(60, 33+ startX, 180, 20) textColor:[UIColor whiteColor] font:[UIFont boldSystemFontOfSize:14.0] text:@"22222" textAlignment:NSTextAlignmentLeft];
-//        [self.view addSubview:titleLabel1];
-//    }
-//    else
-//    {
-//        titleLabel_no1 = [CommonControlOrView setLabelWithFrame:CGRectMake(60, 33+ startX, 150, 20) textColor:[UIColor blackColor] font:[UIFont boldSystemFontOfSize:13.0] text:@"暂无头衔" textAlignment:NSTextAlignmentLeft];
-//        [self.view addSubview:titleLabel_no1];
-//    }
-//    
-//    zanButton1 = [[UIButton alloc] initWithFrame:CGRectMake(230, 15+ startX, 76, 30)];
-//    [zanButton1 setBackgroundImage:KUIImage(@"zan_normal") forState:UIControlStateNormal];
-//    [zanButton1 setBackgroundImage:KUIImage(@"zan_click") forState:UIControlStateSelected];
-//    [zanButton1 setTitle:self.zanStr forState:UIControlStateNormal];
-//    if ([[GameCommon getNewStringWithId:self.zanStr] isEqualToString:@"1"]) {
-//        [zanButton1 setTitleColor:kColorWithRGB(204, 204, 204, 1.0) forState:UIControlStateNormal];
-//        zanButton1.selected = YES;
-//        [zanButton1 setBackgroundImage:KUIImage(@"zan_hig_1") forState:UIControlStateHighlighted];
-//    }
-//    else
-//    {
-//        [zanButton1 setTitleColor:kColorWithRGB(153, 153, 153, 1.0) forState:UIControlStateNormal];
-//        [zanButton1 setBackgroundImage:KUIImage(@"zan_hig_2") forState:UIControlStateHighlighted];
-//        zanButton1.selected = NO;
-//    }
-//    zanButton1.titleLabel.font = [UIFont boldSystemFontOfSize:12.0];
-//    zanButton1.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
-//    [self.view addSubview:zanButton1];
-//    
-//   imageView1 = [[UIImageView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height-40, 320, 40)];
-//    imageView1.image = KUIImage(@"inputbg.png");
-//    imageView1.backgroundColor = [UIColor clearColor];
-//    [self.view addSubview:imageView1];
-//    
-//    reportButton1 = [[UIButton alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height-40, 159, 40)];
-//    [reportButton1 setImage:KUIImage(@"news_report") forState:UIControlStateNormal];
-//    reportButton1.imageEdgeInsets = UIEdgeInsetsMake(15.0/2, 34, 15.2/2, 100);
-//    reportButton1.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 34);
-//    [reportButton1 setTitle:@"举报投诉" forState:UIControlStateNormal];
-//    reportButton1.titleLabel.font = [UIFont boldSystemFontOfSize:12.0];
-//    [reportButton1 setTitleColor:kColorWithRGB(102, 102, 102, 1.0) forState:UIControlStateNormal];
-//    [self.view addSubview:reportButton1];
-//    
-//    line1= [[UILabel alloc] initWithFrame:CGRectMake(160, self.view.frame.size.height-30, 1, 20)];
-//    line1.backgroundColor = kColorWithRGB(200, 200, 200, 1.0);
-//    [self.view addSubview:line1];
-//    
-//    inputButton1 = [[UIButton alloc] initWithFrame:CGRectMake(161, self.view.frame.size.height-40, 159, 40)];
-//    [inputButton1 setImage:KUIImage(@"news_comment") forState:UIControlStateNormal];
-//    inputButton1.imageEdgeInsets = UIEdgeInsetsMake(15.0/2, 34, 15.2/2, 100);
-//    [self.view addSubview:inputButton1];
-//    
-//    commentLabel12 = [[UILabel alloc] initWithFrame:CGRectMake(225, self.view.frame.size.height-40, 85, 40)];
-//    commentLabel12.textAlignment = NSTextAlignmentLeft;
-//    commentLabel12.textColor = kColorWithRGB(102, 102, 102, 1.0);
-//    commentLabel12.font = [UIFont boldSystemFontOfSize:12.0];
-//    commentLabel12.text = [NSString stringWithFormat:@"评论 %d", allPL];
-//    commentLabel12.backgroundColor = [UIColor clearColor];
-//    [self.view addSubview:commentLabel12];
-//}
-
-
-
 
 - (void)getDataByNet
 {
@@ -299,18 +201,11 @@
 
 - (void)heardImgClick:(id)sender
 {
-//    if ([KISDictionaryHaveKey(self.dataDic, @"userid") isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
-//        MyProfileViewController * myP = [[MyProfileViewController alloc] init];
-//        [self.navigationController pushViewController:myP animated:YES];
-//    }
-//    else
-//    {
-        TestViewController* detailV = [[TestViewController alloc] init];
-        detailV.userId = KISDictionaryHaveKey(self.dataDic, @"userid");
-        detailV.nickName = KISDictionaryHaveKey(self.dataDic, @"nickname");
-        detailV.isChatPage = NO;
-        [self.navigationController pushViewController:detailV animated:YES];
-//    }
+    TestViewController* detailV = [[TestViewController alloc] init];
+    detailV.userId = KISDictionaryHaveKey(self.dataDic, @"userid");
+    detailV.nickName = KISDictionaryHaveKey(self.dataDic, @"nickname");
+    detailV.isChatPage = NO;
+    [self.navigationController pushViewController:detailV animated:YES];
 }
 
 #pragma mark button
@@ -322,51 +217,33 @@
         return;
     }
     UIButton* zanBtn = (UIButton*)sender;
-    
     zanBtn.userInteractionEnabled = NO;
-    
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    
     hud.labelText = nil;
     [hud show:YES];
-//    [paramDict setObject:@"4" forKey:@"type"];
     [paramDict setObject:self.messageid forKey:@"messageId"];
- //   [paramDict setObject:@"mydynamicmsg" forKey:@"msgtype"];
-    
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:paramDict forKey:@"params"];
     [postDict setObject:@"185" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         zanBtn.userInteractionEnabled = YES;
-
         zanBtn.selected = !zanBtn.selected;
-
-        if(zanBtn.selected)
-        {
+        if(zanBtn.selected){
             [hud hide:YES];
             m_zannum++;
             [zanBtn setTitle:[NSString stringWithFormat:@"%d",m_zannum] forState:UIControlStateNormal];
 
             [zanBtn setBackgroundImage:KUIImage(@"zan_hig_1") forState:UIControlStateHighlighted];
             [self showMessageWindowWithContent:@"已赞" imageType:5];
-        }
-        else
-        {
+        }else{
             [hud hide:YES];
             m_zannum--;
             [zanBtn setBackgroundImage:KUIImage(@"zan_hig_2") forState:UIControlStateHighlighted];
             [zanBtn setTitle:[NSString stringWithFormat:@"%d",m_zannum] forState:UIControlStateNormal];
             [self showMessageWindowWithContent:@"取消赞" imageType:6];
         }
-    
-//        double allZan = [KISDictionaryHaveKey(responseObject, @"zannum") doubleValue];
-//        [zanBtn setTitle:[NSString stringWithFormat:@"%.f", allZan] forState:UIControlStateNormal];
-       // if (self.delegate&&[self.delegate respondsToSelector:@selector(dynamicListJustReload)])
-          //  [self.delegate dynamicListJustReload];//上个页面刷新
-        
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [hud hide:YES];
 
@@ -395,7 +272,7 @@
 #pragma mark html
 
 - (NSString*)htmlContentWithTitle:(NSString*)title time:(NSString*)time content:(NSString*)content
-{//;width:100%%;height:100%%<div style=\"background-color:#f7f7f7\">
+{
     content = [content stringByReplacingOccurrencesOfString:@"\n" withString:@"<br>"];
     NSString* str = [NSString stringWithFormat:@"<body bgcolor=\"#f7f7f7\"><font size=\"3\" color=\"#444444\"><center><b>%@</b></center></font><p align=\"right\"><font size=\"3\" color=\"#444444\">%@</font></p><p><font size=\"3\" color=\"#444444\" style=\"line-height:25px\">%@</font></p></body>", title, time, content];
     return str;
@@ -403,9 +280,6 @@
 
 - (NSString*)imageHtmlWithId:(NSString*)imageid
 {
-//    if ([GameCommon isPureInt:imageid]) {
-//        [NSString stringWithFormat:@"<a href=\"myimage:%@\"><img src=\"%@%@\" width=\"305\"></img></a>", imageid,[ImageService getImageUrl4:imageid],@"/305"];
-//    }
     return [NSString stringWithFormat:@"<a href=\"myimage:%@\"><img src=\"%@%@\" width=\"305\"></img></a>", imageid,[ImageService getImageUrl4:imageid],@"?imageView2/2/w/305"];
 }
 
@@ -413,20 +287,13 @@
 {
     if ([self.urlLink isEqualToString:@""]) {   //如果是动态
         NSString* loadStr = [self htmlContentWithTitle:KISDictionaryHaveKey(self.dataDic, @"title") time:[NSString stringWithFormat:@"%@", [self getDataWithTime]] content:KISDictionaryHaveKey(self.dataDic, @"msg")];
-        
-
-        
-        
         for(int i = 0; i < [self.headImgArray count]; i++)
         {
             loadStr = [loadStr stringByAppendingString:[self imageHtmlWithId:[self.headImgArray objectAtIndex:i]]];
         }
-        
         UIWebView* contentView = [[UIWebView alloc] initWithFrame:CGRectMake(0, startX + 60, kScreenWidth, kScreenHeigth - 40 - startX - 60-(KISHighVersion_7?0:20))];
         contentView.scalesPageToFit = NO;
         contentView.dataDetectorTypes = UIDataDetectorTypePhoneNumber | UIDataDetectorTypeLink;
-//        contentView.dataDetectorTypes = UIDataDetectorTypeAll;
-//        contentView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
         contentView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
         contentView.delegate = self;
         loadStr = [UILabel getStr:loadStr];
@@ -442,10 +309,9 @@
         [self.view addSubview:contentView];
 
     }
-    else    //如果是网页
+    else//如果是网页
     {
         mWebView = [[UIWebView alloc] initWithFrame:CGRectMake(0, startX + 60, kScreenWidth, kScreenHeigth - 40 - startX - 60-(KISHighVersion_7?0:20))];
-//        mWebView.scalesPageToFit = YES;
         mWebView.delegate = self;
         NSURL *requestUrl = [NSURL URLWithString:self.urlLink];
         NSURLRequest *request = [NSURLRequest requestWithURL:requestUrl];
@@ -485,11 +351,6 @@
     UIButton* inputButton = [[UIButton alloc] initWithFrame:CGRectMake(161, self.view.frame.size.height-40, 159, 40)];
     [inputButton setImage:KUIImage(@"news_comment") forState:UIControlStateNormal];
     inputButton.imageEdgeInsets = UIEdgeInsetsMake(15.0/2, 34, 15.2/2, 100);
-//    inputButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 34);
-//    inputButton.titleLabel.textAlignment = NSTextAlignmentLeft;
-//    [inputButton setTitle:[NSString stringWithFormat:@"评论 %d", allPL] forState:UIControlStateNormal];
-//    inputButton.titleLabel.font = [UIFont boldSystemFontOfSize:12.0];
-//    [inputButton setTitleColor:kColorWithRGB(102, 102, 102, 1.0) forState:UIControlStateNormal];
     [inputButton addTarget:self action:@selector(okButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:inputButton];
     
@@ -516,7 +377,6 @@
 #pragma mark 手势
 - (void)tapClick:(id)sender
 {
-    //[self.textView resignFirstResponder];
     NSLog(@"点击啊 点击");
 }
 
@@ -607,10 +467,7 @@
                 break;
         }
     }else{
-        
-       
-         NSString * shareUrl = [self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]];
-        
+        NSString * shareUrl = [self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]];
         if (buttonIndex ==0) {
             if ([KISDictionaryHaveKey([DataStoreManager queryMyInfo], @"superstar") doubleValue]) {
                 UIActionSheet* sheet = [[UIActionSheet alloc] initWithTitle:@"分享类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"发送给好友",@"广播给粉丝及好友", nil];
@@ -633,15 +490,9 @@
             }else{
                 title = [NSString stringWithFormat:@"《%@》",title];
             }
-            
             if (title.length>100) {
-//                [self showAlertViewWithTitle:@"提示" message:@"消息文本内容长度必须小于140个汉字" buttonTitle:@"确定"];
                 title = [title substringToIndex:100];
-                NSLog(@"%d",title.length);
-//                return;
             }
-            
-            
             [[ShareToOther singleton]shareTosinass:[self getShareImageToSima] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
         }
         else if(buttonIndex ==2)
@@ -660,9 +511,7 @@
             }else{
                 [[ShareToOther singleton] onShareToQQ:title Description:_dataDic[@"msg"] Url:shareUrl previewImageURL:[ImageService getImageString:KISDictionaryHaveKey(self.dataDic, @"img")] IsZone:NO];
             }
-//          [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
-        }
-        else if(buttonIndex ==3)
+        }else if(buttonIndex ==3)
         {//分享到微信
             NSString * title = KISDictionaryHaveKey(self.dataDic, @"title");
             if ([GameCommon isEmtity:title]) {
@@ -714,7 +563,7 @@
 
 -(void)getContact:(NSDictionary *)userDict
 {
-    self.shareUserDic = userDict;//KISDictionaryHaveKey(userDict, @"userid");
+    self.shareUserDic = userDict;
     [self setShareView];
 }
 
@@ -1017,10 +866,8 @@
 - (void)webViewDidFinishLoad:(UIWebView *)webView{
     //修改WebView的样式
     [self changeWebViewStyle:webView];
-
     //为图片添加点击响应
     NSString *str = [mWebView stringByEvaluatingJavaScriptFromString:[self createJavaScript]];
-//    NSLog(@"------finish=%@",str);
 }
 
 - (void)changeWebViewStyle:(UIWebView *)webView{
@@ -1037,7 +884,7 @@
      "if(myimg.width > maxwidth){"
      "oldwidth = myimg.width;"
      "oldheight = myimg.height;"
-     "myimg.style.width = '';"     //必须先设置为空， 才能改变。不然会出现形如  <style width = "1500px" width = "305">这种坑爹的情况
+     "myimg.style.width = '';"//必须先设置为空， 才能改变。不然会出现形如  <style width = "1500px" width = "305">这种坑爹的情况
      "myimg.style.height = '';"
      "myimg.width = maxwidth;"
      "myimg.height = oldheight * (maxwidth/oldwidth);"
@@ -1045,22 +892,14 @@
      "}"
      "}\";"
      "document.getElementsByTagName('head')[0].appendChild(script);"];
-    
     [webView stringByEvaluatingJavaScriptFromString:@"ResizeImages();"];
-    
-//    NSString *lJs = @"document.documentElement.innerHTML";
-//    NSString *lHtml1 = [webView stringByEvaluatingJavaScriptFromString:lJs];
-//    NSLog(@"%@", lHtml1);
-    
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)webView
 {
-//    [hud show:YES];
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error{
-//    [hud hide:YES];
     [webView stopLoading];
 }
 
