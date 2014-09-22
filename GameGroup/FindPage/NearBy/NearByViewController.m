@@ -29,6 +29,7 @@
     BOOL isGetNetSuccess;
     UIButton *menuButton;
     UIAlertView *alertView;
+    UIActivityIndicatorView *m_loginActivity;
 }
 @end
 
@@ -95,12 +96,19 @@
         [imageArray addObject:[UIImage imageNamed:str]];
     }
     
-    m_loadImageView.animationImages = imageArray;
-    m_loadImageView.animationDuration = 1;
-    [m_loadImageView startAnimating];
-    [self.view addSubview:m_loadImageView];
+//    m_loadImageView.animationImages = imageArray;
+//    m_loadImageView.animationDuration = 1;
+//    [m_loadImageView startAnimating];
+//    [self.view addSubview:m_loadImageView];
     
-    
+    m_loginActivity = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    [self.view addSubview:m_loginActivity];
+//    [self changeActivityPositionWithTitle:titleLabel.text];
+    m_loginActivity.frame = CGRectMake(110, KISHighVersion_7?27:7, 20, 20);
+    m_loginActivity.center = CGPointMake(110, KISHighVersion_7?42:22);
+    m_loginActivity.color = [UIColor whiteColor];
+    m_loginActivity.activityIndicatorViewStyle =UIActivityIndicatorViewStyleWhite;
+    [m_loginActivity startAnimating];
     //
     
     //if ([CLLocationManager locationServicesEnabled] && ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorized || [CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined)){} 是否开启了本应用的定位服务
@@ -129,6 +137,8 @@
 
 - (void)getNearByDataByNet
 {
+    [m_loginActivity startAnimating];
+    [m_header endRefreshing];
     isGetNetSuccess =NO;
     [[NSUserDefaults standardUserDefaults]setBool:YES forKey:@"isGetNearByDataByNet"];
     NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
@@ -151,8 +161,9 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
         isGetNetSuccess =YES;
+        
         menuButton.userInteractionEnabled =YES;
-
+        [m_loginActivity stopAnimating];
         [m_loadImageView stopAnimating];
         NSLog(@"附近的人 %@", responseObject);
         if ((m_currentPage ==0 && ![responseObject isKindOfClass:[NSDictionary class]]) || (m_currentPage != 0 && ![responseObject isKindOfClass:[NSArray class]])) {
@@ -189,6 +200,7 @@
         [m_footer endRefreshing];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         isGetNetSuccess =YES;
+        [m_loginActivity stopAnimating];
         [m_loadImageView stopAnimating];
         menuButton.userInteractionEnabled = YES;
 
@@ -253,6 +265,7 @@
     [[NSUserDefaults standardUserDefaults] setObject:[NSString stringWithFormat:@"%ld", (long)m_searchType] forKey:NewNearByKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [m_loadImageView startAnimating];
+    [m_loginActivity startAnimating];
     [self getNearByDataByNet];
 }
 

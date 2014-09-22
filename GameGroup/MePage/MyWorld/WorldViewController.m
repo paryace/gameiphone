@@ -404,15 +404,25 @@ typedef enum : NSUInteger {
     }
     
     
-    if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"unkown"]||[KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"3"]) {
+    if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"unkown"]) {
         if ([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"userid")isEqualToString:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]]) {
             cell.focusButton.hidden=YES;
+            cell.makeFriendBtn.hidden = YES;
         }else{
-            cell.focusButton.hidden=NO;
-        }
-    }else
+            cell.focusButton.hidden= NO;
+            cell.makeFriendBtn.hidden = YES;
+        }//1是好友  2是关注 3是粉丝 unknow是陌生人
+    }else if([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"1"])
     {
-        cell.focusButton.hidden=YES;
+        cell.makeFriendBtn.hidden = YES;
+        cell.focusButton.hidden = YES;
+    }else if([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"2"]){
+        cell.makeFriendBtn.hidden = YES;
+        cell.focusButton.hidden = YES;
+    }else if([KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"shiptype")isEqualToString:@"3"])
+    {
+        cell.makeFriendBtn.hidden = NO;
+        cell.focusButton.hidden = YES;
     }
     NSString * imageIds = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img");
     cell.headImgBtn.imageURL = [ImageService getImageStr:imageIds Width:80];

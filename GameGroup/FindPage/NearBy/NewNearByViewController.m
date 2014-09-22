@@ -382,6 +382,7 @@ typedef enum : NSUInteger {
 #pragma mark ---- 网络请求
 -(void)getLocationForNet
 {
+    [m_header endRefreshing];
     [m_loginActivity startAnimating];
     if (app.reach.currentReachabilityStatus ==NotReachable) {
         return;
@@ -402,6 +403,7 @@ typedef enum : NSUInteger {
 }
 -(void)getTopImageFromNet
 {
+    [m_header endRefreshing];
     [m_loginActivity startAnimating];
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
@@ -509,7 +511,7 @@ typedef enum : NSUInteger {
         titleLabel.text = titleStr;
 }
 -(void)getInfoWithNet
-{
+{    [m_header endRefreshing];
     [hud show:YES];
     [m_loginActivity startAnimating];
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];

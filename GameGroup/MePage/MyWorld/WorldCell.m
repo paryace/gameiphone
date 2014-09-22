@@ -33,6 +33,15 @@
         [self.focusButton addTarget:self action:@selector(guanzhuing:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:self.focusButton];
         
+        self.makeFriendBtn = [[UIButton alloc]initWithFrame:CGRectMake(10, 60, 40, 20)];
+//        [self.makeFriendBtn setTitle:@"加好友" forState:UIControlStateNormal];
+        [self.makeFriendBtn setBackgroundImage:KUIImage(@"makeFriendBtn") forState:UIControlStateNormal];
+        self.makeFriendBtn.titleLabel.font = [UIFont systemFontOfSize:10];
+        [self.makeFriendBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
+        [self.makeFriendBtn addTarget:self action:@selector(guanzhuing:) forControlEvents:UIControlEventTouchUpInside];
+        [self.contentView addSubview:self.makeFriendBtn];
+
+        
         self.nickNameLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 10, 120, 20)];
         self.nickNameLabel.textColor = UIColorFromRGBA(0x455ca8, 1);
         self.nickNameLabel.backgroundColor = [UIColor clearColor];
