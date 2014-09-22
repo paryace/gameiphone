@@ -605,6 +605,13 @@
     
     //第一次从 备注姓名的数组取出符合条件的数据添加到搜索列表
     for (NSDictionary *tempdic in m_allSearchArray) {
+         // 取之前先判断一下这个字典是否有 备注，有备注的提出去
+//        for (NSString*str in filteredArray) {
+//           if ([[tempdic objectForKey:@"alias"]isEqualToString:@""]) {
+//            [filteredArray removeObject:str];
+//        }
+//        }
+        
         for (NSString *aliaStr in aliasFilteredArray) {
             if ([[tempdic objectForKey:@"alias"]isEqualToString:aliaStr]&&![m_searchArray containsObject:tempdic]) {
                 
@@ -612,10 +619,13 @@
                 
             }
         }
-        
     // 第二次从 昵称的数组取出符合条件的数据添加到搜索列表
+   
         for (NSString  *predicateStr in filteredArray) {
             
+//                [filteredArray removeObjectsInArray:<#(NSArray *)#>]
+            
+
             if ([[tempdic objectForKey:@"nickname"]isEqualToString:predicateStr]&&![m_searchArray containsObject:tempdic]) {
                 
                 [m_searchArray addObject:tempdic];

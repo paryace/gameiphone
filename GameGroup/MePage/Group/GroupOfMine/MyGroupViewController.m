@@ -71,9 +71,9 @@ static NSString * const HeaderIdentifier = @"HeaderIdentifier";
     myGroupArray = [NSMutableArray array];
     
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-//    [shareButton setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
-//    [shareButton setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
-    [shareButton setTitle:@"创建" forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
+//    [shareButton setTitle:@"创建" forState:UIControlStateNormal];
     shareButton.titleLabel.font = [UIFont systemFontOfSize: 18.0];
     [shareButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [shareButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];

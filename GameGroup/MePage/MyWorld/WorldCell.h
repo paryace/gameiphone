@@ -47,6 +47,8 @@
 @property(nonatomic,strong)UIImageView *areaIcon;
 //标准label，参照的是举报按钮的frame
 @property(nonatomic,strong)UIButton *ETBtn;
+//加好友button
+@property(nonatomic,strong)UIButton *makeFriendBtn;
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr;
 + (CGSize)getTitleHeigthWithStr:(NSString*)contStr;
 
