@@ -16,6 +16,7 @@
 @property(nonatomic,strong)EGOImageButton *headImgBtn;//头像
 @property(nonatomic,strong)UILabel *nickNameLabel;//昵称
 @property(nonatomic,strong)UILabel *titleLabel;//内容
+@property(nonatomic,strong)UIButton *clickBtn; 
 @property(nonatomic,strong)UIButton *focusButton;//关注button
 @property(nonatomic,strong)UIButton *commentBtn;//评论butotn
 @property(nonatomic,strong)UIButton *zanButton;//赞button
@@ -49,7 +50,6 @@
 @property(nonatomic,assign)id<NewNearByCellDelegate>myCellDelegate;
 
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr;
-//@property(nonatomic,strong)
 @end
 @protocol NewNearByCellDelegate <NSObject>
 
@@ -94,5 +94,7 @@
 -(void)delCellWithCell:(NewNearByCell*)myCell;
 
 -(void)jubaoThisInfoWithCell:(NewNearByCell*)myCell;
+
+-(void)onLongClickContext:(NewNearByCell*)myCell;
 
 @end

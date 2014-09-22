@@ -15,9 +15,7 @@
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    if (self) {
-        // Initialization code
-        
+    if (self) {        
         self.backgroundColor =[ UIColor whiteColor];
         self.headImgBtn = [[EGOImageButton alloc]initWithPlaceholderImage:KUIImage(@"placeholder.png")];
         self.headImgBtn.frame = CGRectMake(10, 10, 40, 40);
@@ -37,11 +35,22 @@
         self.nickNameLabel.font = [UIFont boldSystemFontOfSize:13];
         [self.contentView addSubview:self.nickNameLabel];
         
+        
+        self.clickBtn = [[UIButton alloc]initWithFrame:CGRectMake(180, 60, 200, 100)];
+        self.clickBtn.backgroundColor = [UIColor clearColor];
+        [self.clickBtn setBackgroundImage:KUIImage(@"") forState:UIControlStateNormal];
+        [self.clickBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateHighlighted];
+        [self.contentView addSubview:self.clickBtn];
+        UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressContent:)];
+        [self.clickBtn addGestureRecognizer:longPress];
+        
         self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
         self.titleLabel.font = [UIFont systemFontOfSize:13];
         self.titleLabel.backgroundColor = [UIColor clearColor];
         self.titleLabel.numberOfLines=0;
         [self.contentView addSubview:self.titleLabel];
+        
+
         
         self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 60, 100, 30)];
         self.timeLabel.font = [UIFont systemFontOfSize:12];
@@ -127,7 +136,7 @@
         self.commentTabelView.scrollEnabled = NO;
         [self.contentView addSubview:self.commentTabelView];
         
-        //展开菜单“。。。”
+        //展开菜单
         self.openBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         self.openBtn.frame = CGRectMake(270, 60, 50, 30);
         [self.openBtn setBackgroundImage:KUIImage(@"add_click") forState:UIControlStateNormal];
@@ -169,7 +178,13 @@
     return self;
 }
 
-
+#pragma mark 长按
+-(void)longPressContent:(UITapGestureRecognizer*)sender{
+    NSLog(@"长按下");
+    if(self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(onLongClickContext:)]) {
+        [self.myCellDelegate  onLongClickContext:self];
+    }
+}
 
 #pragma mark ---collectionviewdelegate datasourse
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section

@@ -47,6 +47,8 @@
     [super viewDidLoad];    
     [self setTopViewWithTitle:@"推荐搜索" withBackButton:YES];
     self.view.backgroundColor = [UIColor whiteColor];
+    
+    currentPageCount ==0;
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
     [shareButton setBackgroundImage:KUIImage(@"createGroup_normal") forState:UIControlStateNormal];
     [shareButton setBackgroundImage:KUIImage(@"createGroup_click") forState:UIControlStateHighlighted];
@@ -133,6 +135,7 @@
     if ([self.tagsId isEqualToString:@"realm"]) {
         self.realmStr = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dataDic, @"tagName")];
     }
+    currentPageCount =0;
     [self reloadData:NO];
 }
 
@@ -257,11 +260,11 @@
                     [m_groupArray removeAllObjects];
                 }
                 [m_groupArray addObjectsFromArray:groupList];
-                currentPageCount +=20;
-                if (currentPageCount == 0) {
-                     [m_GroupTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
-                }
                 [m_GroupTableView reloadData];
+                if (currentPageCount == 0) {
+                    [m_GroupTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+                }
+                currentPageCount +=20;
             }else{
                 if (currentPageCount ==0) {
                     if (!isRefre) {
@@ -286,6 +289,7 @@
     header.arrowImage.frame = headerRect;
     header.scrollView = m_GroupTableView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
+        currentPageCount = 0;
         [self reloadData:YES];
     };
     m_header = header;
@@ -331,7 +335,6 @@
         [m_footer endRefreshing];
         return;
     }
-    currentPageCount = 0;
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
     [paramDict setObject:@"20" forKey:@"maxSize"];
@@ -346,7 +349,6 @@
         [m_footer endRefreshing];
         return;
     }
-    currentPageCount = 0;
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
     [paramDict setObject:@"20" forKey:@"maxSize"];
@@ -362,7 +364,6 @@
         [m_footer endRefreshing];
         return;
     }
-    currentPageCount = 0;
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
     [paramDict setObject:@"20" forKey:@"maxSize"];
@@ -377,7 +378,6 @@
         [m_footer endRefreshing];
         return;
     }
-    currentPageCount = 0;
     NSMutableDictionary *paramDict = [NSMutableDictionary dictionary];
     [paramDict setObject:@(currentPageCount) forKey:@"firstResult"];
     [paramDict setObject:@"20" forKey:@"maxSize"];

@@ -47,9 +47,10 @@
     m_myTableView.delegate = self;
     m_myTableView.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     [self.view addSubview:m_myTableView];
-    
-    
-    
+    hud = [[MBProgressHUD alloc] initWithView:self.view];
+    hud.labelText = @"请求中...";
+    [self.view addSubview:hud];
+    [self getFriendListFromNet:nil];
 }
 
 //举报邀请
@@ -108,7 +109,7 @@
         cell.headImageV.imageURL=[ImageService getImageStr:imageids Width:80];
         NSString *genderimage=[self genderImage:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"gender")]];
         cell.sexImg.image =KUIImage(genderimage);
-        NSString * nickName=[tempDict objectForKey:@"type"];
+        NSString * nickName=[GameCommon getNewStringWithId:[tempDict objectForKey:@"type"]];
         if (nickName) {
             cell.nameLabel.text = nickName;
         }
@@ -163,20 +164,25 @@
 #pragma mark 请求数据
 - (void)getFriendListFromNet:(NSString*)gender
 {
+    [hud show:YES];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:[GameCommon getNewStringWithId:gender] forKey:@"gender"];
-    [paramDict setObject:[GameCommon getNewStringWithId:self.gameid] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:@"2"] forKey:@"gameid"];
+    if (![GameCommon isEmtity:gender]) {
+        [paramDict setObject:[GameCommon getNewStringWithId:gender] forKey:@"gender"];
+    }
     [postDict setObject:paramDict forKey:@"params"];
     [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [postDict setObject:@"295" forKey:@"method"];
     [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
         NSLog(@"%@",responseObject);
         dataArray = responseObject;
         [m_myTableView reloadData];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-
+        [hud hide:YES];
+        NSLog(@"faile--->>%@",error);
     }];
 }
 

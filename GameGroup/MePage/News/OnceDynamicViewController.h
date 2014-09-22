@@ -12,6 +12,7 @@
 #import "selectContactPage.h"
 #import "PBEmojiLabel.h"
 #import "ShareDynamicView.h"
+#import "ShareDynamicMsgService.h"
 
 @interface OnceDynamicViewController : BaseViewController
 <HPGrowingTextViewDelegate,
@@ -20,7 +21,8 @@ UIWebViewDelegate,
 UIGestureRecognizerDelegate,
 getContact,
 UIActionSheetDelegate,
-UIAlertViewDelegate>
+UIAlertViewDelegate,
+ShareDynamicDelegate>
 
 @property (nonatomic, strong)NSString* messageid;
 @property (nonatomic, strong)NSString* urlLink;//如果不为空  内容用webView显示

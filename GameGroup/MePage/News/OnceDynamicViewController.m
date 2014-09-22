@@ -16,6 +16,7 @@
 #import "AppDelegate.h"
 #import "JSON.h"
 #import "ShareToOther.h"
+
 @interface OnceDynamicViewController ()
 {
     UIButton *m_shareButton;
@@ -46,7 +47,7 @@
     UIImageView *imageView1;
     NSString *m_msg;
     
-    ShareDynamicView * shareDynamicView;
+    ShareDynamicView * showShareView;
     
     NSString * m_userid;
     AppDelegate *app;
@@ -132,21 +133,13 @@
             [self.view bringSubviewToFront:hud];
         }
     } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
         [hud hide:YES];
+        [self showErrorMsgDialog:error];
     }];
 }
 
 - (void)setUpView
 {
-
-    
     UIImageView* bg = [[UIImageView alloc] initWithFrame:CGRectMake(0, + startX, kScreenWidth, 60)];
     bg.image = KUIImage(@"detail_top_bg");
     [self.view addSubview:bg];
@@ -455,19 +448,17 @@
                 shareType = 0;
                 selectContactPage *VC = [[selectContactPage alloc] init];
                 VC.contactDelegate = self;
-                VC.contentDic = self.dataDic;
                 [self.navigationController pushViewController:VC animated:YES];
             }  break;
             case 1:
             {
                 shareType = 1;
-                [self setShareView];
+                [self setShareView:1];
             }break;
             default:
                 break;
         }
     }else{
-        NSString * shareUrl = [self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]];
         if (buttonIndex ==0) {
             if ([KISDictionaryHaveKey([DataStoreManager queryMyInfo], @"superstar") doubleValue]) {
                 UIActionSheet* sheet = [[UIActionSheet alloc] initWithTitle:@"分享类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"发送给好友",@"广播给粉丝及好友", nil];
@@ -476,245 +467,82 @@
             }
             else
             {
-                shareType = 0;
-                selectContactPage *VC = [[selectContactPage alloc] init];
-                VC.contactDelegate = self;
-                [self.navigationController pushViewController:VC animated:YES];
+                [self intentToSelectFriendPage];
             }
+        }else {
+            [[ShareDynamicMsgService singleton] shareToOther:KISDictionaryHaveKey(self.dataDic, @"id") MsgTitle:KISDictionaryHaveKey(self.dataDic, @"title") Description:KISDictionaryHaveKey(self.dataDic, @"msg") Image:KISDictionaryHaveKey(self.dataDic, @"img") UserNickName:KISDictionaryHaveKey(self.dataDic,@"nickname") index:buttonIndex];
         }
-        else if (buttonIndex ==1)
-        {//分享到微博
-            NSString * title = KISDictionaryHaveKey(self.dataDic, @"title");
-            if ([GameCommon isEmtity:title]) {
-                title = KISDictionaryHaveKey(self.dataDic, @"msg");
-            }else{
-                title = [NSString stringWithFormat:@"《%@》",title];
-            }
-            if (title.length>100) {
-                title = [title substringToIndex:100];
-            }
-            [[ShareToOther singleton]shareTosinass:[self getShareImageToSima] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
-        }
-        else if(buttonIndex ==2)
-        {//分享到QQ
-            [[ShareToOther singleton]changeScene:WXSceneSession];
-            NSString * title = KISDictionaryHaveKey(self.dataDic, @"title");
-            if ([GameCommon isEmtity:title]) {
-               title = [NSString stringWithFormat:@"分享自%@的动态",_dataDic[@"nickname"]];
-            }
-            if (title.length>100) {
-                title = [title substringToIndex:100];
-            }
-            if ([GameCommon isEmtity:KISDictionaryHaveKey(self.dataDic, @"img")]) {
-                NSData * data = [self getNSDataFromURL:@"icon"];
-                [[ShareToOther singleton] onShareToQQ:title Description:_dataDic[@"msg"] Url:shareUrl previewImageData:data IsZone:NO];
-            }else{
-                [[ShareToOther singleton] onShareToQQ:title Description:_dataDic[@"msg"] Url:shareUrl previewImageURL:[ImageService getImageString:KISDictionaryHaveKey(self.dataDic, @"img")] IsZone:NO];
-            }
-        }else if(buttonIndex ==3)
-        {//分享到微信
-            NSString * title = KISDictionaryHaveKey(self.dataDic, @"title");
-            if ([GameCommon isEmtity:title]) {
-                title = _dataDic[@"msg"];
-            }
-            if (title.length>100) {
-                title = [title substringToIndex:100];
-            }
-            [[ShareToOther singleton] changeScene:WXSceneTimeline];
-            [[ShareToOther singleton] sendAppExtendContent_friend:[self getShareImage] Title:title Description:_dataDic[@"msg"] Url:[self getShareUrl:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"id")]]];
-        }
+
     }
 }
-
--(NSString*)getShareUrl:(NSString*)msgid
-{
-    return [NSString stringWithFormat:@"%@%@%@",BaseDynamicShareUrl,@"id=",msgid];
+//跳转选择好友页面
+-(void)intentToSelectFriendPage{
+    selectContactPage *VC = [[selectContactPage alloc] init];
+    VC.contactDelegate = self;
+    [self.navigationController pushViewController:VC animated:YES];
 }
-
-//请求网络图片
--(UIImage *) getImageFromURL:(NSString *)fileURL {
-    UIImage * result;
-    NSData * data = [NSData dataWithContentsOfURL:[NSURL URLWithString:fileURL]];
-    result = [UIImage imageWithData:data];
-    return result;
-}
-
-//请求网络图片
--(NSData *) getNSDataFromURL:(NSString *)imageName {
-    return UIImageJPEGRepresentation(KUIImage(imageName),0.8);
-}
-
--(UIImage*)getShareImageToSima
-{
-    NSString * imageUrl = [ImageService getImageString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"img")]];
-    if (![GameCommon isEmtity:imageUrl]) {
-        return [self getImageFromURL:imageUrl];
-    }
-    return nil;
-}
--(UIImage*)getShareImage
-{
-    NSString * imageUrl = [ImageService getImageString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"img")]];
-    if (![GameCommon isEmtity:imageUrl]) {
-        return [self getImageFromURL:imageUrl];
-    }
-    return KUIImage(@"icon");
-}
-
+#pragma mark --选择好友回来
 -(void)getContact:(NSDictionary *)userDict
 {
     self.shareUserDic = userDict;
-    [self setShareView];
+    [self setShareView:0];
 }
 
-- (void)setShareView
+- (void)setShareView:(NSInteger)type
 {
-    if (m_shareView == nil) {
-        m_shareViewBg = [[UIView alloc] initWithFrame:self.view.frame];
-        m_shareViewBg.backgroundColor = [UIColor blackColor];
-        m_shareViewBg.alpha = 0.5;
-        [self.view addSubview:m_shareViewBg];
-        
-        m_shareView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 280, 170)];
-        m_shareView.center = self.view.center;
-        m_shareView.backgroundColor = [UIColor whiteColor];
-        m_shareView.layer.cornerRadius = 3;
-        m_shareView.layer.masksToBounds = YES;
-        [self.view addSubview:m_shareView];
-        
-        CGSize titleSize = CGSizeZero;
-        if ([GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"title")].length > 0) {
-            titleSize = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"title")] sizeWithFont:[UIFont boldSystemFontOfSize:15.0] constrainedToSize:CGSizeMake(260, 40)];
-        }
-        
-        UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 260, titleSize.height)];
-        titleLabel.textAlignment = NSTextAlignmentCenter;
-        titleLabel.numberOfLines = 2;
-        titleLabel.text = KISDictionaryHaveKey(self.dataDic, @"title");
-        titleLabel.textColor = [UIColor blackColor];
-        titleLabel.font = [UIFont boldSystemFontOfSize:15.0];
-        [m_shareView addSubview:titleLabel];
-        
-        if ([GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"thumb")].length > 0 && ![[GameCommon getNewStringWithId:KISDictionaryHaveKey(self.dataDic, @"thumb")] isEqualToString:@"null"]) {
-            EGOImageView* thumb = [[EGOImageView alloc] initWithFrame:CGRectMake(10, (titleSize.height > 0 ? titleSize.height : 10) + 15, 50, 50)];
-            thumb.layer.cornerRadius = 5;
-            thumb.layer.masksToBounds = YES;
-            thumb.placeholderImage = KUIImage(@"have_picture");
-            
-            NSString * imageId=KISDictionaryHaveKey(self.dataDic, @"thumb");
-            thumb.imageURL = [ImageService getImageUrl3:imageId Width:50];
-            
-            [m_shareView addSubview:thumb];
-            
-            CGSize contentSize = [KISDictionaryHaveKey(self.dataDic, @"msg") sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(200, 50)];
-            UILabel* contentLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(70, (titleSize.height > 0 ? titleSize.height : 10) + 15, 170, contentSize.height) textColor:kColorWithRGB(102, 102, 102, 1.0) font:[UIFont boldSystemFontOfSize:13.0] text:KISDictionaryHaveKey(self.dataDic, @"msg") textAlignment:NSTextAlignmentLeft];
-            contentLabel.numberOfLines = 0;
-            [m_shareView addSubview:contentLabel];
-        }
-        else
-        {
-            CGSize contentSize = [KISDictionaryHaveKey(self.dataDic, @"msg") sizeWithFont:[UIFont boldSystemFontOfSize:13.0] constrainedToSize:CGSizeMake(260, 50)];
-
-            UILabel* contentLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(10, (titleSize.height > 0 ? titleSize.height : 10) + 15, 260, contentSize.height) textColor:kColorWithRGB(102, 102, 102, 1.0) font:[UIFont boldSystemFontOfSize:13.0] text:KISDictionaryHaveKey(self.dataDic, @"msg") textAlignment:NSTextAlignmentLeft];
-            contentLabel.numberOfLines = 0;
-            [m_shareView addSubview:contentLabel];
-        }
-        if (shareType == 0) {
-            sharePeopleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(15, 95, 250, 30) textColor:kColorWithRGB(51, 51, 51, 1.0) font:[UIFont systemFontOfSize:13.0] text:[NSString stringWithFormat:@"分享给：%@", KISDictionaryHaveKey(self.shareUserDic, @"nickname")] textAlignment:NSTextAlignmentLeft];
-        }
-        else
-        {
-            sharePeopleLabel = [CommonControlOrView setLabelWithFrame:CGRectMake(15, 95, 250, 30) textColor:kColorWithRGB(51, 51, 51, 1.0) font:[UIFont systemFontOfSize:13.0] text:@"分享给：好友及粉丝" textAlignment:NSTextAlignmentLeft];
-        }
-        [m_shareView addSubview:sharePeopleLabel];
-        
-        UIButton* cancelBtn = [[UIButton alloc] initWithFrame:CGRectMake(15, 125, 120, 35)];
-        [cancelBtn setBackgroundColor:kColorWithRGB(186, 186, 186, 1.0)];
-        [cancelBtn setTitle:@"取消" forState:UIControlStateNormal];
-        cancelBtn.titleLabel.font = [UIFont boldSystemFontOfSize:15.0];
-        [cancelBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [cancelBtn addTarget:self action:@selector(cancelShareClick:) forControlEvents:UIControlEventTouchUpInside];
-        [m_shareView addSubview:cancelBtn];
-        
-        UIButton* sendBtn = [[UIButton alloc] initWithFrame:CGRectMake(145, 125, 120, 35)];
-        [sendBtn setBackgroundColor:kColorWithRGB(35, 167, 211, 1.0)];
-        [sendBtn setTitle:@"发送" forState:UIControlStateNormal];
-        sendBtn.titleLabel.font = [UIFont boldSystemFontOfSize:15.0];
-        [sendBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [sendBtn addTarget:self action:@selector(okShareClick:) forControlEvents:UIControlEventTouchUpInside];
-        [m_shareView addSubview:sendBtn];
+    if (showShareView == nil) {
+        showShareView = [[ShareDynamicView alloc] initWithFrame:self.view.frame];
+        showShareView.shareDelegate = self;
+        [self.view addSubview:showShareView];
+    }else{
+        [showShareView showSelf];
     }
-    else
-    {
-        m_shareViewBg.hidden = NO;
-        m_shareView.hidden = NO;
-        if (shareType == 0) {
-            sharePeopleLabel.text = [NSString stringWithFormat:@"分享给：%@", KISDictionaryHaveKey(self.shareUserDic, @"nickname")];
-        }
-        else
-        {
-            sharePeopleLabel.text = @"分享给：好友及粉丝";
-        }
-    }
-    
+    [showShareView setTextToView:KISDictionaryHaveKey(self.dataDic, @"title") MsgContext:KISDictionaryHaveKey(self.dataDic, @"msg") ShareToUserNickName:KISDictionaryHaveKey(self.shareUserDic, @"nickname") ShareImage:KISDictionaryHaveKey(self.dataDic, @"thumb") type:type];
 }
-
-- (void)cancelShareClick:(id)sender
-{
-    m_shareViewBg.hidden = YES;
-    m_shareView.hidden = YES;
+#pragma mark --分享给好友
+-(void)shareToFriend{
+    [self sendDynamicToFriend];
 }
-- (void)okShareClick:(id)sender
-{
-    if (shareType == 0) {//好友
-        [self sendToFriend];
-    }else{//粉丝
-        [self broadcastToFans];
-    }
-    m_shareViewBg.hidden = YES;
-    m_shareView.hidden = YES;
+#pragma mark -- 广播给粉丝
+-(void)broadcastToFans{
+    [self broadcastDynamicToFans];
 }
 //分享给好友
--(void)sendToFriend
+-(void)sendDynamicToFriend
 {
-    NSString *title = [NSString stringWithFormat:@"分享了%@的动态",_dataDic[@"nickname"]];
-    NSXMLElement * payload = [NSXMLElement elementWithName:@"payload"];
-    NSString *payloadStr = [MessageService createPayLoadStr:_dataDic[@"thumb"] title:title shiptype:@"1" messageid:_dataDic[@"id"] msg:_dataDic[@"msg"] type:@"3"];
-    [payload setStringValue:payloadStr];
-    
-    NSString * nowTime = [GameCommon getCurrentTime];
-    NSString * message = [NSString stringWithFormat:@"分享:%@的动态",_dataDic[@"nickname"]];
-    NSString * fromUserId = [[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID];
-    NSString * domain = [[NSUserDefaults standardUserDefaults] objectForKey:kDOMAIN];
-    NSString * from = [fromUserId stringByAppendingString:domain];
-    NSString * toUserid = KISDictionaryHaveKey(self.shareUserDic, @"userid");
-    NSString * to = [toUserid stringByAppendingString:domain];
-    NSString* uuid = [[GameCommon shareGameCommon] uuid];
-    
-    NSXMLElement *mes =[MessageService createMes:nowTime Message:message UUid:uuid From:from To:to FileType:@"text" MsgType:@"normalchat" Type:@"chat"];
-    [mes addChild:payload];
-    
-    //发送消息
-    if ([((AppDelegate*)[[UIApplication sharedApplication] delegate]).xmppHelper sendMessage:mes]) {
+    [[ShareDynamicMsgService singleton] sendToFriend:KISDictionaryHaveKey(self.dataDic,@"nickname") DynamicId:self.dataDic[@"id"] MsgBody:self.dataDic[@"msg"] DynamicImage:KISDictionaryHaveKey(self.dataDic, @"thumb") ToUserId:KISDictionaryHaveKey(self.shareUserDic, @"userid") ToNickName:KISDictionaryHaveKey(self.shareUserDic, @"nickname") ToImage:KISDictionaryHaveKey(self.shareUserDic, @"img") success:^{
         [self showMessageWindowWithContent:@"发送成功" imageType:0];
-        NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-        [dictionary setObject:title forKey:@"msg"];
-        [dictionary setObject:@"you" forKey:@"sender"];
-        [dictionary setObject:nowTime forKey:@"time"];
-        [dictionary setObject:toUserid forKey:@"receiver"];
-        [dictionary setObject:KISDictionaryHaveKey(self.shareUserDic, @"nickname") forKey:@"nickname"];
-        [dictionary setObject:KISDictionaryHaveKey(self.shareUserDic, @"img") forKey:@"img"];
-        [dictionary setObject:payloadStr forKey:@"payload"];
-        [dictionary setObject:@"normalchat" forKey:@"msgType"];
-        [dictionary setObject:uuid forKey:@"messageuuid"];
-        [dictionary setObject:@"2" forKey:@"status"];
-        [DataStoreManager storeMyPayloadmsg:dictionary];
-        [DataStoreManager storeMyNormalMessage:dictionary];
-    }else{
+    } failure:^(NSString *error) {
         [self showMessageWindowWithContent:@"发送失败" imageType:0];
-    }
+    }];
 }
 
+//广播给粉丝
+-(void)broadcastDynamicToFans
+{
+    [self.view bringSubviewToFront:hud];
+    hud.labelText = @"发送中...";
+    [hud show:YES];
+    [[ShareDynamicMsgService singleton] broadcastToFans:KISDictionaryHaveKey(self.dataDic, @"id") resuccess:^(id responseObject) {
+        [hud hide:YES];
+        showShareView.hidden = YES;
+        [self showMessageWindowWithContent:@"成功" imageType:0];
+    } refailure:^(id error) {
+        [hud hide:YES];
+        [self showErrorMsgDialog:error];
+    }];
+}
+
+-(void)showErrorMsgDialog:(id)error{
+    if ([error isKindOfClass:[NSDictionary class]]) {
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+        {
+            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+        }
+    }
+
+}
 
 //消息发送成功
 - (void)messageAck:(NSNotification *)notification
@@ -722,39 +550,6 @@
     NSDictionary* tempDic = notification.userInfo;
     [DataStoreManager refreshMessageStatusWithId:KISDictionaryHaveKey(tempDic, @"src_id") status:KISDictionaryHaveKey(tempDic, @"msgState")];
 }
-
-//广播给粉丝
--(void)broadcastToFans
-{
-    NSMutableDictionary * paramDict = [NSMutableDictionary dictionary];
-    NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:self.messageid forKey:@"messageid"];
-    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
-    [postDict setObject:@"145" forKey:@"method"];
-    [postDict setObject:paramDict forKey:@"params"];
-    [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
-    [self.view bringSubviewToFront:hud];
-    hud.labelText = @"发送中...";
-    [hud show:YES];
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [hud hide:YES];
-        m_shareViewBg.hidden = YES;
-        m_shareView.hidden = YES;
-        [self showMessageWindowWithContent:@"成功" imageType:0];
-    } failure:^(AFHTTPRequestOperation *operation, id error) {
-        if ([error isKindOfClass:[NSDictionary class]]) {
-            if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
-            {
-                UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-                [alert show];
-            }
-        }
-        [hud hide:YES];
-    }];
-}
-
-
-
 #pragma mark 举报 或评论
 - (void)reportButtonClick:(id)sender
 {
