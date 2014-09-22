@@ -2226,6 +2226,8 @@
     NSMutableArray* heightArray = [NSMutableArray array];
     NSMutableArray* times = [NSMutableArray arrayWithCapacity:messages.count];
     NSMutableDictionary* imgs = [[NSMutableDictionary alloc]init];
+    NSMutableArray* showimgs = [[NSMutableArray alloc]init];
+    
     for(int i=0; i<messages.count;i++)
     {
         NSDictionary* plainEntry = messages[i];
@@ -2239,6 +2241,8 @@
         if(kkChatMsgType==KKChatMsgTypeImage){
             NSString *uuid = KISDictionaryHaveKey(plainEntry, @"messageuuid");
             UIImage* uidimage=[self getImage:plainEntry];
+            NSString * imageStr = [self getImageStr:plainEntry];
+            [showimgs addObject:imageStr];
             if (uidimage) {
                 [imgs setObject:uidimage forKey:uuid];
             }
@@ -2248,6 +2252,7 @@
     self.finalMessageTime =times;
     self.finalMessageArray = formattedEntries;
     self.HeightArray = heightArray;
+    self.showImages = showimgs;
 }
 
 //单条消息放到集合里
@@ -2256,6 +2261,7 @@
     NSArray * hh = [self cacuMsgSize:plainEntry];
     [self.HeightArray addObject:hh];
     [self addImageToArray:plainEntry];
+    [self.showImages addObject:[self getImageStr:plainEntry]];
     [self.finalMessageTime addObject:[self getMsgTime:plainEntry]];
      NSMutableAttributedString *mas=[self getNSMutableByMsgNSDictionary:plainEntry];
     [self.finalMessageArray addObject:mas];
@@ -2267,6 +2273,7 @@
     NSArray * hh = [self cacuMsgSize:plainEntry];
     [self.HeightArray insertObject:hh atIndex:index];
     [self addImageToArray:plainEntry];
+    [self.showImages insertObject:[self getImageStr:plainEntry] atIndex:index];
     [self.finalMessageTime insertObject:[self getMsgTime:plainEntry] atIndex:index];
     NSMutableAttributedString *mas=[self getNSMutableByMsgNSDictionary:plainEntry];
     [self.finalMessageArray insertObject:mas atIndex:index];
@@ -2348,7 +2355,7 @@
     {
         NSDictionary* payload = [KISDictionaryHaveKey(plainEntry, @"payload") JSONValue];
         NSString *kkChatImagethumb = KISDictionaryHaveKey(payload, @"thumb");
-         NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
+        NSString *kkChatImageMsg = KISDictionaryHaveKey(payload, @"msg");
         if (![GameCommon isEmtity:kkChatImagethumb]) {
             UIImage *image = [[UIImage alloc]initWithContentsOfFile:kkChatImagethumb];
             if(image){
@@ -2367,6 +2374,34 @@
     }
     return [self.finalImage objectForKey:uuid];
 }
+
+
+//缓存图片
+-(NSString*) getImageStr:(NSDictionary*) plainEntry
+{
+    NSDictionary *payload = [KISDictionaryHaveKey(plainEntry, @"payload") JSONValue];
+    NSString *senderId=KISDictionaryHaveKey(plainEntry, @"sender");
+    NSString *str=KISDictionaryHaveKey(payload, @"msg");
+    if ([senderId isEqualToString:@"you"]) {
+        str=KISDictionaryHaveKey(payload, @"title");
+        if(str==nil||[str isEqualToString:@""]){
+            str = KISDictionaryHaveKey(payload, @"msg");
+            if (str==nil||[str isEqualToString:@""]) {
+                str=KISDictionaryHaveKey(payload, @"thumb");
+            }
+        }
+    }else{
+        str=KISDictionaryHaveKey(payload, @"msg");//先加载网络图片
+        if(str==nil||[str isEqualToString:@""]){//网络图片没有加载本地的大图
+            str = KISDictionaryHaveKey(payload, @"title");
+            if (str==nil||[str isEqualToString:@""]) {//本地大图没有就加载本地的小图
+                str=KISDictionaryHaveKey(payload, @"thumb");
+            }
+        }
+    }
+    return str;
+}
+
 //计算每条消息的大小，放到array里边
 -(NSArray*)cacuMsgSize:(NSDictionary*) plainEntry
 {
@@ -2508,8 +2543,7 @@
     if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"3"])
     {
         return KKChatMsgTypeLink;
-    }
-    else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"audio"]){
+    }else if ([[NSString stringWithFormat:@"%@",types] isEqualToString:@"audio"]){
         return kkchatMsgAudio;
     }
     //图片
@@ -3684,10 +3718,10 @@
         [clearView removeFromSuperview];
     }
     //删除聊天消息
-    NSString* uuid = KISDictionaryHaveKey(messages[readyIndex], @"messageuuid");
-    NSString* userId = KISDictionaryHaveKey(messages[readyIndex], @"sender");
-    NSDictionary *dic =[KISDictionaryHaveKey(messages[readyIndex], @"payload")JSONValue];
-
+    NSDictionary * onDeleteDic = messages[readyIndex];
+    NSString* uuid = KISDictionaryHaveKey(onDeleteDic, @"messageuuid");
+    NSString* userId = KISDictionaryHaveKey(onDeleteDic, @"sender");
+    KKChatMsgType kkChatMsgType=[self msgType:onDeleteDic];
     if([self .type isEqualToString:@"normal"]){
         [DataStoreManager deleteMsgInCommentWithUUid:uuid];
     }else if ([self.type isEqualToString:@"group"])
@@ -3704,7 +3738,7 @@
     [self.tView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPathTo]withRowAnimation:UITableViewRowAnimationRight];
     [self.tView reloadData];
     
-    if ([KISDictionaryHaveKey(dic, @"type")isEqualToString:@"audio"]) {
+    if (kkChatMsgType == kkchatMsgAudio) {
         NSInteger index = [self getMsgRowWithId:uuid];
         if ([PlayerManager sharedManager].playIndex == index) {
             [[PlayerManager sharedManager]stopPlaying];
@@ -3714,8 +3748,11 @@
                 [self startPayloadAudioAnimation:playindex];
             }
         }
+    }else if (kkChatMsgType == KKChatMsgTypeImage){
+        NSString * deleteImage = [self getImageStr:onDeleteDic];
+        NSInteger indexOf = [self.showImages indexOfObject:deleteImage];
+        [self.showImages removeObjectAtIndex:indexOf];
     }
-    
 }
 #pragma mark 历史聊天记录展示
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
@@ -4009,6 +4046,7 @@
     NSDictionary *dict = [messages objectAtIndex:sender.view.tag];
     NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
     NSString *senderId=KISDictionaryHaveKey(dict, @"sender");
+    
     NSString *str=KISDictionaryHaveKey(payload, @"msg");
     if ([senderId isEqualToString:@"you"]) {
         str=KISDictionaryHaveKey(payload, @"title");
@@ -4028,12 +4066,18 @@
         }
     }
     oTherPage=YES;
-    NSArray *array = [NSArray arrayWithObjects:str, nil];
-    PhotoViewController *photo = [[PhotoViewController alloc]initWithSmallImages:nil images:array indext:0];
+//    NSArray *array = [NSArray arrayWithObjects:str, nil];
+    
+    
+    NSString * deleteImage = [self getImageStr:dict];
+    NSInteger indexOf = [self.showImages indexOfObject:deleteImage];
+    
+    PhotoViewController *photo = [[PhotoViewController alloc]initWithSmallImages:nil images:self.showImages indext:indexOf];
     [self presentViewController:photo animated:NO completion:^{
         
     }];
 }
+
 
 #pragma mark 长按图片
 -(void)longPressImg:(UITapGestureRecognizer*)sender

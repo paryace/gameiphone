@@ -56,7 +56,7 @@
     if (searchResultView.hidden == NO) {
         [[Custom_tabbar showTabBar] hideTabBar:YES];
     }else{
-    [[Custom_tabbar showTabBar] hideTabBar:NO];
+        [[Custom_tabbar showTabBar] hideTabBar:NO];
     }
     
     

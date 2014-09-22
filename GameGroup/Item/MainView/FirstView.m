@@ -540,11 +540,39 @@
         cell.MemberImage.image = KUIImage(myRankStr);
         cell.MemberImage.hidden = NO;
     }
-    cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")];
-    NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")] doubleValue]];
-    NSString *timeStr = [GameCommon getShowTime:sendTime];
-    cell.timeLabel.text = timeStr;
-    [cell refreText:timeStr];
+//    cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"roomName")];
+    
+    cell.contentLabel.text = [NSString stringWithFormat:@"%@ | %@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"realm")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"type"), @"value")]];
+    
+    NSMutableDictionary * filterDic = KISDictionaryHaveKey(dic, @"filter");
+    if (filterDic&& [filterDic isKindOfClass:[NSDictionary class]]) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"filter"), @"filterType")] isEqualToString:@"time"]) {
+            NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"filter"), @"content")] doubleValue]];
+            NSString *timeStr = [GameCommon getShowTime:sendTime];
+            cell.timeLabel.text = timeStr;
+        }else if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"filter"), @"filterType")] isEqualToString:@"gender"]){
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"filter"), @"content")] isEqualToString:@"0"]) {
+                cell.timeLabel.text = @"♀";
+            }else {
+                cell.timeLabel.text = @"♂";
+            }
+        }
+        else{
+            cell.timeLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"filter"), @"content")];
+        }
+        if (![GameCommon isEmtity:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"filter"), @"content")]]) {
+            cell.timeLabel.textColor = UIColorFromRGBA([[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"filter"), @"textColor")] intValue], 1);
+        }else{
+            cell.timeLabel.textColor = [UIColor grayColor];
+        }
+    }else{
+        NSDate * sendTime = [NSDate dateWithTimeIntervalSince1970:[[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"createDate")] doubleValue]];
+        NSString *timeStr = [GameCommon getShowTime:sendTime];
+        cell.timeLabel.text = timeStr;
+    }
+
+
+    [cell refreText:cell.timeLabel.text];
     return cell;
 }
 

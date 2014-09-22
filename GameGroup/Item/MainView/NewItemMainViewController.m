@@ -319,6 +319,7 @@
         [hud hide: YES];
         [self showMessageWindowWithContent:@"解散成功" imageType:0];
 
+
         [firstView initSearchConditions];
 
     } reError:^(id error) {

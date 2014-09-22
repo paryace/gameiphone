@@ -170,6 +170,7 @@ PlayingDelegate>
 @property (strong, nonatomic)  NSMutableArray *finalMessageTime; //消息的时间
 @property (strong, nonatomic)  NSMutableDictionary *finalImage; //消息的图片
 @property (strong, nonatomic)  NSMutableArray *HeightArray;
+@property (strong, nonatomic)  NSMutableArray *showImages; //消息的图片
 @property (strong, nonatomic)  UITextField *messageTextField;
 @property (nonatomic, retain) NSString *chatWithUser;
 @property (nonatomic, retain) NSString *nickName;
