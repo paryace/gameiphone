@@ -89,12 +89,13 @@ typedef enum : NSUInteger {
 }
 - (void)dealloc
 {
-   
+   [[NSNotificationCenter defaultCenter]removeObserver:self name:@"friendState" object:nil];
 }
 - (void)viewWillDisappear:(BOOL)animated
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:Nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:Nil];
+//
     [super viewWillDisappear:animated];
 }
 
@@ -104,14 +105,20 @@ typedef enum : NSUInteger {
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-    
+     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(notiReloadData:) name:@"friendState" object:nil];
 }
-
+- (void)notiReloadData:(id)sender
+{
+    
+    [m_myTableView reloadData];
+//    [self getInfoWithNet];
+//    [self netWork];
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-   
+  
     
     m_currPageCount = 0;
     m_dataArray = [NSMutableArray array];

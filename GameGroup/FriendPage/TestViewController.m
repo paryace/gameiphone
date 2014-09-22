@@ -1190,6 +1190,9 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self end];
         [hud hide:YES];
+        
+         [[NSNotificationCenter defaultCenter]postNotificationName:@"friendState" object:nil];
+        
         NSString * shipT=KISDictionaryHaveKey(responseObject, @"shiptype");
         [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipT Successcompletion:^(BOOL success, NSError *error) {
             DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
@@ -1204,6 +1207,9 @@
                 [self refreFansNum:@"0"];
                 [self showMessageWindowWithContent:@"删除成功" imageType:0];
             }
+//            [self.navigationController popViewControllerAnimated:YES];
+            //post一个通知
+           
             [self.navigationController popViewControllerAnimated:YES];
         }];
     } failure:^(AFHTTPRequestOperation *operation, id error) {

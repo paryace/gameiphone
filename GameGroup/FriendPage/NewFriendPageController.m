@@ -601,7 +601,8 @@
     NSMutableArray  *filteredArray = [NSMutableArray arrayWithArray:[arr filteredArrayUsingPredicate:predicateString]];
     //取别名的数组
     NSMutableArray  *aliasFilteredArray = [NSMutableArray arrayWithArray:[aliasArr filteredArrayUsingPredicate:predicateString]];
- 
+  
+    NSMutableArray * testArray = [NSMutableArray array];
     
     //第一次从 备注姓名的数组取出符合条件的数据添加到搜索列表
     for (NSDictionary *tempdic in m_allSearchArray) {
@@ -619,14 +620,19 @@
                 
             }
         }
+        if (![[tempdic objectForKey:@"alias"]isEqualToString:@""]) {
+                [arr addObject:tempdic];
+            }
     // 第二次从 昵称的数组取出符合条件的数据添加到搜索列表
-   
+        
+     //去除数组中有备注姓名的字符串
+        
         for (NSString  *predicateStr in filteredArray) {
-            
+           
 //                [filteredArray removeObjectsInArray:<#(NSArray *)#>]
             
 
-            if ([[tempdic objectForKey:@"nickname"]isEqualToString:predicateStr]&&![m_searchArray containsObject:tempdic]) {
+            if ([[tempdic objectForKey:@"nickname"]isEqualToString:predicateStr]&&![m_searchArray containsObject:tempdic]&&![arr containsObject:tempdic]) {
                 
                 [m_searchArray addObject:tempdic];
             }
