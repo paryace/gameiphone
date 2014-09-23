@@ -118,8 +118,10 @@
 //Cell长按
 -(void)onLongClick:(UITapGestureRecognizer*)sender
 {
-    if (self.myChatCellDelegate) {
-        [self.myChatCellDelegate onCellBgLongClick:sender];
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        if (self.myChatCellDelegate) {
+            [self.myChatCellDelegate onCellBgLongClick:sender];
+        }
     }
 }
 

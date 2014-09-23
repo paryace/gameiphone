@@ -180,9 +180,11 @@
 
 #pragma mark 长按
 -(void)longPressContent:(UITapGestureRecognizer*)sender{
-    NSLog(@"长按下");
-    if(self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(onLongClickContext:)]) {
-        [self.myCellDelegate  onLongClickContext:self];
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        NSLog(@"longPressContentBegin----");
+        if(self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(onLongClickContext:)]) {
+            [self.myCellDelegate  onLongClickContext:self];
+        }
     }
 }
 
