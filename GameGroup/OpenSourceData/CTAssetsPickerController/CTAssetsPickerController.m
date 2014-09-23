@@ -197,7 +197,7 @@
     if (picker.showsCancelButton)
     {
         self.navigationItem.rightBarButtonItem =
-        [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", nil)
+        [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"取消", nil)
                                          style:UIBarButtonItemStylePlain
                                         target:self
                                         action:@selector(dismiss:)];
@@ -206,7 +206,7 @@
 
 - (void)localize
 {
-    self.title = NSLocalizedString(@"Photos", nil);
+    self.title = NSLocalizedString(@"照片", nil);
 }
 
 - (void)setupGroup
@@ -342,13 +342,13 @@
     UILabel *title          = [[UILabel alloc] initWithFrame:rect];
     UILabel *message        = [[UILabel alloc] initWithFrame:rect];
     
-    title.text              = NSLocalizedString(@"No Photos or Videos", nil);
+    title.text              = NSLocalizedString(@"没有照片或者视频", nil);
     title.font              = [UIFont systemFontOfSize:26.0];
     title.textColor         = [UIColor colorWithRed:153.0/255.0 green:153.0/255.0 blue:153.0/255.0 alpha:1];
     title.textAlignment     = NSTextAlignmentCenter;
     title.numberOfLines     = 5;
     
-    message.text            = NSLocalizedString(@"You can sync photos and videos onto your iPhone using iTunes.", nil);
+    message.text            = NSLocalizedString(@"您可以使用iTunes同步照片和视频到你的iPhone.", nil);
     message.font            = [UIFont systemFontOfSize:18.0];
     message.textColor       = [UIColor colorWithRed:153.0/255.0 green:153.0/255.0 blue:153.0/255.0 alpha:1];
     message.textAlignment   = NSTextAlignmentCenter;
@@ -451,7 +451,7 @@
 {
     NSString *label = [self.assetsGroup valueForProperty:ALAssetsGroupPropertyName];
     
-    return [label stringByAppendingFormat:NSLocalizedString(@"%d Photos", nil), [self.assetsGroup numberOfAssets]];
+    return [label stringByAppendingFormat:NSLocalizedString(@"%d 张照片", nil), [self.assetsGroup numberOfAssets]];
 }
 
 @end
@@ -521,7 +521,7 @@
 - (void)setupButtons
 {
     self.navigationItem.rightBarButtonItem =
-    [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done", nil)
+    [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"选择", nil)
                                      style:UIBarButtonItemStylePlain
                                     target:self
                                     action:@selector(finishPickingAssets:)];
@@ -653,10 +653,10 @@
         format = NSLocalizedString(@"%d Items Selected", nil);
     
     else if (photosSelected)
-        format = (indexPaths.count > 1) ? NSLocalizedString(@"%d Photos Selected", nil) : NSLocalizedString(@"%d Photo Selected", nil);
+        format = (indexPaths.count > 1) ? NSLocalizedString(@"选择了 %d 张照片", nil) : NSLocalizedString(@"选择了 %d 张照片", nil);
 
     else if (videoSelected)
-        format = (indexPaths.count > 1) ? NSLocalizedString(@"%d Videos Selected", nil) : NSLocalizedString(@"%d Video Selected", nil);
+        format = (indexPaths.count > 1) ? NSLocalizedString(@"选择了 %d 个视频", nil) : NSLocalizedString(@"选择了 %d 个视频", nil);
     
     self.title = [NSString stringWithFormat:format, indexPaths.count];
 }
@@ -849,11 +849,11 @@ static UIColor *selectedColor;
     NSString *title;
     
     if (numberOfVideos == 0)
-        title = [NSString stringWithFormat:NSLocalizedString(@"%d Photos", nil), numberOfPhotos];
+        title = [NSString stringWithFormat:NSLocalizedString(@"%d 张图片", nil), numberOfPhotos];
     else if (numberOfPhotos == 0)
-        title = [NSString stringWithFormat:NSLocalizedString(@"%d Videos", nil), numberOfVideos];
+        title = [NSString stringWithFormat:NSLocalizedString(@"%d 个视频", nil), numberOfVideos];
     else
-        title = [NSString stringWithFormat:NSLocalizedString(@"%d Photos, %d Videos", nil), numberOfPhotos, numberOfVideos];
+        title = [NSString stringWithFormat:NSLocalizedString(@"%d 张图片, %d 个视频", nil), numberOfPhotos, numberOfVideos];
     
     self.sectionLabel.text = title;
 }

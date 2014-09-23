@@ -29,6 +29,8 @@
     UIButton *m_button1;
     UIButton *m_button2;
     
+    UIImageView * guideImage;
+    
     
 }
 @end
@@ -135,6 +137,11 @@
     firstView.backgroundColor = [UIColor whiteColor];
     firstView.myDelegate = self;
     [customView addSubview:firstView];
+    
+    guideImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height-50)];
+    guideImage.image = KUIImage(@"team_guide_img_7");
+//    [self.view addSubview:guideImage];
+    
     [self reloadMsgCount];
 //    [firstView initSearchConditions];//使用上次的搜索条件
     
