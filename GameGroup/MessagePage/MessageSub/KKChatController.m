@@ -34,7 +34,6 @@
     UIButton * titleBtn;//右上角button
     CustomInputView *custview;//录音框架
     UIButton * tempBtn; //被点击的按钮
-    UIView * popLittleView;
     int readyIndex;                 //设置当前待操作cell的INDEX
     NSIndexPath * indexPathTo;      //设置当前待操作cell的indexPathTo
     NSString * tempStr;
@@ -78,17 +77,6 @@
     if ([self.type isEqualToString:@"group"]) {
         [self initGroupCricleMsgCount];
     }
-}
-
--(void)viewDidAppear:(BOOL)animated{
-//    [self kkChatAddRefreshHeadView];//添加下拉刷新组件
-//    
-//     [self.view addSubview:self.inPutView];//输入框
-//    
-//    [self.view addSubview:self.theEmojiView];
-//    self.theEmojiView.hidden = YES;
-//    [self.view addSubview:self.kkChatAddView];
-//    self.kkChatAddView.hidden = YES;
 }
 
 -(void)viewWillDisappear:(BOOL)animated
@@ -180,6 +168,7 @@
     custview= [[ CustomInputView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-44,320,44)];
     custview.mydelegate = self;
     custview.hidden = YES;
+    custview.backgroundColor = [UIColor redColor];
     [self.view addSubview:custview];
     
      [self changMsgToRead];
@@ -1667,7 +1656,7 @@
 //表情按钮
 - (EmojiView *)theEmojiView{
     if (!_theEmojiView) {
-        _theEmojiView = [[EmojiView alloc]initWithFrame:CGRectMake(0,self.view.frame.size.height-253,320,253)WithSendBtn:YES];
+        _theEmojiView = [[EmojiView alloc]initWithFrame:CGRectMake(0,self.view.bounds.size.height,320,253)WithSendBtn:YES];
         _theEmojiView.delegate = self;
     }
     return _theEmojiView;
@@ -1676,7 +1665,7 @@
 - (UIView *)kkChatAddView{
     if (!_kkChatAddView) {
         _kkChatAddView = [[UIView alloc] init];
-        _kkChatAddView.frame = CGRectMake(0, self.view.frame.size.height-125, 320,125);
+        _kkChatAddView.frame = CGRectMake(0,self.view.bounds.size.height,320,125);
         _kkChatAddView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"chatMorebg.png"]];
         NSArray *kkChatButtonsTitle = @[@"相册",@"相机"];
         for (int i = 0; i < 2; i++) {
@@ -1733,29 +1722,6 @@
     return _audioBtn;
 }
 
-#pragma mark----录音发送录音方法
--(void)showStartRecordBtn:(UIButton *)sender
-{
-    if (self.kkchatInputType != KKChatInputTypeNone) {
-        [self autoMovekeyBoard:0];
-        [self.textView resignFirstResponder];
-        self.kkchatInputType = KKChatInputTypeNone;
-        [UIView animateWithDuration:0.2 animations:^{
-            self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
-            self.kkChatAddView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44, 320,253);
-        } completion:^(BOOL finished) {
-            self.theEmojiView.hidden = YES;
-            self.kkChatAddView.hidden = YES;
-        }];
-        [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
-        [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
-    }
-    canAdd = YES;
-    self.inPutView.hidden = YES;
-    custview.hidden = NO;
-}
-
-#pragma mark --播放
 #pragma mark ---播放声音
 -(void)playAudio:(UIButton *)sender
 {
@@ -1983,6 +1949,18 @@
     return _groupunReadMsgLable;
 }
 
+
+- (UITableView *)tView{
+    if(!_tView) {
+        _tView = [[UITableView alloc] initWithFrame:CGRectMake(0,startX+offsetTopHight,320,self.view.frame.size.height-startX-offsetTopHight-55)style:UITableViewStylePlain];
+        [_tView setBackgroundColor:[UIColor clearColor]];
+        _tView.delegate = self;
+        _tView.dataSource = self;
+        _tView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    }
+    return _tView;
+}
+
 //加号按钮
 - (UIButton *)kkChatAddButton{
     if (!_kkChatAddButton) {
@@ -2002,19 +1980,6 @@
         [_emojiBtn addTarget:self action:@selector(kkChatEmojiBtnClicked:)forControlEvents:UIControlEventTouchUpInside];
     }
     return _emojiBtn;
-}
-
-
-
-- (UITableView *)tView{
-    if(!_tView) {
-        _tView = [[UITableView alloc] initWithFrame:CGRectMake(0,startX+offsetTopHight,320,self.view.frame.size.height-startX-offsetTopHight-55)style:UITableViewStylePlain];
-        [_tView setBackgroundColor:[UIColor clearColor]];
-        _tView.delegate = self;
-        _tView.dataSource = self;
-        _tView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    }
-    return _tView;
 }
 
 - (HPGrowingTextView *)textView{
@@ -2574,9 +2539,6 @@
 
 //点击加号中的按钮
 - (void)kkChatAddViewButtonsClick:(UIButton *)sender{
-    
-
-    
     if (![self isGroupAvaitable]) {
         [self showInVisableDialog];
         return;
@@ -2589,19 +2551,17 @@
 
     UIImagePickerController *imagePicker = nil;
     switch (sender.tag) {
-
         case 0: //相册
         {
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
                 oTherPage = YES;
-
+                
                 CTAssetsPickerController *picker = [[CTAssetsPickerController alloc] init];
                 picker.maximumNumberOfSelection = 9;
                 picker.assetsFilter = [ALAssetsFilter allAssets];
                 picker.delegate = self;
                 [self presentViewController:picker animated:YES completion:NULL];
-            }
-            else {
+            }else {
                 UIAlertView *libraryAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相册" delegate:self cancelButtonTitle:@"了解" otherButtonTitles:nil];
                 [libraryAlert show];
             }
@@ -2632,11 +2592,9 @@
     }
 }
 #pragma mark - 从相机或相册获取到图片
-
-//从相机中选取图片
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo NS_DEPRECATED_IOS(2_0, 3_0){
 }
-//从相册中选取图片
+#pragma mark - 从相机或相册获取到图片
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"请稍后...";
@@ -2649,7 +2607,7 @@
     [self chooseImage:upImage];
 }
 
-#pragma mark - Assets Picker Delegate
+#pragma mark - 图片多选
 - (void)assetsPickerController:(CTAssetsPickerController *)picker didFinishPickingAssets:(NSArray *)assets
 {
     for (ALAsset * asset in assets) {
@@ -2731,7 +2689,7 @@
     NSInteger index = [self getMsgRowWithId:uuid];
     [self refreMessageStatus:index Status:status];
 }
-
+#pragma mark----点击表情按钮
 -(void)kkChatEmojiBtnClicked:(UIButton *)sender
 {
     self.inPutView.hidden = NO;
@@ -2751,14 +2709,13 @@
         [sender setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
     }
 }
-
+#pragma mark----点击加号按钮
 - (void)kkChatAddButtonClick:(UIButton *)sender{
     self.inPutView.hidden = NO;
     [self.view bringSubviewToFront:self.inPutView];
     [self.view bringSubviewToFront:self.kkChatAddView];
     if (self.kkchatInputType != KKChatInputTypeAdd) {   //点击切到发送
         self.kkchatInputType = KKChatInputTypeAdd;
-        
         [sender setImage:[UIImage imageNamed:@"keyboard.png"]forState:UIControlStateNormal];
         [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
         [self showEmojiScrollView];
@@ -2770,39 +2727,91 @@
     }
     return;
 }
--(void)showUnActionAlert
+
+#pragma mark----点击录音按钮
+-(void)showStartRecordBtn:(UIButton *)sender
 {
-    UIAlertView * UnActionAlertV = [[UIAlertView alloc] initWithTitle:@"您尚未激活" message:@"未激活用户不能发送聊天消息"delegate:self
-                cancelButtonTitle:@"取消"otherButtonTitles:@"去激活", nil];
-    [UnActionAlertV show];
+    if (self.kkchatInputType != KKChatInputTypeNone) {
+        [self autoMovekeyBoard:0];
+        [self.textView resignFirstResponder];
+        self.kkchatInputType = KKChatInputTypeNone;
+        [UIView animateWithDuration:0.2 animations:^{
+            self.theEmojiView.frame = CGRectMake(0,self.view.bounds.size.height,320,253);
+            self.kkChatAddView.frame = CGRectMake(0,self.view.bounds.size.height, 320,253);
+        } completion:^(BOOL finished) {
+            self.theEmojiView.hidden = YES;
+            self.kkChatAddView.hidden = YES;
+        }];
+        [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
+        [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
+    }
+    canAdd = YES;
+    self.inPutView.hidden = YES;
+    custview.hidden = NO;
+}
+#pragma mark----点击屏幕隐藏底部view
+-(void)hideKeyEmView{
+    [self.textView resignFirstResponder];
+    if (self.kkchatInputType != KKChatInputTypeNone) {
+        [self autoMovekeyBoard:0];
+        self.kkchatInputType = KKChatInputTypeNone;
+        [UIView animateWithDuration:0.2 animations:^{
+            self.theEmojiView.frame = CGRectMake(0,self.view.bounds.size.height,320,253);
+            self.kkChatAddView.frame = CGRectMake(0,self.view.bounds.size.height, 320,253);
+        } completion:^(BOOL finished) {
+            self.theEmojiView.hidden = YES;
+            self.kkChatAddView.hidden = YES;
+        }];
+        [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
+        [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
+    }
+    
+    [clearView removeFromSuperview];
+    canAdd = YES;
+}
+//表情键盘上的发送按钮
+-(void)emojiSendBtnDo
+{
+    [self sendButton:nil];
 }
 
+//键盘上的发送按钮
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [self sendButton:nil];
+    return YES;
+}
+#pragma mark----点击屏幕
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch * touch = [touches anyObject];
+    if ([touch view]==clearView) {
+        [self hideKeyEmView];
+    }
+}
 -(void)showEmojiScrollView
 {
     switch (self.kkchatInputType) {
         case KKChatInputTypeEmoji:
         {
-            
             [UIView animateWithDuration:0.3 animations:^{
                 [self.textView resignFirstResponder];
-                self.inPutView.frame = CGRectMake(0,self.view.frame.size.height-227-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
                 self.theEmojiView.hidden = NO;
                 self.kkChatAddView.hidden = YES;
                 self.theEmojiView.frame = CGRectMake(0,self.view.frame.size.height-253,320,253);
+                self.kkChatAddView.frame = CGRectMake(0,self.view.frame.size.height,320,125);
                 [self autoMovekeyBoard:253];
-                
             } completion:^(BOOL finished) {
             }];
-
         }
             break;
         case KKChatInputTypeAdd:
         {
             [self.textView resignFirstResponder];
-            [UIView animateWithDuration:0.2 animations:^{
-                self.inPutView.frame = CGRectMake(0,self.view.frame.size.height-125-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
+            [UIView animateWithDuration:0.3 animations:^{
                 self.theEmojiView.hidden = YES;
                 self.kkChatAddView.hidden = NO;
+                self.theEmojiView.frame = CGRectMake(0,self.view.frame.size.height,320,253);
                 self.kkChatAddView.frame = CGRectMake(0,self.view.frame.size.height-125,320,125);
                 [self autoMovekeyBoard:125];
             } completion:^(BOOL finished) {
@@ -2813,13 +2822,10 @@
         default:
             break;
     }
-    
-}
--(void)emojiSendBtnDo
-{
-    [self sendButton:nil];
 }
 
+
+//跳转用户详情页面
 -(void)toContactProfile:(NSString*)userId
 {
     oTherPage = YES;
@@ -2827,43 +2833,6 @@
     detailV.userId = userId;
     [self.navigationController pushViewController:detailV animated:YES];
 }
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    [self sendButton:nil];
-    return YES;
-}
--(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    UITouch * touch = [touches anyObject];
-    if ([touch view]==clearView) {
-        [self hideKeyEmView];
-    }
-}
-//隐藏底部view
--(void)hideKeyEmView{
-    [self.textView resignFirstResponder];
-    if (self.kkchatInputType != KKChatInputTypeNone) {
-        [self autoMovekeyBoard:0];
-        self.kkchatInputType = KKChatInputTypeNone;
-        [UIView animateWithDuration:0.2 animations:^{
-            self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
-            self.kkChatAddView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44, 320,253);
-        } completion:^(BOOL finished) {
-            self.theEmojiView.hidden = YES;
-            self.kkChatAddView.hidden = YES;
-        }];
-        [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
-        [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
-    }
-    
-    [clearView removeFromSuperview];
-    if ([popLittleView superview]) {
-        [popLittleView removeFromSuperview];
-    }
-    canAdd = YES;
-}
-
 - (void)viewDidUnload
 {
     [self setTView:nil];
@@ -2909,6 +2878,8 @@
         self.tView.frame=cgmm;
     }
     [UIView commitAnimations];
+    
+    
     if (messages.count>0) {
         [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }
@@ -3034,9 +3005,6 @@
     if ([clearView superview]) {
         [clearView removeFromSuperview];
     }
-    if ([popLittleView superview]) {
-        [popLittleView removeFromSuperview];
-    }
     canAdd = YES;
     NSDictionary *userInfo = [notification userInfo];
     NSValue* aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
@@ -3160,7 +3128,6 @@
 //拷贝消息
 -(void)copyMsg
 {
-    [popLittleView removeFromSuperview];
     if ([clearView superview]) {
         [clearView removeFromSuperview];
     }
@@ -3613,7 +3580,6 @@
 #pragma mark 删除
 -(void)deleteMsg
 {
-    [popLittleView removeFromSuperview];
     if ([clearView superview]) {
         [clearView removeFromSuperview];
     }
