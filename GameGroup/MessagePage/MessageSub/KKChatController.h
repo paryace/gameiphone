@@ -131,7 +131,6 @@ DropDownChooseDelegate,
 DropDownChooseDataSource,
 DetailDelegate,
 LocationViewDelegate,
-
 RecordAudioDelegate,
 SendAudioMsgDeleGate,
 ApplyDetailDelegate,
@@ -190,7 +189,6 @@ PlayingDelegate>
 @property (nonatomic, strong) UIView *kkChatAddView;
 @property (nonatomic, strong) EmojiView *theEmojiView;
 @property (nonatomic, strong) NSMutableArray *messages;
-@property (nonatomic, strong) NSArray *typeData_list;
 @property (assign, nonatomic)  NSInteger groupCricleMsgCount;// 群动态的未读消息
 @property (nonatomic,strong) NewTeamMenuView * newTeamMenuView;
 @property (nonatomic,strong) NewTeamApplyListView * newTeamApplyListView;
@@ -201,7 +199,4 @@ PlayingDelegate>
 @property (nonatomic,assign)NSInteger clickCellNum;
 
 - (void)sendButton:(id)sender;
-
-
-
 @end

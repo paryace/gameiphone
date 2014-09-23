@@ -14,7 +14,6 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code
         emojis = [Emojis allEmoji];
         [self showEmojiScrollView:ifWith];
         
@@ -23,15 +22,9 @@
 }
 -(void)showEmojiScrollView:(BOOL)ifWith
 {
-//    [self.textView resignFirstResponder];
-//    [inPutView setFrame:CGRectMake(0, self.view.frame.size.height-227-inPutView.frame.size.height, 320, inPutView.frame.size.height)];
-    //表情列表如果存在就隐藏
-    //if (m_EmojiScrollView==nil)
-    //{
     //将面板先于工具栏加入视图，避免遮挡
     UIImageView *sixGridBGV=[[UIImageView alloc]initWithFrame:CGRectMake(-320, 0, 1280, 253)];//原来是253
     [sixGridBGV setBackgroundColor:[UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1]];
-    
     //创建表情视图
     UIScrollView *i_emojiScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0,  0, 320, 253)];//原来是227和253
     //设置表情列表scrollview属性
@@ -68,9 +61,6 @@
         [emojiBGV addSubview:sendEmojiBtn];
         [sendEmojiBtn addTarget:self action:@selector(sendButton:) forControlEvents:UIControlEventTouchUpInside];
     }
-    
-//    [self autoMovekeyBoard:253];
-    
 }
 -(void)backBtnDo
 {
@@ -107,8 +97,6 @@
         }
         else if(n>=28&&n<56)
             [btn setFrame:CGRectMake(13.75*(n%7+1)+30*(n%7)+320, ((n-28)/7+1)*12+30*((n-28)/7), 30, 30)];
-//        else
-//            [btn setFrame:CGRectMake(13.75*(n%7+1)+30*(n%7)+640, ((n-56)/7+1)*12+30*((n-56)/7), 30, 30)];
         [btn setBackgroundColor:[UIColor clearColor]];
         [btn.titleLabel setFont:[UIFont fontWithName:@"AppleColorEmoji" size:30.0]];
         [btn setTitle: [emojis objectAtIndex:n] forState:UIControlStateNormal];
@@ -131,17 +119,8 @@
     NSArray *arrayEmoji = [NSArray arrayWithContentsOfFile:finalPath];
     NSDictionary *dic = arrayEmoji[n];
     NSString *thekey = KISDictionaryHaveKey(dic, @"thekey");
-    
     [self.delegate selectedEmoji:[NSString stringWithFormat:@"%@ ",thekey]];
     //提示文字标签隐藏
-	//判断输入框是否有内容，追加转义字符
-//	if (self.textView.text == nil) {
-//		self.textView.text = [NSString stringWithFormat:@"[%@] ",i_transCharacter];
-//	}
-//	else {
-//		self.textView.text = [self.textView.text stringByAppendingString:[NSString stringWithFormat:@"[%@] ",i_transCharacter]];
-//	}
-//    [self autoMovekeyBoard:253];
 }
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
@@ -149,14 +128,5 @@
 	int page=floor((a-320/2)/320)+1;
 	m_Emojipc.currentPage=page;
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
 
 @end

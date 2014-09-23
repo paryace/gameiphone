@@ -1107,7 +1107,6 @@ typedef enum : NSUInteger {
     CGRect textRect = myCell.clickBtn.frame;
     [menu setTargetRect:CGRectMake(textRect.origin.x, textRect.origin.y+textRect.size.height/2, textRect.size.width, textRect.size.height) inView:myCell.clickBtn.superview];
     [menu setMenuVisible:YES animated:YES];
-    [m_myTableView reloadData];
     
     
 
@@ -1117,7 +1116,6 @@ typedef enum : NSUInteger {
     copyIndex = -1;
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
     pasteboard.string = copyContext;
-    [m_myTableView reloadData];
     [self showMessageWindowWithContent:@"已复制" imageType:0];
 }
 //转发
@@ -1127,8 +1125,6 @@ typedef enum : NSUInteger {
     actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
     actionSheet.tag = 20000000;
     [actionSheet showInView:self.view];
-    [m_myTableView reloadData];
-    
 }
 - (BOOL)canBecomeFirstResponder{
     return YES;

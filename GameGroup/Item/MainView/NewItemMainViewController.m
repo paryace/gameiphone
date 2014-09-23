@@ -29,6 +29,12 @@
     UIButton *m_button1;
     UIButton *m_button2;
     
+    UIButton * guideImage;
+    
+    UIView * view1;
+    UIView * view2;
+    UIView * view3;
+    
     
 }
 @end
@@ -39,7 +45,6 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
         userid = [[NSUserDefaults standardUserDefaults]objectForKey:kMYUSERID];
 
     }
@@ -135,13 +140,89 @@
     firstView.backgroundColor = [UIColor whiteColor];
     firstView.myDelegate = self;
     [customView addSubview:firstView];
+    
+    
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"firseGuide"]) {
+        [[NSUserDefaults standardUserDefaults] setObject:@"first" forKey:@"firseGuide"];
+        guideImage = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height)];
+        guideImage.backgroundColor = [UIColor clearColor];
+        [guideImage addTarget:self action:@selector(nomath) forControlEvents:UIControlEventTouchUpInside];
+        
+        view1 = [[UIView alloc] initWithFrame:CGRectMake(320-247.5-22.5, 50, 247.5, 157.5)];
+        view1.backgroundColor = [UIColor clearColor];
+        
+        UIImageView * guideImage11 = [[UIImageView alloc] initWithFrame:CGRectMake(247.5-57.5, 0, 57.5, 104)];
+        guideImage11.image = KUIImage(@"guide_11");
+        [view1 addSubview:guideImage11];
+        
+        UIButton * guideImage12 = [[UIButton alloc] initWithFrame:CGRectMake(0, 157.5-104, 190, 87.5)];
+        [guideImage12 setBackgroundImage:KUIImage(@"guide_12") forState:UIControlStateNormal];
+        [guideImage12 addTarget:self action:@selector(guideAction1:) forControlEvents:UIControlEventTouchUpInside];
+        [view1 addSubview:guideImage12];
+        [guideImage addSubview:view1];
+        
+        
+        
+        view2 = [[UIView alloc] initWithFrame:CGRectMake(320-238-32.5, startX+30, 238, 125.5)];
+        view2.hidden = YES;
+        view2.backgroundColor = [UIColor clearColor];
+        
+        UIImageView * guideImage21 = [[UIImageView alloc] initWithFrame:CGRectMake(238-48.5, 0, 48.5, 66.5)];
+        guideImage21.image = KUIImage(@"guide_31");
+        [view2 addSubview:guideImage21];
+        
+        UIButton * guideImage22 = [[UIButton alloc] initWithFrame:CGRectMake(0,40, 189.5, 85.5)];
+        [guideImage22 setBackgroundImage:KUIImage(@"guide_32") forState:UIControlStateNormal];
+        [guideImage22 addTarget:self action:@selector(guideAction2:) forControlEvents:UIControlEventTouchUpInside];
+        [view2 addSubview:guideImage22];
+        [guideImage addSubview:view2];
+        
+        
+        view3 = [[UIView alloc] initWithFrame:CGRectMake(29, 50, 247.5, 125.5)];
+        view3.hidden = YES;
+        view3.backgroundColor = [UIColor clearColor];
+        
+        UIImageView * guideImage31 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 57.5, 104)];
+        guideImage31.image = KUIImage(@"guide_21");
+        [view3 addSubview:guideImage31];
+        
+        UIButton * guideImage32 = [[UIButton alloc] initWithFrame:CGRectMake(57.5,40, 190, 87.5)];
+        [guideImage32 setBackgroundImage:KUIImage(@"guide_22") forState:UIControlStateNormal];
+        [guideImage32 addTarget:self action:@selector(guideAction3:) forControlEvents:UIControlEventTouchUpInside];
+        [view3 addSubview:guideImage32];
+        [guideImage addSubview:view3];
+        
+        [self.view addSubview:guideImage];
+    }
+    
+    
+    
     [self reloadMsgCount];
-//    [firstView initSearchConditions];//使用上次的搜索条件
     
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
-
 }
+-(void)nomath{
+    
+}
+
+
+-(void)guideAction1:(id)sender
+{
+    [view1 removeFromSuperview];
+    view2.hidden = NO;
+}
+-(void)guideAction2:(id)sender
+{
+    [view2 removeFromSuperview];
+    view3.hidden = NO;
+}
+-(void)guideAction3:(id)sender
+{
+    [view3 removeFromSuperview];
+    [guideImage removeFromSuperview];
+}
+
 
 //排序
 -(void)sortingList:(id)sender

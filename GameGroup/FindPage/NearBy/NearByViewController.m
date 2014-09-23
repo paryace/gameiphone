@@ -311,14 +311,6 @@
         cell.headImageV.imageURL = nil;
         
     }else{
-//        NSArray* heardImgArray = [[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDict, @"img")] componentsSeparatedByString:@","];
-//        if (heardImgArray.count>0&&(![[heardImgArray objectAtIndex:0] isEqualToString:@""]||![KISDictionaryHaveKey(tempDict, @"img")isEqualToString:@" "])) {
-//            cell.headImageV.imageURL = [NSURL URLWithString:[NSString stringWithFormat:BaseImageUrl@"%@/80/80",[heardImgArray objectAtIndex:0]]];
-//        }else{
-//            cell.headImageV.imageURL = nil;
-//        }
-        
-        
         NSString * userImageIds=KISDictionaryHaveKey(tempDict, @"img");
         cell.headImageV.imageURL = [ImageService getImageStr:userImageIds Width:80];
     }

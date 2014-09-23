@@ -12,61 +12,33 @@
 
 @interface KKChatController ()
 {
-    NSMutableArray *messages;   //信息
-    UIMenuItem *copyItem;
-    UIMenuItem *delItem;
-    UIButton *profileButton;
-    BOOL myActive;
-    NSMutableArray *wxSDArray;
+    NSMutableArray *messages;//信息
+    
+    UIMenuItem *copyItem;//拷贝
+    UIMenuItem *delItem;//删除
+    UIMenuController * menu;
+    
+    UIButton *profileButton;//右上角个人信息
+    NSMutableArray *wxSDArray;//第一次打招呼列表
     NSInteger offHight;//群消息需要多加上的高度
-    NSInteger historyMsg;
-    NSInteger screenHeigth;
-    NSInteger offsetTopHight;
-    BOOL endOfTable;
-    BOOL oTherPage;
-    BOOL teamUsershipType;
-    BOOL isMenuShow;
-    BOOL isApplyShow;
-    NSMutableDictionary * selectType;
-    ShowRecordView *showRecordView;
+    NSInteger historyMsg;//以上是历史消息
+    NSInteger offsetTopHight;//上移偏移量
+    BOOL endOfTable;//滑动到tableviw底部
+    BOOL oTherPage;//是否跳转其他页面
+    BOOL teamUsershipType;//组队关系
+    BOOL isMenuShow;//菜单是否显示
+    BOOL isApplyShow;//申请列表是否显示
+    NSMutableDictionary * selectType;//选择的位置
+    ShowRecordView *showRecordView;//录音btn
     BOOL isPlaying;
     UIButton * titleBtn;//右上角button
     CustomInputView *custview;//录音框架
-    NSString * userName;
-    NSUserDefaults * uDefault;
-    NSMutableDictionary * peopleDict;
-    UILongPressGestureRecognizer *btnLongTap;
     UIButton * tempBtn; //被点击的按钮
-    UIView * popLittleView;
-    UIView * btnBG;
     int readyIndex;                 //设置当前待操作cell的INDEX
     NSIndexPath * indexPathTo;      //设置当前待操作cell的indexPathTo
     NSString * tempStr;
     UIView * clearView;
     BOOL canAdd;
-    NSString * currentID;
-    UIImageView * inputbg;
-    UIButton * senBtn;
-    int previousTime;
-    int touchTimePre;
-    int touchTimeFinal;
-    NSMutableDictionary * userInfoDict;
-    NSMutableDictionary * postDict;
-    NSString * myHeadImg;
-    NSDictionary * tempDict;
-    BOOL ifAudio;
-    BOOL ifEmoji;
-    UIButton * picBtn;
-    UIButton * audioplayButton;
-    UIScrollView *m_EmojiScrollView;
-    UIPageControl *m_Emojipc;
-    UIView * emojiBGV;
-    NSMutableDictionary *recordSetting;
-    AVAudioPlayer * audioPlayer;
-    NSString * rootRecordPath;
-    NSMutableArray * animationOne;
-    NSMutableArray * animationTwo;
-    UIMenuController * menu;
 }
 
 
@@ -92,21 +64,20 @@
     //接收消息监听
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNewMessageReceived object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newMesgReceived:)name:kNewMessageReceived object:nil];
-    //ack消息监听//消息是否发送成功
+    //ack消息监听
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kMessageAck object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:)name:kMessageAck object:nil];
-    
     //初始化就位确认状态
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kJoinTeamMessage object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(joinTeamReceived:) name:kJoinTeamMessage object:nil];
     [self.newTeamMenuView restartTime];
     [self refreTitleText];
     [self showErrorDialog];
+    //初始化群动态的未读消息数
     if ([self.type isEqualToString:@"group"]) {
-        [self initGroupCricleMsgCount];//初始化群动态的未读消息数
+        [self initGroupCricleMsgCount];
     }
 }
-
 
 -(void)viewWillDisappear:(BOOL)animated
 {
@@ -120,19 +91,171 @@
         [self.newTeamMenuView stopTime];
         [[RecorderManager sharedManager]cancelRecording];//退出页面，停止录音
     }
-    
     [[InplaceTimer singleton] stopTimer:self.gameId RoomId:self.roomId GroupId:self.chatWithUser];
     if ([self.type isEqualToString:@"normal"]) {
         [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser Successcompletion:^(BOOL success, NSError *error) {
-            
         }];
     }else if ([self.type isEqualToString:@"group"]){
         [DataStoreManager updateDSTeamNotificationMsgCount:self.chatWithUser SayHightType:@"1" Successcompletion:^(BOOL success, NSError *error) {
-            
         }];
     }
 }
 
+//初始化会话界面UI
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    //监听是否触发home键挂起程序.
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:)name:UIApplicationWillResignActiveNotification object:nil];
+    //监听是否重新进入程序程序.
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:)name:UIApplicationDidBecomeActiveNotification object:nil];
+    //群信息更新完成通知
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupInfoUploaded:) name:groupInfoUpload object:nil];
+    //用户信息更新完成
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userInfoUploaded:) name:userInfoUpload object:nil];
+    //解散该群
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDisbandGroup:) name:kDisbandGroup object:nil];
+    //加入群组通知
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onjoinGroupSuccess:) name:kJoinSuccessGroupMessage object:nil];
+    //被剔出该群
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onkickOffGroupGroup:) name:kKickOffGroupGroup object:nil];
+    //群动态消息
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedGroupDynamicMsg:) name:GroupDynamic_msg object:nil];
+    //组队人数变化
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMemberCountChang:) name:UpdateTeamMemberCount object:nil];
+    //发送系统消息
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendSystemMessage:) name:kSendSystemMessage object:nil];
+    //组队信息更新
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(teamInfoUploadNotification:) name:teamInfoUpload object:nil];
+    //收到确认或者取消就位确认状态
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];
+    //发起就位确认状态
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];
+    //就位确认结束
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];
+    //键盘显示
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    //键盘隐藏
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    
+    [self initMyInfo];
+    wxSDArray = [[NSMutableArray alloc]init];
+    canAdd = YES;
+    historyMsg = 0;
+    endOfTable = YES;
+    oTherPage= NO;
+    isPlaying = NO;
+    if([self.type isEqualToString:@"normal"]){
+        offHight = 0;
+    }else if([self.type isEqualToString:@"group"])
+    {
+        offHight = 20;
+    }
+    self.appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
+    
+    [self.view addSubview:self.tView];
+    [self initMsgData];
+    
+    [self kkChatAddRefreshHeadView];//添加下拉刷新组件
+    [self.view addSubview:self.inPutView];//输入框
+    //标题栏
+    [self setTopViewWithTitle];
+    //录音按钮
+    custview= [[ CustomInputView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-44,320,44)];
+    custview.mydelegate = self;
+    custview.hidden = YES;
+    custview.backgroundColor = [UIColor redColor];
+    [self.view addSubview:custview];
+
+    //长按以后的按钮
+    copyItem = [[UIMenuItem alloc] initWithTitle:@"复制"action:@selector(copyMsg)];
+    delItem = [[UIMenuItem alloc] initWithTitle:@"删除"action:@selector(deleteMsg)];
+    menu = [UIMenuController sharedMenuController];
+    
+    
+    showRecordView = [[ShowRecordView alloc]initWithFrame:CGRectMake(0, startX,320 , self.view.bounds.size.height-startX-50)];
+    showRecordView.hidden = YES;
+    [self.view addSubview:showRecordView];
+    
+    
+   
+    if (self.isTeam) {
+       NSMutableDictionary *  teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameId] RoomId:[GameCommon getNewStringWithId:self.roomId]];
+        if ([KISDictionaryHaveKey(teamInfo, @"teamUsershipType") intValue]==0) {
+            teamUsershipType = YES;
+        }
+        
+        [self initTopMenuView];
+        [self initTeamInfoView];
+        
+        [self hideExtendedChooseView];
+        if (!teamUsershipType) {
+            [self initInpaceTopMenuIsShow];
+        }
+        
+        [self hideApplyListExtendedChooseView];
+        if (teamUsershipType) {
+            [self initApplyTopMenuIsSHow];
+        }
+        [self showOrHidePositionDitView];
+    }
+    [self goBack];
+    hud = [[MBProgressHUD alloc] initWithView:self.view];
+    hud.labelText = @"正在处理...";
+    [self.view addSubview:hud];
+}
+
+//初始化消息记录
+-(void)initMsgData{
+    dispatch_async(dispatch_queue_create("game.message.kkchat", NULL), ^{
+        messages = [self getMsgArray:0 PageSize:10];
+        [self normalMsgToFinalMsg];
+        [self changMsgToRead];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_tView reloadData];
+            if (messages.count>0) {
+                [_tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+            }
+        });
+    });
+}
+//初始化弹出弹出菜单
+-(void)initTopMenuView{
+    self.topItemView=[UIButton buttonWithType:UIButtonTypeCustom];
+    self.topItemView.frame=CGRectMake(0,startX, 320, 0);
+    self.topItemView.backgroundColor = [UIColor clearColor];
+    [self.topItemView setBackgroundImage:KUIImage([self getBgImage]) forState:UIControlStateNormal];
+    [self.topItemView.titleLabel setFont:[UIFont boldSystemFontOfSize:15]];
+    [self.topItemView addTarget:self action:@selector(showTeamInfoView) forControlEvents:UIControlEventTouchUpInside];
+    self.topItemView.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+    self.topItemView.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    [self.topItemView setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.view addSubview:self.topItemView];
+    
+    self.leftImage = [[UIImageView alloc] initWithFrame:CGRectMake(10, 52/4, 52/2, 52/2)];
+    self.leftImage.image = KUIImage([self getleftIcon]);
+    [self.topItemView addSubview:self.leftImage];
+    
+    self.rightImage = [[UIImageView alloc] initWithFrame:CGRectMake(320-22-10, (52-22)/2, 22, 22)];
+    self.rightImage.image = KUIImage(@"team_right_top");
+    [self.topItemView addSubview:self.rightImage];
+}
+
+//初始化组队操作view
+-(void)initTeamInfoView{
+    //就位确认
+    self.newTeamMenuView = [[NewTeamMenuView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
+    self.newTeamMenuView.mSuperView = self.view;
+    self.newTeamMenuView.detaildelegate = self;
+    self.newTeamMenuView.hidden = YES;
+    [self.view addSubview:self.newTeamMenuView];
+    
+    self.newTeamApplyListView = [[NewTeamApplyListView alloc] initWithFrame:CGRectMake(0, KISHighVersion_7?20:0, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
+    self.newTeamApplyListView.mSuperView = self.view;
+    self.newTeamApplyListView.detaildelegate = self;
+    [self.view addSubview:self.newTeamApplyListView];
+}
 //设置Title
 -(void)refreTitleText
 {
@@ -162,7 +285,7 @@
             [self.newTeamMenuView settTitleMsg:self.nickName];
         }
     }
-    self.titleLabel.text = self.nickName;
+    _titleLabel.text = self.nickName;
 }
 -(void)showErrorDialog{
     if (![self isGroupAvaitable]) {
@@ -183,162 +306,11 @@
     UIAlertView * errorDialog = [[UIAlertView alloc] initWithTitle:@"提示" message:self.isTeam?@"对不起，您已经不在该组队里":@"对不起，您已经不在该群组里" delegate:self cancelButtonTitle:@"确定"otherButtonTitles:nil, nil];
     errorDialog.tag = 10001;
     [errorDialog show];
-
+    
 }
 
 -(NSString*)getMemberCount:(NSMutableDictionary*)teamInfo{
     return [NSString stringWithFormat:@"[%@/%@]",KISDictionaryHaveKey(teamInfo, @"memberCount"),KISDictionaryHaveKey(teamInfo, @"maxVol")];
-}
-
-
-//初始化会话界面UI
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    //激活监听
-    wxSDArray = [[NSMutableArray alloc]init];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillResignActive:)name:UIApplicationWillResignActiveNotification object:nil]; //监听是否触发home键挂起程序.
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive:)name:UIApplicationDidBecomeActiveNotification object:nil]; //监听是否重新进入程序程序.
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeMyActive:)name:@"wxr_myActiveBeChanged"object:nil];
-    //群信息更新完成通知
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(groupInfoUploaded:) name:groupInfoUpload object:nil];
-    //用户信息更新完成
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userInfoUploaded:) name:userInfoUpload object:nil];
-    //解散该群
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDisbandGroup:) name:kDisbandGroup object:nil];
-    //加入群组通知
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onjoinGroupSuccess:) name:kJoinSuccessGroupMessage object:nil];
-    //被剔出该群
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onkickOffGroupGroup:) name:kKickOffGroupGroup object:nil];
-    //群动态消息
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedGroupDynamicMsg:) name:GroupDynamic_msg object:nil];
-    //组队人数变化
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(teamMemberCountChang:) name:UpdateTeamMemberCount object:nil];
-    //发送系统消息
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendSystemMessage:) name:kSendSystemMessage object:nil];
-
-    
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(teamInfoUploadNotification:) name:teamInfoUpload object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changInplaceState:) name:kChangInplaceState object:nil];//收到确认或者取消就位确认状态
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(sendChangInplaceState:) name:kSendChangInplaceState object:nil];//发起就位确认状态
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetChangInplaceState:) name:kResetChangInplaceState object:nil];//
-    
-    
-    [self initMyInfo];
-    postDict = [NSMutableDictionary dictionary];
-    self.typeData_list = [NSArray array];
-    canAdd = YES;
-    historyMsg = 0;
-    endOfTable = YES;
-    oTherPage= NO;
-    isPlaying = NO;
-    if([self.type isEqualToString:@"normal"]){
-        offHight = 0;
-    }else if([self.type isEqualToString:@"group"])
-    {
-        offHight = 20;
-    }
-    
-    uDefault = [NSUserDefaults standardUserDefaults];
-    currentID = [uDefault objectForKey:@"account"];
-    self.appDel = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    self.view.backgroundColor = UIColorFromRGBA(0xf7f7f7, 1);
-    [self.view addSubview:self.tView];
-    [self kkChatAddRefreshHeadView];//添加下拉刷新组件
-    
-
-    //从数据库中取出与这个人的聊天记录
-    messages = [self getMsgArray:0 PageSize:20];
-    [self normalMsgToFinalMsg];
-    if (messages.count>0) {
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
-    }
-    ifEmoji = NO;
-    [self.view addSubview:self.inPutView];  //输入框
-    
-    [self setTopViewWithTitle];
-    custview= [[ CustomInputView alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height-44,320,44)];
-    custview.mydelegate = self;
-    custview.hidden = YES;
-    [self.view addSubview:custview];
-    
-     [self changMsgToRead];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification
-        object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification
-        object:nil];
-    //图片与表情按钮
-    [self.view addSubview:self.theEmojiView];
-    self.theEmojiView.hidden = YES;
-    [self.view addSubview:self.kkChatAddView];
-    self.kkChatAddView.hidden = YES;
-    //长按以后的按钮-》
-    copyItem = [[UIMenuItem alloc] initWithTitle:@"复制"action:@selector(copyMsg)];
-    delItem = [[UIMenuItem alloc] initWithTitle:@"删除"action:@selector(deleteMsg)];
-    menu = [UIMenuController sharedMenuController];
-
-    
-    if (self.isTeam) {
-       NSMutableDictionary *  teamInfo = [[TeamManager singleton] getTeamInfo:[GameCommon getNewStringWithId:self.gameId] RoomId:[GameCommon getNewStringWithId:self.roomId]];
-        if ([KISDictionaryHaveKey(teamInfo, @"teamUsershipType") intValue]==0) {
-            teamUsershipType = YES;
-        }
-        
-        
-        self.topItemView=[UIButton buttonWithType:UIButtonTypeCustom];
-        self.topItemView.frame=CGRectMake(0,startX, 320, 0);
-        self.topItemView.backgroundColor = [UIColor clearColor];
-        [self.topItemView setBackgroundImage:KUIImage([self getBgImage]) forState:UIControlStateNormal];
-        
-        [self.topItemView.titleLabel setFont:[UIFont boldSystemFontOfSize:15]];
-        [self.topItemView addTarget:self action:@selector(showTeamInfoView) forControlEvents:UIControlEventTouchUpInside];
-        self.topItemView.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
-        self.topItemView.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-        [self.topItemView setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        
-        [self.view addSubview:self.topItemView];
-        
-        
-        self.leftImage = [[UIImageView alloc] initWithFrame:CGRectMake(10, 52/4, 52/2, 52/2)];
-        self.leftImage.image = KUIImage([self getleftIcon]);
-        [self.topItemView addSubview:self.leftImage];
-        
-        self.rightImage = [[UIImageView alloc] initWithFrame:CGRectMake(320-22-10, (52-22)/2, 22, 22)];
-        self.rightImage.image = KUIImage(@"team_right_top");
-        [self.topItemView addSubview:self.rightImage];
-        
-        
-        //就位确认
-        self.newTeamMenuView = [[NewTeamMenuView alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
-        self.newTeamMenuView.mSuperView = self.view;
-        self.newTeamMenuView.detaildelegate = self;
-        self.newTeamMenuView.hidden = YES;
-        [self.view addSubview:self.newTeamMenuView];
-        [self hideExtendedChooseView];
-        if (!teamUsershipType) {
-            [self initInpaceTopMenuIsShow];
-        }
-        
-        self.newTeamApplyListView = [[NewTeamApplyListView alloc] initWithFrame:CGRectMake(0, KISHighVersion_7?20:0, kScreenWidth,kScreenHeigth) GroupId:self.chatWithUser RoomId:self.roomId GameId:self.gameId teamUsershipType:teamUsershipType];
-        self.newTeamApplyListView.mSuperView = self.view;
-        self.newTeamApplyListView.detaildelegate = self;
-        [self.view addSubview:self.newTeamApplyListView];
-        [self hideApplyListExtendedChooseView];
-        if (teamUsershipType) {
-            [self initApplyTopMenuIsSHow];
-        }
-        [self showOrHidePositionDitView];
-    }
-    [self goBack];
-    showRecordView = [[ShowRecordView alloc]initWithFrame:CGRectMake(0, startX,320 , self.view.bounds.size.height-startX-50)];
-    showRecordView.hidden = YES;
-    [self.view addSubview:showRecordView];
-    
-    
-    hud = [[MBProgressHUD alloc] initWithView:self.view];
-    hud.labelText = @"正在处理...";
-    [self.view addSubview:hud];
 }
 
 -(void)showOrHidePositionDitView{
@@ -376,11 +348,9 @@
     
     if ([self.type isEqualToString:@"group"]&&!self.isTeam) {
         [self.view addSubview:self.groupCircleImage]; //群动态入口
-        
         if (self.unreadMsgCount>20&&self.unreadMsgCount<100) {
             _titleLabel.hidden = YES;
             [titleBtn addSubview:self.groupunReadMsgLable];//群未读消息数
-            
             CGSize textSize = [_groupunReadMsgLable.text sizeWithFont:[UIFont boldSystemFontOfSize:18] constrainedToSize:CGSizeMake(200, 20) lineBreakMode:NSLineBreakByWordWrapping];
             _groupunReadMsgLable.frame = CGRectMake((200-textSize.width)/2,10, textSize.width, 20);
             _titleImageV = [[UIButton alloc]initWithFrame:CGRectMake((200-textSize.width)/2+textSize.width+2, 15.5, 13, 13)];
@@ -392,7 +362,6 @@
         }
     }
     [self.topImageView addSubview:titleBtn];
-    
     self.dotPosition = [[MsgNotifityView alloc] initWithFrame:CGRectMake(320-25,KISHighVersion_7 ? 22 : 2, 22,18)];
     [self.topImageView addSubview:self.dotPosition];
     
@@ -587,7 +556,7 @@
         
         self.newTeamMenuView.alpha = 0;
         
-        self.tView.frame = CGRectMake(0,startX,320,self.view.frame.size.height-startX-55);
+        _tView.frame = CGRectMake(0,startX,320,self.view.frame.size.height-startX-55);
         self.topItemView.frame = CGRectMake(0, startX, 320, reTop.size.height);
     }completion:^(BOOL finished) {
         self.newTeamMenuView.hidden = YES;
@@ -595,7 +564,7 @@
         self.topImageView.hidden = NO;
     }];
     if (messages.count>0) {
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        [_tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }
     
 }
@@ -611,7 +580,7 @@
         self.newTeamMenuView.alpha = 0;
         
         self.newTeamMenuView.alpha = 1;
-        self.tView.frame = CGRectMake(0,0, 320,kScreenHeigth-55);
+        _tView.frame = CGRectMake(0,0, 320,kScreenHeigth-55);
         self.topItemView.frame = CGRectMake(0, 0, 320, reTop.size.height);
     }completion:^(BOOL finished) {
         self.topImageView.hidden = YES;
@@ -632,7 +601,7 @@
             self.topItemView.frame = CGRectMake(0, startX, 320, topViewHight);
         }
         if (messages.count>0) {
-            [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+            [_tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
         }
     }completion:^(BOOL finished) {
         
@@ -654,7 +623,7 @@
     }];
     offsetTopHight = 0;
     if (messages.count>0) {
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        [_tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     }
 }
 #pragma mark -- 跳转角色详情
@@ -861,7 +830,7 @@
 {
     [self showOrHidePositionDitView];
     [self changGroupMsgLocation:self.chatWithUser UserId:@"you" TeamPosition:KISDictionaryHaveKey(selectPosiitonDic, @"value")];
-    [self.tView reloadData];
+    [_tView reloadData];
 }
 //改变列表位置
 -(void)changGroupMsgLocation:(NSString*)groupId UserId:(NSString*)userid TeamPosition:(NSString*)teamPosition
@@ -902,9 +871,6 @@
 -(void)changMsgToRead
 {
     if ([self.type isEqualToString:@"normal"]) {
-        [self sendReadedMesg];//发送已读消息
-    }
-    if ([self.type isEqualToString:@"normal"]) {
         [DataStoreManager blankMsgUnreadCountForUser:self.chatWithUser Successcompletion:^(BOOL success, NSError *error) {
             [self setBackButtonNoreadMsg];
         }];
@@ -916,7 +882,6 @@
             }
         }];
     }
-    
 }
 
 
@@ -933,15 +898,9 @@
 //初始我的信息（激活状态，头像）
 -(void)initMyInfo
 {
-    myActive = YES;
-    DSuser * friend = [DataStoreManager queryDUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
-    self.myNickName = friend.nickName;
-    self.myHeadImg = [ImageService getImageOneId:friend.headImgID];
-}
-//改变我的激活状态
-- (void)changeMyActive:(NSNotification*)notification
-{
-     myActive = YES;
+    NSMutableDictionary * userInfo = [[UserManager singleton] getUser:[[NSUserDefaults standardUserDefaults] objectForKey:kMYUSERID]];
+    self.myNickName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"nickname")];
+    self.myHeadImg = [ImageService getImageOneId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"img")]];
 }
 
 #pragma mark ---TabView 显示方法
@@ -1685,7 +1644,7 @@
     [self becomeFirstResponder];
     //弹出菜单
     indexPathTo = [[NSIndexPath indexPathForRow:(readyIndex) inSection:0] copy];
-    KKMessageCell * cell = (KKMessageCell *)[self.tView cellForRowAtIndexPath:indexPathTo];
+    KKMessageCell * cell = (KKMessageCell *)[_tView cellForRowAtIndexPath:indexPathTo];
     tempStr = [[[messages objectAtIndex:indexPathTo.row] objectForKey:@"msg"] copy];
     CGRect rect = [self.view convertRect:tempBtn.frame fromView:cell.contentView];
     
@@ -1702,7 +1661,7 @@
 //表情按钮
 - (EmojiView *)theEmojiView{
     if (!_theEmojiView) {
-        _theEmojiView = [[EmojiView alloc]initWithFrame:CGRectMake(0,self.view.frame.size.height-253,320,253)WithSendBtn:YES];
+        _theEmojiView = [[EmojiView alloc]initWithFrame:CGRectMake(0,self.view.bounds.size.height,320,253)WithSendBtn:YES];
         _theEmojiView.delegate = self;
     }
     return _theEmojiView;
@@ -1711,7 +1670,7 @@
 - (UIView *)kkChatAddView{
     if (!_kkChatAddView) {
         _kkChatAddView = [[UIView alloc] init];
-        _kkChatAddView.frame = CGRectMake(0, self.view.frame.size.height-125, 320,125);
+        _kkChatAddView.frame = CGRectMake(0,self.view.bounds.size.height,320,125);
         _kkChatAddView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"chatMorebg.png"]];
         NSArray *kkChatButtonsTitle = @[@"相册",@"相机"];
         for (int i = 0; i < 2; i++) {
@@ -1738,16 +1697,13 @@
     if (!_inPutView) {
         _inPutView = [[UIView alloc] init];
         _inPutView.frame = CGRectMake(0, self.view.frame.size.height-44,320,44);
-        UIImage *rawEntryBackground = [UIImage imageNamed:@"chat_input.png"];
-        UIImage *entryBackground = [rawEntryBackground stretchableImageWithLeftCapWidth:13
-                                                                           topCapHeight:22];
-        UIImageView *entryImageView = [[UIImageView alloc] initWithImage:entryBackground];
+        
+        UIImageView *entryImageView = [[UIImageView alloc] initWithImage:KUIImage(@"chat_input.png")];
         entryImageView.frame = CGRectMake(41, 7, 206, 29);
         entryImageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        UIImage *rawBackground = [UIImage imageNamed:@"inputbg.png"];
-        UIImage *background = [rawBackground stretchableImageWithLeftCapWidth:13 topCapHeight:22];
-        UIImageView *imageView = [[UIImageView alloc] initWithImage:background];
-        imageView.frame = CGRectMake(0,0,self.inPutView.frame.size.width,self.inPutView.frame.size.height);
+        
+        UIImageView *imageView = [[UIImageView alloc] initWithImage:KUIImage(@"inputbg.png")];
+        imageView.frame = CGRectMake(0,0,_inPutView.frame.size.width,_inPutView.frame.size.height);
         imageView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         
         [_inPutView addSubview:imageView];
@@ -1764,44 +1720,13 @@
 -(UIButton *)audioBtn
 {
     _audioBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    _audioBtn.frame =CGRectMake(10, self.inPutView.frame.size.height-9.5f-25, 25, 25);
+    _audioBtn.frame =CGRectMake(10, _inPutView.frame.size.height-9.5f-25, 25, 25);
     _audioBtn.backgroundColor = [UIColor clearColor];
     [_audioBtn setImage:KUIImage(@"audioBtn") forState:UIControlStateNormal];
     [_audioBtn addTarget:self action:@selector(showStartRecordBtn:) forControlEvents:UIControlEventTouchUpInside];
     return _audioBtn;
 }
 
-#pragma mark----录音发送录音方法
--(void)showStartRecordBtn:(UIButton *)sender
-{
-    
-            if (self.kkchatInputType != KKChatInputTypeNone) {
-                [self autoMovekeyBoard:0];
-                [self.textView resignFirstResponder];
-                self.kkchatInputType = KKChatInputTypeNone;
-                [UIView animateWithDuration:0.2 animations:^{
-                    self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
-                    self.kkChatAddView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44, 320,253);
-                    m_EmojiScrollView.frame = CGRectMake(0,m_EmojiScrollView.frame.origin.y+260,320,253);
-                    emojiBGV.frame = CGRectMake(0,emojiBGV.frame.origin.y+260+startX-44,320,emojiBGV.frame.size.height);
-                    m_Emojipc.frame = CGRectMake(0, m_Emojipc.frame.origin.y+260+startX-44,320,m_Emojipc.frame.size.height);
-                } completion:^(BOOL finished) {
-                    self.theEmojiView.hidden = YES;
-                    self.kkChatAddView.hidden = YES;
-                    [m_EmojiScrollView removeFromSuperview];
-                    [emojiBGV removeFromSuperview];
-                    [m_Emojipc removeFromSuperview];
-                }];
-                [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
-                [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
-            }
-    canAdd = YES;
-    ifEmoji = NO;
-    self.inPutView.hidden = YES;
-    custview.hidden = NO;
-}
-
-#pragma mark --播放
 #pragma mark ---播放声音
 -(void)playAudio:(UIButton *)sender
 {
@@ -1871,7 +1796,7 @@
 -(void)startPayloadAudioAnimation:(NSInteger)cellIndex{
     isPlaying = YES;
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(cellIndex) inSection:0];
-    PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
+    PlayVoiceCell * cell = (PlayVoiceCell *)[_tView cellForRowAtIndexPath:indexPath];
     cell.cellCount = indexPath.row;
     cell.audioRedImg.hidden = YES;
     [cell startPaly];
@@ -1882,13 +1807,13 @@
 -(void)stopPayloadAudioAnimation:(NSInteger)cellIndex{
     isPlaying = NO;
     NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(cellIndex) inSection:0];
-    PlayVoiceCell * cell = (PlayVoiceCell *)[self.tView cellForRowAtIndexPath:indexPath];
+    PlayVoiceCell * cell = (PlayVoiceCell *)[_tView cellForRowAtIndexPath:indexPath];
     [cell stopPlay];
 }
 
 #pragma mark ----停止播放
 - (void)playingStoped {
-    for (PlayVoiceCell *cell in [self.tView visibleCells]  ) {
+    for (PlayVoiceCell *cell in [_tView visibleCells]  ) {
         if ([cell isKindOfClass:[PlayVoiceCell class]]) {
             [cell.voiceImageView stopAnimating];
         }
@@ -2029,28 +1954,6 @@
     return _groupunReadMsgLable;
 }
 
-//加号按钮
-- (UIButton *)kkChatAddButton{
-    if (!_kkChatAddButton) {
-        _kkChatAddButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        _kkChatAddButton.frame = CGRectMake(253, self.inPutView.frame.size.height-9.5f-25, 25, 25);
-        [_kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal"]forState:UIControlStateNormal];
-        [_kkChatAddButton addTarget:self action:@selector(kkChatAddButtonClick:)forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _kkChatAddButton;
-}
-//表情
-- (UIButton *)emojiBtn{
-    if (!_emojiBtn) {
-        _emojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        _emojiBtn.frame = CGRectMake(285, self.inPutView.frame.size.height-9.5-25,25,25);
-        [_emojiBtn setImage:[UIImage imageNamed:@"emoji.png"] forState:UIControlStateNormal];
-        [_emojiBtn addTarget:self action:@selector(kkChatEmojiBtnClicked:)forControlEvents:UIControlEventTouchUpInside];
-    }
-    return _emojiBtn;
-}
-
-
 
 - (UITableView *)tView{
     if(!_tView) {
@@ -2061,6 +1964,27 @@
         _tView.separatorStyle = UITableViewCellSeparatorStyleNone;
     }
     return _tView;
+}
+
+//加号按钮
+- (UIButton *)kkChatAddButton{
+    if (!_kkChatAddButton) {
+        _kkChatAddButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        _kkChatAddButton.frame = CGRectMake(253, _inPutView.frame.size.height-9.5f-25, 25, 25);
+        [_kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal"]forState:UIControlStateNormal];
+        [_kkChatAddButton addTarget:self action:@selector(kkChatAddButtonClick:)forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _kkChatAddButton;
+}
+//表情
+- (UIButton *)emojiBtn{
+    if (!_emojiBtn) {
+        _emojiBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        _emojiBtn.frame = CGRectMake(285, _inPutView.frame.size.height-9.5-25,25,25);
+        [_emojiBtn setImage:[UIImage imageNamed:@"emoji.png"] forState:UIControlStateNormal];
+        [_emojiBtn addTarget:self action:@selector(kkChatEmojiBtnClicked:)forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _emojiBtn;
 }
 
 - (HPGrowingTextView *)textView{
@@ -2142,8 +2066,8 @@
         [self overReadMsgToArray:array[i] Index:i];
     }
     [self addGroupHistoryMsg];
-    [self.tView reloadData];
-    [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+    [_tView reloadData];
+    [_tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
 
 -(void)loadMessage:(NSInteger)FetchOffset PageSize:(NSInteger)pageSize
@@ -2165,20 +2089,18 @@
         self.unreadMsgCount=0;
     }
 }
-//将当前会话的所有消息改为已读，发送已读消息
-- (void)sendReadedMesg
-{
-    for(NSMutableDictionary* plainEntry in messages)
-    {
-        NSString *msgType = KISDictionaryHaveKey(plainEntry, @"msgType");
-        NSString *status = KISDictionaryHaveKey(plainEntry, @"status");
-        NSString *sender = KISDictionaryHaveKey(plainEntry, @"sender");
-        if ([msgType isEqualToString:@"normalchat"] && ![[NSString stringWithString:status] isEqualToString:@"4"] && ![sender isEqualToString:@"you"]) {
-            NSString*readMagIdString = KISDictionaryHaveKey(plainEntry, @"messageuuid");
-            [self comeBackDisplayed:self.chatWithUser msgId:readMagIdString];
-        }
+//发送已读反馈
+-(void)detailMsg:(NSMutableDictionary*)msgDic{
+    NSString *msgType = KISDictionaryHaveKey(msgDic, @"msgType");
+    NSString *status = KISDictionaryHaveKey(msgDic, @"status");
+    NSString *sender = KISDictionaryHaveKey(msgDic, @"sender");
+    if ([msgType isEqualToString:@"normalchat"] && ![[NSString stringWithString:status] isEqualToString:@"4"] && ![sender isEqualToString:@"you"]) {
+        NSString*readMagIdString = KISDictionaryHaveKey(msgDic, @"messageuuid");
+        [self comeBackDisplayed:self.chatWithUser msgId:readMagIdString];
     }
+
 }
+
 //计算单条Cell的高度
 -(CGFloat)getCellHight:(NSDictionary*)msgDic msgHight:(CGFloat)hight
 {
@@ -2228,11 +2150,11 @@
     NSMutableDictionary* imgs = [[NSMutableDictionary alloc]init];
     NSMutableArray* showimgs = [[NSMutableArray alloc]init];
     
-    for(int i=0; i<messages.count;i++)
-    {
-        NSDictionary* plainEntry = messages[i];
+    for(NSMutableDictionary * plainEntry in messages){
+        if ([self.type isEqualToString:@"normal"]) {
+            [self detailMsg:plainEntry];
+        }
         NSArray * hh = [self cacuMsgSize:plainEntry];
-        
         [heightArray addObject:hh];
         [times addObject:[self getMsgTime:plainEntry]];
         NSMutableAttributedString *mas=[self getNSMutableByMsgNSDictionary:plainEntry];
@@ -2620,9 +2542,6 @@
 
 //点击加号中的按钮
 - (void)kkChatAddViewButtonsClick:(UIButton *)sender{
-    
-
-    
     if (![self isGroupAvaitable]) {
         [self showInVisableDialog];
         return;
@@ -2635,19 +2554,17 @@
 
     UIImagePickerController *imagePicker = nil;
     switch (sender.tag) {
-
         case 0: //相册
         {
             if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]) {
                 oTherPage = YES;
-
+                
                 CTAssetsPickerController *picker = [[CTAssetsPickerController alloc] init];
                 picker.maximumNumberOfSelection = 9;
                 picker.assetsFilter = [ALAssetsFilter allAssets];
                 picker.delegate = self;
                 [self presentViewController:picker animated:YES completion:NULL];
-            }
-            else {
+            }else {
                 UIAlertView *libraryAlert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您的设备不支持相册" delegate:self cancelButtonTitle:@"了解" otherButtonTitles:nil];
                 [libraryAlert show];
             }
@@ -2678,11 +2595,9 @@
     }
 }
 #pragma mark - 从相机或相册获取到图片
-
-//从相机中选取图片
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo NS_DEPRECATED_IOS(2_0, 3_0){
 }
-//从相册中选取图片
+#pragma mark - 从相机或相册获取到图片
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
     hud = [[MBProgressHUD alloc] initWithView:self.view];
     hud.labelText = @"请稍后...";
@@ -2695,7 +2610,7 @@
     [self chooseImage:upImage];
 }
 
-#pragma mark - Assets Picker Delegate
+#pragma mark - 图片多选
 - (void)assetsPickerController:(CTAssetsPickerController *)picker didFinishPickingAssets:(NSArray *)assets
 {
     for (ALAsset * asset in assets) {
@@ -2767,7 +2682,7 @@
         [DataStoreManager refreshGroupMessageStatusWithId:uuid status:status];
     }
     [messages replaceObjectAtIndex:index withObject:dict];
-    KKChatCell * cell = (KKChatCell *)[self.tView cellForRowAtIndexPath:indexPath];
+    KKChatCell * cell = (KKChatCell *)[_tView cellForRowAtIndexPath:indexPath];
     [cell setViewState:status];
 }
 //刷新消息状态
@@ -2777,121 +2692,134 @@
     NSInteger index = [self getMsgRowWithId:uuid];
     [self refreMessageStatus:index Status:status];
 }
-
+#pragma mark----点击表情按钮
 -(void)kkChatEmojiBtnClicked:(UIButton *)sender
 {
-    if (!myActive) {
-         [self showUnActionAlert];
-        return ;
+    if (!_theEmojiView) {
+        [self.view addSubview:self.theEmojiView];
     }
-    self.inPutView.hidden = NO;
-    self.audioBtn.selected = NO;
-
-    [self.view bringSubviewToFront:self.inPutView];
-    [self.view bringSubviewToFront:self.theEmojiView];
-
+    _inPutView.hidden = NO;
+    [self.view bringSubviewToFront:_inPutView];
+    [self.view bringSubviewToFront:_theEmojiView];
     if (self.kkchatInputType != KKChatInputTypeEmoji) {
-        ifEmoji = YES;
-        self.kkchatInputType = KKChatInputTypeEmoji;
-        [sender setImage:[UIImage imageNamed:@"keyboard.png"]forState:UIControlStateNormal];
-        [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
-        self.textView.hidden = NO;
-        [self showEmojiScrollView];
-    }
-    else
-    {
-        [self.textView.internalTextView becomeFirstResponder];
-        ifEmoji = NO;
-        self.kkchatInputType = KKChatInputTypeKeyboard;
-        self.theEmojiView.hidden = YES;
-        [m_EmojiScrollView removeFromSuperview];
-        [emojiBGV removeFromSuperview];
-        [m_Emojipc removeFromSuperview];
-        [sender setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
+        [self showEmoji];
+    }else{
+        [self showKeyBoard];
     }
 }
-
+#pragma mark----点击加号按钮
 - (void)kkChatAddButtonClick:(UIButton *)sender{
-    if (!myActive) {
-        [self showUnActionAlert];
-        return ;
+    if (!_kkChatAddView) {
+        [self.view addSubview:self.kkChatAddView];
     }
-    self.inPutView.hidden = NO;
-    [self.view bringSubviewToFront:self.inPutView];
-    [self.view bringSubviewToFront:self.kkChatAddView];
-    if (self.kkchatInputType != KKChatInputTypeAdd) {   //点击切到发送
-        self.kkchatInputType = KKChatInputTypeAdd;
-        
-        [sender setImage:[UIImage imageNamed:@"keyboard.png"]forState:UIControlStateNormal];
-        [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
-        [self showEmojiScrollView];
+    _inPutView.hidden = NO;
+    [self.view bringSubviewToFront:_inPutView];
+    [self.view bringSubviewToFront:_kkChatAddView];
+    if (self.kkchatInputType != KKChatInputTypeAdd) {
+        [self showMoreMenu];
     }else{//点击切回键盘
-        [self.textView.internalTextView becomeFirstResponder];
-        ifEmoji = NO;
-        self.kkchatInputType = KKChatInputTypeKeyboard;
-        self.theEmojiView.hidden = YES;
-        [m_EmojiScrollView removeFromSuperview];
-        [emojiBGV removeFromSuperview];
-        [m_Emojipc removeFromSuperview];
-        [sender setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
+        [self showKeyBoard];
     }
     return;
 }
--(void)showUnActionAlert
+
+#pragma mark----点击录音按钮
+-(void)showStartRecordBtn:(UIButton *)sender
 {
-    UIAlertView * UnActionAlertV = [[UIAlertView alloc] initWithTitle:@"您尚未激活" message:@"未激活用户不能发送聊天消息"delegate:self
-                cancelButtonTitle:@"取消"otherButtonTitles:@"去激活", nil];
-    [UnActionAlertV show];
+    if (self.kkchatInputType != KKChatInputTypeNone) {
+        [self showAudio];
+    }
+    canAdd = YES;
+    _inPutView.hidden = YES;
+    custview.hidden = NO;
+}
+#pragma mark----点击屏幕隐藏底部view
+-(void)hideKeyEmView{
+    if (self.kkchatInputType != KKChatInputTypeNone) {
+        [self showAudio];
+    }
+    [clearView removeFromSuperview];
+    canAdd = YES;
 }
 
--(void)showEmojiScrollView
-{
-    switch (self.kkchatInputType) {
-        case KKChatInputTypeEmoji:
-        {
-            [self.textView resignFirstResponder];
-            self.inPutView.frame = CGRectMake(0,self.view.frame.size.height-227-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
-            self.theEmojiView.hidden = NO;
-            self.kkChatAddView.hidden = YES;
-            self.theEmojiView.frame = CGRectMake(0,self.view.frame.size.height-253,320,253);
-            [self autoMovekeyBoard:253];
-        }
-            break;
-        case KKChatInputTypeAdd:
-        {
-            [self.textView resignFirstResponder];
-            
-            self.inPutView.frame = CGRectMake(0,self.view.frame.size.height-125-self.inPutView.frame.size.height,320,self.inPutView.frame.size.height);
-            self.theEmojiView.hidden = YES;
-            self.kkChatAddView.hidden = NO;
-            self.kkChatAddView.frame = CGRectMake(0,self.view.frame.size.height-125,320,125);
-            [self autoMovekeyBoard:125];
-        }
-            break;
-            
-        default:
-            break;
-    }
-    
+//显示表情
+-(void)showEmoji{
+    self.kkchatInputType = KKChatInputTypeEmoji;
+    [_textView resignFirstResponder];
+    [_emojiBtn setImage:[UIImage imageNamed:@"keyboard.png"]forState:UIControlStateNormal];
+    [_kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
+    [UIView animateWithDuration:0.3 animations:^{
+        _theEmojiView.hidden = NO;
+        _kkChatAddView.hidden = YES;
+        _theEmojiView.frame = CGRectMake(0,self.view.frame.size.height-253,320,253);
+        _kkChatAddView.frame = CGRectMake(0,self.view.frame.size.height,320,125);
+        [self autoMovekeyBoard:253];
+    } completion:^(BOOL finished) {
+        
+    }];
 }
+//显示更多菜单
+-(void)showMoreMenu{
+    self.kkchatInputType = KKChatInputTypeAdd;
+    [_textView resignFirstResponder];
+    [_kkChatAddButton setImage:[UIImage imageNamed:@"keyboard.png"]forState:UIControlStateNormal];
+    [_emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
+    [UIView animateWithDuration:0.3 animations:^{
+        _kkChatAddView.hidden = NO;
+        _theEmojiView.hidden = YES;
+        _theEmojiView.frame = CGRectMake(0,self.view.frame.size.height,320,253);
+        _kkChatAddView.frame = CGRectMake(0,self.view.frame.size.height-125,320,125);
+        [self autoMovekeyBoard:125];
+    } completion:^(BOOL finished) {
+        
+    }];
+}
+
+//显示录音
+-(void)showAudio{
+    self.kkchatInputType = KKChatInputTypeNone;
+    [_textView resignFirstResponder];
+    [_emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
+    [_kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
+    [UIView animateWithDuration:0.3 animations:^{
+        _theEmojiView.frame = CGRectMake(0,self.view.bounds.size.height,320,253);
+        _kkChatAddView.frame = CGRectMake(0,self.view.bounds.size.height,320,125);
+        [self autoMovekeyBoard:0];
+    } completion:^(BOOL finished) {
+        _theEmojiView.hidden = YES;
+        _kkChatAddView.hidden = YES;
+    }];
+}
+
+//显示键盘
+-(void)showKeyBoard{
+    self.kkchatInputType = KKChatInputTypeKeyboard;
+    [_textView.internalTextView becomeFirstResponder];
+    [_emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
+    [_kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
+    [UIView animateWithDuration:0.3 animations:^{
+        _theEmojiView.frame = CGRectMake(0,self.view.bounds.size.height,320,253);
+        _kkChatAddView.frame = CGRectMake(0,self.view.bounds.size.height,320,125);
+    } completion:^(BOOL finished) {
+        _theEmojiView.hidden = YES;
+        _kkChatAddView.hidden = YES;
+    }];
+}
+
+
+//表情键盘上的发送按钮
 -(void)emojiSendBtnDo
 {
     [self sendButton:nil];
 }
 
--(void)toContactProfile:(NSString*)userId
-{
-    oTherPage = YES;
-    TestViewController * detailV = [[TestViewController alloc] init];
-    detailV.userId = userId;
-    [self.navigationController pushViewController:detailV animated:YES];
-}
-
+//键盘上的发送按钮
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [self sendButton:nil];
     return YES;
 }
+#pragma mark----点击屏幕
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     UITouch * touch = [touches anyObject];
@@ -2899,36 +2827,14 @@
         [self hideKeyEmView];
     }
 }
-
--(void)hideKeyEmView{
-    [self.textView resignFirstResponder];
-    if (self.kkchatInputType != KKChatInputTypeNone) {
-        [self autoMovekeyBoard:0];
-        self.kkchatInputType = KKChatInputTypeNone;
-        [UIView animateWithDuration:0.2 animations:^{
-            self.theEmojiView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44,320,253);
-            self.kkChatAddView.frame = CGRectMake(0,self.theEmojiView.frame.origin.y+260+startX-44, 320,253);
-            m_EmojiScrollView.frame = CGRectMake(0,m_EmojiScrollView.frame.origin.y+260,320,253);
-            emojiBGV.frame = CGRectMake(0,emojiBGV.frame.origin.y+260+startX-44,320,emojiBGV.frame.size.height);
-            m_Emojipc.frame = CGRectMake(0, m_Emojipc.frame.origin.y+260+startX-44,320,m_Emojipc.frame.size.height);
-        } completion:^(BOOL finished) {
-            self.theEmojiView.hidden = YES;
-            self.kkChatAddView.hidden = YES;
-            [m_EmojiScrollView removeFromSuperview];
-            [emojiBGV removeFromSuperview];
-            [m_Emojipc removeFromSuperview];
-        }];
-        [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
-        [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
-    }
-    
-    [clearView removeFromSuperview];
-    if ([popLittleView superview]) {
-        [popLittleView removeFromSuperview];
-    }
-    canAdd = YES;
+//跳转用户详情页面
+-(void)toContactProfile:(NSString*)userId
+{
+    oTherPage = YES;
+    TestViewController * detailV = [[TestViewController alloc] init];
+    detailV.userId = userId;
+    [self.navigationController pushViewController:detailV animated:YES];
 }
-
 - (void)viewDidUnload
 {
     [self setTView:nil];
@@ -2954,37 +2860,39 @@
 -(void)hideOrShowInputView:(float) h{
     [UIView beginAnimations:nil context:nil];
     [UIView setAnimationDuration:0.3];
-    CGRect containerFrame = self.inPutView.frame;
+    CGRect containerFrame = _inPutView.frame;
     containerFrame.origin.y = self.view.bounds.size.height - (h + containerFrame.size.height);
-	self.inPutView.frame = containerFrame;
+	_inPutView.frame = containerFrame;
     if (messages.count<4) {
-        CGRect cgmm = self.tView.frame;
+        CGRect cgmm = _tView.frame;
         cgmm.size.height=self.view.frame.size.height-startX-55-h-(self.isTeam?offsetTopHight:0);
-        self.tView.frame=cgmm;
+        _tView.frame=cgmm;
     }else{
-        CGRect cgmm = self.tView.frame;
+        CGRect cgmm = _tView.frame;
         if (cgmm.size.height<(self.view.frame.size.height-startX-55)) {
             cgmm.size.height=self.view.frame.size.height-startX-55;
         }
-        if (self.inPutView.frame.size.height>50) {
-            h+=(self.inPutView.frame.size.height-50);
+        if (_inPutView.frame.size.height>50) {
+            h+=(_inPutView.frame.size.height-50);
         }
         cgmm.origin.y = startX-h+(self.isTeam?offsetTopHight:0);
         cgmm.size.height = self.isTeam?cgmm.size.height-offsetTopHight:cgmm.size.height;
-        self.tView.frame=cgmm;
+        _tView.frame=cgmm;
     }
     [UIView commitAnimations];
+    
+    
     if (messages.count>0) {
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        [_tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }
     if (h>0&&canAdd) {
         canAdd = NO;
-        clearView = [[UIView alloc] initWithFrame:CGRectMake(0,startX,320,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h)];
+        clearView = [[UIView alloc] initWithFrame:CGRectMake(0,startX,320,self.view.frame.size.height-startX-_inPutView.frame.size.height-h)];
         [clearView setBackgroundColor:[UIColor clearColor]];
         [self.view addSubview:clearView];
     }
     if ([clearView superview]) {
-        [clearView setFrame:CGRectMake(0,startX, 320,self.view.frame.size.height-startX-self.inPutView.frame.size.height-h)];
+        [clearView setFrame:CGRectMake(0,startX, 320,self.view.frame.size.height-startX-_inPutView.frame.size.height-h)];
     }
 }
 
@@ -2993,43 +2901,37 @@
 #pragma mark HPExpandingTextView delegate
 - (BOOL)growingTextViewShouldBeginEditing:(HPGrowingTextView *)growingTextView
 {
-    if (myActive) {
-        [menu setMenuItems:@[]];
-        return YES;
-    }
-    [self showUnActionAlert];
-    return NO;
+    [menu setMenuItems:@[]];
+    return YES;
 }
 - (void)growingTextViewDidBeginEditing:(HPGrowingTextView *)growingTextView
 {
-    [self.kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
+    [_kkChatAddButton setImage:[UIImage imageNamed:@"kkChatAddButtonNomal.png"]forState:UIControlStateNormal];
     
 }
 //改变键盘高度
 - (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
 {
     float diff = (growingTextView.frame.size.height - height);
-	CGRect r = self.inPutView.frame;
+	CGRect r = _inPutView.frame;
     r.size.height -= diff;
     r.origin.y += diff;
-	self.inPutView.frame = r;
+	_inPutView.frame = r;
     
     if ([clearView superview]) {
         [clearView setFrame:CGRectMake(0,startX,320,clearView.frame.size.height+diff)];
     }
 
-    CGRect tvRect=self.tView.frame;
+    CGRect tvRect=_tView.frame;
     tvRect.origin.y = tvRect.origin.y+diff;
-    self.tView.frame=tvRect;
+    _tView.frame=tvRect;
     
     if (messages.count>0) {
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        [_tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }
-    [picBtn setFrame:CGRectMake(285,self.inPutView.frame.size.height-12-27,25,27)];
-    [self.audioBtn setFrame:CGRectMake(10, self.inPutView.frame.size.height-9.5-25,25,25)];
-    [self.emojiBtn setFrame:CGRectMake(285,self.inPutView.frame.size.height-9.5-25,25,25)];
-    [self.kkChatAddButton setFrame:CGRectMake(253,self.inPutView.frame.size.height-9.5-25,25,25)];
-    NSLog(@"%@",self.audioBtn);
+    [_audioBtn setFrame:CGRectMake(10, _inPutView.frame.size.height-9.5-25,25,25)];
+    [_emojiBtn setFrame:CGRectMake(285,_inPutView.frame.size.height-9.5-25,25,25)];
+    [_kkChatAddButton setFrame:CGRectMake(253,_inPutView.frame.size.height-9.5-25,25,25)];
 }
 
 -(BOOL)growingTextViewShouldReturn:(HPGrowingTextView *)growingTextView
@@ -3057,7 +2959,7 @@
                     [DataStoreManager refreshGroupMessageStatusWithId:msgId status:KISDictionaryHaveKey(stateDic, @"msgState")];
                 }
                 NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(i) inSection:0];
-                KKChatCell * cell = (KKChatCell *)[self.tView cellForRowAtIndexPath:indexPath];
+                KKChatCell * cell = (KKChatCell *)[_tView cellForRowAtIndexPath:indexPath];
                 if (![cell isKindOfClass:[KKSystemMsgCell class]]) {
                     [cell setViewState:KISDictionaryHaveKey(stateDic, @"msgState")];
                 }
@@ -3065,10 +2967,6 @@
         }
     }
 }
-
-
-
-
 //根据uuid获取message所在的RowIndex
 - (NSInteger)getMsgRowWithId:(NSString*)msgUUID
 {
@@ -3099,93 +2997,61 @@
     }
     return  dict;
 }
-#pragma mark UI/UE : 响应各种交互操作
+#pragma mark 键盘显示
 - (void)keyboardWillShow:(NSNotification *)notification {
-
-    
-    ifEmoji = NO;
-    self.kkchatInputType = KKChatInputTypeKeyboard;
-    
-    self.theEmojiView.hidden = YES;
-    self.kkChatAddView.hidden = YES;
-    
-    [m_EmojiScrollView removeFromSuperview];
-    [emojiBGV removeFromSuperview];
-    [m_Emojipc removeFromSuperview];
-    [self.emojiBtn setImage:[UIImage imageNamed:@"emoji.png"]forState:UIControlStateNormal];
+    [self showKeyBoard];
     if ([clearView superview]) {
         [clearView removeFromSuperview];
     }
-    if ([popLittleView superview]) {
-        [popLittleView removeFromSuperview];
-    }
     canAdd = YES;
-    
-    /*
-     Reduce the size of the text view so that it's not obscured by the keyboard.
-     Animate the resize so that it's in sync with the appearance of the keyboard.
-     */
-    
     NSDictionary *userInfo = [notification userInfo];
-    
-    // Get the origin of the keyboard when it's displayed.
     NSValue* aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
-    // Get the top of the keyboard as the y coordinate of its origin in self's view's coordinate system. The bottom of the text view's frame should align with the top of the keyboard's final position.
     CGRect keyboardRect = [aValue CGRectValue];
-    // Get the duration of the animation.
     NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
     NSTimeInterval animationDuration;
     [animationDurationValue getValue:&animationDuration];
-    // Animate the resize of the text view's frame in sync with the keyboard's appearance.
-    
     [self autoMovekeyBoard:keyboardRect.size.height];
 }
 
-
+#pragma mark 键盘隐藏
 - (void)keyboardWillHide:(NSNotification *)notification {
     NSDictionary* userInfo = [notification userInfo];
-    
-    /*
-     Restore the size of the text view (fill self's view).
-     Animate the resize so that it's in sync with the disappearance of the keyboard.
-     */
     NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
     NSTimeInterval animationDuration;
     [animationDurationValue getValue:&animationDuration];
     if (self.kkchatInputType==KKChatInputTypeEmoji||self.kkchatInputType==KKChatInputTypeAdd) {
         
-    }else
-    {
+    }else{
         [self autoMovekeyBoard:0];
     }
 }
 -(NSString *)selectedEmoji:(NSString *)ssss
 {
-	if (self.textView.text == nil) {
-		self.textView.text = ssss;
+	if (_textView.text == nil) {
+		_textView.text = ssss;
 	}
 	else {
-		self.textView.text = [self.textView.text stringByAppendingString:ssss];
+		_textView.text = [_textView.text stringByAppendingString:ssss];
 	}
     
     return 0;
 }
 -(void)deleteEmojiStr
 {
-    if (self.textView.text.length>=1) {
-        if ([self.textView.text hasSuffix:@"] "] && [self.textView.text length] >= 5) {
-            self.textView.text = [self.textView.text substringToIndex:(self.textView.text.length-5)];
+    if (_textView.text.length>=1) {
+        if ([_textView.text hasSuffix:@"] "] && [_textView.text length] >= 5) {
+            _textView.text = [_textView.text substringToIndex:(_textView.text.length-5)];
         }
         else
         {
-            self.textView.text = [self.textView.text substringToIndex:(self.textView.text.length-1)];
+            _textView.text = [_textView.text substringToIndex:(_textView.text.length-1)];
         }
     }
 }
 -(void)addEmojiScrollView
 {
-    if (self.textView.text.length>=1) {
-        self.textView.text = [self.textView.text substringToIndex:(self.textView.text.length-1)];
+    if (_textView.text.length>=1) {
+        _textView.text = [_textView.text substringToIndex:(_textView.text.length-1)];
     }
 }
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -3260,7 +3126,6 @@
 //拷贝消息
 -(void)copyMsg
 {
-    [popLittleView removeFromSuperview];
     if ([clearView superview]) {
         [clearView removeFromSuperview];
     }
@@ -3281,7 +3146,7 @@
             return;
         }
     }
-    NSString *message = self.textView.text;
+    NSString *message = _textView.text;
     if (message.length==0||[[message stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]length]==0) {
         //如果发送信息为空或者为空格的时候弹框提示
         UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"不能发送空消息" message:nil delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
@@ -3296,7 +3161,7 @@
         [self showAlertViewWithTitle:nil message:@"发送字数太多，请分条发送" buttonTitle:@"确定"];
         return;
     }
-    self.textView.text = @"";
+    _textView.text = @"";
     [self sendMsg:message];
 }
 
@@ -3468,7 +3333,7 @@
     if (messages.count>=50) {
         [self clearMessage];
         [self loadMessage:0 PageSize:20];
-        [self.tView reloadData];
+        [_tView reloadData];
     }
     if([self.type isEqualToString:@"group"]){
         [dictionary setObject:self.chatWithUser forKey:@"groupId"];
@@ -3548,11 +3413,11 @@
 {
     [messages addObject:dictionary];
     [self newMsgToArray:dictionary];
-    [self.tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
-    [self.tView reloadData];
+    [_tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
+    [_tView reloadData];
     
     if (messages.count>0) {//定位到列表最后
-        [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+        [_tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
     }
 }
 
@@ -3609,7 +3474,7 @@
     NSString *imageUrl = KISDictionaryHaveKey(payloads, @"msg");
     if ([[GameCommon getNewStringWithId:messageState] isEqualToString:@"8"]) {//如果之前没上传成功,读取本地图片，再次上传
         [self refreMessageStatus2:messageDict Status:@"10"];
-        [self.tView reloadData];
+        [_tView reloadData];
     }else{//如果已经成功 ，把message再发一遍
         if (imageUrl.length==0)
         {
@@ -3625,7 +3490,7 @@
     NSString *messageState = KISDictionaryHaveKey(messageDict, @"status");
     if ([[GameCommon getNewStringWithId:messageState] isEqualToString:@"8"]) {//如果之前没上传成功,读取本地图片，再次上传
         [self refreMessageStatus2:messageDict Status:@"10"];
-        [self.tView reloadData];
+        [_tView reloadData];
     }else{//如果已经成功 ，把message再发一遍
         [messageDict setObject:@"2" forKey:@"status"];
         [self reSendAudioMsg:messageDict];
@@ -3679,7 +3544,7 @@
 {
     NSIndexPath* indexpath = [NSIndexPath indexPathForRow:cellIndex inSection:0];
     CGSize size = CGSizeMake([[[self.HeightArray objectAtIndex:indexpath.row] objectAtIndex:0] floatValue],[[[self.HeightArray objectAtIndex:indexpath.row] objectAtIndex:1] floatValue]);
-    KKChatCell * cell = (KKChatCell *)[self.tView cellForRowAtIndexPath:indexpath];
+    KKChatCell * cell = (KKChatCell *)[_tView cellForRowAtIndexPath:indexpath];
     [cell refreshStatusPoint:CGPointMake(320-size.width-padding-60 -15,(size.height+20)/2 + padding*2-15)status:status];
 }
 #pragma mark 判断是否需要执行第一次打招呼
@@ -3713,7 +3578,6 @@
 #pragma mark 删除
 -(void)deleteMsg
 {
-    [popLittleView removeFromSuperview];
     if ([clearView superview]) {
         [clearView removeFromSuperview];
     }
@@ -3735,8 +3599,8 @@
     }else{
         [DataStoreManager refreshThumbMsgsAfterDeleteCommonMsg:[messages lastObject]ForUser:userId ifDel:YES];
     }
-    [self.tView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPathTo]withRowAnimation:UITableViewRowAnimationRight];
-    [self.tView reloadData];
+    [_tView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPathTo]withRowAnimation:UITableViewRowAnimationRight];
+    [_tView reloadData];
     
     if (kkChatMsgType == kkchatMsgAudio) {
         NSInteger index = [self getMsgRowWithId:uuid];
@@ -3769,26 +3633,22 @@
     [postDict1 setObject:@"153" forKey:@"method"];
     [postDict1 setObject:paramDict forKey:@"params"];
     [postDict1 setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken]forKey:@"token"];
-    
-    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict1
-                success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                              [wxSDArray addObject:self.chatWithUser];
-                              [DataStoreManager storeThumbMsgUser:self.chatWithUser type:@"1"];
-                              [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"sayHello_wx_info_id"];
-                              [[NSUserDefaults standardUserDefaults] setObject:wxSDArray forKey:@"sayHello_wx_info_id"];
-                              
-                } failure:^(AFHTTPRequestOperation *operation, id error) {
-                }];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict1 success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [wxSDArray addObject:self.chatWithUser];
+        [DataStoreManager storeThumbMsgUser:self.chatWithUser type:@"1"];
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"sayHello_wx_info_id"];
+        [[NSUserDefaults standardUserDefaults] setObject:wxSDArray forKey:@"sayHello_wx_info_id"];
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+    }];
 }
 #pragma mark - 下拉刷新
 
 - (void)kkChatAddRefreshHeadView{
-    
     __block NSArray *array;
     __block int loadHistoryArrayCount;
     __block float loadMoreMsgHeight = 0;
     MJRefreshHeaderView *header = [MJRefreshHeaderView header];
-    header.scrollView = self.tView;
+    header.scrollView = _tView;
     [header.statusLabel setHidden:YES];
     [header.lastUpdateTimeLabel setHidden:YES];
     CGRect headerRect = header.arrowImage.frame;
@@ -3808,13 +3668,12 @@
         loadHistoryArrayCount = array.count;
         [header endRefreshing];
     };
-    
     header.endStateChangeBlock = ^(MJRefreshBaseView *refreshView) {
-        [self.tView reloadData];
+        [_tView reloadData];
         if (loadHistoryArrayCount==0) {
             return;
         }
-        [self.tView scrollRectToVisible:CGRectMake(0,loadMoreMsgHeight,self.tView.frame.size.width,self.tView.frame.size.height) animated:NO];
+        [_tView scrollRectToVisible:CGRectMake(0,loadMoreMsgHeight,_tView.frame.size.width,_tView.frame.size.height) animated:NO];
     };
     
 }
@@ -3830,7 +3689,7 @@
         return;
     }
     [self refreTitleText];
-    [self.tView reloadData];
+    [_tView reloadData];
 }
 
 #pragma mark 发送系统消息
@@ -3864,7 +3723,7 @@
         return;
     }
     [self refreTitleText];
-    [self.tView reloadData];
+    [_tView reloadData];
 }
 #pragma mark 该群组解散通知
 - (void)onDisbandGroup:(NSNotification*)notification
@@ -3894,7 +3753,7 @@
     if ([state isEqualToString:@"2"]) {//被踢出了该群
         self.groupUsershipType = @"3";
         [messages removeAllObjects];
-        [self.tView reloadData];
+        [_tView reloadData];
     }
 }
 
@@ -3968,7 +3827,7 @@
         if (self.isTeam) {
             if ([KISDictionaryHaveKey([KISDictionaryHaveKey(tempDic, @"payload") JSONValue], @"type") isEqualToString:@"selectTeamPosition"]) {//位置选择
                 [self changGroupMsgLocation:self.chatWithUser UserId:KISDictionaryHaveKey(tempDic, @"sender") TeamPosition:KISDictionaryHaveKey(tempDic, @"teamPosition")];
-                [self.tView reloadData];
+                [_tView reloadData];
             }
         }
     }else{
@@ -4000,15 +3859,15 @@
         if (messages.count>=60&&endOfTable) {
             [self clearMessage];
             [self loadMessage:0 PageSize:20];
-            [self.tView reloadData];
+            [_tView reloadData];
         }
             
         [messages addObject:tempDic];
         [self newMsgToArray:tempDic];
-        [self.tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
+        [_tView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:(messages.count-1) inSection:0]] withRowAnimation:UITableViewRowAnimationBottom];
         if (endOfTable) {
             if (messages.count>0) {
-                [self.tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+                [_tView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:messages.count-1 inSection:0]atScrollPosition:UITableViewScrollPositionBottom animated:YES];
             }
         }
     }else{
@@ -4044,37 +3903,12 @@
 -(void)lookBigImg:(UITapGestureRecognizer*)sender
 {
     NSDictionary *dict = [messages objectAtIndex:sender.view.tag];
-    NSDictionary *payload = [KISDictionaryHaveKey(dict, @"payload") JSONValue];
-    NSString *senderId=KISDictionaryHaveKey(dict, @"sender");
-    
-    NSString *str=KISDictionaryHaveKey(payload, @"msg");
-    if ([senderId isEqualToString:@"you"]) {
-        str=KISDictionaryHaveKey(payload, @"title");
-        if(str==nil||[str isEqualToString:@""]){
-            str = KISDictionaryHaveKey(payload, @"msg");
-            if (str==nil||[str isEqualToString:@""]) {
-                str=KISDictionaryHaveKey(payload, @"thumb");
-            }
-        }
-    }else{
-        str=KISDictionaryHaveKey(payload, @"msg");//先加载网络图片
-        if(str==nil||[str isEqualToString:@""]){//网络图片没有加载本地的大图
-            str = KISDictionaryHaveKey(payload, @"title");
-            if (str==nil||[str isEqualToString:@""]) {//本地大图没有就加载本地的小图
-                str=KISDictionaryHaveKey(payload, @"thumb");
-            }
-        }
-    }
-    oTherPage=YES;
-//    NSArray *array = [NSArray arrayWithObjects:str, nil];
-    
-    
+        oTherPage=YES;
     NSString * deleteImage = [self getImageStr:dict];
     NSInteger indexOf = [self.showImages indexOfObject:deleteImage];
     
     PhotoViewController *photo = [[PhotoViewController alloc]initWithSmallImages:nil images:self.showImages indext:indexOf];
     [self presentViewController:photo animated:NO completion:^{
-        
     }];
 }
 
@@ -4086,7 +3920,7 @@
     readyIndex = imgV.tag ;//设置当前要操作的cell idnex
     indexPathTo = [[NSIndexPath indexPathForRow:(imgV.tag) inSection:0] copy];
     //弹出菜单
-    KKMessageCell * cell = (KKMessageCell *)[self.tView cellForRowAtIndexPath:indexPathTo];
+    KKMessageCell * cell = (KKMessageCell *)[_tView cellForRowAtIndexPath:indexPathTo];
     CGRect rect = [self.view convertRect:imgV.frame fromView:cell.contentView];
     [menu setMenuItems:[NSArray arrayWithObjects:delItem, nil]];
     [menu setTargetRect:CGRectMake(rect.origin.x, rect.origin.y, 60, 90) inView:self.view];
@@ -4103,7 +3937,7 @@
     [self refreMessageStatus:cellIndex Status:@"2"];
     if ([type isEqualToString:@"image"]) {//图片
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(cellIndex) inSection:0];
-        KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
+        KKImgCell * cell = (KKImgCell *)[_tView cellForRowAtIndexPath:indexPath];
         cell.progressView.hidden = YES;
         [self sendImageMsg:fileKey UUID:KISDictionaryHaveKey(messages[cellIndex], @"messageuuid")];//改图片地址，并发送消息
     }else if ([type isEqualToString:@"audio"]){//语音
@@ -4117,7 +3951,7 @@
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"发送图片失败请重新发送" delegate:nil cancelButtonTitle:@"知道啦"otherButtonTitles:nil];
         [alert show];
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(cellIndex) inSection:0];
-        KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
+        KKImgCell * cell = (KKImgCell *)[_tView cellForRowAtIndexPath:indexPath];
         cell.progressView.hidden = YES;
     }
 }
@@ -4125,7 +3959,7 @@
 -(void)uploadProgressUpdated:(NSInteger)cellIndex percent:(float)percent Type:(NSString*)type{
     if ([type isEqualToString:@"image"]) {
         NSIndexPath* indexPath = [NSIndexPath indexPathForRow:(cellIndex) inSection:0];
-        KKImgCell * cell = (KKImgCell *)[self.tView cellForRowAtIndexPath:indexPath];
+        KKImgCell * cell = (KKImgCell *)[_tView cellForRowAtIndexPath:indexPath];
         cell.progressView.progress = percent;
     }
 }
@@ -4164,8 +3998,7 @@
     }
 }
 
-#pragma mark----各种声音的
-#pragma mark - 录音完毕
+#pragma mark - 录音完毕回调
 - (void)recordingFinishedWithFileName:(NSString *)filePath time:(NSTimeInterval)interval {
     dispatch_async(dispatch_get_main_queue(), ^{
         if ((long long)interval<1) {//录音小于
@@ -4251,24 +4084,23 @@
 #pragma mark ----点击表情buton
 -(void)didClickEmjoWithView:(UIView *)view
 {
-    [self kkChatEmojiBtnClicked:self.emojiBtn];
+    [self kkChatEmojiBtnClicked:_emojiBtn];
     custview.hidden = YES;
-    self.inPutView.hidden  = NO;
-
+    _inPutView.hidden  = NO;
 }
 #pragma mark ----点击加号
 -(void)didClickkkchatAddBtnWithView:(UIView *)view
 {
-    [self kkChatAddButtonClick:self.kkChatAddButton];
+    [self kkChatAddButtonClick:_kkChatAddButton];
     custview.hidden = YES;
-    self.inPutView.hidden  = NO;
+    _inPutView.hidden  = NO;
 }
-#pragma mark ----
+#pragma mark ---- 点击语音
 -(void)didClickAudioWithView:(UIView *)view
 {
     custview.hidden = YES;
-    self.inPutView.hidden  = NO;
-    [self.textView becomeFirstResponder];
+    _inPutView.hidden  = NO;
+    [_textView becomeFirstResponder];
 }
 
 -(void)viewDidDisappear:(BOOL)animated
