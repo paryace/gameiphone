@@ -104,15 +104,22 @@
         self.layout.itemSize = CGSizeMake(80, 80);
         
         self.photoCollectionView = [[UICollectionView alloc]initWithFrame:CGRectZero collectionViewLayout:self.layout];
+        self.photoCollectionView.backgroundColor = [UIColor clearColor];
         self.photoCollectionView.scrollEnabled = NO;
         self.photoCollectionView.delegate = self;
         self.photoCollectionView.dataSource = self;
         [self.photoCollectionView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
         
-        UITapGestureRecognizer *tapMIss = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(taptap)];
-//        [self.photoCollectionView addGestureRecognizer:tapMIss];
+        self.gestureView = [[UIView alloc]initWithFrame:CGRectMake(0 , 0, 320, 500)];
+        self.gestureView.backgroundColor = [UIColor whiteColor];
+        self.gestureView.alpha = 0.1;
+        self.gestureView.hidden = YES;
+        [self.photoCollectionView addSubview:self.gestureView];
         
-        self.photoCollectionView.backgroundColor = [UIColor clearColor];
+        UITapGestureRecognizer *tapMIss = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(taptap)];
+        [self.gestureView addGestureRecognizer:tapMIss];
+        
+//
         [self.contentView addSubview:self.photoCollectionView];
         
         self.zanView = [[UIImageView alloc]initWithFrame:CGRectMake(60, 100, 250, 30)];
@@ -205,8 +212,8 @@
 }
 - (void)taptap
 {
-    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(TapMiss)]) {
-        [self.myCellDelegate  TapMiss];
+    if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(TapMiss:)]) {
+        [self.myCellDelegate  TapMiss:self];
     }
 }
 
@@ -225,6 +232,7 @@
 }
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+    
     if (self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(bigImgWithCircle:WithIndexPath:)]) {
         [self.myCellDelegate  bigImgWithCircle:self WithIndexPath:indexPath.row];
     }

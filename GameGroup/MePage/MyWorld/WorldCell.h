@@ -47,6 +47,7 @@
 @property(nonatomic,strong)UIImageView *areaIcon;
 //标准label，参照的是举报按钮的frame
 @property(nonatomic,strong)UIButton *ETBtn;
+@property(nonatomic,strong)UIView * gestureView;//手势图层
 //加好友button
 @property(nonatomic,strong)UIButton *makeFriendBtn;
 + (CGSize)getContentHeigthWithStr:(NSString*)contStr;
@@ -93,7 +94,7 @@
 
 -(void)tapZanNickNameWithCell:(WorldCell *)myCell;
 
--(void)TapMiss;//点击collectionview收回键盘
+-(void)TapMiss:(WorldCell *)mycell;//点击collectionview收回键盘
 
 //传送显示的 评论，赞菜单的Cell
 - (void)openMenuCell:(WorldCell*)myCell;
