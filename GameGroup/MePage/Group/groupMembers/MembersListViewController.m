@@ -33,8 +33,8 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"" withBackButton:YES];
     UIButton *shareButton = [[UIButton alloc]initWithFrame:CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44)];
-    [shareButton setBackgroundImage:KUIImage(@"GroupMembers_normal") forState:UIControlStateNormal];
-    [shareButton setBackgroundImage:KUIImage(@"GroupMembers_click") forState:UIControlStateHighlighted];
+    [shareButton setBackgroundImage:KUIImage(@"checkRoles") forState:UIControlStateNormal];
+    [shareButton setBackgroundImage:KUIImage(@"checkRoles2") forState:UIControlStateHighlighted];
     shareButton.backgroundColor = [UIColor clearColor];
     [shareButton addTarget:self action:@selector(shareBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
@@ -72,13 +72,13 @@
     if (sender.selected) {
         requestType =@"members";
         sender.selected =NO;
-        [sender setBackgroundImage:KUIImage(@"GroupMembers_normal") forState:UIControlStateNormal];
-        [sender setBackgroundImage:KUIImage(@"GroupMembers_click") forState:UIControlStateHighlighted];
+        [sender setBackgroundImage:KUIImage(@"checkRoles") forState:UIControlStateNormal];
+        [sender setBackgroundImage:KUIImage(@"checkRoles2") forState:UIControlStateHighlighted];
     }else{
         requestType =@"characters";
         sender.selected = YES;
-        [sender setBackgroundImage:KUIImage(@"GroupRoles_normal") forState:UIControlStateNormal];
-        [sender setBackgroundImage:KUIImage(@"GroupRoles_click") forState:UIControlStateHighlighted];
+        [sender setBackgroundImage:KUIImage(@"checkMember") forState:UIControlStateNormal];
+        [sender setBackgroundImage:KUIImage(@"checkMember2") forState:UIControlStateHighlighted];
     }
     [self getNearByDataByNetWithType:requestType];
 

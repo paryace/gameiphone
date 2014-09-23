@@ -57,6 +57,7 @@ typedef enum : NSUInteger {
     float offer;
     int height;
     BOOL _keyboardIsVisible;
+    UIActivityIndicatorView *m_loginActivity;
 }
 @property (nonatomic, assign) CommentInputType commentInputType;
 @property (nonatomic, strong) EmojiView *theEmojiView;
@@ -151,6 +152,14 @@ typedef enum : NSUInteger {
     shareButton.backgroundColor = [UIColor clearColor];
     [shareButton addTarget:self action:@selector(publishInfo:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:shareButton];
+    
+    m_loginActivity = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    m_loginActivity.frame = CGRectMake(100, KISHighVersion_7?27:7, 20, 20);
+    m_loginActivity.center = CGPointMake(100, KISHighVersion_7?42:22);
+    m_loginActivity.color = [UIColor whiteColor];
+    m_loginActivity.activityIndicatorViewStyle =UIActivityIndicatorViewStyleWhite;
+    [self.view addSubview:m_loginActivity];
+    [m_loginActivity startAnimating];
 }
 
 -(void)backButtonClick:(UIButton*)sender
@@ -247,7 +256,7 @@ typedef enum : NSUInteger {
 -(void)getInfoWithNet:(BOOL)isRefre
 {
     if (!isRefre) {
-        [hud show:YES];
+//        [hud show:YES];
     }
     NSMutableDictionary *paramDic = [NSMutableDictionary dictionary];
     NSMutableDictionary *dict = [NSMutableDictionary dictionary];
@@ -260,6 +269,7 @@ typedef enum : NSUInteger {
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:dict   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [m_loginActivity stopAnimating];
         [m_footer endRefreshing];
         [m_header endRefreshing];
         [hud hide:YES];
@@ -298,6 +308,7 @@ typedef enum : NSUInteger {
         [m_myTableView reloadData];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
+            
             if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
             {
                 UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
@@ -307,7 +318,7 @@ typedef enum : NSUInteger {
         }
         [m_footer endRefreshing];
         [m_header endRefreshing];
-        
+        [m_loginActivity startAnimating];
         [hud hide:YES];
     }];
     
@@ -593,6 +604,7 @@ typedef enum : NSUInteger {
     header.scrollView = m_myTableView;
     header.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         m_currPageCount = 0;
+        [m_loginActivity startAnimating];
         [self getInfoWithNet:YES];
         
     };
@@ -615,6 +627,7 @@ typedef enum : NSUInteger {
     footer.scrollView = m_myTableView;
     footer.beginRefreshingBlock = ^(MJRefreshBaseView *refreshView) {
         m_currPageCount = m_dataArray.count;
+        [m_loginActivity startAnimating];
         [self getInfoWithNet:YES];
     };
     m_footer = footer;

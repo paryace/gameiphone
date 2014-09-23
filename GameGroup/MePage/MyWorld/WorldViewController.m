@@ -103,16 +103,34 @@ typedef enum : NSUInteger {
 {
     [super viewWillAppear:animated];
     
+    [m_myTableView reloadData];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
      [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(notiReloadData:) name:@"friendState" object:nil];
-}
-- (void)notiReloadData:(id)sender
-{
     
+}
+- (void)notiReloadData:(NSNotification*)sender
+{
+
+//    NSDictionary *shiptypeDic = sender.userInfo;
+//    NSString *useridStr = [[shiptypeDic objectForKey:@"parms"]objectForKey:@"frienduserid"];
+//    NSString *shiptypeStr = [shiptypeDic objectForKey:@"shiptype"];
+//    if ([KISDictionaryHaveKey(shiptypeDic, @"kind")isEqualToString:@"110"]) {
+//        if ([KISDictionaryHaveKey(shiptypeDic, @"shiptype")isEqualToString:@"1"]) {
+//            for (NSMutableDictionary*dic in m_dataArray) {
+////                NSMutableDictionary *zz = [dic objectForKey:@"user"];
+//                [[dic objectForKey:@"user"] setObject:@"2" forKey:@"shiptype"];
+//            }
+//        }
+//    }
+//    NSMutableDictionary * dic = [m_dataArray objectAtIndex:0];
+//    dic setObject:  forKey:<#(id<NSCopying>)#>
     [m_myTableView reloadData];
-//    [self getInfoWithNet];
+    m_currPageCount = 0;
+    [self getInfoWithNet];
 //    [self netWork];
+//    [self changeShiptypeWithCell];
+//    [self viewDidLoad];
 }
 - (void)viewDidLoad
 {
@@ -433,6 +451,7 @@ typedef enum : NSUInteger {
     }
     NSString * imageIds = KISDictionaryHaveKey(KISDictionaryHaveKey(dict, @"user"), @"img");
     cell.headImgBtn.imageURL = [ImageService getImageStr:imageIds Width:80];
+    
     //判断赞按钮状态显示相应的图标
     UIButton *button  = cell.zanBtn;
     NSString *isZan=KISDictionaryHaveKey(dict, @"isZan");
@@ -778,6 +797,7 @@ typedef enum : NSUInteger {
     if ([GameCommon isEmtity:nickName]) {
         nickName=KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"user"), @"nickname");
     }
+    test.worldRow = myCell.tag;
     test.nickName = nickName;
     [self.navigationController pushViewController: test animated:YES];
 }
@@ -939,14 +959,15 @@ typedef enum : NSUInteger {
     
     return contentDict;
 }
--(void)TapMiss
+-(void)TapMiss:(WorldCell *)mycell
 {
     [self.textView resignFirstResponder];
+    mycell.gestureView.hidden = YES;
 }
 
 -(void)changeShiptypeWithCell:(NewNearByCell *)myCell
 {
-    
+    [hud show:YES];
     NSDictionary *dic = [m_dataArray objectAtIndex:myCell.tag];
     
     
@@ -966,6 +987,7 @@ typedef enum : NSUInteger {
     [postDict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
         if ([responseObject isKindOfClass:[NSDictionary class]])
         {
             [DataStoreManager changshiptypeWithUserId:KISDictionaryHaveKey(KISDictionaryHaveKey([m_dataArray objectAtIndex:myCell.tag], @"user"), @"userid") type:KISDictionaryHaveKey(responseObject, @"shiptype") Successcompletion:^(BOOL success, NSError *error) {
@@ -1381,8 +1403,9 @@ typedef enum : NSUInteger {
 }
 #pragma mark ---tableviewdelegate ----点击自己发的评论-删除  点击他人评论 回复
 //点击删除或者点击回复某人的评论
-- (void)editCommentOfYouWithCircle:(NewNearByCell *)mycell withIndexPath:(NSInteger)row
+- (void)editCommentOfYouWithCircle:(WorldCell *)mycell withIndexPath:(NSInteger)row
 {
+    mycell.gestureView.hidden = NO;
     NSDictionary *dic = [m_dataArray objectAtIndex:mycell.tag];
     NSDictionary *dict = [KISDictionaryHaveKey(dic, @"commentList") objectAtIndex:row];
     //点击的是自己的评论，弹出删除菜单
@@ -1438,7 +1461,7 @@ typedef enum : NSUInteger {
 }
 
 //tableView定位
--(void)keyboardLocation:(NewNearByCell *)mycell
+-(void)keyboardLocation:(WorldCell *)mycell
 {
     for (int i=0; i<(mycell.tag+1); i++) {
         NSDictionary *dict =[m_dataArray objectAtIndex:i];

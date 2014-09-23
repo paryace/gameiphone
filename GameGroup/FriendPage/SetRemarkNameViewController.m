@@ -119,6 +119,8 @@
     
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [hud hide:YES];
+        NSDictionary * dic = @{@"remarkName": m_remarkText.text,@"userId":self.userId};
+        [[NSNotificationCenter defaultCenter]postNotificationName:@"changeRemarkName" object:nil userInfo:dic];
         NSLog(@"%@", responseObject);
         if (self.isFriend) {
             [DataStoreManager saveFriendRemarkName:m_remarkText.text userid:self.userId];

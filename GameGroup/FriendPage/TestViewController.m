@@ -59,8 +59,15 @@
         NSLog(@"self.userid%@",self.nickName);
     }
     NSLog(@"m_titlelabel%@",m_titleLabel.text);
+    // 添加修改备注的通知
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeRemarkName:) name:@"changeRemarkName" object:nil];
 }
-
+- (void)changeRemarkName:(NSNotification *)sender
+{
+    NSDictionary *dic = sender.userInfo;
+    NSString *str = [dic objectForKey:@"remarkName"];
+    [self setTopViewWithTitle:str withBackButton:YES];
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -1043,6 +1050,7 @@
     }
     UIAlertView* alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"您确定要删除该好友吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
     alter.tag = 234;
+    [hud show:YES];
     [alter show];
 }
 //刷新粉丝数
@@ -1173,7 +1181,7 @@
     attentionOffBtn.userInteractionEnabled = YES;
 }
 
-//取消关注或者删除好友1，取消关注 2,删除好友
+//取消关注或者删除好友   1，取消关注 2,删除好友
 -(void)cancelFriend:(NSString*)type
 {
     [self begin];
@@ -1190,8 +1198,14 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self end];
         [hud hide:YES];
+//           [[NSNotificationCenter defaultCenter]postNotificationName:@"friendState" object:nil];
         
-         [[NSNotificationCenter defaultCenter]postNotificationName:@"friendState" object:nil];
+        //用通知传过去一个字典，记录着 关系 userid 请求方法
+        NSDictionary * shiptypeDic = @{@"kind": [postDict objectForKey:@"method"],@"shiptype":type,@"params":paramDict};
+        
+        //            NSDictionary *shiptypeDic = [NSDictionary dictionaryWithObject:type forKey:@"shiptype"];
+        //            [shiptypeDic setValue:[postDict objectForKey:@"params"] forKey:@"kind"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"friendState" object:nil userInfo:shiptypeDic];
         
         NSString * shipT=KISDictionaryHaveKey(responseObject, @"shiptype");
         [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipT Successcompletion:^(BOOL success, NSError *error) {
@@ -1202,15 +1216,17 @@
                 if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
                     [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"off"];
                 }
+                [self showMessageWindowWithContent:@"取消成功" imageType:0];
             }
             if ([type isEqualToString:@"2"]) {
                 [self refreFansNum:@"0"];
                 [self showMessageWindowWithContent:@"删除成功" imageType:0];
             }
-//            [self.navigationController popViewControllerAnimated:YES];
-            //post一个通知
-           
-            [self.navigationController popViewControllerAnimated:YES];
+            
+             [self.navigationController popViewControllerAnimated:YES];
+//            [self.navigationController popToViewController:[self.navigationController.viewControllers objectAtIndex:1] animated:YES];
+            
+            
         }];
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         [self end];
@@ -1300,6 +1316,13 @@
         [self end];
         NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
         [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipType Successcompletion:^(BOOL success, NSError *error) {
+            
+            NSDictionary * shiptypeDic = @{@"kind": [postDict objectForKey:@"method"],@"shiptype":type};
+            
+//            NSDictionary *shiptypeDic = [NSDictionary dictionaryWithObject:type forKey:@"shiptype"];
+//            [shiptypeDic setValue:[postDict objectForKey:@"params"] forKey:@"kind"];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"friendState" object:nil userInfo:shiptypeDic];
+            
             [DataStoreManager deleteMemberFromListWithUserid:self.hostInfo.userId];
             if ([type isEqualToString:@"2"]) {
                 [self refreFansNum:@"1"];
@@ -1355,6 +1378,7 @@
     UIAlertView* alter = [[UIAlertView alloc] initWithTitle:@"提示" message:@"确实取消对该用户的关注吗？" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
     alter.tag = 345;
     [alter show];
+    [hud show:YES];
 }
 
 #pragma mark 修改备注名字

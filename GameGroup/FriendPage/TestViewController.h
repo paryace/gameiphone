@@ -40,7 +40,7 @@ typedef enum
 @property(nonatomic,assign)BOOL isActiveAc;//是否激活
 @property(nonatomic,assign)BOOL isOnClick;
 @property(nonatomic,assign)NSInteger  testRow;
-
+@property(nonatomic,assign)NSInteger worldRow;//再世界等页面所在的row
 
 @property(nonatomic, assign)BOOL          isFansPage;
 @property(nonatomic,assign)NSInteger  fansTestRow;

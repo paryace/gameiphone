@@ -69,6 +69,27 @@
         [[NSUserDefaults standardUserDefaults] synchronize];
         [self getFriendListFromNet];
     }
+    //添加修改备注姓名的通知
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(changeRemarkName:) name:@"changeRemarkName" object:nil];
+}
+- (void)changeRemarkName:(NSNotification *)sender
+{
+    NSDictionary *dic = sender.userInfo;
+    NSString *remarkStr = [dic objectForKey:@"remarkName"];
+    NSString *userID = [dic objectForKey:@"userId"];
+    //resultArray 是一个字典
+    for (NSArray *Arr in [resultArray allValues]) {
+        for (NSMutableDictionary*tempDic in Arr) {
+            if ([[tempDic objectForKey:@"userid"]isEqualToString:userID]) {
+                    [tempDic setObject:remarkStr forKey:@"alias"];
+                }
+            }
+    }
+    [m_myTableView reloadData];
+//    [self getFriendDateFromDataSore];
+//    [self addheadView];
+    [self getFriendListFromNet];
+
 }
 - (void)viewDidAppear:(BOOL)animated
 {
