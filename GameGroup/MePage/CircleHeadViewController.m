@@ -73,11 +73,12 @@ typedef enum : NSUInteger {
     UIActivityIndicatorView * m_loginActivity;
     BOOL ishaveAboutMe;
     BOOL ishavehuancun;
+    
+    
     NSString *copyContext;
     NSInteger copyIndex;
     NSMutableDictionary * copyDic;
     NSDictionary * shareUserDic;
-    
     ShareDynamicView * showShareView;
     NSString * sharethumbImage;
 }

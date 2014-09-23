@@ -12,6 +12,9 @@
 #import "EmojiView.h"
 #import "HPGrowingTextView.h"
 #import "SendNewsViewController.h"
+#import "selectContactPage.h"
+#import "ShareDynamicView.h"
+#import "ShareDynamicMsgService.h"
 
 @interface GroupCricleViewController : BaseViewController
 <
@@ -22,7 +25,9 @@ NewNearByCellDelegate,
 UIActionSheetDelegate,
 HPGrowingTextViewDelegate,
 EmojiViewDelegate,
-TableViewDatasourceDidChange
+TableViewDatasourceDidChange,
+getContact,
+ShareDynamicDelegate
 >
 @property(nonatomic,strong)HPGrowingTextView *textView;
 @property(nonatomic,copy)NSString *groupId;

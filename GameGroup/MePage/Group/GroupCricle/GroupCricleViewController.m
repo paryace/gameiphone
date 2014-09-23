@@ -57,6 +57,14 @@ typedef enum : NSUInteger {
     float offer;
     int height;
     BOOL _keyboardIsVisible;
+    
+    
+    NSString *copyContext;
+    NSInteger copyIndex;
+    NSMutableDictionary * copyDic;
+    NSDictionary * shareUserDic;
+    ShareDynamicView * showShareView;
+    NSString * sharethumbImage;
 }
 @property (nonatomic, assign) CommentInputType commentInputType;
 @property (nonatomic, strong) EmojiView *theEmojiView;
@@ -404,6 +412,7 @@ typedef enum : NSUInteger {
         //动态的高度
         float height1 = [KISDictionaryHaveKey(dict, @"titleLabelHieght") floatValue];
         cell.titleLabel.frame = CGRectMake(60, 30, 250, height1);
+        cell.clickBtn.frame = CGRectMake(60, 30, 250, height1);
         m_currmagY += height1 + 5;
         
         
@@ -452,6 +461,7 @@ typedef enum : NSUInteger {
         //文章高度
         titleLabelHeight = [KISDictionaryHaveKey(dict, @"titleLabelHieght") floatValue];
         cell.titleLabel.frame = CGRectMake(60, 30, 250, titleLabelHeight);
+        cell.clickBtn.frame = CGRectMake(60, 30, 250, titleLabelHeight);
         cell.shareView.frame = CGRectMake(60, titleLabelHeight+35, 250, 50);
         //titleLabelHeight +=5;
         m_currmagY += titleLabelHeight+50 ;
@@ -536,6 +546,46 @@ typedef enum : NSUInteger {
     return cell;
     
 }
+
+
+//菜单
+-(void)onLongClickContext:(NewNearByCell*)myCell{
+    copyIndex = myCell.tag;
+    copyContext = myCell.titleLabel.text;
+    copyDic = [m_dataArray objectAtIndex:myCell.tag];
+    NSArray * imageArray = KISDictionaryHaveKey(copyDic, @"imgArray");
+    if (imageArray&&[imageArray isKindOfClass:[NSArray class]]&&imageArray.count>0) {
+        sharethumbImage = [imageArray objectAtIndex:0];
+    }else{
+        sharethumbImage = @"";
+    }
+    UIMenuItem *copyitem = [[UIMenuItem alloc] initWithTitle:@"复制"action:@selector(copyAction:)];
+    UIMenuItem *forwarding = [[UIMenuItem alloc] initWithTitle:@"转发"action:@selector(forwardingAction:)];
+    UIMenuController *menu = [UIMenuController sharedMenuController];
+    [menu setMenuItems:[NSArray arrayWithObjects:copyitem, forwarding, nil]];
+    CGRect textRect = myCell.clickBtn.frame;
+    [menu setTargetRect:CGRectMake(textRect.origin.x, textRect.origin.y+textRect.size.height/2, textRect.size.width, textRect.size.height) inView:myCell.clickBtn.superview];
+    [menu setMenuVisible:YES animated:YES];
+}
+//复制
+- (void)copyAction:(id)sender {
+    copyIndex = -1;
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = copyContext;
+    [self showMessageWindowWithContent:@"已复制" imageType:0];
+}
+//转发
+- (void)forwardingAction:(id)sender {
+    copyIndex = -1;
+    UIActionSheet* actionSheet = [[UIActionSheet alloc]initWithTitle:@"分享到" delegate:self cancelButtonTitle:@"取消"destructiveButtonTitle:nil otherButtonTitles:@"好友",@"新浪微博",@"QQ",@"微信朋友圈",nil];
+    actionSheet.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+    actionSheet.tag = 20000000;
+    [actionSheet showInView:self.view];
+}
+- (BOOL)canBecomeFirstResponder{
+    return YES;
+}
+
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //用分析器初始化m_dataArray
@@ -1301,8 +1351,112 @@ typedef enum : NSUInteger {
         }else{
             return;
         }
+    }else if (actionSheet.tag == 20000000){//转发动态
+        if (buttonIndex ==0) {
+            if ([KISDictionaryHaveKey([DataStoreManager queryMyInfo], @"superstar") doubleValue]) {
+                UIActionSheet* sheet = [[UIActionSheet alloc] initWithTitle:@"分享类型" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"发送给好友",@"广播给粉丝及好友", nil];
+                sheet.tag = 90;
+                [sheet showInView:self.view];
+            }else{
+                [self intentToSelectFriendPage];
+            }
+        }else {
+            [[ShareDynamicMsgService singleton] shareToOther:KISDictionaryHaveKey(copyDic, @"id") MsgTitle:KISDictionaryHaveKey(copyDic, @"title") Description:KISDictionaryHaveKey(copyDic, @"msg") Image:KISDictionaryHaveKey(copyDic, @"img") UserNickName:KISDictionaryHaveKey(KISDictionaryHaveKey(copyDic,@"user"),@"nickname") index:buttonIndex];
+        }
+    }else if (actionSheet.tag == 90){//广播粉丝
+        switch (buttonIndex) {
+            case 0:
+            {
+                [self intentToSelectFriendPage];
+            }  break;
+            case 1:
+            {
+                [self setShareView:1];
+            }break;
+            default:
+                break;
+        }
     }
 }
+
+//跳转选择好友页面
+-(void)intentToSelectFriendPage{
+    selectContactPage *VC = [[selectContactPage alloc] init];
+    VC.contactDelegate = self;
+    [self.navigationController pushViewController:VC animated:YES];
+}
+#pragma mark --选择好友回来
+-(void)getContact:(NSDictionary *)userDict
+{
+    shareUserDic = userDict;
+    [self setShareView:0];
+}
+//显示需要分享的view
+- (void)setShareView:(NSInteger)type
+{
+    if (showShareView == nil) {
+        showShareView = [[ShareDynamicView alloc] initWithFrame:self.view.frame];
+        showShareView.shareDelegate = self;
+        [self.view addSubview:showShareView];
+    }else{
+        [showShareView showSelf];
+    }
+    [showShareView setTextToView:KISDictionaryHaveKey(copyDic, @"title") MsgContext:KISDictionaryHaveKey(copyDic, @"msg") ShareToUserNickName:KISDictionaryHaveKey(shareUserDic, @"nickname") ShareImage:sharethumbImage type:type];
+}
+#pragma mark --分享给好友
+-(void)shareToFriend{
+    [self sendDynamicToFriend];
+}
+#pragma mark -- 广播给粉丝
+-(void)broadcastToFans{
+    [self broadcastDynamicToFans];
+}
+
+//分享给好友
+-(void)sendDynamicToFriend
+{
+    [[ShareDynamicMsgService singleton] sendToFriend:KISDictionaryHaveKey(KISDictionaryHaveKey(copyDic, @"user"),@"nickname") DynamicId:copyDic[@"id"] MsgBody:copyDic[@"msg"] DynamicImage:sharethumbImage ToUserId:KISDictionaryHaveKey(shareUserDic, @"userid") ToNickName:KISDictionaryHaveKey(shareUserDic, @"nickname") ToImage:KISDictionaryHaveKey(shareUserDic, @"img") success:^{
+        [self showMessageWindowWithContent:@"发送成功" imageType:0];
+    } failure:^(NSString *error) {
+        [self showMessageWindowWithContent:@"发送失败" imageType:0];
+    }];
+}
+
+
+//消息发送成功
+- (void)messageAck:(NSNotification *)notification
+{
+    NSDictionary* tempDic = notification.userInfo;
+    [DataStoreManager refreshMessageStatusWithId:KISDictionaryHaveKey(tempDic, @"src_id") status:KISDictionaryHaveKey(tempDic, @"msgState")];
+}
+
+//广播给粉丝
+-(void)broadcastDynamicToFans
+{
+    [self.view bringSubviewToFront:hud];
+    hud.labelText = @"发送中...";
+    [hud show:YES];
+    [[ShareDynamicMsgService singleton] broadcastToFans:KISDictionaryHaveKey(copyDic, @"id") resuccess:^(id responseObject) {
+        [hud hide:YES];
+        showShareView.hidden = YES;
+        [self showMessageWindowWithContent:@"成功" imageType:0];
+    } refailure:^(id error) {
+        [hud hide:YES];
+        [self showErrorMsgDialog:error];
+    }];
+}
+-(void)showErrorMsgDialog:(id)error{
+    if ([error isKindOfClass:[NSDictionary class]]) {
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+        {
+            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+        }
+    }
+}
+
+
+
 
 //tableView定位
 -(void)keyboardLocation:(NewNearByCell *)mycell
