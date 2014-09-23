@@ -167,7 +167,7 @@
     [hud show:YES];
     NSMutableDictionary *paramDict  = [NSMutableDictionary dictionary];
     NSMutableDictionary * postDict = [NSMutableDictionary dictionary];
-    [paramDict setObject:[GameCommon getNewStringWithId:@"2"] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:self.gameid] forKey:@"gameid"];
     if (![GameCommon isEmtity:gender]) {
         [paramDict setObject:[GameCommon getNewStringWithId:gender] forKey:@"gender"];
     }

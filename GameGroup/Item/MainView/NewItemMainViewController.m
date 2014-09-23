@@ -29,7 +29,7 @@
     UIButton *m_button1;
     UIButton *m_button2;
     
-    UIImageView * guideImage;
+    UIButton * guideImage;
     
     
 }
@@ -138,16 +138,19 @@
     firstView.myDelegate = self;
     [customView addSubview:firstView];
     
-    guideImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height-50)];
-    guideImage.image = KUIImage(@"team_guide_img_7");
+    guideImage = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height)];
+    [guideImage setBackgroundImage:KUIImage(iPhone5?@"team_guide_img_7":@"team_guide_img_6") forState:UIControlStateNormal];
+    [guideImage setBackgroundImage:KUIImage(iPhone5?@"team_guide_img_7":@"team_guide_img_6") forState:UIControlStateHighlighted];
+    [guideImage addTarget:self action:@selector(nomath) forControlEvents:UIControlEventTouchUpInside];
 //    [self.view addSubview:guideImage];
     
     [self reloadMsgCount];
-//    [firstView initSearchConditions];//使用上次的搜索条件
     
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     [self.view addSubview:hud];
-
+}
+-(void)nomath{
+    
 }
 
 //排序

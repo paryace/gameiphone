@@ -131,7 +131,6 @@ DropDownChooseDelegate,
 DropDownChooseDataSource,
 DetailDelegate,
 LocationViewDelegate,
-
 RecordAudioDelegate,
 SendAudioMsgDeleGate,
 ApplyDetailDelegate,
@@ -201,7 +200,4 @@ PlayingDelegate>
 @property (nonatomic,assign)NSInteger clickCellNum;
 
 - (void)sendButton:(id)sender;
-
-
-
 @end
