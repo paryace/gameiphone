@@ -1198,20 +1198,17 @@
     [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self end];
         [hud hide:YES];
-//           [[NSNotificationCenter defaultCenter]postNotificationName:@"friendState" object:nil];
-        
         //用通知传过去一个字典，记录着 关系 userid 请求方法
-        NSDictionary * shiptypeDic = @{@"kind": [postDict objectForKey:@"method"],@"shiptype":type,@"params":paramDict};
         
-        //            NSDictionary *shiptypeDic = [NSDictionary dictionaryWithObject:type forKey:@"shiptype"];
-        //            [shiptypeDic setValue:[postDict objectForKey:@"params"] forKey:@"kind"];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"friendState" object:nil userInfo:shiptypeDic];
         
         NSString * shipT=KISDictionaryHaveKey(responseObject, @"shiptype");
+        
         [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipT Successcompletion:^(BOOL success, NSError *error) {
             DSuser *dUser = [DataStoreManager getInfoWithUserId:self.hostInfo.userId];
             [DataStoreManager cleanIndexWithNameIndex:dUser.nameIndex withType:@"2"];
             [[NSNotificationCenter defaultCenter] postNotificationName:kReloadContentKey object:@"0"];
+             NSDictionary * shiptypeDic = @{@"userid": self.hostInfo.userId,@"shiptype":shipT};
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"friendState" object:nil userInfo:shiptypeDic];
             if ([type isEqualToString:@"1"]) {
                 if (self.myDelegate&&[self.myDelegate respondsToSelector:@selector(isAttention:attentionSuccess:backValue:)]) {
                     [self.myDelegate isAttention:self attentionSuccess:self.testRow backValue:@"off"];
@@ -1317,10 +1314,7 @@
         NSString * shipType=KISDictionaryHaveKey(responseObject, @"shiptype");
         [DataStoreManager changshiptypeWithUserId:self.hostInfo.userId type:shipType Successcompletion:^(BOOL success, NSError *error) {
             
-            NSDictionary * shiptypeDic = @{@"kind": [postDict objectForKey:@"method"],@"shiptype":type};
-            
-//            NSDictionary *shiptypeDic = [NSDictionary dictionaryWithObject:type forKey:@"shiptype"];
-//            [shiptypeDic setValue:[postDict objectForKey:@"params"] forKey:@"kind"];
+            NSDictionary * shiptypeDic = @{@"userid":self.hostInfo.userId,@"shiptype":shipType};
             [[NSNotificationCenter defaultCenter] postNotificationName:@"friendState" object:nil userInfo:shiptypeDic];
             
             [DataStoreManager deleteMemberFromListWithUserid:self.hostInfo.userId];
