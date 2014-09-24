@@ -119,32 +119,27 @@ typedef enum : NSUInteger {
 }
 - (void)notiReloadData:(NSNotification*)sender
 {
-
-//    NSDictionary *shiptypeDic = sender.userInfo;
-//    NSString *useridStr = [[shiptypeDic objectForKey:@"parms"]objectForKey:@"frienduserid"];
-//    NSString *shiptypeStr = [shiptypeDic objectForKey:@"shiptype"];
-//    if ([KISDictionaryHaveKey(shiptypeDic, @"kind")isEqualToString:@"110"]) {
-//        if ([KISDictionaryHaveKey(shiptypeDic, @"shiptype")isEqualToString:@"1"]) {
-//            for (NSMutableDictionary*dic in m_dataArray) {
-////                NSMutableDictionary *zz = [dic objectForKey:@"user"];
-//                [[dic objectForKey:@"user"] setObject:@"2" forKey:@"shiptype"];
-//            }
-//        }
-//    }
-//    NSMutableDictionary * dic = [m_dataArray objectAtIndex:0];
-//    dic setObject:  forKey:<#(id<NSCopying>)#>
-    [m_myTableView reloadData];
-    m_currPageCount = 0;
-    [self getInfoWithNet];
-//    [self netWork];
-//    [self changeShiptypeWithCell];
-//    [self viewDidLoad];
+    NSDictionary * userInfo = sender.userInfo;
+    NSString * userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"userid")];
+    NSString * shipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"shiptype")];
+    [self changUserShipType:userId ShipType:shipType];
 }
+//改变好友关系
+-(void)changUserShipType:(NSString*)userId ShipType:(NSString*)shipType{
+    NSMutableArray * tempArray = [m_dataArray mutableCopy];
+    for (NSMutableDictionary *  dataDic in tempArray) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dataDic, @"user"), @"userid")] isEqualToString:userId]) {
+            [[dataDic objectForKey:@"user"] setObject:shipType forKey:@"shiptype"];
+        }
+    }
+    [m_myTableView reloadData];
+}
+
+
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-  
     
     m_currPageCount = 0;
     m_dataArray = [NSMutableArray array];
@@ -178,15 +173,13 @@ typedef enum : NSUInteger {
     lb.textAlignment = NSTextAlignmentCenter;
     lb.text = @"我的世界我做主";
     [topImageView addSubview:lb];
-//    m_myTableView.tableHeaderView = topImageView;
     [self setTopViewWithTitle:@"我的世界" withBackButton:YES];
     hud = [[MBProgressHUD alloc]initWithView:self.view];
     hud.labelText = @"加载中...";
     
     [self.view addSubview:hud];
-    
-    
-//        //从本地取数据
+
+    //从本地取数据
     NSFileManager *fileManager =[NSFileManager defaultManager];
     
     NSString *path1  =[RootDocPath stringByAppendingString:@"/MY_myWorld"];
@@ -334,7 +327,7 @@ typedef enum : NSUInteger {
     [paramDic setObject:str forKey:@"firstResult"];
         isRefresh = NO;
     }else{
-    [paramDic setObject:@"0" forKey:@"firstResult"];
+        [paramDic setObject:@"0" forKey:@"firstResult"];
     }
     [paramDic setObject:self.gameid forKey:@"gameid"];
     [paramDic setObject:@"20" forKey:@"maxSize"];

@@ -97,7 +97,26 @@ typedef enum : NSUInteger {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageAck:)name:kMessageAck object:nil];
+   [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(notiReloadData:) name:@"friendState" object:nil];
 
+}
+
+- (void)notiReloadData:(NSNotification*)sender
+{
+    NSDictionary * userInfo = sender.userInfo;
+    NSString * userId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"userid")];
+    NSString * shipType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(userInfo, @"shiptype")];
+    [self changUserShipType:userId ShipType:shipType];
+}
+//改变好友关系
+-(void)changUserShipType:(NSString*)userId ShipType:(NSString*)shipType{
+    NSMutableArray * tempArray = [m_dataArray mutableCopy];
+    for (NSMutableDictionary *  dataDic in tempArray) {
+        if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dataDic, @"user"), @"userid")] isEqualToString:userId]) {
+            [[dataDic objectForKey:@"user"] setObject:shipType forKey:@"shiptype"];
+        }
+    }
+    [m_myTableView reloadData];
 }
 
 - (void)viewDidLoad

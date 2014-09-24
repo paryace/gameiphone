@@ -34,7 +34,6 @@
         [self.contentView addSubview:self.focusButton];
         
         self.makeFriendBtn = [[UIButton alloc]initWithFrame:CGRectMake(10, 60, 40, 20)];
-//        [self.makeFriendBtn setTitle:@"加好友" forState:UIControlStateNormal];
         [self.makeFriendBtn setBackgroundImage:KUIImage(@"makeFriendBtn") forState:UIControlStateNormal];
         self.makeFriendBtn.titleLabel.font = [UIFont systemFontOfSize:10];
         [self.makeFriendBtn setTitleColor:[UIColor darkGrayColor] forState:UIControlStateNormal];
