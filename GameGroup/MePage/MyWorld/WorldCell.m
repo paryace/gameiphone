@@ -111,10 +111,10 @@
         [self.photoCollectionView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
         
         self.gestureView = [[UIView alloc]initWithFrame:CGRectMake(0 , 0, 320, 500)];
-        self.gestureView.backgroundColor = [UIColor whiteColor];
-        self.gestureView.alpha = 0.1;
+        self.gestureView.backgroundColor = [UIColor redColor];
+        self.gestureView.alpha = 0.5;
         self.gestureView.hidden = YES;
-        [self.photoCollectionView addSubview:self.gestureView];
+//        [self.photoCollectionView addSubview:self.gestureView];
         
         UITapGestureRecognizer *tapMIss = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(taptap)];
         [self.gestureView addGestureRecognizer:tapMIss];

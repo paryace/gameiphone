@@ -73,7 +73,7 @@ typedef enum : NSUInteger {
 }
 @property (nonatomic, assign) CommentInputType commentInputType;
 @property (nonatomic, strong) EmojiView *theEmojiView;
-
+@property (nonatomic, strong) WorldCell *wCell;
 @end
 
 @implementation WorldViewController
@@ -215,6 +215,8 @@ typedef enum : NSUInteger {
 
 }
 -(void)viewTapped:(UITapGestureRecognizer*)tapGr{
+    
+
     if (openMenuBtn2.menuImageView.hidden==NO) {
         openMenuBtn2.menuImageView.hidden =YES;
     }
@@ -1146,7 +1148,8 @@ typedef enum : NSUInteger {
     [myCell.contentView bringSubviewToFront:myCell.menuImageView];
     [myCell.contentView  becomeFirstResponder];
     myCell.menuImageView.hidden = NO;
-    openMenuBtn2=myCell;}
+    openMenuBtn2 = myCell;
+}
 #pragma mark ---cell delegate  commentAndZan
 //评论button方法
 -(void)pinglunWithCircle:(NewNearByCell *)myCell
@@ -1272,12 +1275,16 @@ typedef enum : NSUInteger {
 #pragma mark ---发送评论
 -(void)updateComment
 {
+    
     NSLog(@"commentView-->%@",self.textView.text);
     
     if (self.textView.text.length<1) {
         [self showMessageWithContent:@"评论不能回复空内容" point:CGPointMake(kScreenWidth/2, kScreenHeigth/2)];
         
         return;
+    }
+    if (openMenuBtn2.gestureView.hidden==NO) {
+        openMenuBtn2.gestureView.hidden=YES;
     }
     if([self.textView isFirstResponder]){
         [self.textView resignFirstResponder];
@@ -1342,6 +1349,7 @@ typedef enum : NSUInteger {
 //删除评论
 -(void)delcomment
 {
+   
     
     NSMutableDictionary *dic = [m_dataArray objectAtIndex:[[delcommentDic objectForKey:@"mycell"]intValue]];
     NSMutableArray *arr = [dic objectForKey:@"commentList"];
@@ -1372,6 +1380,9 @@ typedef enum : NSUInteger {
         [self showMessageWindowWithContent:@"删除成功" imageType:0];
         [arr removeObjectAtIndex:[[delcommentDic objectForKey:@"row"]intValue]];
         [m_myTableView reloadData];
+        if (openMenuBtn2.menuImageView.hidden==NO) {
+            openMenuBtn2.menuImageView.hidden=YES;
+        }
         
     } failure:^(AFHTTPRequestOperation *operation, id error) {
         if ([error isKindOfClass:[NSDictionary class]]) {
@@ -1405,6 +1416,7 @@ typedef enum : NSUInteger {
 //点击删除或者点击回复某人的评论
 - (void)editCommentOfYouWithCircle:(WorldCell *)mycell withIndexPath:(NSInteger)row
 {
+    
     mycell.gestureView.hidden = NO;
     NSDictionary *dic = [m_dataArray objectAtIndex:mycell.tag];
     NSDictionary *dict = [KISDictionaryHaveKey(dic, @"commentList") objectAtIndex:row];
