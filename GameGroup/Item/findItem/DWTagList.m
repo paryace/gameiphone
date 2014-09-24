@@ -67,7 +67,7 @@
     for (int i = 0;i<textArray.count;i++) {
         ;
         NSString * text = KISDictionaryHaveKey([textArray objectAtIndex:i], @"value");
-        NSString * action = KISDictionaryHaveKey([textArray objectAtIndex:i], @"action");
+        NSString * action = KISDictionaryHaveKey([textArray objectAtIndex:i], @"tagaction");
         CGSize textSize = [text sizeWithFont:[UIFont systemFontOfSize:FONT_SIZE] constrainedToSize:CGSizeMake(self.frame.size.width, 1500) lineBreakMode:NSLineBreakByCharWrapping];
         if (self.isAverage) {
             textSize.width = (self.frame.size.width-(HORIZONTAL_PADDING*self.rowNum-1))/self.rowNum;

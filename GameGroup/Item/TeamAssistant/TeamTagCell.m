@@ -36,24 +36,23 @@
     [_tagList setTags:typeArray average:YES rowCount:3];
 }
 -(void)addTagAction{
-    NSArray * copyarray = [_tagArray mutableCopy];
-    for (NSMutableDictionary * ac in copyarray) {
-        [ac setObject:@"0" forKey:@"action"];
+    for (NSMutableDictionary * ac in _tagArray) {
+        [ac setValue:@"0" forKey:@"tagaction"];
     }
 }
 -(void)tagClick:(UIButton*)sender{
     NSMutableDictionary * tagDic = [_tagArray objectAtIndex:sender.tag];
-    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tagDic, @"action")] isEqualToString:@"1"]) {
+    if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tagDic, @"tagaction")] isEqualToString:@"1"]) {
         [sender setBackgroundImage:KUIImage(@"tagBtn_normal") forState:UIControlStateNormal];
         [sender setBackgroundImage:KUIImage(@"tagBtn_click") forState:UIControlStateHighlighted];
-        [tagDic setObject:@"0" forKey:@"action"];
+        [tagDic setObject:@"0" forKey:@"tagaction"];
         if (self.tagDelegate) {
             [self.tagDelegate tagType:tagDic isRemove:YES];
         }
     }else{
         [sender setBackgroundImage:KUIImage(@"tagBtn_click") forState:UIControlStateNormal];
         [sender setBackgroundImage:KUIImage(@"tagBtn_normal") forState:UIControlStateHighlighted];
-        [tagDic setObject:@"1" forKey:@"action"];
+        [tagDic setObject:@"1" forKey:@"tagaction"];
         if (self.tagDelegate) {
             [self.tagDelegate tagType:tagDic isRemove:NO];
         }

@@ -11,9 +11,9 @@
 #import "AddTeamMsgPushController.h"
 #import "EGoImageView.h"
 
-@interface TeamMsgPushController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
+@interface TeamMsgPushController : BaseViewController<UITableViewDataSource, UITableViewDelegate,UIActionSheetDelegate>
 @property(nonatomic,strong) UITableView*  m_TableView;
 @property(nonatomic,strong) NSMutableArray * characterKey;
-@property(nonatomic,strong) NSMutableDictionary * characterDic
-;
+@property(nonatomic,strong) NSMutableDictionary * characterDic;
+@property(nonatomic,strong) NSIndexPath * detailIndexPath;
 @end

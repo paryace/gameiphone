@@ -5484,7 +5484,7 @@
     }];
 }
 //
-//保存组队创建者的信息
+//保存片好消息
 +(void)savePreferenceMsg:(NSDictionary*)preferenceMsg SaveSuccess:(void (^)(NSDictionary *msgDic))block{
     NSString * msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceMsg, @"msgId")];
     NSString * msgType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceMsg, @"msgType")];

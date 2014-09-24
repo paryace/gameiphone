@@ -78,6 +78,7 @@
         if (cell ==nil) {
             cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
         }
+        [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         UIView *lineView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 320, 1)];
         lineView.backgroundColor = kColorWithRGB(225, 225, 225, 1);
         [cell.contentView addSubview:lineView];
@@ -130,18 +131,44 @@
             cell.titleLabel.text = @"";
         }
         cell.contentLabel.text = [GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"keyword")];
+//        if ([KISDictionaryHaveKey(dic, @"haveMsg") intValue]==1) {
+//            [cell setTime:KISDictionaryHaveKey(dic, @"msgTime")];
+//        }
+        if (!KISDictionaryHaveKey(dic, @"receiveState")) {
+            NSInteger state = [KISDictionaryHaveKey(dic, @"receiveState") intValue];
+            if (state == 1) {
+                cell.stopImg.image = KUIImage(@"have_soundSong");
+            }
+            else if (state == 2){
+                cell.stopImg.image = KUIImage(@"close_receive");
+            }
+            else if (state == 3){
+                cell.stopImg.image = KUIImage(@"nor_soundSong");
+            }
+        }else{
+            cell.stopImg.image = KUIImage(@"have_soundSong");
+        }
     }else{
         cell.titleLabel.text = @"";
         cell.contentLabel.text = @"";
     }
     return cell;
 }
+//总开关
 -(void)infomationAccording:(UISwitch*)sender
 {
     if ([sender isOn]) {
         NSLog(@"----onOpen----");
+        [self preferenceMainSwitch:@"0" reSuccess:^(id responseObject) {
+            sender.on = NO;
+            [self msgSwitich:@"3"];
+        }];
         
     }else{
+        [self preferenceMainSwitch:@"1" reSuccess:^(id responseObject) {
+            sender.on = YES;
+            [self msgSwitich:@"1"];
+        }];
         NSLog(@"----onClose----");
     }
 }
@@ -234,8 +261,20 @@
     }else if (indexPath.section ==_characterKey.count-1){
         return @"";
     }
-    return @"删除";
+    return @"设置";
 }
+
+-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle ==UITableViewCellEditingStyleDelete) {
+        tableView.editing = NO;
+       UIActionSheet * editActionSheet = [[UIActionSheet alloc]initWithTitle:@"编辑" delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:@"正常模式" otherButtonTitles:@"无红点模式",@"静音模式", @"删除偏好",nil];
+        editActionSheet.tag = indexPath.row;
+        _detailIndexPath = indexPath;
+        [editActionSheet showInView:self.view];
+    }
+}
+
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.section == 0) {
@@ -245,12 +284,67 @@
     }
     return YES;
 }
--(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+//偏好设置
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    NSLog(@"-----delete the msg----");
-    [self deleteCellWithIndexPathRow:indexPath];
+    NSArray * groupArray =  [_characterDic objectForKey:[GameCommon getNewStringWithId:[_characterKey objectAtIndex:_detailIndexPath.section]]];
+    if (groupArray && groupArray.count>0) {
+        NSMutableDictionary * dic = [groupArray objectAtIndex:_detailIndexPath.row];
+        switch (buttonIndex) {
+            case 0:
+            {
+                [self preferenceBranchSwitch:@"1" GameId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:KISDictionaryHaveKey(dic, @"preferenceId") reSuccess:^(id responseObject) {
+                    NSLog(@"正常模式");
+                    [[PreferencesMsgManager singleton] setPreferenceState:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:KISDictionaryHaveKey(dic, @"preferenceId") State:1];
+                    [dic setValue:@"1" forKey:@"receiveState"];
+                    [_m_TableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:_detailIndexPath] withRowAnimation:NO];
+                }];
+            }
+                break;
+            case 1:
+            {
+                [self preferenceBranchSwitch:@"0" GameId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:KISDictionaryHaveKey(dic, @"preferenceId") reSuccess:^(id responseObject) {
+                    NSLog(@"无红点模式");
+                    [[PreferencesMsgManager singleton] setPreferenceState:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:KISDictionaryHaveKey(dic, @"preferenceId") State:2];
+                    [dic setValue:@"2" forKey:@"receiveState"];
+                    [_m_TableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:_detailIndexPath] withRowAnimation:NO];
+                }];
+            }
+                break;
+            case 2:
+            {
+                [self preferenceBranchSwitch:@"0" GameId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:KISDictionaryHaveKey(dic, @"preferenceId") reSuccess:^(id responseObject) {
+                    NSLog(@"静音模式");
+                    [[PreferencesMsgManager singleton] setPreferenceState:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:KISDictionaryHaveKey(dic, @"preferenceId") State:3];
+                    [dic setValue:@"3" forKey:@"receiveState"];
+                    [_m_TableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:_detailIndexPath] withRowAnimation:NO];
+                }];
+            }
+                break;
+            case 3:
+                NSLog(@"删除偏好");
+                [self deleteCellWithIndexPathRow:_detailIndexPath];
+                break;
+            default:
+                break;
+        }
+    }
 }
 
+//总开关
+-(void)msgSwitich:(NSString*)state{
+    for (NSString * keyStr in  _characterKey) {
+        NSArray * groupArray =  [_characterDic objectForKey:[GameCommon getNewStringWithId:keyStr]];
+        for (NSMutableDictionary * dic in groupArray) {
+            [[PreferencesMsgManager singleton] setPreferenceState:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:KISDictionaryHaveKey(dic, @"preferenceId") State:1];
+            [dic setValue:state forKey:@"receiveState"];
+        }
+    }
+    [_m_TableView reloadData];
+    
+}
+
+//获取偏好列表
 -(void)getPreferencesWithNet
 {
     [hud show:YES];
@@ -264,6 +358,9 @@
         [self showErrorAlert:error];
     }];
 }
+
+
+//删除偏好
 -(void)deleteCellWithIndexPathRow:(NSIndexPath*)indexPath
 {
     NSArray * groupArray =  [_characterDic objectForKey:[GameCommon getNewStringWithId:[_characterKey objectAtIndex:indexPath.section]]];
@@ -289,7 +386,7 @@
         }
     }];
 }
-
+//删除偏好
 -(void)deletePreference:(NSString*)gameId PreferenceId:(NSString*)preferenceId reSuccess:(void (^)(id responseObject))resuccess{
     NSMutableDictionary *paramDict =[ NSMutableDictionary dictionary];
     NSMutableDictionary *postDict =[ NSMutableDictionary dictionary];
@@ -313,9 +410,27 @@
         }
     }];
 }
+//分组
 -(void)ssasasa:(NSMutableArray*)array{
     BOOL found;
-    for (NSDictionary *dic in array){
+    for (NSMutableDictionary *dic in array){
+        
+        NSMutableDictionary * preDic = [DataStoreManager getPreferenceMsg:[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")] PreferenceId:[GameCommon getNewStringWithId:KISDictionaryHaveKey(dic, @"preferenceId")]];
+        
+        NSString *statestr =[NSString stringWithFormat:@"%d",[[PreferencesMsgManager singleton] getPreferenceState:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid") PreferenceId:KISDictionaryHaveKey(dic, @"preferenceId")]];
+        [dic setObject:statestr forKey:@"receiveState"];
+        if (preDic) {
+            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"characterName")] forKey:@"characterName"];
+            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"description")] forKey:@"description"];
+            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"msgCount")] forKey:@"msgCount"];
+            [dic setObject:[GameCommon getNewStringWithId:KISDictionaryHaveKey(preDic, @"msgTime")] forKey:@"msgTime"];
+            [dic setObject:@"1" forKey:@"haveMsg"];
+        }else{
+            [dic setObject:@"0" forKey:@"msgCount"];
+            [dic setObject:@"1000" forKey:@"msgTime"];
+            [dic setObject:@"0" forKey:@"haveMsg"];
+        }
+
         NSString *c = [NSString stringWithFormat:@"%@%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"gameid")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(dic, @"createTeamUser"), @"characterId")]];
         found = NO;
         for (NSString *str in [_characterDic allKeys]){
@@ -340,8 +455,8 @@
     NSLog(@"--%@--",_characterDic);
 }
 
-
--(void)addNewPreference:(NSMutableDictionary*)preferInfo{
+//添加偏好
+-(void)addNewPreference:(NSDictionary*)preferInfo{
      NSString *key = [NSString stringWithFormat:@"%@%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(preferInfo, @"createTeamUser"), @"gameid")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(preferInfo, @"createTeamUser"), @"characterId")]];
     if ([_characterKey containsObject:key]) {
          [[_characterDic objectForKey:key] addObject:preferInfo];
@@ -359,7 +474,8 @@
     }
      [_m_TableView reloadData];
 }
--(void)updatePreference:(NSMutableDictionary*)preferInfo{
+//更新偏好
+-(void)updatePreference:(NSDictionary*)preferInfo{
     NSString *key = [NSString stringWithFormat:@"%@%@",[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(preferInfo, @"createTeamUser"), @"gameid")],[GameCommon getNewStringWithId:KISDictionaryHaveKey(KISDictionaryHaveKey(preferInfo, @"createTeamUser"), @"characterId")]];
     
     NSArray * updateArray = [[_characterDic objectForKey:key] mutableCopy];
@@ -371,7 +487,7 @@
     }
     [_m_TableView reloadData];
 }
-
+//显示错误信息
 -(void)showErrorAlert:(id)error
 {
     if ([error isKindOfClass:[NSDictionary class]]) {
@@ -382,6 +498,65 @@
         }
     }
 }
+
+
+//总开关
+-(void)preferenceMainSwitch:(NSString*)isOpen reSuccess:(void (^)(id responseObject))resuccess{
+    hud.labelText = @"请稍等...";
+    [hud show:YES];
+    NSMutableDictionary *paramDict =[ NSMutableDictionary dictionary];
+    NSMutableDictionary *postDict =[ NSMutableDictionary dictionary];
+    [paramDict setObject:[GameCommon getNewStringWithId:isOpen] forKey:@"isOpen"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"312" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        if (resuccess) {
+            resuccess(responseObject);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
+        [self showErrorAlert:error];
+    }];
+}
+
+//单个开关
+-(void)preferenceBranchSwitch:(NSString*)isOpen GameId:(NSString*)gameId PreferenceId:(NSString*)preferenceId reSuccess:(void (^)(id responseObject))resuccess{
+    hud.labelText = @"请稍等...";
+//    [hud show:YES];
+    NSMutableDictionary *paramDict =[ NSMutableDictionary dictionary];
+    NSMutableDictionary *postDict =[ NSMutableDictionary dictionary];
+    [paramDict setObject:[GameCommon getNewStringWithId:gameId] forKey:@"gameid"];
+    [paramDict setObject:[GameCommon getNewStringWithId:preferenceId] forKey:@"preferenceId"];
+    [paramDict setObject:[GameCommon getNewStringWithId:isOpen] forKey:@"isOpen"];
+    [postDict setObject:paramDict forKey:@"params"];
+    [postDict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
+    [postDict setObject:@"284" forKey:@"method"];
+    [postDict setObject:[[NSUserDefaults standardUserDefaults]objectForKey:kMyToken] forKey:@"token"];
+    [NetManager requestWithURLStr:BaseClientUrl Parameters:postDict  success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [hud hide:YES];
+        if (resuccess) {
+            resuccess(responseObject);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, id error) {
+        [hud hide:YES];
+        [self showErrorAlert:error];
+    }];
+}
+
+-(void)showErrorMsg:(id)error{
+    if ([error isKindOfClass:[NSDictionary class]]) {
+        if (![[GameCommon getNewStringWithId:KISDictionaryHaveKey(error, kFailErrorCodeKey)] isEqualToString:@"100001"])
+        {
+            UIAlertView* alert = [[UIAlertView alloc]initWithTitle:nil message:[NSString stringWithFormat:@"%@", [error objectForKey:kFailMessageKey]] delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+            [alert show];
+        }
+    }
+
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

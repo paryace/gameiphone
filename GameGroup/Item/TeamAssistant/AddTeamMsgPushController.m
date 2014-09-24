@@ -102,7 +102,6 @@
 }
 -(void)tagType:(NSMutableDictionary *)tagDic isRemove:(BOOL)isRemove{
     if (isRemove) {
-        
         [_selectTagArray removeObject:tagDic];
     }else{
         [_selectTagArray addObject:tagDic];
@@ -247,6 +246,7 @@
             if (cell ==nil) {
                 cell = [[PowerableCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellinde];
             }
+            [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
             cell.soundSwitch.on = YES;
             cell.switchelegate = self;
             return cell;
