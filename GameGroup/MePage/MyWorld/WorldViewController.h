@@ -12,6 +12,9 @@
 #import "EmojiView.h"
 #import "WorldCell.h"
 #import "SendNewsViewController.h"
+#import "selectContactPage.h"
+#import "ShareDynamicView.h"
+#import "ShareDynamicMsgService.h"
 @interface WorldViewController : BaseViewController
 
 
@@ -24,7 +27,9 @@ WorldCellDelegate,
 UIActionSheetDelegate,
 HPGrowingTextViewDelegate,
 EmojiViewDelegate,
-TableViewDatasourceDidChange
+TableViewDatasourceDidChange,
+getContact,
+ShareDynamicDelegate
 >
 @property(nonatomic,strong)HPGrowingTextView *textView;
 @property(nonatomic,copy)NSString *gameid;

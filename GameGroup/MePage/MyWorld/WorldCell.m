@@ -48,6 +48,15 @@
         self.nickNameLabel.font = [UIFont boldSystemFontOfSize:13];
         [self.contentView addSubview:self.nickNameLabel];
         
+        self.clickBtn = [[UIButton alloc]initWithFrame:CGRectMake(180, 60, 200, 100)];
+        self.clickBtn.backgroundColor = [UIColor clearColor];
+        [self.clickBtn setBackgroundImage:KUIImage(@"") forState:UIControlStateNormal];
+        [self.clickBtn setBackgroundImage:KUIImage(@"line_btn_normal") forState:UIControlStateHighlighted];
+        [self.contentView addSubview:self.clickBtn];
+        UILongPressGestureRecognizer* longPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressContent:)];
+        [self.clickBtn addGestureRecognizer:longPress];
+
+        
         self.titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(60, 27, 170, 30)];
         self.titleLabel.font = [UIFont systemFontOfSize:13];
         self.titleLabel.backgroundColor = [UIColor clearColor];
@@ -216,7 +225,16 @@
         [self.myCellDelegate  TapMiss:self];
     }
 }
-
+#pragma mark 长按
+-(void)longPressContent:(UITapGestureRecognizer*)sender{
+    
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        NSLog(@"longPressContentBegin----");
+        if(self.myCellDelegate &&[self.myCellDelegate respondsToSelector:@selector(onLongClickContext:)]) {
+            [self.myCellDelegate  onLongClickContext:self];
+        }
+    }
+}
 
 #pragma mark ---collectionviewdelegate datasourse
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
