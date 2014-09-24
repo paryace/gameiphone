@@ -67,8 +67,6 @@
         [self.contentView addSubview:self.jubaoBtn];
         
         
-        
-        
         self.shareView = [[UIButton alloc]initWithFrame:CGRectMake(60, 60, 250, 50)];
         self.shareView.backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
         [self addSubview:self.shareView];
@@ -101,6 +99,8 @@
         [self.photoCollectionView registerClass:[ImgCollCell class] forCellWithReuseIdentifier:@"ImageCell"];
         self.photoCollectionView.backgroundColor = [UIColor clearColor];
         [self.contentView addSubview:self.photoCollectionView];
+        
+       
         
         self.zanView = [[UIImageView alloc]initWithFrame:CGRectMake(60, 100, 250, 30)];
         self.zanView.image = KUIImage(@"zanAndCommentBg");
@@ -172,8 +172,6 @@
         self.commentMoreBtn .backgroundColor = UIColorFromRGBA(0xf0f1f3, 1);
         self.commentMoreBtn.hidden =YES;
         [self.contentView addSubview:self.commentMoreBtn];
-        
-        
     }
     return self;
 }

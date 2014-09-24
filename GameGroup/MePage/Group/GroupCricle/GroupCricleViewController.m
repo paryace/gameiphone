@@ -22,7 +22,6 @@ typedef enum : NSUInteger {
 } CommentInputType;
 @interface GroupCricleViewController ()
 {
-    UICollectionView *m_photoCollectionView;
     MJRefreshHeaderView *m_header;
     MJRefreshFooterView *m_footer;
     UITableView *m_myTableView;
@@ -224,6 +223,7 @@ typedef enum : NSUInteger {
         senderBnt.selected = NO;
     }
 }
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
     return YES;
@@ -290,7 +290,7 @@ typedef enum : NSUInteger {
     [dict addEntriesFromDictionary:[[GameCommon shareGameCommon] getNetCommomDic]];
     [dict setObject:paramDic forKey:@"params"];
     [dict setObject:@"248" forKey:@"method"];
-     [paramDic setObject:self.groupId forKey:@"groupId"];
+    [paramDic setObject:self.groupId forKey:@"groupId"];
     [paramDic setObject:@(m_currPageCount) forKey:@"firstResult"];
     [paramDic setObject:@"20" forKey:@"maxSize"];
     [dict setObject:[[NSUserDefaults standardUserDefaults] objectForKey:kMyToken] forKey:@"token"];
@@ -461,7 +461,8 @@ typedef enum : NSUInteger {
             cell.photoCollectionView.hidden = NO;
             
             float imgHeight = [KISDictionaryHaveKey(dict, @"imgHieght") floatValue];
-            cell.photoCollectionView.frame = CGRectMake(60, m_currmagY, 250,imgHeight);
+            float imgWidth = [KISDictionaryHaveKey(dict, @"imgWidth") floatValue];
+            cell.photoCollectionView.frame = CGRectMake(60, m_currmagY, imgWidth,imgHeight);
             m_currmagY += imgHeight;
             
             CGFloat paddingY = 2;
@@ -781,6 +782,7 @@ typedef enum : NSUInteger {
                     cellHeight += 0;
                     
                     [contentDict setObject:@(0) forKey:@"imgHieght"];
+                    [contentDict setObject:@(0) forKey:@"imgWidth"];
                 }
                 else
                 {
@@ -804,9 +806,15 @@ typedef enum : NSUInteger {
                     //根据图片数组接卸图片所占高度
                     int i = (collArray.count-1)/3;
                     float imgViewHeight = i*80+80; //图片的高度
+                    float imgViewWidth = collArray.count*82; //图片的高度
                     imgViewHeight += (i+1)*2; //图片的padding, 为2
-                    [contentDict setObject:@(imgViewHeight) forKey:@"imgHieght"];
                     
+                    [contentDict setObject:@(imgViewHeight) forKey:@"imgHieght"];
+                    if (collArray.count>2) {
+                        [contentDict setObject:@(250) forKey:@"imgWidth"];
+                    }else{
+                        [contentDict setObject:@(imgViewWidth) forKey:@"imgWidth"];
+                    }
                     cellHeight +=imgViewHeight;
                 }
             }

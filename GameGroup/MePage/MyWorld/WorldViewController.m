@@ -522,11 +522,8 @@ typedef enum : NSUInteger {
             cell.photoCollectionView.hidden = NO;
             
             float imgHeight = [KISDictionaryHaveKey(dict, @"imgHieght") floatValue];
-            //            if (cell.photoArray.count<4) {
-            //                cell.photoCollectionView.frame = CGRectMake(60, m_currmagY, cell.photoArray.count *80,imgHeight);
-            //            }else{
-            cell.photoCollectionView.frame = CGRectMake(60, m_currmagY, 250,imgHeight);
-            //            }
+            float imageWidth = [KISDictionaryHaveKey(dict, @"imgWidth") floatValue];
+            cell.photoCollectionView.frame = CGRectMake(60, m_currmagY, imageWidth,imgHeight);
             m_currmagY += imgHeight;
             
             CGFloat paddingY = 2;
@@ -866,6 +863,7 @@ typedef enum : NSUInteger {
                     cellHeight += 0;
                     
                     [contentDict setObject:@(0) forKey:@"imgHieght"];
+                    [contentDict setObject:@(0) forKey:@"imgWidth"];
                 }
                 else
                 {
@@ -889,9 +887,15 @@ typedef enum : NSUInteger {
                     //根据图片数组接卸图片所占高度
                     int i = (collArray.count-1)/3;
                     float imgViewHeight = i*80+80; //图片的高度
+                    float imgViewWidth = collArray.count*82; //图片的高度
                     imgViewHeight += (i+1)*2; //图片的padding, 为2
-                    [contentDict setObject:@(imgViewHeight) forKey:@"imgHieght"];
                     
+                    [contentDict setObject:@(imgViewHeight) forKey:@"imgHieght"];
+                    if (collArray.count>2) {
+                        [contentDict setObject:@(250) forKey:@"imgWidth"];
+                    }else{
+                        [contentDict setObject:@(imgViewWidth) forKey:@"imgWidth"];
+                    }
                     cellHeight +=imgViewHeight;
                 }
             }

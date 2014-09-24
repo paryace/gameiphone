@@ -774,6 +774,7 @@ typedef enum : NSUInteger {
                     cellHeight += 0;
                     
                     [contentDict setObject:@(0) forKey:@"imgHieght"];
+                    [contentDict setObject:@(0) forKey:@"imgWidth"];
                 }else{
                     //有图， 先解析出图片数组
                     NSMutableString *imgStr = KISDictionaryHaveKey(contentDict, @"img");
@@ -795,9 +796,15 @@ typedef enum : NSUInteger {
                     //根据图片数组接卸图片所占高度
                     int i = (collArray.count-1)/3;
                     float imgViewHeight = i*80+80; //图片的高度
+                    float imgViewWidth = collArray.count*82; //图片的高度
                     imgViewHeight += (i+1)*2; //图片的padding, 为2
-                    [contentDict setObject:@(imgViewHeight) forKey:@"imgHieght"];
                     
+                    [contentDict setObject:@(imgViewHeight) forKey:@"imgHieght"];
+                    if (collArray.count>2) {
+                        [contentDict setObject:@(250) forKey:@"imgWidth"];
+                    }else{
+                        [contentDict setObject:@(imgViewWidth) forKey:@"imgWidth"];
+                    }
                     cellHeight +=imgViewHeight;
                 }
             }
@@ -978,7 +985,8 @@ typedef enum : NSUInteger {
             [cell getImgWithArray:imgArray];
             cell.customPhotoCollectionView.hidden = NO;
             float imgHeight = [KISDictionaryHaveKey(dict, @"imgHieght") floatValue];
-            cell.customPhotoCollectionView.frame = CGRectMake(60, m_currmagY, 250,imgHeight);
+            float imgWidth = [KISDictionaryHaveKey(dict, @"imgWidth") floatValue];
+            cell.customPhotoCollectionView.frame = CGRectMake(60, m_currmagY, imgWidth,imgHeight);
             m_currmagY += imgHeight;
             cell.timeLabel.frame = CGRectMake(60,m_currmagY, 120, 30);
             cell.openBtn.frame = CGRectMake(270,m_currmagY-5, 50, 40);
