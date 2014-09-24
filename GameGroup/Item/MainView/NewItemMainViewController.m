@@ -145,8 +145,11 @@
     if (![[NSUserDefaults standardUserDefaults] objectForKey:@"firseGuide"]) {
         [[NSUserDefaults standardUserDefaults] setObject:@"first" forKey:@"firseGuide"];
         guideImage = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height)];
-        guideImage.backgroundColor = [UIColor clearColor];
+        guideImage.backgroundColor = [UIColor blackColor];
+        guideImage.alpha = 0.7;
         [guideImage addTarget:self action:@selector(nomath) forControlEvents:UIControlEventTouchUpInside];
+    
+        [self.view addSubview:guideImage];
         
         view1 = [[UIView alloc] initWithFrame:CGRectMake(320-247.5-22.5, 50, 247.5, 157.5)];
         view1.backgroundColor = [UIColor clearColor];
@@ -159,7 +162,7 @@
         [guideImage12 setBackgroundImage:KUIImage(@"guide_12") forState:UIControlStateNormal];
         [guideImage12 addTarget:self action:@selector(guideAction1:) forControlEvents:UIControlEventTouchUpInside];
         [view1 addSubview:guideImage12];
-        [guideImage addSubview:view1];
+        [self.view addSubview:view1];
         
         
         
@@ -175,7 +178,7 @@
         [guideImage22 setBackgroundImage:KUIImage(@"guide_32") forState:UIControlStateNormal];
         [guideImage22 addTarget:self action:@selector(guideAction2:) forControlEvents:UIControlEventTouchUpInside];
         [view2 addSubview:guideImage22];
-        [guideImage addSubview:view2];
+        [self.view addSubview:view2];
         
         
         view3 = [[UIView alloc] initWithFrame:CGRectMake(29, 50, 247.5, 125.5)];
@@ -190,9 +193,7 @@
         [guideImage32 setBackgroundImage:KUIImage(@"guide_22") forState:UIControlStateNormal];
         [guideImage32 addTarget:self action:@selector(guideAction3:) forControlEvents:UIControlEventTouchUpInside];
         [view3 addSubview:guideImage32];
-        [guideImage addSubview:view3];
-        
-        [self.view addSubview:guideImage];
+        [self.view addSubview:view3];
     }
     
     

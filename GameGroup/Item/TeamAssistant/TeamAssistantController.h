@@ -9,7 +9,10 @@
 #import "BaseViewController.h"
 #import "TeamAssistantCell.h"
 #import "TeamMsgPushController.h"
+#import "PreferencesMsgManager.h"
 
 @interface TeamAssistantController : BaseViewController<UITableViewDataSource, UITableViewDelegate>
 @property(nonatomic,strong) UITableView*  m_TableView;
+
+@property(nonatomic,strong) NSMutableArray * perferenceMsgsArray;
 @end

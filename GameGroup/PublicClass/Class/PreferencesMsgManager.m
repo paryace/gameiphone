@@ -123,4 +123,12 @@ static PreferencesMsgManager *preferencesMsgManager = NULL;
     }
 }
 
+-(NSMutableArray*)getPreferenceMsgs{
+   return [DataStoreManager getPrefernceMsgs];
+}
+
+-(NSMutableDictionary*)getPreferenceMsg:(NSString*)gameId PreferenceId:(NSString*)preferenceId{
+    return [DataStoreManager getPreferenceMsg:gameId PreferenceId:preferenceId];
+}
+
 @end

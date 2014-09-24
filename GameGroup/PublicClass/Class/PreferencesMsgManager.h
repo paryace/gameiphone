@@ -36,4 +36,8 @@
 -(void)savePreferences:(NSMutableDictionary*)preferencesInfo;
 
 -(void)getPreferencesWithLoca;
+
+-(NSMutableArray*)getPreferenceMsgs;
+
+-(NSMutableDictionary*)getPreferenceMsg:(NSString*)gameId PreferenceId:(NSString*)preferenceId;
 @end

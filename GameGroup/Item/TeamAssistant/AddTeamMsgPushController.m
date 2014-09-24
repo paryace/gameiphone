@@ -26,7 +26,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setTopViewWithTitle:@"添加推送" withBackButton:YES];
+    
+    if ([_type isEqualToString:@"update"]) {
+       [self setTopViewWithTitle:@"更新推送" withBackButton:YES];
+    }else {
+        [self setTopViewWithTitle:@"添加推送" withBackButton:YES];
+    }
     self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
     _selectTagArray = [NSMutableArray array];
     _tagArray = [NSMutableArray array];
@@ -127,6 +132,7 @@
         [arr addObjectsFromArray:responseObject];
         [_tagArray removeAllObjects];
         [_tagArray addObjectsFromArray:arr];
+        [self initFirstTag];
         _ifCreate = NO;
         if (_ifOpen) {
             [_m_TableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:2 inSection:1]] withRowAnimation:UITableViewRowAnimationNone];
@@ -134,6 +140,16 @@
     } reError:^(id error) {
         [self showErrorAlert:error];
     }];
+}
+-(void)initFirstTag{
+    NSArray * teamArray = [_tagArray mutableCopy];
+    for (NSMutableDictionary * tempDic in  teamArray) {
+        for (NSMutableDictionary * tempDic2 in  _selectTagArray) {
+            if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic, @"constId")] isEqualToString:[GameCommon getNewStringWithId:KISDictionaryHaveKey(tempDic2, @"constId")]]) {
+                [tempDic setValue:@"1" forKey:@"tagaction"];
+            }
+        }
+    }
 }
 
 #pragma mark ----tableview delegate  datasourse
@@ -259,7 +275,11 @@
         }
         cell.backgroundColor = [UIColor clearColor];
         UIButton *addPushBtn  =[[UIButton alloc]initWithFrame:CGRectMake(10, 0, 300, 45)];
-        [addPushBtn  setTitle:@"添加此推送" forState:UIControlStateNormal];
+        if ([_type isEqualToString:@"update"]) {
+            [addPushBtn  setTitle:@"更新此推送" forState:UIControlStateNormal];
+        }else {
+            [addPushBtn  setTitle:@"添加此推送" forState:UIControlStateNormal];
+        }
         [addPushBtn setTitleColor:UIColorFromRGBA(0xffffff, 1) forState:UIControlStateNormal];
         addPushBtn.titleLabel.font = [UIFont systemFontOfSize:14];
         addPushBtn.backgroundColor = kColorWithRGB(85, 134, 192, 1);

@@ -27,6 +27,9 @@
     [super viewDidLoad];
     [self setTopViewWithTitle:@"组队助手" withBackButton:YES];
     self.view.backgroundColor = UIColorFromRGBA(0xf3f3f3, 1);
+    
+    _perferenceMsgsArray = [NSMutableArray array];
+    
     UIButton *delButton=[UIButton buttonWithType:UIButtonTypeCustom];
     delButton.frame=CGRectMake(320-65, KISHighVersion_7?20:0, 65, 44);
     [delButton setBackgroundImage:KUIImage(@"deleteButton") forState:UIControlStateNormal];
@@ -53,6 +56,11 @@
     [GameCommon setExtraCellLineHidden:_m_TableView];
     [self.view addSubview:_m_TableView];
      _m_TableView.tableFooterView = footerView;
+    
+    
+    NSMutableArray * perferenceMsgs = [[PreferencesMsgManager singleton] getPreferenceMsgs];
+    
+    _perferenceMsgsArray = perferenceMsgs;
 }
 -(void)cleanBtnClick:(UIButton*)sender{
     NSLog(@"----cLearMsg---");
@@ -72,7 +80,7 @@
     if (section == 0) {
         return 1;
     }
-    return 3;
+    return _perferenceMsgsArray.count;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

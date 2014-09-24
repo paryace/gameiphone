@@ -5488,17 +5488,18 @@
 +(void)savePreferenceMsg:(NSDictionary*)preferenceMsg SaveSuccess:(void (^)(NSDictionary *msgDic))block{
     NSString * msgId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceMsg, @"msgId")];
     NSString * msgType = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceMsg, @"msgType")];
-    NSString * fromId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceMsg, @"fromId")];
+    NSString * fromId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceMsg, @"sender")];
     NSString * toId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceMsg, @"toId")];
     NSDate * msgTime = [NSDate dateWithTimeIntervalSince1970:[[preferenceMsg objectForKey:@"time"] doubleValue]];
     NSString * payload = [GameCommon getNewStringWithId:KISDictionaryHaveKey(preferenceMsg, @"payload")];
     NSDictionary * payLoadDic = [payload JSONValue];
-    NSString * userCount = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payLoadDic, @"userCount")];
-    NSString * roomCount = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payLoadDic, @"roomCount")];
-    NSString * characterName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payLoadDic, @"characterName")];
-    NSString * descriptions = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payLoadDic, @"description")];
-    NSString * preferenceId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payLoadDic, @"preferenceId")];
-    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(payLoadDic, @"gameid")];
+    NSMutableDictionary * teamInfo = KISDictionaryHaveKey(payLoadDic, @"roomInfo");
+    NSString * userCount = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamInfo, @"memberCount")];
+    NSString * roomCount = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamInfo, @"typeId")];
+    NSString * characterName = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamInfo, @"characterName")];
+    NSString * descriptions = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamInfo, @"description")];
+    NSString * preferenceId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamInfo, @"preferenceId")];
+    NSString * gameid = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamInfo, @"gameid")];
     [MagicalRecord saveWithBlockAndWait:^(NSManagedObjectContext *localContext) {
          NSPredicate * predicatesTeamUser = [NSPredicate predicateWithFormat:@"gameid==[c]%@ and preferenceId==[c]%@",gameid,preferenceId];
         DSPreferenceMsg * commonMsg = [DSPreferenceMsg MR_findFirstWithPredicate:predicatesTeamUser inContext:localContext];
@@ -5523,11 +5524,6 @@
         commonMsg.gameid = gameid;
         commonMsg.msgCount = [NSString stringWithFormat:@"%d",unread+1];
     }
-//    completion:^(BOOL success, NSError *error) {
-//        if (block) {
-//            block(preferenceMsg);
-//        }
-//    }
      ];
     if (block) {
         block(preferenceMsg);

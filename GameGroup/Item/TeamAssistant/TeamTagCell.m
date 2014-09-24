@@ -41,18 +41,18 @@
     }
 }
 -(void)tagClick:(UIButton*)sender{
-    NSMutableDictionary * tagDic = [_tagArray objectAtIndex:sender.tag];
+    NSMutableDictionary * tagDic = [[_tagArray objectAtIndex:sender.tag] mutableCopy];
     if ([[GameCommon getNewStringWithId:KISDictionaryHaveKey(tagDic, @"tagaction")] isEqualToString:@"1"]) {
         [sender setBackgroundImage:KUIImage(@"tagBtn_normal") forState:UIControlStateNormal];
         [sender setBackgroundImage:KUIImage(@"tagBtn_click") forState:UIControlStateHighlighted];
-        [tagDic setObject:@"0" forKey:@"tagaction"];
+        [[_tagArray objectAtIndex:sender.tag] setValue:@"0" forKey:@"tagaction"];
         if (self.tagDelegate) {
             [self.tagDelegate tagType:tagDic isRemove:YES];
         }
     }else{
         [sender setBackgroundImage:KUIImage(@"tagBtn_click") forState:UIControlStateNormal];
         [sender setBackgroundImage:KUIImage(@"tagBtn_normal") forState:UIControlStateHighlighted];
-        [tagDic setObject:@"1" forKey:@"tagaction"];
+        [[_tagArray objectAtIndex:sender.tag] setValue:@"1" forKey:@"tagaction"];
         if (self.tagDelegate) {
             [self.tagDelegate tagType:tagDic isRemove:NO];
         }

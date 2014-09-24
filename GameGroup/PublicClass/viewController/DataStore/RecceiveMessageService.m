@@ -259,7 +259,7 @@ static RecceiveMessageService *recceiveMessageService = NULL;
             }
             [self.chatDelegate teamInviteInGroupTypeMessageReceived:dict];
         }
-        else if ([msgtype isEqualToString:@"teamRecommend"]){//组队偏好消息
+        else if ([msgtype isEqualToString:@"teamHelper"]){//组队偏好消息
             if (payload.length>0) {
                 [dict setObject:payload forKey:@"payload"];
             }

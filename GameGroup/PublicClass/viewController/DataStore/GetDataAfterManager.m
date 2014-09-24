@@ -461,8 +461,12 @@ static GetDataAfterManager *my_getDataAfterManager = NULL;
 #pragma mark 组队偏好
 -(void)teamRecommendMessageReceived:(NSDictionary *)messageContent{
     NSMutableDictionary * payloadDic = [self getPayloadDic:messageContent];
+    NSMutableDictionary * teamInfo = KISDictionaryHaveKey(payloadDic, @"roomInfo");
+    NSString * preferenceId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamInfo, @"preferenceId")];
+    NSString * gameId = [GameCommon getNewStringWithId:KISDictionaryHaveKey(teamInfo, @"gameid")];
+    
     [DataStoreManager savePreferenceMsg:messageContent SaveSuccess:^(NSDictionary *msgDic) {
-        NSInteger state = [[PreferencesMsgManager singleton] getPreferenceState:KISDictionaryHaveKey(payloadDic, @"gameid") PreferenceId:KISDictionaryHaveKey(payloadDic, @"preferenceId")];
+        NSInteger state = [[PreferencesMsgManager singleton] getPreferenceState:gameId PreferenceId:preferenceId];
         [self comeBackDelivered:KISDictionaryHaveKey(msgDic, @"sender") msgId:KISDictionaryHaveKey(msgDic, @"msgId") Type:@"normal"];//反馈消息
         dispatch_async(dispatch_get_main_queue(), ^{
             if (state == 1) {
